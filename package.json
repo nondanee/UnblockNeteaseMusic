@@ -1,0 +1,23 @@
+{
+  "name": "unblockneteasemusic",
+  "version": "0.0.8",
+  "description": "An agent server for netease cloud music pc version",
+  "main": "proxy.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "netease",
+    "neteasemusic",
+    "unblock",
+    "neteaseunblock"
+  ],
+  "author": "nondanee",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.15.1"
+  }
+}
