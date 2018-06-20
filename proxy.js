@@ -22,14 +22,16 @@ cloudMusicApiHost = {
 detailApiPath = [
 	'/api/v3/playlist/detail',
 	'/api/v3/song/detail',
-	'/api/v3/song/detail/',
 	// '/api/playlist/detail/dynamic',
 	'/api/artist/privilege',
 	'/api/album/privilege',
+	'/api/v1/artist',
+	'/api/v1/album',
 	'/api/playlist/privilege',
 	'/api/song/enhance/player/url',
 	'/batch',
-	'/api/v1/search/get'
+	'/api/v1/search/get',
+	'/api/cloudsearch/pc'
 ]
 
 var server = http.createServer(function (req, res) {
@@ -51,7 +53,7 @@ var server = http.createServer(function (req, res) {
 	if(proxy){
 		options.hostname = proxy.hostname
 		options.port = proxy.port
-		options.path = urlObj.href
+		options.path = urlObj.href.replace('music.163.com',switchHost('music.163.com'))
 	}
 	else{
 		options.hostname = switchHost(urlObj.hostname)
@@ -77,6 +79,7 @@ var server = http.createServer(function (req, res) {
 					text = decryptEapi(reqBody.slice(7))
 					apiPath = text.split('-36cd479b6b5-')[0]
 				}
+				apiPath = apiPath.replace(/\/\d*$/,'')
 				var proxyReq = http.request(options, function(proxyRes) {
 					if(detailApiPath.indexOf(apiPath) != -1){
 						res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
@@ -211,6 +214,20 @@ function bodyHook(apiPath,buffer){
 			})
 			finish()
 		}
+		else if(apiPath == '/api/v1/artist'){
+			jsonBody['hotSongs'].forEach(function(item){
+				item['privilege']['st'] = 0
+				item['privilege']['pl'] = 320000
+			})
+			finish()
+		}
+		else if(apiPath == '/api/v1/album'){
+			jsonBody['songs'].forEach(function(item){
+				item['privilege']['st'] = 0
+				item['privilege']['pl'] = 320000
+			})
+			finish()
+		}
 		else if(apiPath == '/batch'){
 			if('/api/cloudsearch/pc' in jsonBody){
 				jsonBody['/api/cloudsearch/pc']['result']['songs'].forEach(function(item){
@@ -218,6 +235,13 @@ function bodyHook(apiPath,buffer){
 					item['privilege']['pl'] = 320000
 				})
 			}
+			finish()
+		}
+		else if(apiPath == '/api/cloudsearch/pc'){
+			jsonBody['result']['songs'].forEach(function(item){
+				item['privilege']['st'] = 0
+				item['privilege']['pl'] = 320000
+			})
 			finish()
 		}
 		else if(apiPath == '/api/v1/search/get'){

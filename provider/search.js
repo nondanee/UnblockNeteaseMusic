@@ -16,7 +16,7 @@ function search(id,proxy){
 			Promise.all([qqResult, xiamiResult])
 			.then(function (results){
 				var urls = results.filter(function(url){return url})
-				if(urls){
+				if(urls.length > 0){
 					console.log('[Replace]',urls[0])
 					resolve(urls[0])
 				}
