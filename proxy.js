@@ -189,7 +189,7 @@ function bodyHook(apiPath,buffer){
 		function finish(){
 			var body = JSON.stringify(jsonBody)
 			if(encrypt)
-				resolve(Buffer.from(Encrypt(body),'hex'))
+				resolve(Buffer.from(encryptEapi(body),'hex'))
 			else
 				resolve(body)
 		}
