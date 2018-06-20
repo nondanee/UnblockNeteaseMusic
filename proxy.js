@@ -3,7 +3,8 @@ const zlib = require('zlib')
 const url = require('url')
 const net = require('net')
 
-const {Decrypt, Encrypt} = require('./crypto.js')
+const {decryptEapi, encryptEapi, decryptLinuxapi, encryptLinuxapi} = require('./crypto.js')
+
 const search = require('./provider/search.js')
 
 global.switchHost = function(host){
@@ -21,6 +22,7 @@ cloudMusicApiHost = {
 detailApiPath = [
 	'/api/v3/playlist/detail',
 	'/api/v3/song/detail',
+	'/api/v3/song/detail/',
 	// '/api/playlist/detail/dynamic',
 	'/api/artist/privilege',
 	'/api/album/privilege',
@@ -56,8 +58,8 @@ var server = http.createServer(function (req, res) {
 		options.port = urlObj.port || 80
 		options.path = urlObj.path
 	}
-
-	if ((urlObj.hostname in cloudMusicApiHost) && urlObj.path.indexOf('/eapi/') == 0 && req.method == 'POST'){
+	
+	if ((urlObj.hostname in cloudMusicApiHost) && (urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0) && req.method == 'POST'){
 		options.headers['X-Real-IP'] = '118.88.88.88'
 		var reqBody = ''
 		req.on('data', function (chunk) {
@@ -65,8 +67,16 @@ var server = http.createServer(function (req, res) {
 		})
 		req.on('end', function () {
 			if(reqBody){
-				var text = Decrypt(reqBody.slice(7))
-				var apiPath = text.split('-36cd479b6b5-')[0]
+				var text = ''
+				var apiPath = ''
+				if (urlObj.path == '/api/linux/forward'){
+					text = decryptLinuxapi(reqBody.slice(8))
+					apiPath = text.match(/http:\/\/music.163.com([^"]+)/)[1]
+				}
+				else{
+					text = decryptEapi(reqBody.slice(7))
+					apiPath = text.split('-36cd479b6b5-')[0]
+				}
 				var proxyReq = http.request(options, function(proxyRes) {
 					if(detailApiPath.indexOf(apiPath) != -1){
 						res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
@@ -122,28 +132,10 @@ function purifyHeaders(headers){
 }
 
 
-var regex_hostport = /^([^:]+)(:([0-9]+))?$/
-
-var getHostPortFromString = function (hostString, defaultPort) {
-	var host = hostString
-	var port = defaultPort
-
-	var result = regex_hostport.exec(hostString)
-	if (result != null) {
-		host = result[1]
-		if (result[2] != null) {
-			port = result[3]
-		}
-	}
-	return ( [host, port] )
-}
-
-
 server.on('connect', function (req, socket, head) {
-	var urlParsed = getHostPortFromString(req.url, 443)
-	var hostDomain = urlParsed[0]
-	var hostPort = parseInt(urlParsed[1])
-	console.log("Proxy HTTPS request for:", hostDomain, hostPort)
+
+	var urlObj = url.parse('https://' + req.url)
+	console.log("Proxy HTTPS request for:", urlObj.href.slice(0,-1))
 
 	if(proxy){
 		const options = {
@@ -166,11 +158,14 @@ server.on('connect', function (req, socket, head) {
 		})
 	}
 	else{
-		var proxySocket = net.connect(hostPort, switchHost(hostDomain), function () {
+		var proxySocket = net.connect(urlObj.port, switchHost(urlObj.hostname), function () {
 			socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
 			proxySocket.write(head)
 			proxySocket.pipe(socket)
 			socket.pipe(proxySocket)
+		})
+		proxySocket.on('error', function () {
+			socket.end()
 		})
 	}
 })
@@ -188,7 +183,7 @@ function bodyHook(apiPath,buffer){
 		}
 		catch(e){
 			encrypt = true
-			jsonBody = JSON.parse(Decrypt(buffer.toString('hex')))
+			jsonBody = JSON.parse(decryptEapi(buffer.toString('hex')))
 		}
 
 		function finish(){
@@ -199,11 +194,14 @@ function bodyHook(apiPath,buffer){
 				resolve(body)
 		}
 
-		if(apiPath == '/api/v3/playlist/detail' || apiPath == '/api/v3/song/detail'){
-			jsonBody['privileges'].forEach(function(item){
-				item['st'] = 0
-				item['pl'] = 320000
-			})
+		if(apiPath.indexOf('detail') != -1){
+			// console.log(apiPath)
+			if(jsonBody['privileges']){
+				jsonBody['privileges'].forEach(function(item){
+					item['st'] = 0
+					item['pl'] = 320000
+				})
+			}
 			finish()
 		}
 		else if(apiPath.indexOf('privilege') != -1){

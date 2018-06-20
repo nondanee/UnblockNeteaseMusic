@@ -40,7 +40,8 @@ function caesar(location){
 	return unescape(s.join('')).replace(/\^/g, '0')
 }
 
-function search(keyword) {
+function search(songInfo) {
+	var keyword = songInfo.name + ' - ' + songInfo.artists[0].name
 	var urlObj = url.parse(
 		'http://api.xiami.com/web?v=2.0&app_key=1' + 
 		'&key=' + encodeURIComponent(keyword) + '&page=1' +
@@ -141,9 +142,9 @@ function track(id) {
 	})
 }
 
-function check(keyword){
+function check(songInfo){
 	return new Promise(function (resolve, reject){
-		search(keyword)
+		search(songInfo)
 		.then(function(songId){
 			track(songId)
 			.then(function(songUrl){

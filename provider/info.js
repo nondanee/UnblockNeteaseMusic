@@ -29,8 +29,10 @@ function info(id){
 	return new Promise(function (resolve, reject){
 		httpRequest(options)
 		.then(function (body) {
-			var keyword = body.match(/<title>([\s\S]+?)<\/title>/)[1].replace(' - 单曲 - 网易云音乐','')
-			resolve(keyword)
+			var part = body.match(/window\.REDUX_STATE = ([^;]+);/)[1]
+			var jsonBody = JSON.parse(part)
+			var songInfo = jsonBody['Song']['info']['song']
+			resolve(songInfo)
 		})
 		.catch(function (e) {
 			reject(e)

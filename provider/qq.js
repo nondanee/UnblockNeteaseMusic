@@ -19,7 +19,8 @@ function isPlayable(song) {
 	return ((playFlag == 1) || ((playFlag == 1) && (tryFlag == 1)))
 }
 
-function search(keyword) {
+function search(songInfo) {
+	var keyword = songInfo.name + ' - ' + songInfo.artists[0].name
 	var urlObj = url.parse(
 		'http://i.y.qq.com/s.music/fcgi-bin/search_for_qq_cp?' + 
 		'g_tk=938407465&uin=0&format=jsonp&inCharset=utf-8' + 
@@ -128,9 +129,9 @@ function track(id) {
 	})
 }
 
-function check(keyword){
+function check(songInfo){
 	return new Promise(function (resolve, reject){
-		search(keyword)
+		search(songInfo)
 		.then(function(songId){
 			track(songId)
 			.then(function(songUrl){

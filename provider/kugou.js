@@ -9,7 +9,8 @@ var headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
 }
 
-function search(keyword) {
+function search(songInfo) {
+	var keyword = songInfo.name + ' - ' + songInfo.artists[0].name
 	var urlObj = url.parse(
 		'http://songsearch.kugou.com/' +
 		'song_search_v2?keyword=' + encodeURIComponent(keyword) + '&page=1'
@@ -95,9 +96,9 @@ function track(id) {
 	})
 }
 
-function check(keyword){
+function check(songInfo){
 	return new Promise(function (resolve, reject){
-		search(keyword)
+		search(songInfo)
 		.then(function(songId){
 			track(songId)
 			.then(function(songUrl){
