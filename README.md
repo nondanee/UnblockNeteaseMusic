@@ -4,11 +4,11 @@
 
 ## 特性
 
-- 使用QQ/虾米/~~酷狗/酷我~~音源替换变灰歌曲链接(因为质量问题未启用后两个)
+- 使用QQ/虾米/百度~~酷狗/酷我/咕咪~~音源替换变灰歌曲链接(因为质量问题部分未启用)
 - 为请求增加`X-Real-IP`参数解锁海外限制，支持指定网易云服务器IP，支持设置第二级HTTP/HTTPS代理
 - 完整的流量代理功能(HTTP/HTTPS)，可直接作为系统代理(不过没有PAC)
 
-## 使用
+## 运行
 
 ```
 $ node app.js
@@ -30,9 +30,9 @@ $ node app.js -h
     -h, --help               output usage information
 ```
 
-### 支持客户端
+### 使用
 
-> 支持Windows客户端，UWP客户端，Linux客户端和Mac客户端 ~~(不支持Mac客户端因为Mac上用的接口走HTTPS要MITM)~~(改hosts测试后可用，应该是Mac客户端请求HTTPS接口失败后自动降级到HTTP)
+> 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (未做HTTPS的MITM，Mac客户端和Android客户端请求HTTPS接口失败后自动降级到HTTP)
 
 有如下两种方案
 
@@ -42,7 +42,7 @@ $ node app.js -h
 <Server IP> interface.music.163.com
 ```
 
-> 修改hosts只能使用80端口 `-p 80` ，**若在本地运行，务必指定网易云服务器IP** `-f 223.252.199.66` (改hosts前自己ping一下)。因拦截HTTPS请求需自签根证书，暂时不处理
+> 修改hosts只能使用80端口 `-p 80` ，**若在本地运行，务必指定网易云服务器IP** `-f 223.252.199.66` (改hosts前自己ping一下)。因拦截HTTPS请求需自签根证书，暂时不处理。**Android客户端下修改hosts无法使用**
 
 #### 2. 设置代理
 Windows客户端设置内使用HTTP代理
@@ -60,6 +60,8 @@ Linux客户端下设置环境代理
 > export http_proxy=<127.0.0.1:PORT>
 > bash netease-cloud-music &
 > ```
+
+Android客户端下设置HTTP代理
 
 Mac客户端下无法通过代理使用(默认接口走HTTPS，Tunnel未作拦截)
 

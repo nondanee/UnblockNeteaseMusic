@@ -22,7 +22,7 @@ if (program.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(program.forceHost)) {
 	process.exit(1)
 }
 
-if (program.proxyUrl && !/\d+\.\d+\.\d+\.\d+:\d+/.test(program.proxyUrl)) {
+if (program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)) {
 	console.log('Please check the proxy url.')
 	process.exit(1)
 }

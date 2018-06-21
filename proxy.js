@@ -3,6 +3,7 @@ const zlib = require('zlib')
 const url = require('url')
 const net = require('net')
 
+const request = require('./request.js')
 const {decryptEapi, encryptEapi, decryptLinuxapi, encryptLinuxapi} = require('./crypto.js')
 
 const search = require('./provider/search.js')
@@ -22,7 +23,9 @@ cloudMusicApiHost = {
 detailApiPath = [
 	'/api/v3/playlist/detail',
 	'/api/v3/song/detail',
+	'/api/v6/playlist/detail',
 	// '/api/playlist/detail/dynamic',
+	'/api/album/play',
 	'/api/artist/privilege',
 	'/api/album/privilege',
 	'/api/v1/artist',
@@ -41,59 +44,37 @@ var server = http.createServer(function (req, res) {
 		urlObj = url.parse(req.url)
 	else
 		urlObj = url.parse('http://music.163.com' + req.url)
+	console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
 
-	var target = urlObj.protocol + "//" + urlObj.host
-	console.log("Proxy HTTP request for:", target)
-
-	var options = {
-		method: req.method,
-		headers: req.headers
-	}
-
-	if(proxy){
-		options.hostname = proxy.hostname
-		options.port = proxy.port
-		options.path = urlObj.href.replace('music.163.com',switchHost('music.163.com'))
-	}
-	else{
-		options.hostname = switchHost(urlObj.hostname)
-		options.port = urlObj.port || 80
-		options.path = urlObj.path
-	}
+	var options = request.init(req.method, urlObj, req.headers)
 	
-	if ((urlObj.hostname in cloudMusicApiHost) && (urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0) && req.method == 'POST'){
+	if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
+		(urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0)){
 		options.headers['X-Real-IP'] = '118.88.88.88'
 		var reqBody = ''
-		req.on('data', function (chunk) {
-			reqBody += chunk
+		req.on('data', function (data) {
+			reqBody += data
 		})
 		req.on('end', function () {
 			if(reqBody){
-				var text = ''
+				var param = ''
 				var apiPath = ''
 				if (urlObj.path == '/api/linux/forward'){
-					text = decryptLinuxapi(reqBody.slice(8))
-					apiPath = text.match(/http:\/\/music.163.com([^"]+)/)[1]
+					param = decryptLinuxapi(reqBody.slice(8))
+					apiPath = param.match(/http:\/\/music.163.com([^"]+)/)[1]
 				}
 				else{
-					text = decryptEapi(reqBody.slice(7))
-					apiPath = text.split('-36cd479b6b5-')[0]
+					param = decryptEapi(reqBody.slice(7))
+					apiPath = param.split('-36cd479b6b5-')[0]
 				}
 				apiPath = apiPath.replace(/\/\d*$/,'')
+				// console.log(apiPath)
 				var proxyReq = http.request(options, function(proxyRes) {
 					if(detailApiPath.indexOf(apiPath) != -1){
-						res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
-						var chunks = []
-						var gunzip = zlib.createGunzip()
-						proxyRes.pipe(gunzip)
-
-						gunzip.on('data', function (data) {
-							chunks.push(data)
-						})
-						gunzip.on('end', function() {
-							var buffer = Buffer.concat(chunks)
+						request.read(proxyRes, true).then(function (buffer){
 							bodyHook(apiPath,buffer)
 							.then(function(body){
+								res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
 								res.write(body)
 								res.end()
 							})
@@ -140,7 +121,11 @@ server.on('connect', function (req, socket, head) {
 	var urlObj = url.parse('https://' + req.url)
 	console.log("Proxy HTTPS request for:", urlObj.href.slice(0,-1))
 
-	if(proxy){
+	if(urlObj.hostname in cloudMusicApiHost){
+		socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
+		socket.end()
+	}
+	else if(proxy){
 		const options = {
 			port: proxy.port,
 			hostname: proxy.hostname,
@@ -198,11 +183,11 @@ function bodyHook(apiPath,buffer){
 		}
 
 		if(apiPath.indexOf('detail') != -1){
-			// console.log(apiPath)
 			if(jsonBody['privileges']){
 				jsonBody['privileges'].forEach(function(item){
 					item['st'] = 0
 					item['pl'] = 320000
+					item['dl'] = 320000
 				})
 			}
 			finish()
@@ -211,6 +196,7 @@ function bodyHook(apiPath,buffer){
 			jsonBody['data'].forEach(function(item){
 				item['st'] = 0
 				item['pl'] = 320000
+				item['dl'] = 320000
 			})
 			finish()
 		}
@@ -218,6 +204,7 @@ function bodyHook(apiPath,buffer){
 			jsonBody['hotSongs'].forEach(function(item){
 				item['privilege']['st'] = 0
 				item['privilege']['pl'] = 320000
+				item['privilege']['dl'] = 320000
 			})
 			finish()
 		}
@@ -225,6 +212,7 @@ function bodyHook(apiPath,buffer){
 			jsonBody['songs'].forEach(function(item){
 				item['privilege']['st'] = 0
 				item['privilege']['pl'] = 320000
+				item['privilege']['dl'] = 320000
 			})
 			finish()
 		}
@@ -233,6 +221,7 @@ function bodyHook(apiPath,buffer){
 				jsonBody['/api/cloudsearch/pc']['result']['songs'].forEach(function(item){
 					item['privilege']['st'] = 0
 					item['privilege']['pl'] = 320000
+					item['privilege']['dl'] = 320000
 				})
 			}
 			finish()
@@ -241,6 +230,7 @@ function bodyHook(apiPath,buffer){
 			jsonBody['result']['songs'].forEach(function(item){
 				item['privilege']['st'] = 0
 				item['privilege']['pl'] = 320000
+				item['privilege']['dl'] = 320000
 			})
 			finish()
 		}
@@ -249,6 +239,7 @@ function bodyHook(apiPath,buffer){
 				jsonBody['result']['songs'].forEach(function(item){
 					item['privilege']['st'] = 0
 					item['privilege']['pl'] = 320000
+					item['privilege']['dl'] = 320000
 				})
 			}
 			finish()
@@ -258,10 +249,18 @@ function bodyHook(apiPath,buffer){
 				if(item['code'] != 200){
 					search(item['id'],proxy)
 					.then(function (songUrl) {
-						item.url = songUrl
-						item.br = 320000
-						item.code = 200
-						finish()
+						playCheck(songUrl)
+						.then(function (size){
+							item.url = songUrl
+							item.br = 320000
+							item.size = size
+							item.code = 200
+							item.type = 'mp3'
+							finish()
+						})
+						.catch(function () {
+							finish()
+						})
 					})
 					.catch(function () {
 						finish()
@@ -272,5 +271,21 @@ function bodyHook(apiPath,buffer){
 				}
 			})
 		}
+		else{
+			finish()
+		}
+	})
+}
+
+
+function playCheck(songUrl){
+	return new Promise(function(resolve, reject){
+		request('HEAD', songUrl)
+		.then(function (headers){
+			resolve(headers['content-length'] || 0)
+		})
+		.catch(function (e){
+			reject()
+		})
 	})
 }
