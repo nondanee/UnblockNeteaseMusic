@@ -39,6 +39,21 @@ detailApiPath = [
 
 var server = http.createServer(function (req, res) {
 
+	if(req.url == '/proxy.pac'){
+	
+	res.writeHead(200, {'Content-Type': 'application/octet-stream'})
+	res.end(`
+		function FindProxyForURL(url, host) {
+				if (host == 'music.163.com' || host == 'interface.music.163.com') {
+					return 'PROXY 127.0.0.1:${port}'
+				}
+				return 'DIRECT'
+			}
+		`) 
+	
+	}
+	else{
+
 	var urlObj = {}
 	if(req.url.indexOf('http://') == 0)
 		urlObj = url.parse(req.url)
@@ -47,6 +62,7 @@ var server = http.createServer(function (req, res) {
 	console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
 
 	var options = request.init(req.method, urlObj, req.headers)
+	var makeRequest = (proxy) ? ((proxy.protocol == 'https') ? https.request : http.request) : ((urlObj.protocol == 'https') ? https.request : http.request)
 	
 	if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
 		(urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0)){
@@ -69,7 +85,7 @@ var server = http.createServer(function (req, res) {
 				}
 				apiPath = apiPath.replace(/\/\d*$/,'')
 				// console.log(apiPath)
-				var proxyReq = http.request(options, function(proxyRes) {
+				var proxyReq = makeRequest(options, function(proxyRes) {
 					if(detailApiPath.indexOf(apiPath) != -1){
 						request.read(proxyRes, true).then(function (buffer){
 							bodyHook(apiPath,buffer)
@@ -95,13 +111,15 @@ var server = http.createServer(function (req, res) {
 
 	// direct
 	else{
-		var proxyReq = http.request(options, function(proxyRes) {
+		var proxyReq = makeRequest(options, function(proxyRes) {
 			res.writeHead(proxyRes.statusCode, proxyRes.headers)
 			proxyRes.pipe(res)
 		}).on('error', function (e) {
 			res.end()
 		})
 		req.pipe(proxyReq)
+	}
+
 	}
 
 }).listen(port)
