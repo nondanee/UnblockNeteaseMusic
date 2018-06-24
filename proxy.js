@@ -32,7 +32,9 @@ detailApiPath = [
 	'/api/v1/album',
 	'/api/playlist/privilege',
 	'/api/song/enhance/player/url',
+	// '/api/song/enhance/download/url',
 	'/batch',
+	// '/api/batch',
 	'/api/v1/search/get',
 	'/api/cloudsearch/pc'
 ]
@@ -41,17 +43,18 @@ var server = http.createServer(function (req, res) {
 
 	if(req.url == '/proxy.pac'){
 	
-	res.writeHead(200, {'Content-Type': 'application/octet-stream'})
+	res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 	res.end(`
 		function FindProxyForURL(url, host) {
 				if (host == 'music.163.com' || host == 'interface.music.163.com') {
-					return 'PROXY 127.0.0.1:${port}'
+					return 'PROXY ${req.headers.host}'
 				}
 				return 'DIRECT'
 			}
 		`) 
 	
 	}
+
 	else{
 
 	var urlObj = {}
@@ -262,32 +265,35 @@ function bodyHook(apiPath,buffer){
 			}
 			finish()
 		}
-		else if(apiPath == '/api/song/enhance/player/url'){
-			jsonBody['data'].forEach(function(item){
-				if(item['code'] != 200){
-					search(item['id'],proxy)
-					.then(function (songUrl) {
-						playCheck(songUrl)
-						.then(function (size){
-							item.url = songUrl
-							item.br = 320000
-							item.size = size
-							item.code = 200
-							item.type = 'mp3'
-							finish()
-						})
-						.catch(function () {
-							finish()
-						})
+		else if(apiPath.indexOf('url')){
+			var item = {}
+			if(jsonBody['data'] instanceof Array)
+				item = jsonBody['data'][0]
+			else
+				item = jsonBody['data']
+			if(item['code'] != 200){
+				search(item['id'],proxy)
+				.then(function (songUrl) {
+					playCheck(songUrl)
+					.then(function (size){
+						item.url = songUrl
+						item.br = 320000
+						item.size = size
+						item.code = 200
+						item.type = 'mp3'
+						finish()
 					})
 					.catch(function () {
 						finish()
 					})
-				}
-				else{
+				})
+				.catch(function () {
 					finish()
-				}
-			})
+				})
+			}
+			else{
+				finish()
+			}
 		}
 		else{
 			finish()

@@ -6,7 +6,7 @@
 
 - 使用QQ/虾米/百度/~~酷狗/酷我/咕咪~~音源替换变灰歌曲链接(因为质量问题部分未启用)
 - 为请求增加`X-Real-IP`参数解锁海外限制，支持指定网易云服务器IP，支持设置第二级HTTP/HTTPS代理
-- 完整的流量代理功能(HTTP/HTTPS)，可直接作为系统代理(不过没有PAC)
+- 完整的流量代理功能(HTTP/HTTPS)，可直接作为系统代理(支持PAC)
 
 ## 运行
 
@@ -32,7 +32,11 @@ $ node app.js -h
 
 ### 使用
 
-> 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (未做HTTPS的MITM，Mac客户端和Android客户端请求HTTPS接口失败后自动降级到HTTP)
+> 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (Mac客户端和Android客户端默认请求HTTPS接口，代理后端对网易云的HTTPS接口连接都返回空数据，迫使客户端自动降级使用HTTP接口)
+>
+> 不支持iOS客户端，因为Apple强制要求使用HTTPS所以无法降级，要支持只能自签证书做MITM了
+>
+> 解锁的变灰歌曲能试听但是无法下载，很无奈，测试下载发现网易云会提示下载失败，个人猜测应该是下载完后写ID3标记时出错了，因为其他平台的歌源大多都不是MP3格式的。
 
 有如下两种方案
 
@@ -42,14 +46,19 @@ $ node app.js -h
 <Server IP> interface.music.163.com
 ```
 
-> 修改hosts只能使用80端口 `-p 80` ，**若在本地运行，务必指定网易云服务器IP** `-f 223.252.199.66` (改hosts前自己ping一下)。因拦截HTTPS请求需自签根证书，暂时不处理。**Android客户端下修改hosts无法使用**
+> 通过修改hosts使用必需是80端口 `-p 80` ，**若在本地运行，请务必指定网易云服务器IP** `-f 223.252.199.66` (改hosts前自己ping一下)。
+>
+> **Android客户端下修改hosts无法使用**，原因和解决方法详见[云音乐安卓又搞事啦](https://jixun.moe/post/netease-android-hosts-bypass/)，[安卓免 root 绕过网易云音乐 IP 限制](https://jixun.moe/post/android-block-netease-without-root/)
 
 #### 2. 设置代理
-Windows客户端设置内使用HTTP代理
+
+>  PAC自动代理 `http://<Server IP>/proxy.pac`
+
+Windows客户端设置内选择使用HTTP代理
 
 UWP客户端下设置系统代理
 
-> UWP应用需开启loopback才能走系统代理，可使用[Fiddler](https://www.telerik.com/fiddler)或[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager)等工具
+> UWP应用需开启loopback才会走系统代理，可使用[Fiddler](https://www.telerik.com/fiddler)或[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager)等工具
 
 Linux客户端下设置环境代理
 
@@ -63,7 +72,9 @@ Linux客户端下设置环境代理
 
 Android客户端下设置HTTP代理
 
-Mac客户端下无法通过代理使用(默认接口走HTTPS，Tunnel未作拦截)
+Mac客户端下设置HTTP/HTTPS/自动代理
+
+> 系统偏好设置>网络>高级>代理
 
 ## 效果
 
