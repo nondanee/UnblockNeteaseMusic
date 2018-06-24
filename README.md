@@ -60,15 +60,16 @@ UWP客户端下设置系统代理
 
 > UWP应用需开启loopback才会走系统代理，可使用[Fiddler](https://www.telerik.com/fiddler)或[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager)等工具
 
-Linux客户端下设置环境代理
+Linux客户端下设置HTTP/HTTPS/自动代理
 
-> 使用如下类似启动脚本
+> 命令行下可以使用类似的启动脚本
 >
 > ```
 > node app.js -p <PORT> &
 > export http_proxy=<127.0.0.1:PORT>
 > bash netease-cloud-music &
 > ```
+> 
 
 Android客户端下设置HTTP代理
 
@@ -78,7 +79,25 @@ Mac客户端下设置HTTP/HTTPS/自动代理
 
 ## 效果
 
-![](./screenshot.png)
+#### Windows客户端
+
+<img src="./screenshot/windows.png" width='100%' />
+
+#### UWP客户端
+
+<img src="./screenshot/uwp.png" width='100%' />
+
+#### Linux客户端
+
+<img src="./screenshot/linux.png" width='100%' />
+
+#### Mac客户端
+
+<img src="./screenshot/mac.png" width='100%' />
+
+#### Android客户端
+
+<img src="./screenshot/android.png" width='40%' />
 
 ## 感谢
 

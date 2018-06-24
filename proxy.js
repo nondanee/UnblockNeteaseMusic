@@ -247,15 +247,7 @@ function bodyHook(apiPath,buffer){
 			}
 			finish()
 		}
-		else if(apiPath == '/api/cloudsearch/pc'){
-			jsonBody['result']['songs'].forEach(function(item){
-				item['privilege']['st'] = 0
-				item['privilege']['pl'] = 320000
-				item['privilege']['dl'] = 320000
-			})
-			finish()
-		}
-		else if(apiPath == '/api/v1/search/get'){
+		else if(apiPath.indexOf('search') != -1){
 			if(jsonBody['result']['songs']){
 				jsonBody['result']['songs'].forEach(function(item){
 					item['privilege']['st'] = 0
@@ -265,7 +257,7 @@ function bodyHook(apiPath,buffer){
 			}
 			finish()
 		}
-		else if(apiPath.indexOf('url')){
+		else if(apiPath.indexOf('url') != -1){
 			var item = {}
 			if(jsonBody['data'] instanceof Array)
 				item = jsonBody['data'][0]
