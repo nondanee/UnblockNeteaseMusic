@@ -52,7 +52,7 @@ $ node app.js -h
 
 #### 2. 设置代理
 
->  PAC自动代理 `http://<Server IP>/proxy.pac`
+>  PAC自动代理 `http://<Server IP:PORT>/proxy.pac`
 
 Windows客户端设置内选择使用HTTP代理
 
