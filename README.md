@@ -105,6 +105,8 @@ Mac客户端下设置HTTP/HTTPS/自动代理
 
 使用的其它平台音源API出自
 
+[trazyn/ieaseMusic](https://github.com/trazyn/ieaseMusic)
+
 [listen1/listen1_chrome_extension](https://github.com/listen1/listen1_chrome_extension)
 
 向所有同类产品致敬
