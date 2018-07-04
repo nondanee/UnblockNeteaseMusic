@@ -12,7 +12,7 @@ function search(id,proxy){
 		.then(function (keyword) {
 			var qqResult = qq.check(keyword)
 			var xiamiResult = xiami.check(keyword)
-			var baiduResult = xiami.check(keyword)
+			var baiduResult = baidu.check(keyword)
 			Promise.all([qqResult, xiamiResult, baiduResult])
 			.then(function (results){
 				var urls = results.filter(function(url){return url})

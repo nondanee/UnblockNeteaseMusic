@@ -79,11 +79,11 @@ var server = http.createServer(function (req, res) {
 				var param = ''
 				var apiPath = ''
 				if (urlObj.path == '/api/linux/forward'){
-					param = decryptLinuxapi(reqBody.slice(8))
+					param = decryptLinuxapi(reqBody.replace(/%0+$/,'').slice(8))
 					apiPath = param.match(/http:\/\/music.163.com([^"]+)/)[1]
 				}
 				else{
-					param = decryptEapi(reqBody.slice(7))
+					param = decryptEapi(reqBody.replace(/%0+$/,'').slice(7))
 					apiPath = param.split('-36cd479b6b5-')[0]
 				}
 				apiPath = apiPath.replace(/\/\d*$/,'')
