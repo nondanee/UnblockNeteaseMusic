@@ -2,18 +2,18 @@ const info = require('./info.js')
 const qq = require('./qq.js')
 const xiami = require('./xiami.js')
 const baidu = require('./baidu.js')
-// const kugou = require('./kugou.js')
-// const kuwo = require('./kuwo.js')
-// const migu = require('./migu.js')
+const kugou = require('./kugou.js')
+const kuwo = require('./kuwo.js')
+const migu = require('./migu.js')
 
 function search(id,proxy){
 	return new Promise(function (resolve, reject){
 		info(id)
 		.then(function (keyword) {
-			var qqResult = qq.check(keyword)
-			var xiamiResult = xiami.check(keyword)
-			var baiduResult = baidu.check(keyword)
-			Promise.all([qqResult, xiamiResult, baiduResult])
+			var source = [qq, xiami, baidu].map(function(platform){
+				return platform.check(keyword)
+			})
+			Promise.all(source)
 			.then(function (results){
 				var urls = results.filter(function(url){return url})
 				if(urls.length > 0){

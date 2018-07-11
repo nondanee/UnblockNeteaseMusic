@@ -58,12 +58,12 @@ function request(method, uri, extraHeaders, body, raw){
 	})
 }
 
-function read(res, raw){
+function read(connect, raw){
 	return new Promise(function(resolve, reject){
 		var chunks = []
-		if(res.headers['content-encoding'] == 'gzip'){
+		if(connect.headers['content-encoding'] == 'gzip'){
 			var gunzip = zlib.createGunzip()
-			res.pipe(gunzip)
+			connect.pipe(gunzip)
 			gunzip.on('data', function(chunk){
 				chunks.push(chunk)
 			})
@@ -75,13 +75,13 @@ function read(res, raw){
 			})
 		}
 		else{
-			res.on('data', function(chunk){
+			connect.on('data', function(chunk){
 				chunks.push(chunk)
 			})
-			res.on('end', function(){
+			connect.on('end', function(){
 				end()
 			})
-			res.on('error', function(e){
+			connect.on('error', function(e){
 				reject(e)
 			})
 		}

@@ -1,12 +1,14 @@
 const http = require('http')
-const zlib = require('zlib')
+const https = require('https')
 const url = require('url')
 const net = require('net')
+const fs = require('fs')
+const crypto = require('crypto')
 
+const download = require('./download.js')
 const request = require('./request.js')
-const {decryptEapi, encryptEapi, decryptLinuxapi, encryptLinuxapi} = require('./crypto.js')
-
 const search = require('./provider/search.js')
+const {decryptEapi, encryptEapi, decryptLinuxapi, encryptLinuxapi} = require('./crypto.js')
 
 global.switchHost = function(host){
 	if(cloudMusicApiHost[host] != null)
@@ -20,6 +22,8 @@ cloudMusicApiHost = {
 	'music.163.com': forceHost
 }
 
+downloadHookHost = 
+
 detailApiPath = [
 	'/api/v3/playlist/detail',
 	'/api/v3/song/detail',
@@ -32,7 +36,7 @@ detailApiPath = [
 	'/api/v1/album',
 	'/api/playlist/privilege',
 	'/api/song/enhance/player/url',
-	// '/api/song/enhance/download/url',
+	'/api/song/enhance/download/url',
 	'/batch',
 	// '/api/batch',
 	'/api/v1/search/get',
@@ -41,90 +45,117 @@ detailApiPath = [
 
 var server = http.createServer(function (req, res) {
 
-	if(req.url == '/proxy.pac'){
+	if(req.url == '/proxy.pac'){//pac rule
 	
-	res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
-	res.end(`
-		function FindProxyForURL(url, host) {
-				if (host == 'music.163.com' || host == 'interface.music.163.com') {
-					return 'PROXY ${req.headers.host}'
+		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
+		res.end(`
+			function FindProxyForURL(url, host) {
+					if (host == 'music.163.com' || host == 'interface.music.163.com') {
+						return 'PROXY ${req.headers.host}'
+					}
+					return 'DIRECT'
 				}
-				return 'DIRECT'
-			}
-		`) 
+			`) 
 	
 	}
+	else if(req.url.indexOf('pre-download') != -1){//host mp3 file
 
-	else{
+		var fileName = req.url.split('pre-download/').pop()
+		var filePath = `cache/${fileName}`
 
-	var urlObj = {}
-	if(req.url.indexOf('http://') == 0)
-		urlObj = url.parse(req.url)
-	else
-		urlObj = url.parse('http://music.163.com' + req.url)
-	console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
+		var start
+		var end
 
-	var options = request.init(req.method, urlObj, req.headers)
-	var makeRequest = (proxy) ? ((proxy.protocol == 'https') ? https.request : http.request) : ((urlObj.protocol == 'https') ? https.request : http.request)
-	
-	if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
-		(urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0)){
-		options.headers['X-Real-IP'] = '118.88.88.88'
-		var reqBody = ''
-		req.on('data', function (data) {
-			reqBody += data
+		if(req.headers.range){
+			var range = req.headers.range.replace(/bytes=/, "").split("-")
+			start = range[0]
+			end = range[1]
+		}
+
+		fs.stat(filePath,function(error,stat){
+			if(error){
+				res.writeHead(404)
+				res.end()
+			}
+			else{
+				start = start ? parseInt(start, 10) : 0
+				end = end ? parseInt(end, 10) : stat.size - 1
+
+				var readStream = fs.createReadStream(filePath, {start: start, end: end})
+				res.writeHead(206, {'Content-Type': 'audio/mpeg',
+									'Content-Disposition': `inline; filename="${fileName}"`,
+									'Accept-Ranges': 'bytes',
+									'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+									'Content-Length': end - start + 1})
+				readStream.pipe(res)
+			}
 		})
-		req.on('end', function () {
-			if(reqBody){
-				var param = ''
-				var apiPath = ''
-				if (urlObj.path == '/api/linux/forward'){
-					param = decryptLinuxapi(reqBody.replace(/%0+$/,'').slice(8))
-					apiPath = param.match(/http:\/\/music.163.com([^"]+)/)[1]
-				}
-				else{
-					param = decryptEapi(reqBody.replace(/%0+$/,'').slice(7))
-					apiPath = param.split('-36cd479b6b5-')[0]
-				}
-				apiPath = apiPath.replace(/\/\d*$/,'')
-				// console.log(apiPath)
-				var proxyReq = makeRequest(options, function(proxyRes) {
-					if(detailApiPath.indexOf(apiPath) != -1){
-						request.read(proxyRes, true).then(function (buffer){
-							bodyHook(apiPath,buffer)
-							.then(function(body){
-								res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
-								res.write(body)
-								res.end()
-							})
-						})
+
+	}
+	else{//proxy 
+
+		var urlObj = {}
+		if(req.url.indexOf('http://') == 0)
+			urlObj = url.parse(req.url)
+		else
+			urlObj = url.parse('http://music.163.com' + req.url)
+		console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
+
+		var options = request.init(req.method, urlObj, req.headers)
+		var makeRequest = (proxy) ? ((proxy.protocol == 'https') ? https.request : http.request) : ((urlObj.protocol == 'https') ? https.request : http.request)
+		
+		if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
+			(urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0)){
+			options.headers['X-Real-IP'] = '118.88.88.88'
+			request.read(req)
+			.then(function(reqBody){
+				if(reqBody){
+					var param = ''
+					var apiPath = ''
+					if (urlObj.path == '/api/linux/forward'){
+						param = decryptLinuxapi(reqBody.replace(/%0+$/,'').slice(8))
+						apiPath = param.match(/http:\/\/music.163.com([^"]+)/)[1]
 					}
 					else{
-						res.writeHead(proxyRes.statusCode, proxyRes.headers)
-						proxyRes.pipe(res)
+						param = decryptEapi(reqBody.replace(/%0+$/,'').slice(7))
+						apiPath = param.split('-36cd479b6b5-')[0]
 					}
-				}).on('error', function (e) {
-					res.end()
-				})
-				proxyReq.write(reqBody)
-				proxyReq.end()
-			}
-		})
-	}
+					apiPath = apiPath.replace(/\/\d*$/,'')
+					// console.log(apiPath)
+					var proxyReq = makeRequest(options, function(proxyRes) {
+						if(detailApiPath.indexOf(apiPath) != -1){
+							request.read(proxyRes, true).then(function (buffer){
+								bodyHook(apiPath, buffer)
+								.then(function(body){
+									res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
+									res.write(body)
+									res.end()
+								})
+							})
+						}
+						else{
+							res.writeHead(proxyRes.statusCode, proxyRes.headers)
+							proxyRes.pipe(res)
+						}
+					}).on('error', function (e) {
+						res.end()
+					})
+					proxyReq.write(reqBody)
+					proxyReq.end()
+				}
+			})
+		}
+		else{// direct
+			var proxyReq = makeRequest(options, function(proxyRes) {
+				res.writeHead(proxyRes.statusCode, proxyRes.headers)
+				proxyRes.pipe(res)
+			}).on('error', function (e) {
+				res.end()
+			})
+			req.pipe(proxyReq)
+		}
 
-	// direct
-	else{
-		var proxyReq = makeRequest(options, function(proxyRes) {
-			res.writeHead(proxyRes.statusCode, proxyRes.headers)
-			proxyRes.pipe(res)
-		}).on('error', function (e) {
-			res.end()
-		})
-		req.pipe(proxyReq)
 	}
-
-	}
-
 }).listen(port)
 
 
@@ -147,14 +178,14 @@ server.on('connect', function (req, socket, head) {
 		socket.end()
 	}
 	else if(proxy){
-		const options = {
+		var options = {
 			port: proxy.port,
 			hostname: proxy.hostname,
 			method: 'CONNECT',
 			path: req.url
 		}
-
-		const proxyReq = http.request(options)
+		var makeRequest = (proxy.protocol == 'https') ? https.request : http.request
+		var proxyReq = makeRequest(options)
 		proxyReq.end()
 
 		proxyReq.on('connect', function (res, proxySocket, proxyHead) {		
@@ -180,7 +211,7 @@ server.on('connect', function (req, socket, head) {
 })
 
 
-function bodyHook(apiPath,buffer){
+function bodyHook(apiPath, buffer){
 
 	// console.log(apiPath)
 	return new Promise(function (resolve, reject){
@@ -196,6 +227,9 @@ function bodyHook(apiPath,buffer){
 		}
 
 		function finish(){
+			// if(apiPath.indexOf('url') != -1){
+			// 	console.log(jsonBody['data'])
+			// }
 			var body = JSON.stringify(jsonBody)
 			if(encrypt)
 				resolve(Buffer.from(encryptEapi(body),'hex'))
@@ -264,24 +298,63 @@ function bodyHook(apiPath,buffer){
 			else
 				item = jsonBody['data']
 			if(item['code'] != 200){
-				search(item['id'],proxy)
-				.then(function (songUrl) {
-					playCheck(songUrl)
-					.then(function (size){
-						item.url = songUrl
-						item.br = 320000
-						item.size = size
-						item.code = 200
-						item.type = 'mp3'
-						finish()
-					})
-					.catch(function () {
-						finish()
-					})
-				})
-				.catch(function () {
-					finish()
-				})
+				var localUrl = 'http://music.163.com/pre-download/' + item['id'] + '.mp3'
+				fs.stat(`cache/${item['id']}.mp3`, function (error, stat) {
+					if(!error){
+						md5Value(`cache/${item['id']}.mp3`)
+						.then(function(hash){
+							item.url = localUrl
+							item.md5 = hash
+							item.br = 128000
+							item.size = stat.size
+							item.code = 200
+							item.type = 'mp3'
+							finish()
+						})
+						.catch(function (){
+							finish()
+						})
+					}
+					else{
+						search(item['id'],proxy)
+						.then(function (songUrl) {
+							playCheck(songUrl)
+							.then(function (size){
+								item.url = songUrl
+								item.br = 128000
+								item.size = size
+								item.code = 200
+								item.type = 'mp3'
+								if((apiPath.indexOf('download') != -1) && (songUrl.indexOf('.mp3') == -1)){
+									download(item['id'], songUrl)
+									.then(function (){
+										md5Value(`cache/${item['id']}.mp3`)
+										.then(function(hash){
+											item.url = localUrl
+											item.md5 = hash
+											finish()
+										})
+										.catch(function (){
+											finish()
+										})	
+									})
+									.catch(function (){
+										finish()
+									})
+								}
+								else{
+									finish()
+								}
+							})
+							.catch(function () {
+								finish()
+							})
+						})
+						.catch(function () {
+							finish()
+						})
+					}
+				})				
 			}
 			else{
 				finish()
@@ -301,6 +374,22 @@ function playCheck(songUrl){
 			resolve(headers['content-length'] || 0)
 		})
 		.catch(function (e){
+			reject()
+		})
+	})
+}
+
+function md5Value(filePath){
+	return new Promise(function(resolve, reject){
+		var readStream = fs.createReadStream(filePath)
+		var hash = crypto.createHash('md5')
+		readStream.on('data', function (data){
+			hash.update.bind(data)
+		})
+		readStream.on('end', function () {
+			resolve(hash.digest('hex'))
+		})
+		readStream.on('error', function () {
 			reject()
 		})
 	})

@@ -5,7 +5,7 @@ function search(songInfo) {
 		'http://search.kuwo.cn/r.s?' +
 		'ft=music&itemset=web_2013&client=kt' +
 		'&rformat=json&encoding=utf8' +
-		'&all=' + encodeURIComponent(songInfo.keyword) + '&pn=1&rn=20'
+		'&all=' + encodeURIComponent(songInfo.keyword) + '&pn=0&rn=20'
 
 	return new Promise(function (resolve, reject){
 		request('GET', uri)

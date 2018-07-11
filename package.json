@@ -20,7 +20,8 @@
   "author": "nondanee",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.15.1"
+    "commander": "^2.15.1",
+    "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {
     "pkg": "^4.3.3"
