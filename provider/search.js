@@ -10,11 +10,11 @@ function search(id,proxy){
 	return new Promise(function (resolve, reject){
 		info(id)
 		.then(function (keyword) {
-			var source = [qq, xiami, baidu].map(function(platform){
+			var sources = [qq, xiami, baidu].map(function(platform){
 				return platform.check(keyword)
 			})
 			Promise.all(source)
-			.then(function (results){
+			.then(function (sources){
 				var urls = results.filter(function(url){return url})
 				if(urls.length > 0){
 					console.log('[Replace]',urls[0])
