@@ -13,8 +13,8 @@ function search(id,proxy){
 			var sources = [qq, xiami, baidu].map(function(platform){
 				return platform.check(keyword)
 			})
-			Promise.all(source)
-			.then(function (sources){
+			Promise.all(sources)
+			.then(function (results){
 				var urls = results.filter(function(url){return url})
 				if(urls.length > 0){
 					console.log('[Replace]',urls[0])
