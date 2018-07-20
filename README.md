@@ -73,11 +73,11 @@ Linux客户端 设置HTTP和HTTPS代理或自动代理
 > ```
 > 
 
-Mac客户端下设置HTTP和HTTPS代理或自动代理
+Mac客户端 设置HTTP和HTTPS代理或自动代理
 
 > 系统偏好设置>网络>高级>代理
 
-Android客户端下设置手动或自动代理
+Android客户端 设置手动或自动代理
 
 > WLAN>修改网络>高级选项>代理
 
