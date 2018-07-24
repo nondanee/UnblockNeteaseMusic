@@ -16,9 +16,9 @@ function track(songInfo) {
 		request('GET', uri, extraHeaders)
 		.then(function (body) {
 			var jsonBody = JSON.parse(body.slice('jsonp154('.length, -')'.length))
-			var songUrl = jsonBody['data']['songs'][0]
-			if(songUrl){
-				resolve(songUrl.listen_file)
+			var chief = jsonBody['data']['songs'][0]
+			if(chief && chief.listen_file){
+				resolve(chief.listen_file)
 			}
 			else{
 				reject()
@@ -30,18 +30,34 @@ function track(songInfo) {
 	})
 }
 
+function improve(songUrl){
+	var updatedSongUrl = songUrl.replace('m128','m320')
+	return new Promise(function (resolve, reject){
+		request('HEAD', updatedSongUrl)
+		.then(function (res) {
+			if(res.statusCode == 200)
+				resolve(updatedSongUrl)
+			else
+				resolve(songUrl)
+		})
+		.catch(function (e) {
+			resolve(songUrl)
+		})
+	})
+}
+
 function check(songInfo) {
 	return new Promise(function (resolve, reject){
 		track(songInfo)
 		.then(function(songUrl){
+			return improve(songUrl)
+		})
+		.then(function(songUrl){
 			resolve(songUrl)
 		})
-		.catch(function(){
+		.catch(function(e){
 			resolve()
 		})
-	})
-	.catch(function(){
-		resolve()
 	})
 }
 

@@ -47,13 +47,10 @@ function check(songInfo) {
 	return new Promise(function (resolve, reject){
 		search(songInfo)
 		.then(function(songId){
-			track(songId)
-			.then(function(songUrl){
-				resolve(songUrl)
-			})
-			.catch(function(){
-				resolve()
-			})
+			return track(songId)
+		})
+		.then(function(songUrl){
+			resolve(songUrl)
 		})
 		.catch(function(){
 			resolve()

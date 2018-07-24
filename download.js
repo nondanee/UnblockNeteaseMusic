@@ -17,7 +17,7 @@ function download(id, uri){
 		var fileStream = fs.createWriteStream(input)
 		var urlObj = url.parse(uri)
 		var options = request.init('GET', urlObj)
-		var makeRequest = (proxy) ? ((proxy.protocol == 'https') ? https.request : http.request) : ((urlObj.protocol == 'https') ? https.request : http.request)
+		var makeRequest = (proxy) ? ((proxy.protocol == 'https:') ? https.request : http.request) : ((urlObj.protocol == 'https:') ? https.request : http.request)
 
 		var req = makeRequest(options, function(res) {
 			res.pipe(fileStream)

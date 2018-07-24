@@ -26,12 +26,12 @@ function init(method, urlObj, extraHeaders){
 	options.headers['Host'] = urlObj.host
 	if(proxy){
 		options.hostname = switchHost(proxy.hostname)
-		options.port = proxy.port || ((proxy.protocol == 'https') ? 443 : 80)
+		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)
 		options.path = urlObj.protocol + '//' + switchHost(urlObj.hostname) + urlObj.path
 	}
 	else{
 		options.hostname = switchHost(urlObj.hostname)
-		options.port = urlObj.port || ((urlObj.protocol == 'https') ? 443 : 80)
+		options.port = urlObj.port || ((urlObj.protocol == 'https:') ? 443 : 80)
 		options.path = urlObj.path
 	}
 	return options
@@ -40,12 +40,12 @@ function init(method, urlObj, extraHeaders){
 function request(method, uri, extraHeaders, body, raw){
 	var urlObj = url.parse(uri)
 	var options = init(method, urlObj, extraHeaders)
-	var makeRequest = (proxy) ? ((proxy.protocol == 'https') ? https.request : http.request) : ((urlObj.protocol == 'https') ? https.request : http.request)
+	var makeRequest = (proxy) ? ((proxy.protocol == 'https:') ? https.request : http.request) : ((urlObj.protocol == 'https:') ? https.request : http.request)
 
 	return new Promise(function(resolve, reject){
 		var req = makeRequest(options, function(res){
 			if(method == 'HEAD')
-				resolve(res.headers)
+				resolve(res)
 			else
 				read(res, raw).then(function(body){resolve(body)}).catch(function(e){reject(e)})
 		}).on('error', function(e){

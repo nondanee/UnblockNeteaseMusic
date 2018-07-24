@@ -55,12 +55,15 @@ function track(id) {
 		request('GET', uri, extraHeaders)
 		.then(function (body) {
 			var jsonBody = JSON.parse(body.slice(body.indexOf('(')+1,body.length-1))
-			var token = jsonBody.data.items[0].vkey
-			var songUrl = (
-				'http://dl.stream.qqmusic.qq.com/C400' + id +
-				'.m4a?vkey=' + token +
-				'&uin=1297716249&fromtag=0&guid=7332953645'
-			)
+			var vkey = jsonBody.data.items[0].vkey
+			// var songUrl = 
+			// 	'http://dl.stream.qqmusic.qq.com/C400' + id +
+			// 	'.m4a?vkey=' + vkey +
+			// 	'&uin=1297716249&fromtag=0&guid=7332953645'
+			var songUrl = 
+				'http://dl.stream.qqmusic.qq.com/M800' + id + 
+				'.mp3?vkey=' + vkey + 
+				'&uin=0&fromtag=53&guid=7332953645'
 			resolve(songUrl)
 		})
 		.catch(function (e) {
@@ -73,13 +76,10 @@ function check(songInfo) {
 	return new Promise(function (resolve, reject){
 		search(songInfo)
 		.then(function(songId){
-			track(songId)
-			.then(function(songUrl){
-				resolve(songUrl)
-			})
-			.catch(function(){
-				resolve()
-			})
+			return track(songId)
+		})
+		.then(function(songUrl){
+			resolve(songUrl)
 		})
 		.catch(function(e){
 			resolve()

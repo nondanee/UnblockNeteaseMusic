@@ -102,7 +102,7 @@ var server = http.createServer(function (req, res) {
 		console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
 
 		var options = request.init(req.method, urlObj, req.headers)
-		var makeRequest = (proxy) ? ((proxy.protocol == 'https') ? https.request : http.request) : ((urlObj.protocol == 'https') ? https.request : http.request)
+		var makeRequest = (proxy) ? ((proxy.protocol == 'https:') ? https.request : http.request) : ((urlObj.protocol == 'https:') ? https.request : http.request)
 		
 		if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
 			(urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0)){
@@ -184,7 +184,7 @@ server.on('connect', function (req, socket, head) {
 			method: 'CONNECT',
 			path: req.url
 		}
-		var makeRequest = (proxy.protocol == 'https') ? https.request : http.request
+		var makeRequest = (proxy.protocol == 'https:') ? https.request : http.request
 		var proxyReq = makeRequest(options)
 		proxyReq.end()
 
@@ -216,22 +216,21 @@ function bodyHook(apiPath, buffer){
 	// console.log(apiPath)
 	return new Promise(function (resolve, reject){
 
-		var encrypt = false
-		var jsonBody = {}
+		var encrypted
+		var jsonBody
+		
 		try{
+			encrypted = false
 			jsonBody = JSON.parse(buffer.toString())
 		}
 		catch(e){
-			encrypt = true
+			encrypted = true
 			jsonBody = JSON.parse(decryptEapi(buffer.toString('hex')))
 		}
 
 		function finish(){
-			// if(apiPath.indexOf('url') != -1){
-			// 	console.log(jsonBody['data'])
-			// }
 			var body = JSON.stringify(jsonBody)
-			if(encrypt)
+			if(encrypted)
 				resolve(Buffer.from(encryptEapi(body),'hex'))
 			else
 				resolve(body)
@@ -292,7 +291,7 @@ function bodyHook(apiPath, buffer){
 			finish()
 		}
 		else if(apiPath.indexOf('url') != -1){
-			var item = {}
+			var item
 			if(jsonBody['data'] instanceof Array)
 				item = jsonBody['data'][0]
 			else
@@ -370,8 +369,8 @@ function bodyHook(apiPath, buffer){
 function playCheck(songUrl){
 	return new Promise(function(resolve, reject){
 		request('HEAD', songUrl)
-		.then(function (headers){
-			resolve(headers['content-length'] || 0)
+		.then(function (res){
+			resolve(res.headers['content-length'] || 0)
 		})
 		.catch(function (e){
 			reject()
