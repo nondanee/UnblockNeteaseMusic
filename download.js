@@ -1,7 +1,5 @@
 const fs = require('fs')
 const url = require('url')
-const http = require('http')
-const https = require('https')
 const ffmpeg = require('fluent-ffmpeg')
 const request = require('./request.js')
 
@@ -17,19 +15,29 @@ function download(id, uri){
 		var fileStream = fs.createWriteStream(input)
 		var urlObj = url.parse(uri)
 		var options = request.init('GET', urlObj)
-		var makeRequest = (proxy) ? ((proxy.protocol == 'https:') ? https.request : http.request) : ((urlObj.protocol == 'https:') ? https.request : http.request)
+		var makeRequest = request.make(urlObj)
 
 		var req = makeRequest(options, function(res) {
 			res.pipe(fileStream)
 			res.on('end', function(){
-				convert(input, output)
-				.then(function(){
-					fs.unlink(input, function(){})
-					resolve()
-				})
-				.catch(function(){
-					reject()
-				})
+				if(uri.indexOf('.mp3') != -1){
+					fs.rename(input, output, function(error){
+						if(error)
+							resolve()
+						else
+							reject()
+					})
+				}
+				else{
+					convert(input, output)
+					.then(function(){
+						fs.unlink(input, function(){})
+						resolve()
+					})
+					.catch(function(){
+						reject()
+					})
+				}
 			})
 		}).on('error', function (e) {
 			reject()

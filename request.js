@@ -37,10 +37,17 @@ function init(method, urlObj, extraHeaders){
 	return options
 }
 
+function make(urlObj){
+	if(proxy)
+		return (proxy.protocol == 'https:' ? https.request : http.request)
+	else
+		return (urlObj.protocol == 'https:' ? https.request : http.request)
+}
+
 function request(method, uri, extraHeaders, body, raw){
 	var urlObj = url.parse(uri)
 	var options = init(method, urlObj, extraHeaders)
-	var makeRequest = (proxy) ? ((proxy.protocol == 'https:') ? https.request : http.request) : ((urlObj.protocol == 'https:') ? https.request : http.request)
+	var makeRequest = make(urlObj)
 
 	return new Promise(function(resolve, reject){
 		var req = makeRequest(options, function(res){
@@ -95,6 +102,7 @@ function read(connect, raw){
 	})
 }
 request.init = init
+request.make = make
 request.read = read
 
 module.exports = request

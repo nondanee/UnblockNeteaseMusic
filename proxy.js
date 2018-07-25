@@ -1,5 +1,4 @@
 const http = require('http')
-const https = require('https')
 const url = require('url')
 const net = require('net')
 const fs = require('fs')
@@ -8,7 +7,7 @@ const crypto = require('crypto')
 const download = require('./download.js')
 const request = require('./request.js')
 const search = require('./provider/search.js')
-const {decryptEapi, encryptEapi, decryptLinuxapi, encryptLinuxapi} = require('./crypto.js')
+const cryptoNCM = require('./crypto.js')
 
 global.switchHost = function(host){
 	if(cloudMusicApiHost[host] != null)
@@ -102,7 +101,7 @@ var server = http.createServer(function (req, res) {
 		console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
 
 		var options = request.init(req.method, urlObj, req.headers)
-		var makeRequest = (proxy) ? ((proxy.protocol == 'https:') ? https.request : http.request) : ((urlObj.protocol == 'https:') ? https.request : http.request)
+		var makeRequest = request.make(urlObj)
 		
 		if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
 			(urlObj.path == '/api/linux/forward' ||urlObj.path.indexOf('/eapi/') == 0)){
@@ -113,11 +112,11 @@ var server = http.createServer(function (req, res) {
 					var param = ''
 					var apiPath = ''
 					if (urlObj.path == '/api/linux/forward'){
-						param = decryptLinuxapi(reqBody.replace(/%0+$/,'').slice(8))
+						param = cryptoNCM.linuxapi.decrypt(reqBody.replace(/%0+$/,'').slice(8))
 						apiPath = param.match(/http:\/\/music.163.com([^"]+)/)[1]
 					}
 					else{
-						param = decryptEapi(reqBody.replace(/%0+$/,'').slice(7))
+						param = cryptoNCM.eapi.decrypt(reqBody.replace(/%0+$/,'').slice(7))
 						apiPath = param.split('-36cd479b6b5-')[0]
 					}
 					apiPath = apiPath.replace(/\/\d*$/,'')
@@ -184,7 +183,7 @@ server.on('connect', function (req, socket, head) {
 			method: 'CONNECT',
 			path: req.url
 		}
-		var makeRequest = (proxy.protocol == 'https:') ? https.request : http.request
+		var makeRequest = request.make(proxy)
 		var proxyReq = makeRequest(options)
 		proxyReq.end()
 
@@ -225,13 +224,13 @@ function bodyHook(apiPath, buffer){
 		}
 		catch(e){
 			encrypted = true
-			jsonBody = JSON.parse(decryptEapi(buffer.toString('hex')))
+			jsonBody = JSON.parse(cryptoNCM.eapi.decrypt(buffer.toString('hex')))
 		}
 
 		function finish(){
 			var body = JSON.stringify(jsonBody)
 			if(encrypted)
-				resolve(Buffer.from(encryptEapi(body),'hex'))
+				resolve(Buffer.from(cryptoNCM.eapi.encrypt(body),'hex'))
 			else
 				resolve(body)
 		}
@@ -304,7 +303,7 @@ function bodyHook(apiPath, buffer){
 						.then(function(hash){
 							item.url = localUrl
 							item.md5 = hash
-							item.br = 128000
+							item.br = 320000
 							item.size = stat.size
 							item.code = 200
 							item.type = 'mp3'
@@ -320,11 +319,11 @@ function bodyHook(apiPath, buffer){
 							playCheck(songUrl)
 							.then(function (size){
 								item.url = songUrl
-								item.br = 128000
+								item.br = 320000
 								item.size = size
 								item.code = 200
 								item.type = 'mp3'
-								if((apiPath.indexOf('download') != -1) && (songUrl.indexOf('.mp3') == -1)){
+								if(apiPath.indexOf('download') != -1){
 									download(item['id'], songUrl)
 									.then(function (){
 										md5Value(`cache/${item['id']}.mp3`)

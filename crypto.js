@@ -18,22 +18,21 @@ function encrypt(text, key) {
 	return cipherText
 }
 
-function decryptEapi(cipherText) {
-	return decrypt(cipherText, eapiKey)
-}
-function encryptEapi(cipherText) {
-	return encrypt(cipherText, eapiKey)
-}
-function decryptLinuxapi(cipherText) {
-	return decrypt(cipherText, linuxapiKey)
-}
-function encryptLinuxapi(cipherText) {
-	return encrypt(cipherText, linuxapiKey)
-}
-
 module.exports = {
-	decryptEapi: decryptEapi,
-	encryptEapi: encryptEapi,
-	decryptLinuxapi: decryptLinuxapi,
-	encryptLinuxapi: encryptLinuxapi
+	eapi:{
+		encrypt: function(text){
+			return encrypt(text, eapiKey)
+		},
+		decrypt: function(cipherText){
+			return decrypt(cipherText, eapiKey)
+		}
+	},
+	linuxapi:{
+		encrypt: function(text){
+			return encrypt(text, linuxapiKey)
+		},
+		decrypt: function(cipherText){
+			return decrypt(cipherText, linuxapiKey)
+		}
+	}
 }

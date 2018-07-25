@@ -6,25 +6,24 @@ const kugou = require('./kugou.js')
 const kuwo = require('./kuwo.js')
 const migu = require('./migu.js')
 
-function search(id,proxy){
+function search(id){
 	return new Promise(function (resolve, reject){
 		info(id)
-		.then(function (keyword) {
-			var sources = [qq, xiami, baidu].map(function(platform){
-				return platform.check(keyword)
-			})
-			Promise.all(sources)
-			.then(function (results){
-				var urls = results.filter(function(url){return url})
-				if(urls.length > 0){
-					console.log('[Replace]',urls[0])
-					resolve(urls[0])
-				}
-				else
-					reject()
-			})
+		.then(function (songInfo) {
+			return Promise.all([qq].map(function(source){
+				return source.check(songInfo)
+			}))
 		})
-		.catch(function () {
+		.then(function (results){
+			var urls = results.filter(function(url){return url})
+			if(urls.length > 0){
+				console.log('[Replace]',urls[0])
+				resolve(urls[0])
+			}
+			else
+				reject()
+		})
+		.catch(function (e) {
 			reject()
 		})
 	})

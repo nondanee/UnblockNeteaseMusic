@@ -17,12 +17,10 @@ function track(songInfo) {
 		.then(function (body) {
 			var jsonBody = JSON.parse(body.slice('jsonp154('.length, -')'.length))
 			var chief = jsonBody['data']['songs'][0]
-			if(chief && chief.listen_file){
+			if(chief && chief.listen_file)
 				resolve(chief.listen_file)
-			}
-			else{
+			else
 				reject()
-			}
 		})
 		.catch(function (e) {
 			reject(e)

@@ -28,12 +28,10 @@ function search(songInfo) {
 		.then(function (body) {
 			var jsonBody = JSON.parse(body.slice('jsonp4('.length, -')'.length))
 			var chief = jsonBody['data']['song']['list'][0]
-			if(playable(chief)){
+			if(playable(chief))
 				resolve(chief.songmid)
-			}
-			else{
+			else
 				reject()
-			}
 		})
 		.catch(function (e) {
 			reject(e)
