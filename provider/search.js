@@ -10,7 +10,7 @@ function search(id){
 	return new Promise(function (resolve, reject){
 		info(id)
 		.then(function (songInfo) {
-			return Promise.all([qq].map(function(source){
+			return Promise.all([qq, xiami, baidu].map(function(source){
 				return source.check(songInfo)
 			}))
 		})
