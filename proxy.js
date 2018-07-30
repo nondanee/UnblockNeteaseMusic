@@ -21,8 +21,6 @@ cloudMusicApiHost = {
 	'music.163.com': forceHost
 }
 
-downloadHookHost = 
-
 detailApiPath = [
 	'/api/v3/playlist/detail',
 	'/api/v3/song/detail',
@@ -42,7 +40,7 @@ detailApiPath = [
 	'/api/cloudsearch/pc'
 ]
 
-var server = http.createServer(function (req, res) {
+var server = http.createServer(function(req, res){
 
 	if(req.url == '/proxy.pac'){//pac rule
 	
@@ -121,9 +119,9 @@ var server = http.createServer(function (req, res) {
 					}
 					apiPath = apiPath.replace(/\/\d*$/,'')
 					// console.log(apiPath)
-					var proxyReq = makeRequest(options, function(proxyRes) {
+					var proxyReq = makeRequest(options, function(proxyRes){
 						if(detailApiPath.indexOf(apiPath) != -1){
-							request.read(proxyRes, true).then(function (buffer){
+							request.read(proxyRes, true).then(function(buffer){
 								bodyHook(apiPath, buffer)
 								.then(function(body){
 									res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
@@ -136,7 +134,7 @@ var server = http.createServer(function (req, res) {
 							res.writeHead(proxyRes.statusCode, proxyRes.headers)
 							proxyRes.pipe(res)
 						}
-					}).on('error', function (e) {
+					}).on('error', function(e){
 						res.end()
 					})
 					proxyReq.write(reqBody)
@@ -145,10 +143,10 @@ var server = http.createServer(function (req, res) {
 			})
 		}
 		else{// direct
-			var proxyReq = makeRequest(options, function(proxyRes) {
+			var proxyReq = makeRequest(options, function(proxyRes){
 				res.writeHead(proxyRes.statusCode, proxyRes.headers)
 				proxyRes.pipe(res)
-			}).on('error', function (e) {
+			}).on('error', function(e){
 				res.end()
 			})
 			req.pipe(proxyReq)
@@ -167,7 +165,7 @@ function purifyHeaders(headers){
 }
 
 
-server.on('connect', function (req, socket, head) {
+server.on('connect', function(req, socket, head){
 
 	var urlObj = url.parse('https://' + req.url)
 	console.log("Proxy HTTPS request for:", urlObj.href.slice(0,-1))
@@ -187,23 +185,23 @@ server.on('connect', function (req, socket, head) {
 		var proxyReq = makeRequest(options)
 		proxyReq.end()
 
-		proxyReq.on('connect', function (res, proxySocket, proxyHead) {		
+		proxyReq.on('connect', function(res, proxySocket, proxyHead){		
 			socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
 			proxySocket.pipe(socket)
 			socket.pipe(proxySocket)
 		})
-		proxyReq.on('error', function () {
+		proxyReq.on('error', function(){
 			socket.end()
 		})
 	}
 	else{
-		var proxySocket = net.connect(urlObj.port, switchHost(urlObj.hostname), function () {
+		var proxySocket = net.connect(urlObj.port, switchHost(urlObj.hostname), function(){
 			socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
 			proxySocket.write(head)
 			proxySocket.pipe(socket)
 			socket.pipe(proxySocket)
 		})
-		proxySocket.on('error', function () {
+		proxySocket.on('error', function(){
 			socket.end()
 		})
 	}
@@ -213,7 +211,7 @@ server.on('connect', function (req, socket, head) {
 function bodyHook(apiPath, buffer){
 
 	// console.log(apiPath)
-	return new Promise(function (resolve, reject){
+	return new Promise(function(resolve, reject){
 
 		var encrypted
 		var jsonBody
@@ -297,7 +295,7 @@ function bodyHook(apiPath, buffer){
 				item = jsonBody['data']
 			if(item['code'] != 200){
 				var localUrl = 'http://music.163.com/pre-download/' + item['id'] + '.mp3'
-				fs.stat(`cache/${item['id']}.mp3`, function (error, stat) {
+				fs.stat(`cache/${item['id']}.mp3`, function(error, stat){
 					if(!error){
 						md5Value(`cache/${item['id']}.mp3`)
 						.then(function(hash){
@@ -309,15 +307,15 @@ function bodyHook(apiPath, buffer){
 							item.type = 'mp3'
 							finish()
 						})
-						.catch(function (){
+						.catch(function(){
 							finish()
 						})
 					}
 					else{
 						search(item['id'],proxy)
-						.then(function (songUrl) {
+						.then(function(songUrl){
 							playCheck(songUrl)
-							.then(function (size){
+							.then(function(size){
 								item.url = songUrl
 								item.br = 320000
 								item.size = size
@@ -325,18 +323,18 @@ function bodyHook(apiPath, buffer){
 								item.type = 'mp3'
 								if(apiPath.indexOf('download') != -1){
 									download(item['id'], songUrl)
-									.then(function (){
+									.then(function(){
 										md5Value(`cache/${item['id']}.mp3`)
 										.then(function(hash){
 											item.url = localUrl
 											item.md5 = hash
 											finish()
 										})
-										.catch(function (){
+										.catch(function(){
 											finish()
 										})	
 									})
-									.catch(function (){
+									.catch(function(){
 										finish()
 									})
 								}
@@ -344,11 +342,11 @@ function bodyHook(apiPath, buffer){
 									finish()
 								}
 							})
-							.catch(function () {
+							.catch(function(){
 								finish()
 							})
 						})
-						.catch(function () {
+						.catch(function(){
 							finish()
 						})
 					}
@@ -368,10 +366,10 @@ function bodyHook(apiPath, buffer){
 function playCheck(songUrl){
 	return new Promise(function(resolve, reject){
 		request('HEAD', songUrl)
-		.then(function (res){
+		.then(function(res){
 			resolve(res.headers['content-length'] || 0)
 		})
-		.catch(function (e){
+		.catch(function(e){
 			reject()
 		})
 	})
@@ -381,13 +379,13 @@ function md5Value(filePath){
 	return new Promise(function(resolve, reject){
 		var readStream = fs.createReadStream(filePath)
 		var hash = crypto.createHash('md5')
-		readStream.on('data', function (data){
+		readStream.on('data', function(data){
 			hash.update.bind(data)
 		})
-		readStream.on('end', function () {
+		readStream.on('end', function(){
 			resolve(hash.digest('hex'))
 		})
-		readStream.on('error', function () {
+		readStream.on('error', function(){
 			reject()
 		})
 	})

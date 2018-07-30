@@ -6,7 +6,7 @@ program
 	.name(package.name)
 	.version(package.version)
 	.usage('[options] [value ...]')
-	.option('-p, --port <port>', 'specific server port')
+	.option('-p, --port <port>', 'specify server port')
 	.option('-f, --force-host <host>', 'force the netease server ip')
 	.option('-u, --proxy-url <url>', 'request through another proxy')
 	.parse(process.argv)

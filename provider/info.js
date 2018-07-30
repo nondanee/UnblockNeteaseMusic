@@ -10,16 +10,16 @@ function info(id){
 	var uri = 
 		'https://music.163.com/m/song?id=' + id
 
-	return new Promise(function (resolve, reject){
+	return new Promise(function(resolve, reject){
 		request('GET', uri, extraHeaders)
-		.then(function (body) {
+		.then(function(body){
 			var part = body.match(/window\.REDUX_STATE = ([^;]+);/)[1]
 			var jsonBody = JSON.parse(part)
 			var songInfo = jsonBody['Song']['info']['song']
 			songInfo.keyword = songInfo.name + ' - ' + songInfo.artists[0].name
 			resolve(songInfo)
 		})
-		.catch(function (e) {
+		.catch(function(e){
 			reject(e)
 		})
 	})

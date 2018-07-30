@@ -7,14 +7,14 @@ const kuwo = require('./kuwo.js')
 const migu = require('./migu.js')
 
 function search(id){
-	return new Promise(function (resolve, reject){
+	return new Promise(function(resolve, reject){
 		info(id)
-		.then(function (songInfo) {
+		.then(function(songInfo){
 			return Promise.all([qq, xiami, baidu].map(function(source){
 				return source.check(songInfo)
 			}))
 		})
-		.then(function (results){
+		.then(function(results){
 			var urls = results.filter(function(url){return url})
 			if(urls.length > 0){
 				console.log('[Replace]',urls[0])
@@ -23,7 +23,7 @@ function search(id){
 			else
 				reject()
 		})
-		.catch(function (e) {
+		.catch(function(e){
 			reject()
 		})
 	})

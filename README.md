@@ -24,7 +24,7 @@ $ node app.js -h
   Options:
 
     -V, --version            output the version number
-    -p, --port <port>        specific server port
+    -p, --port <port>        specify server port
     -f, --force-host <host>  force the netease server ip
     -u, --proxy-url <url>    request through another proxy
     -h, --help               output usage information

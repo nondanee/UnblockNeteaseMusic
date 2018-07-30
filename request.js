@@ -3,8 +3,9 @@ const url = require('url')
 const http = require('http')
 const https = require('https')
 
-function customizeHeaders(extraHeaders){
+function init(method, urlObj, extraHeaders){
 	var headers = {
+		'Host': urlObj.host
 		'Accept': 'application/json, text/plain, */*',
 		'Accept-Encoding': 'gzip, deflate',
 		'Accept-Language': 'zh-CN,zh;q=0.9',
@@ -13,17 +14,9 @@ function customizeHeaders(extraHeaders){
 	if(typeof(extraHeaders) != 'undefined'){
 		for(var key in extraHeaders){
 			headers[key] = extraHeaders[key]
-		}		
+		}
 	}
-	return headers
-}
-
-function init(method, urlObj, extraHeaders){
-	var options = {
-		method: method,
-		headers: customizeHeaders(extraHeaders)
-	}
-	options.headers['Host'] = urlObj.host
+	var options = {method: method, headers: headers}
 	if(proxy){
 		options.hostname = switchHost(proxy.hostname)
 		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)

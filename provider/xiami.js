@@ -6,15 +6,15 @@ var extraHeaders = {
 	'Referer': 'http://m.xiami.com/'
 }
 
-function track(songInfo) {
+function track(songInfo){
 	var uri = 
 		'http://api.xiami.com/web?v=2.0&app_key=1' + 
 		'&key=' + encodeURIComponent(songInfo.keyword) + '&page=1' +
 		'&limit=20&callback=jsonp154&r=search/songs'
 
-	return new Promise(function (resolve, reject){
+	return new Promise(function(resolve, reject){
 		request('GET', uri, extraHeaders)
-		.then(function (body) {
+		.then(function(body){
 			var jsonBody = JSON.parse(body.slice('jsonp154('.length, -')'.length))
 			var chief = jsonBody['data']['songs'][0]
 			if(chief && chief.listen_file)
@@ -22,7 +22,7 @@ function track(songInfo) {
 			else
 				reject()
 		})
-		.catch(function (e) {
+		.catch(function(e){
 			reject(e)
 		})
 	})
@@ -30,22 +30,22 @@ function track(songInfo) {
 
 function improve(songUrl){
 	var updatedSongUrl = songUrl.replace('m128','m320')
-	return new Promise(function (resolve, reject){
+	return new Promise(function(resolve, reject){
 		request('HEAD', updatedSongUrl)
-		.then(function (res) {
+		.then(function(res){
 			if(res.statusCode == 200)
 				resolve(updatedSongUrl)
 			else
 				resolve(songUrl)
 		})
-		.catch(function (e) {
+		.catch(function(e){
 			resolve(songUrl)
 		})
 	})
 }
 
-function check(songInfo) {
-	return new Promise(function (resolve, reject){
+function check(songInfo){
+	return new Promise(function(resolve, reject){
 		track(songInfo)
 		.then(function(songUrl){
 			return improve(songUrl)
