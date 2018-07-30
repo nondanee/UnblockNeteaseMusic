@@ -5,7 +5,7 @@ const https = require('https')
 
 function init(method, urlObj, extraHeaders){
 	var headers = {
-		'Host': urlObj.host
+		'Host': urlObj.host,
 		'Accept': 'application/json, text/plain, */*',
 		'Accept-Encoding': 'gzip, deflate',
 		'Accept-Language': 'zh-CN,zh;q=0.9',
