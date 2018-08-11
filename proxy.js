@@ -114,15 +114,16 @@ var server = http.createServer(function(req, res){
 						apiPath = param.match(/http:\/\/music.163.com([^"]+)/)[1]
 					}
 					else{
-						param = cryptoNCM.eapi.decrypt(reqBody.replace(/%0+$/,'').slice(7))
-						apiPath = param.split('-36cd479b6b5-')[0]
+						param = cryptoNCM.eapi.decrypt(reqBody.replace(/%0+$/,'').slice(7)).split('-36cd479b6b5-')
+						apiPath = param[0]
+						param = param[1]
 					}
 					apiPath = apiPath.replace(/\/\d*$/,'')
-					// console.log(apiPath)
+					// console.log(urlObj.path,apiPath)
 					var proxyReq = makeRequest(options, function(proxyRes){
 						if(detailApiPath.indexOf(apiPath) != -1){
 							request.read(proxyRes, true).then(function(buffer){
-								bodyHook(apiPath, buffer)
+								bodyHook(apiPath, param, buffer)
 								.then(function(body){
 									res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
 									res.write(body)
@@ -208,7 +209,7 @@ server.on('connect', function(req, socket, head){
 })
 
 
-function bodyHook(apiPath, buffer){
+function bodyHook(apiPath, param, buffer){
 
 	// console.log(apiPath)
 	return new Promise(function(resolve, reject){
@@ -290,27 +291,32 @@ function bodyHook(apiPath, buffer){
 		else if(apiPath.indexOf('url') != -1){
 			var local = (apiPath.indexOf('download') == -1) ? false : true
 			var tasks = []
+			var target = 0
 
-			function single(item, index){
+			function modify(item){
 				if(item.code != 200){
+					// console.log(item.id)
 					item.code = 200
 					item.br = 320000
 					item.type = 'mp3'
-					// if(index == 0){ // reduce time cost
+					if(target == 0 || item.id == target){ // reduce time cost
 						return query(item.id,local)
 						.then(function(song){
 							item.size = song.size
 							item.md5 = song.md5
 							item.url = song.url
+							// console.log(item)
 						})
-					// }
+					}
 				}
 			}
 
-			if(jsonBody['data'] instanceof Array)
-				tasks = jsonBody['data'].map(function(item, index){return single(item,index)})
+			if(jsonBody['data'] instanceof Array){
+				target = parseInt(JSON.parse(JSON.parse(param).ids)[0].replace('_0',''))
+				tasks = jsonBody['data'].map(function(item){return modify(item)})
+			}
 			else
-				tasks = [single(jsonBody['data'],0)]
+				tasks = [modify(jsonBody['data'])]
 
 			// console.log(tasks)
 
