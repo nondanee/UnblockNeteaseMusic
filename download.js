@@ -22,7 +22,7 @@ function download(id, uri){
 			res.on('end', function(){
 				if(uri.indexOf('.mp3') != -1){
 					fs.rename(input, output, function(error){
-						if(error)
+						if(!error)
 							resolve()
 						else
 							reject()

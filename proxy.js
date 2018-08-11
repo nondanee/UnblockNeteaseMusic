@@ -292,6 +292,7 @@ function bodyHook(apiPath, param, buffer){
 			var local = (apiPath.indexOf('download') == -1) ? false : true
 			var tasks = []
 			var target = 0
+			// console.log(apiPath, local)
 
 			function modify(item){
 				if(item.code != 200){
@@ -363,14 +364,15 @@ function query(songId, local){
 				})
 				.then(function(size){
 					song.size = size
-					if (!local)
-						resolve(song)
+					if (!local){
+						return Promise.reject('return')
+					}
 					else
 						return download(song.id, song.url)
 				})
 				.then(function(){
 					song.url = `http://music.163.com/pre-download/${song.id}.mp3`
-					return fileHash(`cache/${songId}.mp3`)
+					return fileHash(`cache/${song.id}.mp3`)
 				})
 				.then(function(md5){
 					song.md5 = md5
@@ -392,7 +394,7 @@ function mediaSize(songUrl){
 			resolve(parseInt(res.headers['content-length']) || 0)
 		})
 		.catch(function(e){
-			reject()
+			reject(e)
 		})
 	})
 }
@@ -407,8 +409,8 @@ function fileHash(filePath){
 		readStream.on('end', function(){
 			resolve(hash.digest('hex'))
 		})
-		readStream.on('error', function(){
-			reject()
+		readStream.on('error', function(e){
+			reject(e)
 		})
 	})
 }
