@@ -288,73 +288,39 @@ function bodyHook(apiPath, buffer){
 			finish()
 		}
 		else if(apiPath.indexOf('url') != -1){
-			var item
+			var local = (apiPath.indexOf('download') == -1) ? false : true
+			var tasks = []
+
+			function single(item, index){
+				if(item.code != 200){
+					item.code = 200
+					item.br = 320000
+					item.type = 'mp3'
+					// if(index == 0){ // reduce time cost
+						return query(item.id,local)
+						.then(function(song){
+							item.size = song.size
+							item.md5 = song.md5
+							item.url = song.url
+						})
+					// }
+				}
+			}
+
 			if(jsonBody['data'] instanceof Array)
-				item = jsonBody['data'][0]
+				tasks = jsonBody['data'].map(function(item, index){return single(item,index)})
 			else
-				item = jsonBody['data']
-			if(item['code'] != 200){
-				var localUrl = 'http://music.163.com/pre-download/' + item['id'] + '.mp3'
-				fs.stat(`cache/${item['id']}.mp3`, function(error, stat){
-					if(!error){
-						md5Value(`cache/${item['id']}.mp3`)
-						.then(function(hash){
-							item.url = localUrl
-							item.md5 = hash
-							item.br = 320000
-							item.size = stat.size
-							item.code = 200
-							item.type = 'mp3'
-							finish()
-						})
-						.catch(function(){
-							finish()
-						})
-					}
-					else{
-						search(item['id'],proxy)
-						.then(function(songUrl){
-							playCheck(songUrl)
-							.then(function(size){
-								item.url = songUrl
-								item.br = 320000
-								item.size = size
-								item.code = 200
-								item.type = 'mp3'
-								if(apiPath.indexOf('download') != -1){
-									download(item['id'], songUrl)
-									.then(function(){
-										md5Value(`cache/${item['id']}.mp3`)
-										.then(function(hash){
-											item.url = localUrl
-											item.md5 = hash
-											finish()
-										})
-										.catch(function(){
-											finish()
-										})	
-									})
-									.catch(function(){
-										finish()
-									})
-								}
-								else{
-									finish()
-								}
-							})
-							.catch(function(){
-								finish()
-							})
-						})
-						.catch(function(){
-							finish()
-						})
-					}
-				})				
-			}
-			else{
+				tasks = [single(jsonBody['data'],0)]
+
+			// console.log(tasks)
+
+			Promise.all(tasks)
+			.then(function(){
 				finish()
-			}
+			})
+			.catch(function(e){
+				finish()
+			})
 		}
 		else{
 			finish()
@@ -362,12 +328,62 @@ function bodyHook(apiPath, buffer){
 	})
 }
 
+function query(songId, local){
+	return new Promise(function(resolve, reject){
+		var song = {
+			id: songId,
+			url: null,
+			md5: null,
+			size: 0
+		}
+		fs.stat(`cache/${song.id}.mp3`, function(error, stat){
+			if(!error){
+				song.size = stat.size
+				fileHash(`cache/${song.id}.mp3`)
+				.then(function(md5){
+					song.url = `http://music.163.com/pre-download/${song.id}.mp3`
+					song.md5 = md5
+					resolve(song)
+				})
+				.catch(function(){
+					resolve(song)
+				})
+			}
+			else{
+				search(song.id)
+				.then(function(songUrl){
+					song.url = songUrl
+					return mediaSize(song.url)
+				})
+				.then(function(size){
+					song.size = size
+					if (!local)
+						resolve(song)
+					else
+						return download(song.id, song.url)
+				})
+				.then(function(){
+					song.url = `http://music.163.com/pre-download/${song.id}.mp3`
+					return fileHash(`cache/${songId}.mp3`)
+				})
+				.then(function(md5){
+					song.md5 = md5
+					resolve(song)
+				})
+				.catch(function(e){
+					resolve(song)
+				})
+			}
+		})
+	})
+}
 
-function playCheck(songUrl){
+
+function mediaSize(songUrl){
 	return new Promise(function(resolve, reject){
 		request('HEAD', songUrl)
 		.then(function(res){
-			resolve(res.headers['content-length'] || 0)
+			resolve(parseInt(res.headers['content-length']) || 0)
 		})
 		.catch(function(e){
 			reject()
@@ -375,7 +391,7 @@ function playCheck(songUrl){
 	})
 }
 
-function md5Value(filePath){
+function fileHash(filePath){
 	return new Promise(function(resolve, reject){
 		var readStream = fs.createReadStream(filePath)
 		var hash = crypto.createHash('md5')

@@ -5,17 +5,17 @@ const https = require('https')
 
 function init(method, urlObj, extraHeaders){
 	var headers = {
-		'Host': urlObj.host,
-		'Accept': 'application/json, text/plain, */*',
-		'Accept-Encoding': 'gzip, deflate',
-		'Accept-Language': 'zh-CN,zh;q=0.9',
-		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
+		'accept': 'application/json, text/plain, */*',
+		'accept-encoding': 'gzip, deflate',
+		'accept-language': 'zh-CN,zh;q=0.9',
+		'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
 	}
 	if(typeof(extraHeaders) != 'undefined'){
 		for(var key in extraHeaders){
 			headers[key] = extraHeaders[key]
 		}
 	}
+	headers.host = urlObj.host
 	var options = {method: method, headers: headers}
 	if(proxy){
 		options.hostname = switchHost(proxy.hostname)

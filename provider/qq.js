@@ -1,8 +1,8 @@
 const request = require('../request.js')
 
 var extraHeaders = {
-	'Origin': 'http://y.qq.com/',
-	'Referer': 'http://y.qq.com/'
+	'origin': 'http://y.qq.com/',
+	'referer': 'http://y.qq.com/'
 }
 
 function playable(song){
