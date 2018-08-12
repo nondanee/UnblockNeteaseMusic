@@ -45,7 +45,6 @@ var server = http.createServer(function(req, res){
 	if(req.url == '/proxy.pac'){//pac rule
 
 		var hostObj = url.parse('http://' + req.headers.host)
-		console.log(hostObj)
 		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 		res.end(`
 			function FindProxyForURL(url, host) {
