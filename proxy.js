@@ -43,12 +43,14 @@ detailApiPath = [
 var server = http.createServer(function(req, res){
 
 	if(req.url == '/proxy.pac'){//pac rule
-	
+
+		var hostObj = url.parse('http://' + req.headers.host)
+		console.log(hostObj)
 		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 		res.end(`
 			function FindProxyForURL(url, host) {
 					if (host == 'music.163.com' || host == 'interface.music.163.com') {
-						return 'PROXY ${req.headers.host}'
+						return 'PROXY ${hostObj.hostname}:${hostObj.port || 80}'
 					}
 					return 'DIRECT'
 				}
