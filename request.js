@@ -16,11 +16,16 @@ function init(method, urlObj, extraHeaders){
 		}
 	}
 	headers.host = urlObj.host
-	var options = {method: method, headers: headers}
+	var options = {
+		method: (proxy && urlObj.protocol == 'https:') ? 'CONNECT' : method,
+		headers: headers
+	}
 	if(proxy){
 		options.hostname = switchHost(proxy.hostname)
 		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)
-		options.path = urlObj.protocol + '//' + switchHost(urlObj.hostname) + urlObj.path
+		options.path = (urlObj.protocol != 'https:') ?
+			('http://' + switchHost(urlObj.hostname) + urlObj.path) :
+			(switchHost(urlObj.hostname) + ':' + (urlObj.port ? urlObj.port : 443))
 	}
 	else{
 		options.hostname = switchHost(urlObj.hostname)
@@ -46,11 +51,28 @@ function request(method, uri, extraHeaders, body, raw){
 		var req = makeRequest(options, function(res){
 			if(method == 'HEAD')
 				resolve(res)
-			else
+			else if(options.method != 'CONNECT')
 				read(res, raw).then(function(body){resolve(body)}).catch(function(e){reject(e)})
+		}).on('connect', function(res, socket){
+			var proxyReq = https.request({
+				method: method,
+				host: switchHost(urlObj.hostname),
+				path: urlObj.path,
+				headers: options.headers,
+				socket: socket,
+				agent: false
+			}, function(res){
+				read(res, raw).then(function(body){resolve(body)}).catch(function(e){reject(e)})
+			})
+
+			if(typeof(body) != 'undefined'){
+				proxyReq.write(body)
+			}
+			proxyReq.end()
 		}).on('error', function(e){
 			reject(e)
 		})
+
 		if(typeof(body) != 'undefined'){
 			req.write(body)
 		}

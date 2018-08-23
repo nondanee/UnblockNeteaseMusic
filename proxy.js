@@ -123,7 +123,8 @@ var server = http.createServer(function(req, res){
 					// console.log(urlObj.path,apiPath)
 					var proxyReq = makeRequest(options, function(proxyRes){
 						if(detailApiPath.indexOf(apiPath) != -1){
-							request.read(proxyRes, true).then(function(buffer){
+							request.read(proxyRes, true)
+							.then(function(buffer){
 								bodyHook(apiPath, param, buffer)
 								.then(function(body){
 									res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
