@@ -299,16 +299,17 @@ function bodyHook(apiPath, param, buffer){
 			function modify(item){
 				if(item.code != 200){
 					// console.log(item.id)
-					item.code = 200
-					item.br = 320000
-					item.type = 'mp3'
 					if(target == 0 || item.id == target){ // reduce time cost
 						return query(item.id,local)
 						.then(function(song){
-							item.size = song.size
-							item.md5 = song.md5
-							item.url = song.url
-							// console.log(item)
+							if(song.url){
+								item.url = song.url
+								item.md5 = song.md5
+								item.size = song.size
+								item.code = 200
+								item.br = 320000
+								item.type = 'mp3'
+							}
 						})
 					}
 				}
@@ -366,9 +367,8 @@ function query(songId, local){
 				})
 				.then(function(size){
 					song.size = size
-					if (!local){
+					if (!local)
 						return Promise.reject('return')
-					}
 					else
 						return download(song.id, song.url)
 				})
