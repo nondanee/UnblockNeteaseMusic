@@ -3,16 +3,18 @@ const url = require('url')
 const http = require('http')
 const https = require('https')
 
-function init(method, urlObj, extraHeaders){
-	var headers = {
+function init(method, urlObj, headers, headersProtect){
+	headers = (typeof(headers) == 'undefined') ? {} : headers
+	var defaultHeaders = {
 		'accept': 'application/json, text/plain, */*',
 		'accept-encoding': 'gzip, deflate',
 		'accept-language': 'zh-CN,zh;q=0.9',
 		'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
 	}
-	if(typeof(extraHeaders) != 'undefined'){
-		for(var key in extraHeaders){
-			headers[key] = extraHeaders[key]
+	if(!headersProtect){
+		for(var key in defaultHeaders){
+			if(!(key in headers))
+				headers[key] = defaultHeaders[key]
 		}
 	}
 	headers.host = urlObj.host

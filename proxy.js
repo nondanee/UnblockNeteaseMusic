@@ -99,7 +99,7 @@ var server = http.createServer(function(req, res){
 			urlObj = url.parse('http://music.163.com' + req.url)
 		console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
 
-		var options = request.init(req.method, urlObj, req.headers)
+		var options = request.init(req.method, urlObj, req.headers, true)
 		var makeRequest = request.make(urlObj)
 		
 		if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
