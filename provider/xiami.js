@@ -2,8 +2,8 @@ const request = require('../request.js')
 
 var extraHeaders = {
 	'cookie': 'user_from=2;XMPLAYER_addSongsToggler=0;XMPLAYER_isOpen=0;_xiamitoken=cb8bfadfe130abdbf5e2282c30f0b39a;',
-	'origin': 'http://m.xiami.com/',
-	'referer': 'http://m.xiami.com/'
+	'origin': 'http://www.xiami.com/',
+	'referer': 'http://www.xiami.com/'
 }
 
 function caesar(location){
