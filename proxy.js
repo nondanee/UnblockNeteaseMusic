@@ -272,21 +272,25 @@ function bodyHook(apiPath, param, buffer){
 		}
 		else if(apiPath == '/batch'){
 			if('/api/cloudsearch/pc' in jsonBody){
-				jsonBody['/api/cloudsearch/pc']['result']['songs'].forEach(function(item){
-					item['privilege']['st'] = 0
-					item['privilege']['pl'] = 320000
-					item['privilege']['dl'] = 320000
-				})
+				if('result' in jsonBody['/api/cloudsearch/pc']){
+					jsonBody['/api/cloudsearch/pc']['result']['songs'].forEach(function(item){
+						item['privilege']['st'] = 0
+						item['privilege']['pl'] = 320000
+						item['privilege']['dl'] = 320000
+					})
+				}
 			}
 			finish()
 		}
 		else if(apiPath.indexOf('search') != -1){
-			if(jsonBody['result']['songs']){
-				jsonBody['result']['songs'].forEach(function(item){
-					item['privilege']['st'] = 0
-					item['privilege']['pl'] = 320000
-					item['privilege']['dl'] = 320000
-				})
+			if('result' in jsonBody){
+				if(jsonBody['result']['songs']){
+					jsonBody['result']['songs'].forEach(function(item){
+						item['privilege']['st'] = 0
+						item['privilege']['pl'] = 320000
+						item['privilege']['dl'] = 320000
+					})
+				}
 			}
 			finish()
 		}
