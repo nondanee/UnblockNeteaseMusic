@@ -37,7 +37,9 @@ detailApiPath = [
 	'/batch',
 	// '/api/batch',
 	'/api/v1/search/get',
-	'/api/cloudsearch/pc'
+	'/api/cloudsearch/pc',
+	'/api/v1/playlist/manipulate/tracks',
+	'/api/song/like'
 ]
 
 var server = http.createServer(function(req, res){
@@ -65,12 +67,12 @@ var server = http.createServer(function(req, res){
 		var end
 
 		if(req.headers.range){
-			var range = req.headers.range.replace(/bytes=/, "").split("-")
+			var range = req.headers.range.replace(/bytes=/, '').split('-')
 			start = range[0]
 			end = range[1]
 		}
 
-		fs.stat(filePath,function(error,stat){
+		fs.stat(filePath, function(error, stat){
 			if(error){
 				res.writeHead(404)
 				res.end()
@@ -97,7 +99,7 @@ var server = http.createServer(function(req, res){
 			urlObj = url.parse(req.url)
 		else
 			urlObj = url.parse('http://music.163.com' + req.url)
-		console.log("Proxy HTTP request for:", urlObj.protocol + "//" + urlObj.host)
+		console.log('Proxy HTTP request for:', urlObj.protocol + '//' + urlObj.host)
 
 		var options = request.init(req.method, urlObj, req.headers, true)
 		var makeRequest = request.make(urlObj)
@@ -108,24 +110,24 @@ var server = http.createServer(function(req, res){
 			request.read(req)
 			.then(function(reqBody){
 				if(reqBody){
-					var param = ''
+					var reqParam = ''
 					var apiPath = ''
 					if (urlObj.path == '/api/linux/forward'){
-						param = cryptoNCM.linuxapi.decrypt(reqBody.replace(/%0+$/,'').slice(8))
-						apiPath = param.match(/http:\/\/music.163.com([^"]+)/)[1]
+						reqParam = cryptoNCM.linuxapi.decrypt(reqBody.replace(/%0+$/, '').slice(8))
+						apiPath = reqParam.match(/http:\/\/music.163.com([^"]+)/)[1]
 					}
 					else{
-						param = cryptoNCM.eapi.decrypt(reqBody.replace(/%0+$/,'').slice(7)).split('-36cd479b6b5-')
-						apiPath = param[0]
-						param = param[1]
+						reqParam = cryptoNCM.eapi.decrypt(reqBody.replace(/%0+$/, '').slice(7)).split('-36cd479b6b5-')
+						apiPath = reqParam[0]
+						reqParam = reqParam[1]
 					}
-					apiPath = apiPath.replace(/\/\d*$/,'')
+					apiPath = apiPath.replace(/\/\d*$/, '')
 					// console.log(urlObj.path,apiPath)
 					var proxyReq = makeRequest(options, function(proxyRes){
 						if(detailApiPath.indexOf(apiPath) != -1){
 							request.read(proxyRes, true)
 							.then(function(buffer){
-								bodyHook(apiPath, param, buffer)
+								bodyHook({path: apiPath, param: reqParam, headers: req.headers}, buffer)
 								.then(function(body){
 									res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
 									res.write(body)
@@ -171,10 +173,11 @@ function purifyHeaders(headers){
 server.on('connect', function(req, socket, head){
 
 	var urlObj = url.parse('https://' + req.url)
-	console.log("Proxy HTTPS request for:", urlObj.href.slice(0,-1))
+	var linkMessage = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
+	console.log('Proxy HTTPS request for:', urlObj.href.slice(0, -1))
 
 	if(urlObj.hostname in cloudMusicApiHost){
-		socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
+		socket.write(linkMessage)
 		socket.end()
 	}
 	else if(proxy){
@@ -189,7 +192,7 @@ server.on('connect', function(req, socket, head){
 		proxyReq.end()
 
 		proxyReq.on('connect', function(res, proxySocket, proxyHead){		
-			socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
+			socket.write(linkMessage)
 			proxySocket.pipe(socket)
 			socket.pipe(proxySocket)
 		})
@@ -199,7 +202,7 @@ server.on('connect', function(req, socket, head){
 	}
 	else{
 		var proxySocket = net.connect(urlObj.port, switchHost(urlObj.hostname), function(){
-			socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
+			socket.write(linkMessage)
 			proxySocket.write(head)
 			proxySocket.pipe(socket)
 			socket.pipe(proxySocket)
@@ -211,9 +214,9 @@ server.on('connect', function(req, socket, head){
 })
 
 
-function bodyHook(apiPath, param, buffer){
+function bodyHook(req, buffer){
 
-	// console.log(apiPath)
+	// console.log(req.path)
 	return new Promise(function(resolve, reject){
 
 		var encrypted
@@ -228,7 +231,7 @@ function bodyHook(apiPath, param, buffer){
 			jsonBody = JSON.parse(cryptoNCM.eapi.decrypt(buffer.toString('hex')))
 		}
 
-		function finish(){
+		function done(){
 			var body = JSON.stringify(jsonBody)
 			if(encrypted)
 				resolve(Buffer.from(cryptoNCM.eapi.encrypt(body),'hex'))
@@ -236,75 +239,125 @@ function bodyHook(apiPath, param, buffer){
 				resolve(body)
 		}
 
-		if(apiPath.indexOf('detail') != -1){
+		function inject(item){
+			item['st'] = 0
+			item['pl'] = 320000
+			item['dl'] = 320000
+			item['subp'] = 1
+		}
+
+		if(req.path.indexOf('detail') != -1){
 			if(jsonBody['privileges']){
 				jsonBody['privileges'].forEach(function(item){
-					item['st'] = 0
-					item['pl'] = 320000
-					item['dl'] = 320000
+					inject(item)
 				})
 			}
-			finish()
+			done()
 		}
-		else if(apiPath.indexOf('privilege') != -1){
+		else if(req.path.indexOf('privilege') != -1){
 			jsonBody['data'].forEach(function(item){
-				item['st'] = 0
-				item['pl'] = 320000
-				item['dl'] = 320000
+				inject(item)
 			})
-			finish()
+			done()
 		}
-		else if(apiPath == '/api/v1/artist'){
+		else if(req.path == '/api/v1/artist'){
 			jsonBody['hotSongs'].forEach(function(item){
-				item['privilege']['st'] = 0
-				item['privilege']['pl'] = 320000
-				item['privilege']['dl'] = 320000
+				inject(item['privilege'])
 			})
-			finish()
+			done()
 		}
-		else if(apiPath == '/api/v1/album'){
+		else if(req.path == '/api/v1/album'){
 			jsonBody['songs'].forEach(function(item){
-				item['privilege']['st'] = 0
-				item['privilege']['pl'] = 320000
-				item['privilege']['dl'] = 320000
+				inject(item['privilege'])
 			})
-			finish()
+			done()
 		}
-		else if(apiPath == '/batch'){
+		else if(req.path == '/batch'){
 			if('/api/cloudsearch/pc' in jsonBody){
 				if('result' in jsonBody['/api/cloudsearch/pc']){
 					jsonBody['/api/cloudsearch/pc']['result']['songs'].forEach(function(item){
-						item['privilege']['st'] = 0
-						item['privilege']['pl'] = 320000
-						item['privilege']['dl'] = 320000
+						inject(item['privilege'])
 					})
 				}
 			}
-			finish()
+			done()
 		}
-		else if(apiPath.indexOf('search') != -1){
+		else if(req.path.indexOf('search') != -1){
 			if('result' in jsonBody){
 				if(jsonBody['result']['songs']){
 					jsonBody['result']['songs'].forEach(function(item){
-						item['privilege']['st'] = 0
-						item['privilege']['pl'] = 320000
-						item['privilege']['dl'] = 320000
+						inject(item['privilege'])
 					})
 				}
 			}
-			finish()
+			done()
 		}
-		else if(apiPath.indexOf('url') != -1){
-			var local = (apiPath.indexOf('download') == -1) ? false : true
+		else if(req.path.indexOf('manipulate') != -1){
+			if(jsonBody.code == 401){
+				var param = JSON.parse(req.param)
+				var trackId = JSON.parse(param.trackIds)[0]
+				request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
+					`trackIds=[${trackId},${trackId}]&pid=${param.pid}&op=${param.op}`
+				)
+				.then(function(body){
+					jsonBody = JSON.parse(body)
+					done()
+				})
+				.catch(function(e){
+					done()
+				})
+			}
+			else{
+				done()
+			}
+		}
+		else if(req.path == '/api/song/like'){
+			if(jsonBody.code == 401){
+				var pid
+				var userId
+				var trackId = JSON.parse(req.param).trackId
+
+				request('GET', 'http://music.163.com/api/v1/user/info', req.headers)
+				.then(function(body){
+					userId = JSON.parse(body).userPoint.userId
+				})
+				.then(function(){
+					return request('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers)
+				})
+				.then(function(body){
+					pid = JSON.parse(body).playlist[0].id
+				})
+				.then(function(){
+					return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
+						`trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`
+					)
+				})
+				.then(function(body){
+					body = JSON.parse(body)
+					if(body.code == 200 || body.code == 502){
+						jsonBody = {code: 200, playlistId: pid}
+					}
+					done()
+				})
+				.catch(function(e){
+					done()
+				})
+			}
+			else{
+				done()
+			}
+		}
+		else if(req.path.indexOf('url') != -1){
+			var save = (req.path.indexOf('download') == -1) ? false : true
 			var tasks = []
 			var target = 0
-			// console.log(apiPath, local)
+			// console.log(req.path, save)
 
 			function modify(item){
 				if(item.code != 200){
 					// console.log(item.id)
 					if(target == 0 || item.id == target){ // reduce time cost
-						return query(item.id,local)
+						return query(item.id, save)
 						.then(function(song){
 							if(song.url){
 								item.url = song.url
@@ -320,7 +373,7 @@ function bodyHook(apiPath, param, buffer){
 			}
 
 			if(jsonBody['data'] instanceof Array){
-				target = parseInt(JSON.parse(JSON.parse(param).ids)[0].replace('_0',''))
+				target = parseInt(JSON.parse(JSON.parse(req.param).ids)[0].replace('_0', ''))
 				tasks = jsonBody['data'].map(function(item){return modify(item)})
 			}
 			else
@@ -330,19 +383,20 @@ function bodyHook(apiPath, param, buffer){
 
 			Promise.all(tasks)
 			.then(function(){
-				finish()
+				done()
 			})
 			.catch(function(e){
-				finish()
+				done()
 			})
 		}
 		else{
-			finish()
+			console.log(req.path)
+			done()
 		}
 	})
 }
 
-function query(songId, local){
+function query(songId, save){
 	return new Promise(function(resolve, reject){
 		var song = {
 			id: songId,
@@ -371,7 +425,7 @@ function query(songId, local){
 				})
 				.then(function(size){
 					song.size = size
-					if (!local)
+					if (!save)
 						return Promise.reject('return')
 					else
 						return download(song.id, song.url)

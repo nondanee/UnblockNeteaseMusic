@@ -1,6 +1,6 @@
 {
   "name": "unblockneteasemusic",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "An agent server for netease cloud music pc version",
   "main": "proxy.js",
   "bin": "app.js",
