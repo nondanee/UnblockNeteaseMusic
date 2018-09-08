@@ -110,13 +110,14 @@ var server = http.createServer(function(req, res){
 				if(reqBody){
 					var reqParam, apiPath
 					if (urlObj.path == '/api/linux/forward'){
-						reqParam = cryptoNCM.linuxapi.decrypt(reqBody.replace(/%0+$/, '').slice(8))
-						apiPath = reqParam.match(/http:\/\/music.163.com([^"]+)/)[1]
+						reqParam = JSON.parse(cryptoNCM.linuxapi.decrypt(reqBody.replace(/%0+$/, '').slice(8)))
+						apiPath = reqParam.url.replace('http://music.163.com', '')
+						reqParam = reqParam.params
 					}
 					else{
 						reqParam = cryptoNCM.eapi.decrypt(reqBody.replace(/%0+$/, '').slice(7)).split('-36cd479b6b5-')
 						apiPath = reqParam[0]
-						reqParam = reqParam[1]
+						reqParam = JSON.parse(reqParam[1])
 					}
 					apiPath = apiPath.replace(/\/\d*$/, '')
 					// console.log(urlObj.path,apiPath)
@@ -301,10 +302,9 @@ function bodyHook(req, buffer){
 		}
 		else if(req.path.indexOf('manipulate') != -1){
 			if(jsonBody.code == 401){
-				var param = JSON.parse(req.param)
-				var trackId = JSON.parse(param.trackIds)[0]
+				var trackId = JSON.parse(req.param.trackIds)[0]
 				request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
-					`trackIds=[${trackId},${trackId}]&pid=${param.pid}&op=${param.op}`
+					`trackIds=[${trackId},${trackId}]&pid=${req.param.pid}&op=${req.param.op}`
 				)
 				.then(function(body){
 					jsonBody = JSON.parse(body)
@@ -320,7 +320,7 @@ function bodyHook(req, buffer){
 		}
 		else if(req.path == '/api/song/like'){
 			if(jsonBody.code == 401){
-				var pid, userId, trackId = JSON.parse(req.param).trackId
+				var pid, userId, trackId = req.param.trackId
 				request('GET', 'http://music.163.com/api/v1/user/info', req.headers)
 				.then(function(body){
 					userId = JSON.parse(body).userPoint.userId
@@ -377,7 +377,7 @@ function bodyHook(req, buffer){
 			}
 
 			if(jsonBody['data'] instanceof Array){
-				target = parseInt(JSON.parse(JSON.parse(req.param).ids)[0].replace('_0', ''))
+				target = parseInt(JSON.parse(req.param.ids)[0].replace('_0', ''))
 				tasks = jsonBody['data'].map(function(item){return modify(item)})
 			}
 			else
