@@ -16,11 +16,11 @@ function init(method, urlObj, headers, headersProtect){
 			if(!(key in headers))
 				headers[key] = defaultHeaders[key]
 		}
+		headers.host = urlObj.host
 	}
 	if('content-length' in headers){
 		delete headers['content-length']
 	}
-	headers.host = urlObj.host
 	var options = {
 		method: (proxy && urlObj.protocol == 'https:') ? 'CONNECT' : method,
 		headers: headers
