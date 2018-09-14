@@ -55,7 +55,7 @@ var server = http.createServer(function(req, res){
 					}
 					return 'DIRECT'
 				}
-			`) 
+			`)
 	
 	}
 	else if(req.url.indexOf('pre-download') != -1){//host mp3 file
@@ -231,6 +231,7 @@ function bodyHook(req, buffer){
 
 		function done(){
 			var body = JSON.stringify(jsonBody)
+			body = body.replace(/"pic_str":"(\w+)","pic":\d+/,'"pic_str":"$1","pic":$1') //for js precision
 			if(encrypted)
 				resolve(Buffer.from(cryptoNCM.eapi.encrypt(body),'hex'))
 			else
