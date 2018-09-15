@@ -231,7 +231,7 @@ function bodyHook(req, buffer){
 
 		function done(){
 			var body = JSON.stringify(jsonBody)
-			body = body.replace(/"pic_str":"(\w+)","pic":\d+/,'"pic_str":"$1","pic":$1') //for js precision
+			body = body.replace(/"pic_str":"(\w+)","pic":\d+/g,'"pic_str":"$1","pic":$1') //for js precision
 			if(encrypted)
 				resolve(Buffer.from(cryptoNCM.eapi.encrypt(body),'hex'))
 			else
