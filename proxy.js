@@ -75,16 +75,23 @@ var server = http.createServer(function(req, res){
 				res.writeHead(404)
 				res.end()
 			}
+			else if(stat.size == 0){
+				fs.unlink(filePath, function(){})
+				res.writeHead(404)
+				res.end()
+			}
 			else{
 				start = start ? parseInt(start, 10) : 0
 				end = end ? parseInt(end, 10) : stat.size - 1
 
 				var readStream = fs.createReadStream(filePath, {start: start, end: end})
-				res.writeHead(206, {'Content-Type': 'audio/mpeg',
-									'Content-Disposition': `inline; filename="${fileName}"`,
-									'Accept-Ranges': 'bytes',
-									'Content-Range': `bytes ${start}-${end}/${stat.size}`,
-									'Content-Length': end - start + 1})
+				res.writeHead(206, {
+					'Content-Type': 'audio/mpeg',
+					'Content-Disposition': `inline; filename="${fileName}"`,
+					'Accept-Ranges': 'bytes',
+					'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+					'Content-Length': end - start + 1
+				})
 				readStream.pipe(res)
 			}
 		})

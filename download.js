@@ -35,6 +35,7 @@ function download(id, uri){
 						resolve()
 					})
 					.catch(function(){
+						fs.unlink(output, function(){})
 						reject()
 					})
 				}
