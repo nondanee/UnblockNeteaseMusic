@@ -1,6 +1,6 @@
 {
   "name": "unblockneteasemusic",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "An agent server for netease cloud music pc version",
   "main": "proxy.js",
   "bin": "app.js",
@@ -20,8 +20,7 @@
   "author": "nondanee",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.15.1",
-    "fluent-ffmpeg": "^2.1.2"
+    "commander": "^2.15.1"
   },
   "devDependencies": {
     "pkg": "^4.3.3"

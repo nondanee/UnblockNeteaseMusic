@@ -3,8 +3,11 @@ const url = require('url')
 const net = require('net')
 const fs = require('fs')
 const crypto = require('crypto')
+const base64 = {
+	encode: function(text){return Buffer.from(text).toString('base64')},
+	decode: function(text){return Buffer.from(text, 'base64').toString('ascii')}
+}
 
-const download = require('./download.js')
 const request = require('./request.js')
 const search = require('./provider/search.js')
 const cryptoNCM = require('./crypto.js')
@@ -58,43 +61,28 @@ var server = http.createServer(function(req, res){
 			`)
 	
 	}
-	else if(req.url.indexOf('pre-download') != -1){//host mp3 file
+	else if(req.url.indexOf('package') != -1){//packaged song url
 
-		var fileName = req.url.split('pre-download/').pop()
-		var filePath = `cache/${fileName}`
-		var start, end
+		try{
+			var params = req.url.split('package/').pop().split('/')
+			var songUrl = base64.decode(params[0])
+			var songId = params[1].replace('.mp3','')
+			var urlObj = url.parse(songUrl)
 
-		if(req.headers.range){
-			var range = req.headers.range.replace(/bytes=/, '').split('-')
-			start = range[0]
-			end = range[1]
+			var options = request.init(req.method, urlObj)
+			var makeRequest = request.make(urlObj)
+
+			makeRequest(options, function(proxyRes){
+				res.writeHead(proxyRes.statusCode, proxyRes.headers)
+				proxyRes.pipe(res)
+			}).on('error', function(e){
+				res.end()
+			}).end()
 		}
-
-		fs.stat(filePath, function(error, stat){
-			if(error){
-				res.writeHead(404)
-				res.end()
-			}
-			else if(stat.size == 0){
-				fs.unlink(filePath, function(){})
-				res.writeHead(404)
-				res.end()
-			}
-			else{
-				start = start ? parseInt(start, 10) : 0
-				end = end ? parseInt(end, 10) : stat.size - 1
-
-				var readStream = fs.createReadStream(filePath, {start: start, end: end})
-				res.writeHead(206, {
-					'Content-Type': 'audio/mpeg',
-					'Content-Disposition': `inline; filename="${fileName}"`,
-					'Accept-Ranges': 'bytes',
-					'Content-Range': `bytes ${start}-${end}/${stat.size}`,
-					'Content-Length': end - start + 1
-				})
-				readStream.pipe(res)
-			}
-		})
+		catch(e){
+			res.writeHead(400)
+			res.end()
+		}
 
 	}
 	else{//proxy 
@@ -129,7 +117,7 @@ var server = http.createServer(function(req, res){
 					apiPath = apiPath.replace(/\/\d*$/, '')
 					// console.log(urlObj.path,apiPath)
 					var proxyReq = makeRequest(options, function(proxyRes){
-						if(detailApiPath.indexOf(apiPath) != -1){
+						if(detailApiPath.includes(apiPath)){
 							request.read(proxyRes, true)
 							.then(function(buffer){
 								bodyHook({path: apiPath, param: reqParam, headers: req.headers}, buffer)
@@ -360,16 +348,14 @@ function bodyHook(req, buffer){
 			}
 		}
 		else if(req.path.indexOf('url') != -1){
-			var save = (req.path.indexOf('download') == -1) ? false : true
 			var tasks = []
 			var target = 0
-			// console.log(req.path, save)
 
 			function modify(item){
 				if(item.code != 200){
 					// console.log(item.id)
 					if(target == 0 || item.id == target){ // reduce time cost
-						return query(item.id, save)
+						return query(item.id)
 						.then(function(song){
 							if(song.url){
 								item.url = song.url
@@ -392,7 +378,6 @@ function bodyHook(req, buffer){
 				tasks = [modify(jsonBody['data'])]
 
 			// console.log(tasks)
-
 			Promise.all(tasks)
 			.then(function(){
 				done()
@@ -408,7 +393,7 @@ function bodyHook(req, buffer){
 	})
 }
 
-function query(songId, save){
+function query(songId){
 	return new Promise(function(resolve, reject){
 		var song = {
 			id: songId,
@@ -416,72 +401,40 @@ function query(songId, save){
 			md5: null,
 			size: 0
 		}
-		fs.stat(`cache/${song.id}.mp3`, function(error, stat){
-			if(!error){
-				song.size = stat.size
-				fileHash(`cache/${song.id}.mp3`)
-				.then(function(md5){
-					song.url = `http://music.163.com/pre-download/${song.id}.mp3`
-					song.md5 = md5
-					resolve(song)
-				})
-				.catch(function(){
-					resolve(song)
-				})
-			}
-			else{
-				search(song.id)
-				.then(function(songUrl){
-					song.url = songUrl
-					return mediaSize(song.url)
-				})
-				.then(function(size){
-					song.size = size
-					if (!save)
-						return Promise.reject('return')
-					else
-						return download(song.id, song.url)
-				})
-				.then(function(){
-					song.url = `http://music.163.com/pre-download/${song.id}.mp3`
-					return fileHash(`cache/${song.id}.mp3`)
-				})
-				.then(function(md5){
-					song.md5 = md5
-					resolve(song)
-				})
-				.catch(function(e){
-					resolve(song)
-				})
-			}
+		search(song.id)
+		.then(function(songUrl){
+			song.url = `http://music.163.com/package/${base64.encode(songUrl)}/${song.id}.mp3`
+			return mediaMeta(songUrl)
+		})
+		.then(function(meta){
+			song.size = meta.size
+			song.md5 = meta.md5
+			resolve(song)
+		})
+		.catch(function(e){
+			song.url = null
+			resolve(song)
 		})
 	})
 }
 
-
-function mediaSize(songUrl){
+function mediaMeta(songUrl){
 	return new Promise(function(resolve, reject){
 		request('HEAD', songUrl)
 		.then(function(res){
-			resolve(parseInt(res.headers['content-length']) || 0)
+			var meta = {
+				size: parseInt(res.headers['content-length']) || 0,
+				md5: crypto.createHash('md5').update(songUrl).digest('hex') //padding use
+			}
+			if(songUrl.indexOf('qq.com') != -1)
+				meta.md5 = res.headers['server-md5']
+			else if(songUrl.indexOf('xiami.net') != -1)
+				meta.md5 = res.headers['etag'].replace(/"/g,'')
+			else if(songUrl.indexOf('qianqian.com') != -1)
+				meta.md5 = res.headers['etag'].replace(/"/g,'')
+			resolve(meta)
 		})
 		.catch(function(e){
-			reject(e)
-		})
-	})
-}
-
-function fileHash(filePath){
-	return new Promise(function(resolve, reject){
-		var readStream = fs.createReadStream(filePath)
-		var hash = crypto.createHash('md5')
-		readStream.on('data', function(data){
-			hash.update.bind(data)
-		})
-		readStream.on('end', function(){
-			resolve(hash.digest('hex'))
-		})
-		readStream.on('error', function(e){
 			reject(e)
 		})
 	})
