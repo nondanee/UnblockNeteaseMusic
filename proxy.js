@@ -69,7 +69,7 @@ var server = http.createServer(function(req, res){
 			var songId = params[1].replace('.mp3','')
 			var urlObj = url.parse(songUrl)
 
-			var options = request.init(req.method, urlObj)
+			var options = request.init(req.method, urlObj, req.headers)
 			var makeRequest = request.make(urlObj)
 
 			makeRequest(options, function(proxyRes){
