@@ -170,7 +170,7 @@ server.on('connect', function(req, socket, head){
 	console.log('HTTPS >', urlObj.href.slice(0, -1))
 
 	if(urlObj.hostname in cloudMusicApiHost){
-		socket.write(linkMessage)
+		socket.write(handshake)
 		socket.end()
 	}
 	else if(proxy){
