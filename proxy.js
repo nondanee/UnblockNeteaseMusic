@@ -70,9 +70,7 @@ var server = http.createServer(function(req, res){
 			var urlObj = url.parse(songUrl)
 
 			var options = request.init(req.method, urlObj, req.headers)
-			var makeRequest = request.make(urlObj)
-
-			makeRequest(options, function(proxyRes){
+			request.make(urlObj)(options, function(proxyRes){
 				res.writeHead(proxyRes.statusCode, proxyRes.headers)
 				proxyRes.pipe(res)
 			}).on('error', function(e){
@@ -168,7 +166,7 @@ function purifyHeaders(headers){
 server.on('connect', function(req, socket, head){
 
 	var urlObj = url.parse('https://' + req.url)
-	var linkMessage = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
+	var handshake = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
 	console.log('HTTPS >', urlObj.href.slice(0, -1))
 
 	if(urlObj.hostname in cloudMusicApiHost){
@@ -182,12 +180,11 @@ server.on('connect', function(req, socket, head){
 			method: 'CONNECT',
 			path: req.url
 		}
-		var makeRequest = request.make(proxy)
-		var proxyReq = makeRequest(options)
+		var proxyReq = request.make(proxy)(options)
 		proxyReq.end()
 
 		proxyReq.on('connect', function(res, proxySocket, proxyHead){		
-			socket.write(linkMessage)
+			socket.write(handshake)
 			proxySocket.pipe(socket)
 			socket.pipe(proxySocket)
 		})
@@ -197,7 +194,7 @@ server.on('connect', function(req, socket, head){
 	}
 	else{
 		var proxySocket = net.connect(urlObj.port, switchHost(urlObj.hostname), function(){
-			socket.write(linkMessage)
+			socket.write(handshake)
 			proxySocket.write(head)
 			proxySocket.pipe(socket)
 			socket.pipe(proxySocket)
@@ -225,8 +222,20 @@ function bodyHook(req, buffer){
 		}
 
 		function done(){
-			var body = JSON.stringify(jsonBody)
-			body = body.replace(/"pic_str":"(\w+)","pic":\d+/g,'"pic_str":"$1","pic":$1') //for js precision
+
+			function calibrate(key, value){ //for js precision
+				if(typeof(value) === 'object' && value != null){
+					if('pic_str' in value && 'pic' in value)
+						value['pic'] = value['pic_str']
+					if('coverImgId_str' in value && 'coverImgId' in value)
+						value['coverImgId'] = value['coverImgId_str']
+				}
+				return value
+			}
+
+			var body = JSON.stringify(jsonBody, calibrate)
+			body = body.replace(/"pic":"(\d+)"/g,'"pic":$1')
+			body = body.replace(/"coverImgId":"(\d+)"/g,'"coverImgId":$1')
 			if(encrypted)
 				resolve(Buffer.from(cryptoNCM.eapi.encrypt(body),'hex'))
 			else
