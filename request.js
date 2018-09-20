@@ -50,38 +50,36 @@ function make(urlObj){
 function request(method, uri, extraHeaders, body, raw){
 	var urlObj = url.parse(uri)
 	var options = init(method, urlObj, extraHeaders)
-	var makeRequest = make(urlObj)
 
 	return new Promise(function(resolve, reject){
-		var req = makeRequest(options, function(res){
+		make(urlObj)(options)
+		.on('response', function(res){
 			if(method == 'HEAD')
 				resolve(res)
 			else if(options.method != 'CONNECT')
 				read(res, raw).then(function(body){resolve(body)}).catch(function(e){reject(e)})
-		}).on('connect', function(res, socket){
-			var proxyReq = https.request({
+		})
+		.on('connect', function(res, socket){
+			https.request({
 				method: method,
 				host: switchHost(urlObj.hostname),
 				path: urlObj.path,
 				headers: options.headers,
 				socket: socket,
 				agent: false
-			}, function(res){
+			})
+			.on('response', function(res){
 				read(res, raw).then(function(body){resolve(body)}).catch(function(e){reject(e)})
 			})
-
-			if(typeof(body) != 'undefined'){
-				proxyReq.write(body)
-			}
-			proxyReq.end()
-		}).on('error', function(e){
+			.on('error', function(e){
+				reject(e)
+			})
+			.end(body)
+		})
+		.on('error', function(e){
 			reject(e)
 		})
-
-		if(typeof(body) != 'undefined'){
-			req.write(body)
-		}
-		req.end()
+		.end(body)
 	})
 }
 
@@ -90,25 +88,26 @@ function read(connect, raw){
 		var chunks = []
 		if(connect.headers['content-encoding'] == 'gzip'){
 			var gunzip = zlib.createGunzip()
-			connect.pipe(gunzip)
-			gunzip.on('data', function(chunk){
+			.on('data', function(chunk){
 				chunks.push(chunk)
 			})
-			gunzip.on('end', function(){
+			.on('end', function(){
 				end()
 			})
-			gunzip.on('error', function(e){
+			.on('error', function(e){
 				reject(e)
 			})
+			connect.pipe(gunzip)
 		}
 		else{
-			connect.on('data', function(chunk){
+			connect
+			.on('data', function(chunk){
 				chunks.push(chunk)
 			})
-			connect.on('end', function(){
+			.on('end', function(){
 				end()
 			})
-			connect.on('error', function(e){
+			.on('error', function(e){
 				reject(e)
 			})
 		}

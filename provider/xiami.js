@@ -104,7 +104,7 @@ function check(songInfo){
 	return new Promise(function(resolve, reject){
 		search(songInfo)
 		.then(function(songUrl){
-			if(typeof(songUrl) == 'number')
+			if(typeof(songUrl) === 'number')
 				return track(songUrl)
 			else
 				return songUrl

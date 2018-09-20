@@ -20,9 +20,9 @@
   "author": "nondanee",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.15.1"
+    "commander": "^2.18.0"
   },
   "devDependencies": {
-    "pkg": "^4.3.3"
+    "pkg": "^4.3.4"
   }
 }
