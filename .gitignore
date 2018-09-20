@@ -62,3 +62,4 @@ typings/
 
 dist/
 cache/
+package-lock.json
