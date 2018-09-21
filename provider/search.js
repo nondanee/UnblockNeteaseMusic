@@ -5,6 +5,7 @@ const baidu = require('./baidu.js')
 const kugou = require('./kugou.js')
 const kuwo = require('./kuwo.js')
 const migu = require('./migu.js')
+const joox = require('./joox.js')
 const provider = [qq, xiami, baidu]
 
 function search(id){
