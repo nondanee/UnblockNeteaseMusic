@@ -1,3 +1,5 @@
+<img src="logo.png" alt="logo" width="120" height="120" align="right" />
+
 # UnblockNeteaseMusic
 
 > 解锁网易云音乐客户端变灰歌曲
