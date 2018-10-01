@@ -81,7 +81,7 @@ $ node app.js -h
 
 #### UWP客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/46274600-96bf1a80-c58c-11e8-9210-9fc86ffd8557.png" width="100%" alt="uwp">
+<img src="https://user-images.githubusercontent.com/26399680/46275283-f4546680-c58e-11e8-8041-16ee26b3dfbb.png" width="100%" alt="uwp">
 
 #### Linux客户端
 
@@ -93,7 +93,7 @@ $ node app.js -h
 
 #### Android客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/46274600-96bf1a80-c58c-11e8-9210-9fc86ffd8557.png" width="100%" alt="android">
+<img src="https://user-images.githubusercontent.com/26399680/46274600-96bf1a80-c58c-11e8-9210-9fc86ffd8557.png" width="40%" alt="android">
 
 ## 感谢
 
@@ -131,6 +131,6 @@ $ node app.js -h
 
 [typcn/163music-mac-client-unlock](https://github.com/typcn/163music-mac-client-unlock)
 
-## License
+## 许可
 
-MIT
+The MIT License
