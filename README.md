@@ -1,4 +1,4 @@
-<img src="logo.png" alt="logo" width="120" height="120" align="right" />
+<img src="logo.png" alt="logo" width="140" height="140" align="right">
 
 # UnblockNeteaseMusic
 
@@ -6,8 +6,8 @@
 
 ## 特性
 
-- 使用QQ/虾米/百度/~~酷狗/酷我/咕咪/JOOX~~音源替换变灰歌曲链接(部分未启用)
-- 为请求增加`X-Real-IP`参数解锁海外限制，支持指定网易云服务器IP，支持设置上游HTTP/HTTPS代理
+- 使用QQ/虾米/百度/~~酷狗/酷我/咕咪/JOOX~~音源替换变灰歌曲链接(如有需要请自行启用)
+- 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器IP，支持设置上游HTTP/HTTPS代理
 - 完整的流量代理功能(HTTP/HTTPS)，可直接作为系统代理(同时支持PAC)
 
 ## 运行
@@ -36,9 +36,9 @@ $ node app.js -h
 
 > 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (Mac客户端和Android客户端默认请求HTTPS接口，代理后端对网易云的HTTPS接口连接都会返回空数据，客户端将自动降级使用HTTP接口)
 >
-> 不支持iOS客户端，因Apple强制要求使用HTTPS所以无法降级，要支持只能自签证书做MITM了
+> 不支持iOS客户端，因Apple强制要求使用HTTPS所以无法降级，~~要支持只能自签证书做MITM了~~ ，看其它项目提到用surge，shadowrocket可以转发，有兴趣可以试试
 >
-> 为尽快返回数据减少不必要开销(Android端会超时重试)，移除了预下载和ffmpeg转码的相关逻辑，仅酷我音源是aac格式(默认未开启)应该会下载失败，其它音源均为mp3格式
+> 移除了预下载和ffmpeg转码的相关逻辑以加快返回速度，仅酷我音源是aac格式(默认未开启)应该会下载失败，其它音源均为mp3格式不受影响
 
 有如下两种方法
 
@@ -61,7 +61,7 @@ $ node app.js -h
 
 > PAC自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 >
-> 全局代理地址 `<Server Name>` 端口 `<PORT>`
+> 全局代理地址填写服务器地址和端口号即可
 
 | 平台    | 设置方法                         |
 | :------ | :------------------------------- |
@@ -77,23 +77,23 @@ $ node app.js -h
 
 #### Windows客户端
 
-<img src="./screenshot/windows.png" width='100%' />
+<img src="https://user-images.githubusercontent.com/26399680/46274493-40ea7280-c58c-11e8-8065-8e04ddaa27cd.png" width="100%" alt="windows">
 
 #### UWP客户端
 
-<img src="./screenshot/uwp.png" width='100%' />
+<img src="https://user-images.githubusercontent.com/26399680/46274600-96bf1a80-c58c-11e8-9210-9fc86ffd8557.png" width="100%" alt="uwp">
 
 #### Linux客户端
 
-<img src="./screenshot/linux.png" width='100%' />
+<img src="https://user-images.githubusercontent.com/26399680/46274631-aa6a8100-c58c-11e8-89f8-e5da3564ac92.png" width="100%" alt="linux">
 
-#### Mac客户端
+#### macOS客户端
 
-<img src="./screenshot/mac.png" width='100%' />
+<img src="https://user-images.githubusercontent.com/26399680/46274674-d2f27b00-c58c-11e8-8ed8-6e0384a870c5.png" width="100%" alt="macos">
 
 #### Android客户端
 
-<img src="./screenshot/android.png" width='40%' />
+<img src="https://user-images.githubusercontent.com/26399680/46274600-96bf1a80-c58c-11e8-9210-9fc86ffd8557.png" width="100%" alt="android">
 
 ## 感谢
 
@@ -115,11 +115,21 @@ $ node app.js -h
 
 [bin456789/Unblock163MusicClient-Xposed](https://github.com/bin456789/Unblock163MusicClient-Xposed)
 
+[YiuChoi/Unlock163Music](https://github.com/YiuChoi/Unlock163Music)
+
 [yi-ji/NeteaseMusicAbroad](https://github.com/yi-ji/NeteaseMusicAbroad)
 
 [stomakun/NeteaseReverseLadder](https://github.com/stomakun/NeteaseReverseLadder/)
 
-[LesterLyu/NeteaseReverseLadder](https://github.com/LesterLyu/NeteaseReverseLadder)
+[fengjueming/unblock-NetEaseMusic](https://github.com/fengjueming/unblock-NetEaseMusic)
+
+[acgotaku/NetEaseMusicWorld](https://github.com/acgotaku/NetEaseMusicWorld)
+
+[mengskysama/163-Cloud-Music-Unlock](https://github.com/mengskysama/163-Cloud-Music-Unlock)
+
+[azureplus/163-music-unlock](https://github.com/azureplus/163-music-unlock)
+
+[typcn/163music-mac-client-unlock](https://github.com/typcn/163music-mac-client-unlock)
 
 ## License
 

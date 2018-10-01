@@ -67,7 +67,6 @@ function check(songInfo){
 			resolve(songUrl)
 		})
 		.catch(function(e){
-			console.log(e)
 			resolve()
 		})
 	})
