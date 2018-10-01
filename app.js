@@ -1,4 +1,4 @@
-const url = require('url')
+const parse = require('url').parse
 const program = require('commander')
 const package = require("./package.json")
 
@@ -31,7 +31,7 @@ global.port = program.port || 8080
 global.forceHost = program.forceHost || null
 
 if (program.proxyUrl)
-	global.proxy = url.parse(program.proxyUrl)
+	global.proxy = parse(program.proxyUrl)
 else
 	global.proxy = ''
 

@@ -1,11 +1,9 @@
 const http = require('http')
-const url = require('url')
 const net = require('net')
-const fs = require('fs')
-const hash = require('crypto')
+const parse = require('url').parse
 const base64 = {
-	encode: function(text){return Buffer.from(text).toString('base64')},
-	decode: function(text){return Buffer.from(text, 'base64').toString('ascii')}
+	encode: function(text){return Buffer.from(text).toString('base64').replace('+', '-').replace('/', '_')},
+	decode: function(text){return Buffer.from(text.replace('-', '+').replace('_', '/'), 'base64').toString('ascii')}
 }
 
 const request = require('./request.js')
@@ -49,12 +47,12 @@ http.createServer().listen(port)
 .on('request', function(req, res){
 
 	if(req.url == '/proxy.pac'){//pac rule
-		var hostObj = url.parse('http://' + req.headers.host)
+		var url = parse('http://' + req.headers.host)
 		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 		res.end(`
 			function FindProxyForURL(url, host) {
 				if (host == 'music.163.com' || host == 'interface.music.163.com') {
-					return 'PROXY ${hostObj.hostname}:${hostObj.port || 80}'
+					return 'PROXY ${url.hostname}:${url.port || 80}'
 				}
 				return 'DIRECT'
 			}
@@ -63,17 +61,16 @@ http.createServer().listen(port)
 	else if(req.url.indexOf('package') != -1){//packaged song url
 		try{
 			var params = req.url.split('package/').pop().split('/')
-			var songUrl = base64.decode(params[0])
-			var songId = params[1].replace('.mp3', '')
-			var urlObj = url.parse(songUrl)
+			var url = parse(base64.decode(params[0]))
+			var id = params[1].replace('.mp3', '')
 
-			var options = request.init(req.method, urlObj, req.headers)
-			request.make(urlObj)(options)
+			var options = request.init(req.method, url, req.headers)
+			request.make(url)(options)
 			.on('response', function(proxyRes){
 				res.writeHead(proxyRes.statusCode, proxyRes.headers)
 				proxyRes.pipe(res)
 			})
-			.on('error', function(){
+			.on('error', function(e){
 				res.end()
 			})
 			.end()
@@ -84,24 +81,20 @@ http.createServer().listen(port)
 		}
 	}
 	else{//proxy 
-		var urlObj
-		if(req.url.indexOf('http://') == 0)
-			urlObj = url.parse(req.url)
-		else
-			urlObj = url.parse('http://music.163.com' + req.url)
-		console.log('HTTP >', urlObj.protocol + '//' + urlObj.host)
+		var url = parse((req.url.indexOf('http://') == 0) ? req.url : 'http://music.163.com' + req.url)
+		console.log('HTTP >', url.protocol + '//' + url.host)
 
-		var options = request.init(req.method, urlObj, req.headers, true)
-		var makeRequest = request.make(urlObj)
+		var options = request.init(req.method, url, req.headers, true)
+		var makeRequest = request.make(url)
 		
-		if ((urlObj.hostname in cloudMusicApiHost) && req.method == 'POST' &&
-			(urlObj.path == '/api/linux/forward' || urlObj.path.indexOf('/eapi/') == 0)){
+		if ((url.hostname in cloudMusicApiHost) && req.method == 'POST' &&
+			(url.path == '/api/linux/forward' || url.path.indexOf('/eapi/') == 0)){
 			options.headers['X-Real-IP'] = '118.88.88.88'
 			request.read(req)
 			.then(function(reqBody){
 				var reqParam, apiPath
 				if(reqBody){
-					if(urlObj.path == '/api/linux/forward'){
+					if(url.path == '/api/linux/forward'){
 						reqParam = JSON.parse(crypto.linuxapi.decrypt(reqBody.replace(/%0+$/, '').slice(8)))
 						apiPath = reqParam.url.replace('http://music.163.com', '')
 						reqParam = reqParam.params
@@ -113,7 +106,7 @@ http.createServer().listen(port)
 					}
 					apiPath = apiPath.replace(/\/\d*$/, '')
 				}
-				// console.log(urlObj.path, apiPath)
+				// console.log(url.path, apiPath)
 				makeRequest(options)
 				.on('response', function(proxyRes){
 					if(detailApiPath.includes(apiPath)){
@@ -122,7 +115,10 @@ http.createServer().listen(port)
 							return bodyHook({path: apiPath, param: reqParam, headers: req.headers}, buffer)
 						})
 						.then(function(buffer){
-							res.writeHead(proxyRes.statusCode, purifyHeaders(proxyRes.headers))
+							if('transfer-encoding' in proxyRes.headers) delete proxyRes.headers['transfer-encoding']
+							if('content-encoding' in proxyRes.headers) delete proxyRes.headers['content-encoding']
+							if('content-length' in proxyRes.headers) delete proxyRes.headers['content-length']
+							res.writeHead(proxyRes.statusCode, proxyRes.headers)
 							res.end(buffer)
 						})
 					}
@@ -152,11 +148,11 @@ http.createServer().listen(port)
 })
 .on('connect', function(req, socket, head){
 
-	var urlObj = url.parse('https://' + req.url)
+	var url = parse('https://' + req.url)
 	var handshake = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
-	console.log('HTTPS >', urlObj.href.slice(0, -1))
+	console.log('HTTPS >', url.href.slice(0, -1))
 
-	if(urlObj.hostname in cloudMusicApiHost){
+	if(url.hostname in cloudMusicApiHost){
 		socket.write(handshake)
 		socket.end()
 	}
@@ -179,7 +175,7 @@ http.createServer().listen(port)
 		.end()
 	}
 	else{
-		var proxySocket = net.connect(urlObj.port, switchHost(urlObj.hostname))
+		var proxySocket = net.connect(url.port, switchHost(url.hostname))
 		.on('connect', function(){
 			socket.write(handshake)
 			proxySocket.write(head)
@@ -209,7 +205,6 @@ function bodyHook(req, buffer){
 		}
 
 		function done(){
-
 			function inject(key, value){ 
 				if(typeof(value) === 'object' && value != null){
 					if('pic_str' in value && 'pic' in value) //for js precision
@@ -241,8 +236,8 @@ function bodyHook(req, buffer){
 				request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
 					`trackIds=[${trackId},${trackId}]&pid=${req.param.pid}&op=${req.param.op}`
 				)
-				.then(function(body){
-					jsonBody = JSON.parse(body)
+				.then(function(response){
+					jsonBody = JSON.parse(response.body)
 					done()
 				})
 				.catch(function(e){
@@ -257,22 +252,18 @@ function bodyHook(req, buffer){
 			if(jsonBody.code == 401){
 				var pid, userId, trackId = req.param.trackId
 				request('GET', 'http://music.163.com/api/v1/user/info', req.headers)
-				.then(function(body){
-					userId = JSON.parse(body).userPoint.userId
-				})
-				.then(function(){
+				.then(function(response){
+					userId = JSON.parse(response.body).userPoint.userId
 					return request('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers)
 				})
-				.then(function(body){
-					pid = JSON.parse(body).playlist[0].id
-				})
-				.then(function(){
+				.then(function(response){
+					pid = JSON.parse(response.body).playlist[0].id
 					return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
 						`trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`
 					)
 				})
-				.then(function(body){
-					body = JSON.parse(body)
+				.then(function(response){
+					var body = JSON.parse(response.body)
 					if(body.code == 200 || body.code == 502){
 						jsonBody = {code: 200, playlistId: pid}
 					}
@@ -291,29 +282,29 @@ function bodyHook(req, buffer){
 
 			function modify(item){
 				if(item.code != 200 && (target == 0 || item.id == target)){
-					return query(item.id)
+					return search(item.id)
 					.then(function(song){
-						if(song.url){
-							item.url = song.url
-							item.md5 = song.md5
-							item.size = song.size
-							item.code = 200
-							item.br = 320000
-							item.type = 'mp3'
-						}
+						item.url = `http://music.163.com/package/${base64.encode(song.url)}/${item.id}.mp3`
+						item.md5 = song.md5
+						item.size = song.size
+						item.code = 200
+						item.br = 320000
+						item.type = 'mp3'
+					})
+					.catch(function(e){
+						return
 					})
 				}
 			}
 
 			if(jsonBody['data'] instanceof Array){
-				target = parseInt(JSON.parse(req.param.ids)[0].replace('_0', ''))//reduce time cost
+				target = parseInt(JSON.parse(req.param.ids)[0].replace('_0', '')) //reduce time cost
 				tasks = jsonBody['data'].map(function(item){return modify(item)})
 			}
 			else{
 				tasks = [modify(jsonBody['data'])]
 			}
 
-			// console.log(tasks)
 			Promise.all(tasks)
 			.then(function(){
 				done()
@@ -327,58 +318,4 @@ function bodyHook(req, buffer){
 			done()
 		}
 	})
-}
-
-function query(songId){
-	return new Promise(function(resolve, reject){
-		var song = {id: songId, url: null, md5: null, size: 0}
-		search(song.id)
-		.then(function(songUrl){
-			song.url = `http://music.163.com/package/${base64.encode(songUrl)}/${song.id}.mp3`
-			return mediaMeta(songUrl)
-		})
-		.then(function(meta){
-			song.size = meta.size
-			song.md5 = meta.md5
-			resolve(song)
-		})
-		.catch(function(e){
-			song.url = null
-			resolve(song)
-		})
-	})
-}
-
-function mediaMeta(songUrl){
-	return new Promise(function(resolve, reject){
-		request('HEAD', songUrl)
-		.then(function(res){
-			if(res.statusCode != 200)
-				return Promise.reject(res.statusCode)
-			var meta = {
-				size: parseInt(res.headers['content-length']) || 0,
-				md5: hash.createHash('md5').update(songUrl).digest('hex') //padding use
-			}
-			if(songUrl.indexOf('qq.com') != -1)
-				meta.md5 = res.headers['server-md5']
-			else if(songUrl.indexOf('xiami.net') != -1)
-				meta.md5 = res.headers['etag'].replace(/"/g, '')
-			else if(songUrl.indexOf('qianqian.com') != -1)
-				meta.md5 = res.headers['etag'].replace(/"/g, '')
-			resolve(meta)
-		})
-		.catch(function(e){
-			reject(e)
-		})
-	})
-}
-
-function purifyHeaders(headers){
-	if('transfer-encoding' in headers)
-		delete headers['transfer-encoding']
-	if('content-encoding' in headers)
-		delete headers['content-encoding']
-	if('content-length' in headers)
-		delete headers['content-length']
-	return headers
 }

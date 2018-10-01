@@ -1,9 +1,9 @@
 const zlib = require('zlib')
-const url = require('url')
 const http = require('http')
 const https = require('https')
+const parse = require('url').parse
 
-function init(method, urlObj, headers, headersProtect){
+function init(method, url, headers, headersProtect){
 	headers = (typeof(headers) == 'undefined') ? {} : headers
 	var defaultHeaders = {
 		'accept': 'application/json, text/plain, */*',
@@ -16,60 +16,67 @@ function init(method, urlObj, headers, headersProtect){
 			if(!(key in headers))
 				headers[key] = defaultHeaders[key]
 		}
-		headers.host = urlObj.host
+		headers.host = url.host
 	}
-	if('content-length' in headers){
-		delete headers['content-length']
-	}
+	if('content-length' in headers) delete headers['content-length']
 	var options = {
-		method: (proxy && urlObj.protocol == 'https:') ? 'CONNECT' : method,
+		method: (proxy && url.protocol == 'https:') ? 'CONNECT' : method,
 		headers: headers
 	}
 	if(proxy){
 		options.hostname = switchHost(proxy.hostname)
 		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)
-		options.path = (urlObj.protocol != 'https:') ?
-			('http://' + switchHost(urlObj.hostname) + urlObj.path) :
-			(switchHost(urlObj.hostname) + ':' + (urlObj.port ? urlObj.port : 443))
+		options.path = (url.protocol != 'https:') ?
+			('http://' + switchHost(url.hostname) + url.path) :
+			(switchHost(url.hostname) + ':' + (url.port ? url.port : 443))
 	}
 	else{
-		options.hostname = switchHost(urlObj.hostname)
-		options.port = urlObj.port || ((urlObj.protocol == 'https:') ? 443 : 80)
-		options.path = urlObj.path
+		options.hostname = switchHost(url.hostname)
+		options.port = url.port || ((url.protocol == 'https:') ? 443 : 80)
+		options.path = url.path
 	}
 	return options
 }
 
-function make(urlObj){
+function make(url){
 	if(proxy)
 		return (proxy.protocol == 'https:' ? https.request : http.request)
 	else
-		return (urlObj.protocol == 'https:' ? https.request : http.request)
+		return (url.protocol == 'https:' ? https.request : http.request)
 }
 
-function request(method, uri, extraHeaders, body, raw){
-	var urlObj = url.parse(uri)
-	var options = init(method, urlObj, extraHeaders)
+function request(method, url, extraHeaders, body, raw){
+	url = parse(url)
+	var options = init(method, url, extraHeaders)
 
 	return new Promise(function(resolve, reject){
-		make(urlObj)(options)
+		make(url)(options)
 		.on('response', function(res){
-			if(method == 'HEAD')
-				resolve(res)
-			else if(options.method != 'CONNECT')
-				read(res, raw).then(function(body){resolve(body)}).catch(function(e){reject(e)})
+			read(res, raw)
+			.then(function(body){
+				resolve({status: res.statusCode, headers: res.headers, body: body})
+			})
+			.catch(function(e){
+				reject(e)
+			})
 		})
 		.on('connect', function(res, socket){
 			https.request({
 				method: method,
-				host: switchHost(urlObj.hostname),
-				path: urlObj.path,
+				host: switchHost(url.hostname),
+				path: url.path,
 				headers: options.headers,
 				socket: socket,
 				agent: false
 			})
 			.on('response', function(res){
-				read(res, raw).then(function(body){resolve(body)}).catch(function(e){reject(e)})
+				read(res, raw)
+				.then(function(body){
+					resolve({status: res.statusCode, headers: res.headers, body: body})
+				})
+				.catch(function(e){
+					reject(e)
+				})
 			})
 			.on('error', function(e){
 				reject(e)

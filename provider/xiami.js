@@ -35,92 +35,73 @@ function caesar(location){
 }
 
 function search(songInfo){
-	var uri = 
+	var url =
 		'http://api.xiami.com/web?v=2.0&app_key=1' + 
 		'&key=' + encodeURIComponent(songInfo.keyword) + '&page=1' +
 		'&limit=20&callback=jsonp154&r=search/songs'
 
-	return new Promise(function(resolve, reject){
-		request('GET', uri, extraHeaders)
-		.then(function(body){
-			var jsonBody = JSON.parse(body.slice('jsonp154('.length, -')'.length))
-			var chief = jsonBody['data']['songs'][0]
-			if(chief){
-				if(chief.listen_file)
-					resolve(chief.listen_file)
-				else
-					resolve(chief.song_id)
-			}
+	return request('GET', url, extraHeaders)
+	.then(function(response){
+		var jsonBody = JSON.parse(response.body.slice('jsonp154('.length, -')'.length))
+		var chief = jsonBody['data']['songs'][0]
+		if(chief){
+			if(chief.listen_file)
+				return chief.listen_file
 			else
-				reject()
-		})
-		.catch(function(e){
-			reject(e)
-		})
+				return chief.song_id
+		}
+		else
+			return Promise.reject()
 	})
 }
 
 function track(id) {
-	var uri =
+	var url =
 		'https://www.xiami.com/song/playlist/id/' + id +
 		'/object_name/default/object_id/0/cat/json'
 	
-	return new Promise(function(resolve, reject){
-		request('GET', uri, extraHeaders)
-		.then(function(body){
-			var jsonBody = JSON.parse(body)
-			if(jsonBody.data.trackList == null){
-				reject()
-			}
-			else{
-				var location = jsonBody.data.trackList[0].location
-				var songUrl = 'http:' + caesar(location)
-				resolve(songUrl)
-			}
-		})
-		.catch(function(e){
-			reject(e)
-		})
+	return request('GET', url, extraHeaders)
+	.then(function(response){
+		var jsonBody = JSON.parse(response.body)
+		if(jsonBody.data.trackList == null){
+			return Promise.reject()
+		}
+		else{
+			var location = jsonBody.data.trackList[0].location
+			var songUrl = 'http:' + caesar(location)
+			return songUrl
+		}
 	})
 }
 
 function improve(songUrl){
 	var updatedSongUrl = songUrl.replace('m128','m320')
-	return new Promise(function(resolve, reject){
-		request('HEAD', updatedSongUrl)
-		.then(function(res){
-			if(res.statusCode == 200)
-				resolve(updatedSongUrl)
-			else
-				resolve(songUrl)
-		})
-		.catch(function(e){
-			resolve(songUrl)
-		})
+	return request('HEAD', updatedSongUrl)
+	.then(function(response){
+		if(response.status == 200)
+			return updatedSongUrl
+		else
+			return songUrl
+	})
+	.catch(function(e){
+		return songUrl
 	})
 }
 
 function check(songInfo){
-	return new Promise(function(resolve, reject){
-		search(songInfo)
-		.then(function(songUrl){
-			if(typeof(songUrl) === 'number')
-				return track(songUrl)
-			else
-				return songUrl
-		})
-		.then(function(songUrl){
-			return improve(songUrl)
-		})
-		.then(function(songUrl){
-			resolve(songUrl)
-		})
-		.catch(function(e){
-			resolve()
-		})
+	return search(songInfo)
+	.then(function(songUrl){
+		if(typeof(songUrl) === 'number')
+			return track(songUrl)
+		else
+			return songUrl
+	})
+	.then(function(songUrl){
+		return improve(songUrl)
+	})
+	.catch(function(e){
+		return
 	})
 }
 
-module.exports = {
-	check: check
-}
+module.exports = {check}
