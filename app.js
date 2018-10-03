@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 const parse = require('url').parse
 const program = require('commander')
 const package = require("./package.json")
