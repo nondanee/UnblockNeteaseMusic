@@ -4,18 +4,14 @@ const crypto = require('crypto')
 const eapiKey = 'e82ckenh8dichen8'
 const linuxapiKey = 'rFgB&h#%2?^eDg:Q'
 
-function decrypt(cipherText, key) {
+function decrypt(cipherBuffer, key) {
 	var decipher = crypto.createDecipheriv('aes-128-ecb',key,'')
-	var text = decipher.update(cipherText,'hex','utf8')
-	text += decipher.final('utf8')
-	return text
+	return Buffer.concat([decipher.update(cipherBuffer),decipher.final()])
 }
 
-function encrypt(text, key) {
+function encrypt(plainBuffer, key) {
 	var cipher = crypto.createCipheriv('aes-128-ecb',key,'')
-	var cipherText = cipher.update(text,'utf8','hex')
-	cipherText += cipher.final('hex')
-	return cipherText
+	return Buffer.concat([cipher.update(plainBuffer),cipher.final()])
 }
 
 module.exports = {

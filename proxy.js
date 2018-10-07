@@ -45,8 +45,8 @@ detailApiPath = [
 
 http.createServer().listen(port)
 .on('request', function(req, res){
-
-	if(req.url == '/proxy.pac'){//pac rule
+	// pac rule
+	if(req.url == '/proxy.pac'){
 		var url = parse('http://' + req.headers.host)
 		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 		res.end(`
@@ -58,7 +58,8 @@ http.createServer().listen(port)
 			}
 		`)
 	}
-	else if(req.url.indexOf('package') != -1){//packaged song url
+	// packaged song url
+	else if(req.url.indexOf('package') != -1){
 		try{
 			var params = req.url.split('package/').pop().split('/')
 			var url = parse(base64.decode(params[0]))
@@ -80,7 +81,8 @@ http.createServer().listen(port)
 			res.end()
 		}
 	}
-	else{//proxy 
+	// proxy 
+	else{
 		var url = parse((req.url.indexOf('http://') == 0) ? req.url : 'http://music.163.com' + req.url)
 		console.log('HTTP >', url.protocol + '//' + url.host)
 
@@ -95,12 +97,12 @@ http.createServer().listen(port)
 				var reqParam, apiPath
 				if(reqBody){
 					if(url.path == '/api/linux/forward'){
-						reqParam = JSON.parse(crypto.linuxapi.decrypt(reqBody.replace(/%0+$/, '').slice(8)))
+						reqParam = JSON.parse(crypto.linuxapi.decrypt(Buffer.from(reqBody.replace(/%0+$/, '').slice(8), 'hex')).toString())
 						apiPath = reqParam.url.replace('http://music.163.com', '')
 						reqParam = reqParam.params
 					}
 					else{
-						reqParam = crypto.eapi.decrypt(reqBody.replace(/%0+$/, '').slice(7)).split('-36cd479b6b5-')
+						reqParam = crypto.eapi.decrypt(Buffer.from(reqBody.replace(/%0+$/, '').slice(7), 'hex')).toString().split('-36cd479b6b5-')
 						apiPath = reqParam[0]
 						reqParam = JSON.parse(reqParam[1])
 					}
@@ -133,7 +135,7 @@ http.createServer().listen(port)
 				.end(reqBody)
 			})
 		}
-		else{// direct
+		else{
 			var proxyReq = makeRequest(options)
 			.on('response', function(proxyRes){
 				res.writeHead(proxyRes.statusCode, proxyRes.headers)
@@ -201,7 +203,7 @@ function bodyHook(req, buffer){
 		}
 		catch(e){
 			encrypted = true
-			jsonBody = JSON.parse(crypto.eapi.decrypt(buffer.toString('hex')))
+			jsonBody = JSON.parse(crypto.eapi.decrypt(buffer).toString())
 		}
 
 		function done(){
@@ -225,7 +227,7 @@ function bodyHook(req, buffer){
 			body = body.replace(/"pic":"(\d+)"/g, '"pic":$1')
 			body = body.replace(/"coverImgId":"(\d+)"/g, '"coverImgId":$1')
 			if(encrypted)
-				resolve(Buffer.from(crypto.eapi.encrypt(body), 'hex'))
+				resolve(crypto.eapi.encrypt(Buffer.from(body)))
 			else
 				resolve(body)
 		}
