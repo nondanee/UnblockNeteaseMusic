@@ -2,8 +2,8 @@ const http = require('http')
 const net = require('net')
 const parse = require('url').parse
 const base64 = {
-	encode: function(text){return Buffer.from(text).toString('base64').replace('+', '-').replace('/', '_')},
-	decode: function(text){return Buffer.from(text.replace('-', '+').replace('_', '/'), 'base64').toString('ascii')}
+	encode: function(text){return Buffer.from(text).toString('base64').replace(/\+/g, '-').replace(/\//g, '_')},
+	decode: function(text){return Buffer.from(text.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('ascii')}
 }
 
 const request = require('./request.js')

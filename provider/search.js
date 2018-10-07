@@ -47,7 +47,7 @@ function check(url){
 		if(url.indexOf('qq.com') != -1)
 			song.md5 = response.headers['server-md5']
 		else if(url.indexOf('xiami.net') != -1 || url.indexOf('qianqian.com') != -1)
-			song.md5 = response.headers['etag'].replace(/"/g, '')
+			song.md5 = response.headers['etag'].replace(/"/g, '').toLowerCase()
 		song.md5 = (song.md5) ? song.md5 : crypto.createHash('md5').update(url).digest('hex') //padding
 		song.size = parseInt(response.headers['content-length']) || 0
 		song.url = url
