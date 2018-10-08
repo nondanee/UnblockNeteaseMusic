@@ -1,17 +1,13 @@
 {
   "name": "unblockneteasemusic",
-  "version": "0.2.4",
-  "description": "An agent server for netease cloud music pc version",
+  "version": "0.3.0",
+  "description": "An agent server for netease cloud music client",
   "main": "proxy.js",
   "bin": {
     "UnblockNeteaseMusic": "app.js"
   },
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "pkg": "pkg . --out-path=dist/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pkg": "pkg . --out-path=dist/"
   },
   "keywords": [
     "netease",
@@ -23,8 +19,5 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^2.18.0"
-  },
-  "devDependencies": {
-    "pkg": "^4.3.4"
   }
 }

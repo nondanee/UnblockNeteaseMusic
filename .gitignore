@@ -60,6 +60,5 @@ typings/
 # next.js build output
 .next
 
+# pkg dist directory
 dist/
-cache/
-package-lock.json
