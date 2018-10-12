@@ -10,13 +10,37 @@
 - 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器IP，支持设置上游HTTP/HTTPS代理
 - 完整的流量代理功能(HTTP/HTTPS)，可直接作为系统代理(同时支持PAC)
 
-## 运行
+## 使用方法
+0. 安装[nodejs](https://nodejs.org/)
+0. 把项目下载或 clone 下来
+   ```
+   git clone https://github.com/nondanee/UnblockNeteaseMusic.git
+   ```
+0. cd 到项目目录中
+   ```
+   cd C:\UnblockNeteaseMusic
+   ```
+0. 安装依赖
+   ```
+   npm install
+   ```
+0. 寻找网易云服务器的IP
+   ```
+   ping music.163.com
+   ```
+   得到类似 123.123.123.123 的IP
+0. [设置客户端使用代理](#方法2-设置代理)或者[改hosts文件](#方法1-修改hosts)
+win10范例: 加入下列两行到C:\Windows\System32\drivers\etc\hosts文件中
+   ```
+   127.0.0.1 music.163.com
+   127.0.0.1 interface.music.163.com
+   ```
+0. 启动 ```node app.js```
+   ```
+   node app.js -p 80 -f 123.123.123.123
+   ```
 
-```
-$ node app.js
-```
-
-### 配置参数
+### 其他配置参数
 
 ```
 $ node app.js -h
@@ -32,7 +56,7 @@ $ node app.js -h
     -h, --help               output usage information
 ```
 
-### 使用
+### 备注
 
 > 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (Mac客户端和Android客户端默认请求HTTPS接口，代理后端对网易云的HTTPS接口连接都会返回空数据，客户端将自动降级使用HTTP接口)
 >
@@ -51,7 +75,7 @@ $ node app.js -h
 <Server IP> interface.music.163.com
 ```
 
-> 使用此方法必须监听80端口 `-p 80` 
+> 使用此方法必须监听80端口 `-p 80`
 >
 > **若在本机运行程序，还需指定网易云服务器IP** `-f xxx.xxx.xxx.xxx` ，可在修改hosts前 `ping music.163.com` 得
 >
