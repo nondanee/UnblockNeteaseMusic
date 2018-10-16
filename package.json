@@ -7,7 +7,8 @@
     "UnblockNeteaseMusic": "app.js"
   },
   "scripts": {
-    "pkg": "pkg . --out-path=dist/"
+    "pkg": "pkg . --out-path=dist/",
+    "start": "node app.js"
   },
   "keywords": [
     "netease",
