@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-const parse = require('url').parse
+
 const program = require('commander')
 const package = require('./package.json')
 
@@ -28,14 +28,13 @@ if (program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)) {
 	process.exit(1)
 }
 
-global.port = program.port || 8080
-global.forceHost = program.forceHost || null
+const parse = require('url').parse
+const hook = require('./hook.js')
+const server = require('./server.js')
+const port = program.port || 8080
 
-if (program.proxyUrl)
-	global.proxy = parse(program.proxyUrl)
-else
-	global.proxy = ''
+global.proxy = program.proxyUrl ? parse(program.proxyUrl) : null
+global.switchHost = function(host){return (hook.host.includes(host) && program.forceHost) ? program.forceHost : host}
 
-require('./proxy.js')
-
-console.log('Server running @ http://0.0.0.0:' + port)
+server.listen(port)
+console.log(`Server running @ http://0.0.0.0:${port}`)

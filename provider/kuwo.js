@@ -26,7 +26,8 @@ function search(songInfo){
 function track(id){
 	var url =
 		'http://antiserver.kuwo.cn/anti.s?' +
-		'type=convert_url&format=aac|mp3|wma&response=url&rid=MUSIC_' + id
+		'type=convert_url&format=mp3&response=url&rid=MUSIC_' + id
+		// 'type=convert_url&format=aac|mp3|wma&response=url&rid=MUSIC_' + id
 
 	return request('GET', url)
 	.then(function(response){
