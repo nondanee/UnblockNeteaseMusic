@@ -70,6 +70,18 @@ $ node app.js -h
 | Linux   | 系统设置>网络>网络代理           |
 | macOS   | 系统偏好设置>网络>高级>代理      |
 | Android | WLAN>修改网络>高级选项>代理      |
+| iOS     | Surge/shadowrocket |
+
+> iOS Surge 配置如下：
+
+```
+[Proxy]
+网易云音乐 = http,服务器地址, 端口号,,
+
+[Rule]
+USER-AGENT,NeteaseMusic*,网易云音乐
+FINAL,DIRECT
+```
 
 > UWP应用需要开启loopback才会使用系统代理，可借助[Fiddler](https://www.telerik.com/fiddler)，[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager)等工具
 
