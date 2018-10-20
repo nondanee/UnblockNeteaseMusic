@@ -16,6 +16,14 @@
 $ node app.js
 ```
 
+或使用 Docker
+
+```
+$ docker-compose -f docker-compose.example.yml up -d --build
+```
+
+以上例子 `docker-compose.example.yml` 所设置端口号为 10000，请酌情修改。
+
 ### 配置参数
 
 ```
