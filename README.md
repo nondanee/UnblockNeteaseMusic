@@ -19,10 +19,8 @@ $ node app.js
 或使用 Docker
 
 ```
-$ docker-compose -f docker-compose.example.yml up -d --build
+$ docker-compose up -d
 ```
-
-以上例子 `docker-compose.example.yml` 所设置端口号为 10000，请酌情修改。
 
 ### 配置参数
 
@@ -42,7 +40,6 @@ $ node app.js -h
 ```
 
 ### 使用
-
 
 若将服务部署在公网，强烈建议使用代理规则或 hosts，并启用严格模式 `-s` (此模式下仅放行网易云音乐所属域名的请求) 限制代理范围，以防代理被他人滥用
 

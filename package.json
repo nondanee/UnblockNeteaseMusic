@@ -15,6 +15,10 @@
     "unblock",
     "neteaseunblock"
   ],
+  "repository" : {     
+    "type" : "git",
+    "url" : "https://github.com/nondanee/UnblockNeteaseMusic.git" 
+  },
   "author": "nondanee",
   "license": "MIT",
   "dependencies": {
