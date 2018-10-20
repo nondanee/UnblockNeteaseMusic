@@ -29,18 +29,20 @@ $ node app.js -h
     -p, --port <port>        specify server port
     -f, --force-host <host>  force the netease server ip
     -u, --proxy-url <url>    request through another proxy
+    -s, --strict             enable proxy limitation
     -h, --help               output usage information
 ```
 
 ### 使用
+
+
+**若将服务部署在公网, 强烈建议使用代理规则或 hosts, 并启用严格模式 `-s` (此模式下仅放行网易云音乐所属域名的请求) 限制代理范围, 以防代理被他人滥用**
 
 > 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (Mac客户端和Android客户端默认请求HTTPS接口，代理后端对网易云的HTTPS接口连接都会返回空数据，客户端将自动降级使用HTTP接口)
 >
 > 不支持iOS客户端，因Apple强制要求使用HTTPS所以无法降级，~~要支持只能自签证书做MITM了~~ ，看其它项目提到用surge，shadowrocket可以转发，有兴趣可以试试
 >
 > 移除了预下载和ffmpeg转码的相关逻辑以加快返回速度，仅酷我音源是aac格式(默认未开启)应该会下载失败，其它音源均为mp3格式不受影响
-
-有如下两种方法
 
 #### 方法1. 修改hosts
 
@@ -53,7 +55,7 @@ $ node app.js -h
 
 > 使用此方法必须监听80端口 `-p 80` 
 >
-> **若在本机运行程序，还需指定网易云服务器IP** `-f xxx.xxx.xxx.xxx` ，可在修改hosts前 `ping music.163.com` 得
+> **若在本机运行程序**，请指定网易云服务器IP `-f xxx.xxx.xxx.xxx` (可在修改hosts前通过 `ping music.163.com` 获得) **或 **使用代理 `-u http(s)://xxx.xxx.xxx.xxx:xxx`, 以防请求死循环
 >
 > **Android客户端下修改hosts无法使用**，原因和解决方法详见[云音乐安卓又搞事啦](https://jixun.moe/post/netease-android-hosts-bypass/)，[安卓免 root 绕过网易云音乐 IP 限制](https://jixun.moe/post/android-block-netease-without-root/)
 
@@ -70,20 +72,20 @@ $ node app.js -h
 | Linux   | 系统设置>网络>网络代理           |
 | macOS   | 系统偏好设置>网络>高级>代理      |
 | Android | WLAN>修改网络>高级选项>代理      |
-| iOS     | Surge/shadowrocket |
-
-> iOS Surge 配置如下：
-
-```
-[Proxy]
-网易云音乐 = http,服务器地址, 端口号,,
-
-[Rule]
-USER-AGENT,NeteaseMusic*,网易云音乐
-FINAL,DIRECT
-```
+| iOS     | Surge / Shadowrocket 添加配置    |
 
 > UWP应用需要开启loopback才会使用系统代理，可借助[Fiddler](https://www.telerik.com/fiddler)，[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager)等工具
+
+> iOS Surge 配置
+> 
+> ```
+> [Proxy]
+> UnblockNeteaseMusic = http,<Server Name>,<PORT>,,
+> 
+> [Rule]
+> USER-AGENT,NeteaseMusic*,UnblockNeteaseMusic 
+> FINAL,DIRECT
+> ```
 
 ## 效果
 

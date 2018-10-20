@@ -4,8 +4,8 @@ const crypto = require('./crypto.js')
 const search = require('./provider/search.js')
 
 const host = [
-    'interface.music.163.com',
-    'music.163.com'
+	'music.163.com',
+	'interface.music.163.com'
 ]
 
 const path = [
@@ -34,7 +34,7 @@ function before(context){
     const req = context.req
     const query = context.query
 	return new Promise(function(resolve, reject){
-		if((host.includes(url.hostname)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.indexOf('/eapi/') == 0)){
+		if((host.includes(url.hostname)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
 			request.read(req).then(function(body){
 				req.headers['X-Real-IP'] = '118.88.88.88'
 				req.body = body
@@ -136,7 +136,7 @@ function after(context){
 					resolve()
 				}
 
-				if(query.path.indexOf('manipulate') != -1){
+				if(query.path.includes('manipulate')){
 					if(jsonBody.code == 401){
 						var trackId = JSON.parse(query.param.trackIds)[0]
 						request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
@@ -183,7 +183,7 @@ function after(context){
 						done()
 					}
 				}
-				else if(query.path.indexOf('url') != -1){
+				else if(query.path.includes('url')){
 					var tasks, target = 0
 
 					function modify(item){
@@ -206,7 +206,7 @@ function after(context){
 					if(!jsonBody['data'] instanceof Array){
 						tasks = [modify(jsonBody['data'])]
 					}
-					else if(query.path.indexOf('download') != -1){
+					else if(query.path.includes('download')){
 						jsonBody['data'] = jsonBody['data'][0]
 						tasks = [modify(jsonBody['data'])]
 					}

@@ -22,7 +22,7 @@ module.exports = http.createServer()
 		`)
 	}
 	// packaged song url
-	else if(req.url.indexOf('package') != -1){
+	else if(req.url.includes('package')){
 		try{
 			var data = req.url.split('package/').pop().split('/')
 			var url = parse(crypto.base64.decode(data[0]))
@@ -46,7 +46,7 @@ module.exports = http.createServer()
 	}
 	// proxy 
 	else{
-		var url = parse(req.url.indexOf('http://') == 0 ? req.url : 'http://music.163.com' + req.url)
+		var url = parse(req.url.startsWith('http://') ? req.url : 'http://music.163.com' + req.url)
 		console.log('HTTP >', url.protocol + '//' + url.host)
 		const context = {url: url, res: res, req: req, query: {}}
 		Promise.resolve()
@@ -75,7 +75,10 @@ module.exports = http.createServer()
 	socket.on('error', function(){
 		socket.end()
 	})
-	if(hook.host.includes(url.hostname)){
+	if(!proxyPermit(url.hostname)){
+		socket.end()
+	}
+	else if(hook.host.includes(url.hostname)){
 		socket.write(handshake)
 		socket.end()
 	}
@@ -98,7 +101,7 @@ module.exports = http.createServer()
 		.end()
 	}
 	else{
-		var proxySocket = net.connect(url.port, switchHost(url.hostname))
+		var proxySocket = net.connect(url.port || 443, switchHost(url.hostname))
 		.on('connect', function(){
 			socket.write(handshake)
 			proxySocket.write(head)
@@ -113,6 +116,7 @@ module.exports = http.createServer()
 
 function access(context){
 	return new Promise(function(resolve, reject){
+		if(!proxyPermit(context.url.hostname)) return reject()
 		var options = request.init(context.req.method, context.url, context.req.headers, true)
 		context.proxyReq = request.make(context.url)(options)
 		.on('response', function(proxyRes){
@@ -138,5 +142,5 @@ function finish(context){
 
 function terminate(context){
 	// console.log('ERROR >', context.error)
-	context.res.end()
+	context.res.socket.end()
 }
