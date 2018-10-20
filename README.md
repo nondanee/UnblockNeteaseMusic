@@ -36,11 +36,11 @@ $ node app.js -h
 ### 使用
 
 
-**若将服务部署在公网, 强烈建议使用代理规则或 hosts, 并启用严格模式 `-s` (此模式下仅放行网易云音乐所属域名的请求) 限制代理范围, 以防代理被他人滥用**
+若将服务部署在公网，强烈建议使用代理规则或 hosts，并启用严格模式 `-s` (此模式下仅放行网易云音乐所属域名的请求) 限制代理范围，以防代理被他人滥用
 
 > 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (Mac客户端和Android客户端默认请求HTTPS接口，代理后端对网易云的HTTPS接口连接都会返回空数据，客户端将自动降级使用HTTP接口)
 >
-> 不支持iOS客户端，因Apple强制要求使用HTTPS所以无法降级，~~要支持只能自签证书做MITM了~~ ，看其它项目提到用surge，shadowrocket可以转发，有兴趣可以试试
+> 不支持iOS客户端，因Apple强制要求使用HTTPS所以无法降级，~~要支持只能自签证书做MITM了~~ ，看其它项目提到用Surge，Shadowrocket 可以转发，有兴趣可以试试
 >
 > 移除了预下载和ffmpeg转码的相关逻辑以加快返回速度，仅酷我音源是aac格式(默认未开启)应该会下载失败，其它音源均为mp3格式不受影响
 
@@ -55,7 +55,7 @@ $ node app.js -h
 
 > 使用此方法必须监听80端口 `-p 80` 
 >
-> **若在本机运行程序**，请指定网易云服务器IP `-f xxx.xxx.xxx.xxx` (可在修改hosts前通过 `ping music.163.com` 获得) **或 **使用代理 `-u http(s)://xxx.xxx.xxx.xxx:xxx`, 以防请求死循环
+> **若在本机运行程序**，请指定网易云服务器IP `-f xxx.xxx.xxx.xxx` (可在修改hosts前通过 `ping music.163.com` 获得) **或** 使用代理 `-u http(s)://xxx.xxx.xxx.xxx:xxx`，以防请求死循环
 >
 > **Android客户端下修改hosts无法使用**，原因和解决方法详见[云音乐安卓又搞事啦](https://jixun.moe/post/netease-android-hosts-bypass/)，[安卓免 root 绕过网易云音乐 IP 限制](https://jixun.moe/post/android-block-netease-without-root/)
 
