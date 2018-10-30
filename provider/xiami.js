@@ -1,49 +1,39 @@
 const request = require('../request.js')
 
-var extraHeaders = {
+let extraHeaders = {
 	'cookie': 'user_from=2;XMPLAYER_addSongsToggler=0;XMPLAYER_isOpen=0;_xiamitoken=cb8bfadfe130abdbf5e2282c30f0b39a;',
 	'origin': 'http://www.xiami.com/',
 	'referer': 'http://www.xiami.com/'
 }
 
-function caesar(location){
-	var num = location[0];
-	var avg_len = Math.floor(location.slice(1).length / num)
-	var remainder = location.slice(1).length % num
+const caesar = pattern => {
 
-	var result = [];
-	for(var i=0; i<remainder; i++){
-		var line = location.slice(i * (avg_len + 1) + 1, (i + 1) * (avg_len + 1) + 1)
-		result.push(line)
-	}
-	for(var i=0; i<num-remainder; i++){
-		var line = location.slice((avg_len + 1) * remainder).slice(i * avg_len + 1, (i + 1) * avg_len + 1)
-		result.push(line)
-	}
+	let height = pattern[0]
+	pattern = pattern.slice(1)
+	let width = Math.floor(pattern.length / height)
+	let extra = pattern.length - width * height
 
-	var s = [];
-	for(var i=0; i<avg_len; i++){
-		for(var j=0; j<num; j++){
-			s.push(result[j][i])
-		}
-	}
-	for(var i=0; i<remainder; i++){
-		s.push(result[i].slice(-1))
-	}
+	let distributed = Array.apply(null, {length: height}).map((_, i) => {
+		return pattern.slice(i < extra ? i * (width + 1) : extra * (width + 1) + (i - extra) * width).slice(0, width)
+	})
 
-	return unescape(s.join('')).replace(/\^/g, '0')
+	let rotated = Array.apply(null, {length: width}).map((_, x) => {
+		return Array.apply(null, {length: height}).map((_, y) => distributed[y][x]).join('')
+	})
+
+	return unescape(rotated.join('')).replace(/\^/g, '0')
 }
 
-function search(songInfo){
-	var url =
+const search = info => {
+	let url =
 		'http://api.xiami.com/web?v=2.0&app_key=1' + 
-		'&key=' + encodeURIComponent(songInfo.keyword) + '&page=1' +
+		'&key=' + encodeURIComponent(info.keyword) + '&page=1' +
 		'&limit=20&callback=jsonp154&r=search/songs'
 
 	return request('GET', url, extraHeaders)
-	.then(function(response){
-		var jsonBody = JSON.parse(response.body.slice('jsonp154('.length, -')'.length))
-		var chief = jsonBody['data']['songs'][0]
+	.then(response => {
+		let jsonBody = JSON.parse(response.body.slice('jsonp154('.length, -')'.length))
+		let chief = jsonBody['data']['songs'][0]
 		if(chief){
 			if(chief.listen_file)
 				return chief.listen_file
@@ -55,53 +45,32 @@ function search(songInfo){
 	})
 }
 
-function track(id) {
-	var url =
+const track = id => {
+	let url =
 		'https://www.xiami.com/song/playlist/id/' + id +
 		'/object_name/default/object_id/0/cat/json'
-	
+
 	return request('GET', url, extraHeaders)
-	.then(function(response){
-		var jsonBody = JSON.parse(response.body)
+	.then(response => {
+		let jsonBody = JSON.parse(response.body)
 		if(jsonBody.data.trackList == null){
 			return Promise.reject()
 		}
 		else{
-			var location = jsonBody.data.trackList[0].location
-			var songUrl = 'http:' + caesar(location)
+			let location = jsonBody.data.trackList[0].location
+			let songUrl = 'http:' + caesar(location)
 			return songUrl
 		}
 	})
 }
 
-function improve(songUrl){
-	var updatedSongUrl = songUrl.replace('m128','m320')
-	return request('HEAD', updatedSongUrl)
-	.then(function(response){
-		if(response.status == 200)
-			return updatedSongUrl
-		else
-			return songUrl
-	})
-	.catch(function(e){
-		return songUrl
-	})
+const improve = origin => {
+	let updated = origin.replace('m128','m320')
+	return request('HEAD', updated)
+	.then(response => response.status == 200 ? updated : origin)
+	.catch(e => origin)
 }
 
-function check(songInfo){
-	return search(songInfo)
-	.then(function(songUrl){
-		if(typeof(songUrl) === 'number')
-			return track(songUrl)
-		else
-			return songUrl
-	})
-	.then(function(songUrl){
-		return improve(songUrl)
-	})
-	.catch(function(e){
-		return
-	})
-}
+const check = info => search(info).then(id => (typeof(id) === 'number' ? track(id) : id)).then(url => improve(url)).catch(e => {})
 
 module.exports = {check}

@@ -7,14 +7,14 @@ const crypto = require('./crypto.js')
 const request = require('./request.js')
 
 module.exports = http.createServer()
-.on('request', function(req, res){
+.on('request', (req, res) => {
 	// pac rule
 	if(req.url == '/proxy.pac'){
-		var url = parse('http://' + req.headers.host)
+		let url = parse('http://' + req.headers.host)
 		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 		res.end(`
 			function FindProxyForURL(url, host) {
-				if (${hook.host.map(function(host){return `host == '${host}'`}).join(' || ')}) {
+				if (${hook.host.map(host => (`host == '${host}'`)).join(' || ')}) {
 					return 'PROXY ${url.hostname}:${url.port || 80}'
 				}
 				return 'DIRECT'
@@ -24,17 +24,17 @@ module.exports = http.createServer()
 	// packaged song url
 	else if(req.url.includes('package')){
 		try{
-			var data = req.url.split('package/').pop().split('/')
-			var url = parse(crypto.base64.decode(data[0]))
-			var id = data[1].replace('.mp3', '')
+			let data = req.url.split('package/').pop().split('/')
+			let url = parse(crypto.base64.decode(data[0]))
+			let id = data[1].replace('.mp3', '')
 
-			var options = request.init(req.method, url, req.headers)
+			let options = request.init(req.method, url, req.headers)
 			request.make(url)(options)
-			.on('response', function(proxyRes){
+			.on('response', proxyRes => {
 				res.writeHead(proxyRes.statusCode, proxyRes.headers)
 				proxyRes.pipe(res)
 			})
-			.on('error', function(e){
+			.on('error', e => {
 				res.end()
 			})
 			.end()
@@ -46,33 +46,23 @@ module.exports = http.createServer()
 	}
 	// proxy 
 	else{
-		var url = parse(req.url.startsWith('http://') ? req.url : 'http://music.163.com' + req.url)
+		let url = parse(req.url.startsWith('http://') ? req.url : 'http://music.163.com' + req.url)
 		console.log('HTTP >', url.protocol + '//' + url.host)
-		const context = {url: url, res: res, req: req, query: {}}
+		const ctx = {res: res, req: req, url: url, query: {}}
 		Promise.resolve()
-		.then(function(){
-			return hook.before(context)
-		})
-		.then(function(){
-			return access(context)
-		})
-		.then(function(){
-			return hook.after(context)
-		})
-		.then(function(){
-			return finish(context)
-		})
-		.catch(function(){
-			return terminate(context)
-		})
+		.then(() => hook.before(ctx))
+		.then(() => access(ctx))
+		.then(() => hook.after(ctx))
+		.then(() => finish(ctx))
+		.catch(() => terminate(ctx))
 	}
 })
-.on('connect', function(req, socket, head){
-	var url = parse('https://' + req.url)
-	var handshake = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
+.on('connect', (req, socket, head) => {
+	let url = parse('https://' + req.url)
+	let handshake = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
 	console.log('HTTPS >', url.href.slice(0, -1))
 
-	socket.on('error', function(){
+	socket.on('error', () => {
 		socket.end()
 	})
 	if(!proxyPermit(url.hostname)){
@@ -83,64 +73,64 @@ module.exports = http.createServer()
 		socket.end()
 	}
 	else if(proxy){
-		var options = {
+		let options = {
 			port: proxy.port,
 			hostname: proxy.hostname,
 			method: 'CONNECT',
 			path: req.url
 		}
 		request.make(proxy)(options)
-		.on('connect', function(res, proxySocket, proxyHead){
+		.on('connect', (res, proxySocket, proxyHead) => {
 			socket.write(handshake)
 			socket.pipe(proxySocket)
 			proxySocket.pipe(socket)
 		})
-		.on('error', function(){
+		.on('error', () => {
 			socket.end()
 		})
 		.end()
 	}
 	else{
-		var proxySocket = net.connect(url.port || 443, switchHost(url.hostname))
-		.on('connect', function(){
+		let proxySocket = net.connect(url.port || 443, switchHost(url.hostname))
+		.on('connect', () => {
 			socket.write(handshake)
 			proxySocket.write(head)
 			socket.pipe(proxySocket)
 			proxySocket.pipe(socket)
 		})
-		.on('error', function(){
+		.on('error', () => {
 			socket.end()
 		})
 	}
 })
 
-function access(context){
-	return new Promise(function(resolve, reject){
-		if(!proxyPermit(context.url.hostname)) return reject()
-		var options = request.init(context.req.method, context.url, context.req.headers, true)
-		context.proxyReq = request.make(context.url)(options)
-		.on('response', function(proxyRes){
-			context.proxyRes = proxyRes, resolve()
+const access = ctx => {
+	return new Promise((resolve, reject) => {
+		if(!proxyPermit(ctx.url.hostname)) return reject()
+		let options = request.init(ctx.req.method, ctx.url, ctx.req.headers, true)
+		ctx.proxyReq = request.make(ctx.url)(options)
+		.on('response', proxyRes => {
+			ctx.proxyRes = proxyRes, resolve()
 		})
-		.on('error', function(error){
-			context.error = error, reject()
+		.on('error', e => {
+			ctx.error = e, reject()
 		})
-		if(context.req.readable)
-			context.req.pipe(context.proxyReq)
+		if(ctx.req.readable)
+			ctx.req.pipe(ctx.proxyReq)
 		else
-			context.proxyReq.end(context.req.body)
+			ctx.proxyReq.end(ctx.req.body)
 	})
 }
 
-function finish(context){
-	context.res.writeHead(context.proxyRes.statusCode, context.proxyRes.headers)
-	if(context.proxyRes.readable)
-		context.proxyRes.pipe(context.res)
+const finish = ctx => {
+	ctx.res.writeHead(ctx.proxyRes.statusCode, ctx.proxyRes.headers)
+	if(ctx.proxyRes.readable)
+		ctx.proxyRes.pipe(ctx.res)
 	else
-		context.res.end(context.proxyRes.body)
+		ctx.res.end(ctx.proxyRes.body)
 }
 
-function terminate(context){
-	// console.log('ERROR >', context.error)
-	context.res.socket.end()
+const terminate = ctx => {
+	// console.log('ERROR >', ctx.error)
+	ctx.res.socket.end()
 }

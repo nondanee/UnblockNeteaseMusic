@@ -3,23 +3,23 @@ const http = require('http')
 const https = require('https')
 const parse = require('url').parse
 
-function init(method, url, headers, headersProtect){
+const init = (method, url, headers, headersProtect) => {
 	headers = (typeof(headers) == 'undefined') ? {} : headers
-	var defaultHeaders = {
+	let defaultHeaders = {
 		'accept': 'application/json, text/plain, */*',
 		'accept-encoding': 'gzip, deflate',
 		'accept-language': 'zh-CN,zh;q=0.9',
 		'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
 	}
 	if(!headersProtect){
-		for(var key in defaultHeaders){
+		for(let key in defaultHeaders){
 			if(!(key in headers))
 				headers[key] = defaultHeaders[key]
 		}
 		headers.host = url.host
 	}
 	if('content-length' in headers) delete headers['content-length']
-	var options = {
+	let options = {
 		method: (proxy && url.protocol == 'https:') ? 'CONNECT' : method,
 		headers: headers
 	}
@@ -38,29 +38,29 @@ function init(method, url, headers, headersProtect){
 	return options
 }
 
-function make(url){
+const make = url => {
 	if(proxy)
 		return (proxy.protocol == 'https:' ? https.request : http.request)
 	else
 		return (url.protocol == 'https:' ? https.request : http.request)
 }
 
-function request(method, url, extraHeaders, body, raw){
+const request = (method, url, extraHeaders, body, raw) => {
 	url = parse(url)
-	var options = init(method, url, extraHeaders)
+	let options = init(method, url, extraHeaders)
 
-	return new Promise(function(resolve, reject){
+	return new Promise((resolve, reject) => {
 		make(url)(options)
-		.on('response', function(res){
+		.on('response', res => {
 			read(res, raw)
-			.then(function(body){
+			.then(body => {
 				resolve({status: res.statusCode, headers: res.headers, body: body})
 			})
-			.catch(function(e){
+			.catch(e => {
 				reject(e)
 			})
 		})
-		.on('connect', function(res, socket){
+		.on('connect', (res, socket) => {
 			https.request({
 				method: method,
 				host: switchHost(url.hostname),
@@ -69,61 +69,58 @@ function request(method, url, extraHeaders, body, raw){
 				socket: socket,
 				agent: false
 			})
-			.on('response', function(res){
+			.on('response', res => {
 				read(res, raw)
-				.then(function(body){
+				.then(body => {
 					resolve({status: res.statusCode, headers: res.headers, body: body})
 				})
-				.catch(function(e){
+				.catch(e => {
 					reject(e)
 				})
 			})
-			.on('error', function(e){
+			.on('error', e => {
 				reject(e)
 			})
 			.end(body)
 		})
-		.on('error', function(e){
+		.on('error', e => {
 			reject(e)
 		})
 		.end(body)
 	})
 }
 
-function read(connect, raw){
-	return new Promise(function(resolve, reject){
-		var chunks = []
+const read = (connect, raw) => {
+	return new Promise((resolve, reject) => {
+		let chunks = []
 		if(connect.headers['content-encoding'] == 'gzip'){
-			var gunzip = zlib.createGunzip()
-			.on('data', function(chunk){
+			let gunzip = zlib.createGunzip()
+			.on('data', chunk => {
 				chunks.push(chunk)
 			})
-			.on('end', function(){
+			.on('end', () => {
 				end()
 			})
-			.on('error', function(e){
+			.on('error', e => {
 				reject(e)
 			})
 			connect.pipe(gunzip)
 		}
 		else{
 			connect
-			.on('data', function(chunk){
+			.on('data', chunk => {
 				chunks.push(chunk)
 			})
-			.on('end', function(){
+			.on('end', () => {
 				end()
 			})
-			.on('error', function(e){
+			.on('error', e => {
 				reject(e)
 			})
 		}
-		function end(){
-			var buffer = Buffer.concat(chunks)
-			if(raw == true)
-				resolve(buffer)
-			else
-				resolve(buffer.toString())
+		const end = () => {
+			let buffer = Buffer.concat(chunks)
+			resolve(raw == true ? buffer : buffer.toString())
 		}
 	})
 }

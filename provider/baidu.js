@@ -1,15 +1,15 @@
 const request = require('../request.js')
 
-function search(songInfo){
-	var url =
+const search = info => {
+	let url =
 		'http://sug.music.baidu.com/info/suggestion?' + 
-		'word=' + encodeURIComponent(songInfo.keyword) + '&version=2&from=0'
+		'word=' + encodeURIComponent(info.keyword) + '&version=2&from=0'
 
 	return request('GET', url)
-	.then(function(response){
-		var jsonBody = JSON.parse(response.body)
+	.then(response => {
+		let jsonBody = JSON.parse(response.body)
 		if('data' in jsonBody){
-			var chief = jsonBody['data']['song'][0]
+			let chief = jsonBody['data']['song'][0]
 			return chief.songid
 		}
 		else{
@@ -18,14 +18,14 @@ function search(songInfo){
 	})
 }
 
-function track(id){
-	var url =
+const track = id => {
+	let url =
 		'http://music.taihe.com/data/music/fmlink?' +
 		'songIds=' + id + '&type=mp3'
 
 	return request('GET', url)
-	.then(function(response){
-		var jsonBody = JSON.parse(response.body)
+	.then(response => {
+		let jsonBody = JSON.parse(response.body)
 		if('songList' in jsonBody.data)
 			return jsonBody.data.songList[0].songLink
 		else
@@ -33,14 +33,6 @@ function track(id){
 	})
 }
 
-function check(songInfo){
-	return search(songInfo)
-	.then(function(songId){
-		return track(songId)
-	})
-	.catch(function(e){
-		return
-	})
-}
+const check = info => search(info).then(id => track(id)).catch(e => {})
 
 module.exports = {check}

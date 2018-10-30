@@ -29,17 +29,17 @@ const path = [
 	'/api/song/like'
 ]
 
-function before(context){
-    const url = context.url
-    const req = context.req
-    const query = context.query
-	return new Promise(function(resolve, reject){
+const before = ctx => {
+    const url = ctx.url
+    const req = ctx.req
+    const query = ctx.query
+	return new Promise((resolve, reject) => {
 		if((host.includes(url.hostname)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
-			request.read(req).then(function(body){
+			request.read(req).then(body => {
 				req.headers['X-Real-IP'] = '118.88.88.88'
 				req.body = body
 				if(body){
-					var data, forward = (url.path == '/api/linux/forward'), pad = body.search(/%0+$/)
+					let data, forward = (url.path == '/api/linux/forward'), pad = body.search(/%0+$/)
 					pad = (pad == -1 ? body.length : pad)
 					if(forward){
 						data = JSON.parse(crypto.linuxapi.decrypt(Buffer.from(body.slice(8, pad), 'hex')).toString())
@@ -53,7 +53,7 @@ function before(context){
 					}
 					query.path = query.path.replace(/\/\d*$/, '')
 					
-					var turn = '/api/song/enhance/download/url'
+					let turn = '/api/song/enhance/download/url'
 					if(query.path == turn){
 						if(forward){
 							query.param = {
@@ -62,7 +62,7 @@ function before(context){
 							}
 							data.url = data.url.replace('download','player')
 							data.params = query.param
-							var eparams = crypto.linuxapi.encryptRequest(data)
+							let eparams = crypto.linuxapi.encryptRequest(data)
 							req.body = 'eparams=' + eparams + body.slice(pad)
 						}
 						else{
@@ -72,16 +72,16 @@ function before(context){
 								e_r: query.param.e_r,
 								header: query.param.header
 							}
-							var params = crypto.eapi.encryptRequest(turn.replace('download','player'), query.param)
-							context.url.parse(turn.replace('download','player').replace('api','eapi'))
+							let params = crypto.eapi.encryptRequest(turn.replace('download','player'), query.param)
+							ctx.url.parse(turn.replace('download','player').replace('api','eapi'))
 							req.body = 'params=' + params + body.slice(pad)
 						}
 					}
                 }
                 resolve()
 			})
-			.catch(function(error){
-				context.error = error
+			.catch(e => {
+				ctx.error = e
 				reject()
 			})
 		}
@@ -91,18 +91,18 @@ function before(context){
 	})
 }
 
-function after(context){
-	const req = context.req
-	const query = context.query
-    const proxyRes = context.proxyRes
-	return new Promise(function(resolve, reject){
+const after = ctx => {
+	const req = ctx.req
+	const query = ctx.query
+    const proxyRes = ctx.proxyRes
+	return new Promise((resolve, reject) => {
 		if(path.includes(query.path) && proxyRes.statusCode == 200){
-			request.read(proxyRes, true).then(function(buffer){
+			request.read(proxyRes, true).then(buffer => {
                 if('transfer-encoding' in proxyRes.headers) delete proxyRes.headers['transfer-encoding']
 				if('content-encoding' in proxyRes.headers) delete proxyRes.headers['content-encoding']
 				if('content-length' in proxyRes.headers) delete proxyRes.headers['content-length']
 				
-				var encrypted, jsonBody
+				let encrypted, jsonBody
 				try{
 					encrypted = false
 					jsonBody = JSON.parse(buffer.toString())
@@ -112,8 +112,8 @@ function after(context){
 					jsonBody = JSON.parse(crypto.eapi.decrypt(buffer).toString())
 				}
 
-				function done(){
-					function inject(key, value){ 
+				const done = () => {
+					const inject = (key, value) => { 
 						if(typeof(value) === 'object' && value != null){
 							if('pic_str' in value && 'pic' in value) //for js precision
 								value['pic'] = value['pic_str']
@@ -129,7 +129,7 @@ function after(context){
 						return value
 					}
 
-					var body = JSON.stringify(jsonBody, inject)
+					let body = JSON.stringify(jsonBody, inject)
 					body = body.replace(/"pic":"(\d+)"/g, '"pic":$1')
 					body = body.replace(/"coverImgId":"(\d+)"/g, '"coverImgId":$1')
 					proxyRes.body = (encrypted ? crypto.eapi.encrypt(Buffer.from(body)) : body)
@@ -138,15 +138,15 @@ function after(context){
 
 				if(query.path.includes('manipulate')){
 					if(jsonBody.code == 401){
-						var trackId = JSON.parse(query.param.trackIds)[0]
+						let trackId = JSON.parse(query.param.trackIds)[0]
 						request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
 							`trackIds=[${trackId},${trackId}]&pid=${query.param.pid}&op=${query.param.op}`
 						)
-						.then(function(response){
+						.then(response => {
 							jsonBody = JSON.parse(response.body)
 							done()
 						})
-						.catch(function(e){
+						.catch(e => {
 							done()
 						})
 					}
@@ -156,26 +156,26 @@ function after(context){
 				}
 				else if(query.path == '/api/song/like'){
 					if(jsonBody.code == 401){
-						var pid, userId, trackId = query.param.trackId
+						let pid, userId, trackId = query.param.trackId
 						request('GET', 'http://music.163.com/api/v1/user/info', req.headers)
-						.then(function(response){
+						.then(response => {
 							userId = JSON.parse(response.body).userPoint.userId
 							return request('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers)
 						})
-						.then(function(response){
+						.then(response => {
 							pid = JSON.parse(response.body).playlist[0].id
 							return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
 								`trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`
 							)
 						})
-						.then(function(response){
-							var body = JSON.parse(response.body)
+						.then(response => {
+							let body = JSON.parse(response.body)
 							if(body.code == 200 || body.code == 502){
 								jsonBody = {code: 200, playlistId: pid}
 							}
 							done()
 						})
-						.catch(function(e){
+						.catch(e => {
 							done()
 						})
 					}
@@ -184,12 +184,12 @@ function after(context){
 					}
 				}
 				else if(query.path.includes('url')){
-					var tasks, target = 0
+					let tasks, target = 0
 
-					function modify(item){
+					const modify = item => {
 						if(item.code != 200 && (target == 0 || item.id == target)){
 							return search(item.id)
-							.then(function(song){
+							.then(song => {
 								item.url = `http://music.163.com/package/${crypto.base64.encode(song.url)}/${item.id}.mp3`
 								item.md5 = song.md5
 								item.size = song.size
@@ -197,7 +197,7 @@ function after(context){
 								item.br = 320000
 								item.type = 'mp3'
 							})
-							.catch(function(e){
+							.catch(e => {
 								return
 							})
 						}
@@ -212,14 +212,14 @@ function after(context){
 					}
 					else{
 						target = parseInt(JSON.parse(query.param.ids)[0].replace('_0', '')) //reduce time cost
-						tasks = jsonBody['data'].map(function(item){return modify(item)})
+						tasks = jsonBody['data'].map(item => modify(item))
 					}
 
 					Promise.all(tasks)
-					.then(function(){
+					.then(() => {
 						done()
 					})
-					.catch(function(e){
+					.catch(e => {
 						done()
 					})
 				}
@@ -227,8 +227,8 @@ function after(context){
 					done()
 				}
 			})
-			.catch(function(error){
-				context.error = error
+			.catch(e => {
+				ctx.error = e
 				reject()
 			})
 		}

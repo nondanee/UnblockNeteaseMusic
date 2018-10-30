@@ -4,50 +4,39 @@ const crypto = require('crypto')
 const eapiKey = 'e82ckenh8dichen8'
 const linuxapiKey = 'rFgB&h#%2?^eDg:Q'
 
-function decrypt(cipherBuffer, key) {
-	var decipher = crypto.createDecipheriv('aes-128-ecb',key,'')
-	return Buffer.concat([decipher.update(cipherBuffer),decipher.final()])
+const decrypt = (buffer, key) => {
+	let decipher = crypto.createDecipheriv('aes-128-ecb',key,'')
+	return Buffer.concat([decipher.update(buffer),decipher.final()])
 }
 
-function encrypt(plainBuffer, key) {
-	var cipher = crypto.createCipheriv('aes-128-ecb',key,'')
-	return Buffer.concat([cipher.update(plainBuffer),cipher.final()])
+const encrypt = (buffer, key) => {
+	let cipher = crypto.createCipheriv('aes-128-ecb',key,'')
+	return Buffer.concat([cipher.update(buffer),cipher.final()])
 }
 
 module.exports = {
 	eapi:{
-		encrypt: function(buffer){
-			return encrypt(buffer, eapiKey)
-		},
-		decrypt: function(cipherBuffer){
-			return decrypt(cipherBuffer, eapiKey)
-		},
-		encryptRequest: function(url, object){
-			var text = JSON.stringify(object)
-			var message = `nobody${url}use${text}md5forencrypt`
-			var digest = crypto.createHash('md5').update(message).digest('hex')
-			var data = `${url}-36cd479b6b5-${text}-36cd479b6b5-${digest}`
+		encrypt: buffer => encrypt(buffer, eapiKey),
+		decrypt: buffer => decrypt(buffer, eapiKey),
+		encryptRequest: (url, object) => {
+			let text = JSON.stringify(object)
+			let message = `nobody${url}use${text}md5forencrypt`
+			let digest = crypto.createHash('md5').update(message).digest('hex')
+			let data = `${url}-36cd479b6b5-${text}-36cd479b6b5-${digest}`
 			return encrypt(Buffer.from(data), eapiKey).toString('hex').toUpperCase()
 		}
 	},
 	linuxapi:{
-		encrypt: function(buffer){
-			return encrypt(buffer, linuxapiKey)
-		},
-		decrypt: function(cipherBuffer){
-			return decrypt(cipherBuffer, linuxapiKey)
-		},
-		encryptRequest: function(object){
-			var text = JSON.stringify(object)
+		encrypt: buffer => encrypt(buffer, linuxapiKey),
+		decrypt: buffer => decrypt(buffer, linuxapiKey),
+		encryptRequest: object => {
+			let text = JSON.stringify(object)
 			return encrypt(Buffer.from(text), linuxapiKey).toString('hex').toUpperCase()
 		}
 	},
-	 base64: {
-		encode: function(text){
-			return Buffer.from(text).toString('base64').replace(/\+/g, '-').replace(/\//g, '_')
-		},
-		decode: function(text){
-			return Buffer.from(text.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('ascii')
-		}
-	}
+	base64: {
+		encode: text => Buffer.from(text).toString('base64').replace(/\+/g, '-').replace(/\//g, '_'),
+		decode: text => Buffer.from(text.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('ascii')
+	},
+	md5: text => crypto.createHash('md5').update(text).digest('hex')
 }
