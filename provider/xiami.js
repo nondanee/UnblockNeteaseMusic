@@ -7,7 +7,6 @@ let extraHeaders = {
 }
 
 const caesar = pattern => {
-
 	let height = pattern[0]
 	pattern = pattern.slice(1)
 	let width = Math.floor(pattern.length / height)

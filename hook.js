@@ -30,9 +30,9 @@ const path = [
 ]
 
 const before = ctx => {
-    const url = ctx.url
-    const req = ctx.req
-    const query = ctx.query
+	const url = ctx.url
+	const req = ctx.req
+	const query = ctx.query
 	return new Promise((resolve, reject) => {
 		if((host.includes(url.hostname)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
 			request.read(req).then(body => {
@@ -77,8 +77,8 @@ const before = ctx => {
 							req.body = 'params=' + params + body.slice(pad)
 						}
 					}
-                }
-                resolve()
+				}
+				resolve()
 			})
 			.catch(e => {
 				ctx.error = e
@@ -94,11 +94,11 @@ const before = ctx => {
 const after = ctx => {
 	const req = ctx.req
 	const query = ctx.query
-    const proxyRes = ctx.proxyRes
+	const proxyRes = ctx.proxyRes
 	return new Promise((resolve, reject) => {
 		if(path.includes(query.path) && proxyRes.statusCode == 200){
 			request.read(proxyRes, true).then(buffer => {
-                if('transfer-encoding' in proxyRes.headers) delete proxyRes.headers['transfer-encoding']
+				if('transfer-encoding' in proxyRes.headers) delete proxyRes.headers['transfer-encoding']
 				if('content-encoding' in proxyRes.headers) delete proxyRes.headers['content-encoding']
 				if('content-length' in proxyRes.headers) delete proxyRes.headers['content-length']
 				
