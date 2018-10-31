@@ -93,33 +93,22 @@ const request = (method, url, extraHeaders, body, raw) => {
 const read = (connect, raw) => {
 	return new Promise((resolve, reject) => {
 		let chunks = []
-		if(connect.headers['content-encoding'] == 'gzip'){
-			let gunzip = zlib.createGunzip()
-			.on('data', chunk => {
-				chunks.push(chunk)
-			})
-			.on('end', () => {
-				end()
-			})
-			.on('error', e => {
-				reject(e)
-			})
-			connect.pipe(gunzip)
-		}
-		else{
-			connect
-			.on('data', chunk => {
-				chunks.push(chunk)
-			})
-			.on('end', () => {
-				end()
-			})
-			.on('error', e => {
-				reject(e)
-			})
-		}
+		connect
+		.on('data', chunk => {
+			chunks.push(chunk)
+		})
+		.on('end', () => {
+			end()
+		})
+		.on('error', e => {
+			reject(e)
+		})
 		const end = () => {
 			let buffer = Buffer.concat(chunks)
+			if(buffer.length && connect.headers['content-encoding'] == 'gzip')
+				buffer = zlib.gunzipSync(buffer)
+			if(buffer.length && connect.headers['content-encoding'] == 'deflate')
+				buffer = zlib.deflateRaw(buffer)
 			resolve(raw == true ? buffer : buffer.toString())
 		}
 	})
