@@ -1,11 +1,14 @@
 const parse = require('url').parse
-const request = require('./request.js')
-const crypto = require('./crypto.js')
-const search = require('./provider/search.js')
+const request = require('./request')
+const crypto = require('./crypto')
+const search = require('./provider/search')
 
 const host = [
 	'music.163.com',
-	'interface.music.163.com'
+	'interface.music.163.com',
+	'apm.music.163.com',
+	'mam.netease.com',
+	'clientlog.music.163.com'
 ]
 
 const path = [

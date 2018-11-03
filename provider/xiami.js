@@ -1,4 +1,4 @@
-const request = require('../request.js')
+const request = require('../request')
 
 let extraHeaders = {
 	'cookie': 'user_from=2;XMPLAYER_addSongsToggler=0;XMPLAYER_isOpen=0;_xiamitoken=cb8bfadfe130abdbf5e2282c30f0b39a;',

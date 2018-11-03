@@ -30,20 +30,27 @@ if(program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)){
 }
 
 const parse = require('url').parse
-const hook = require('./hook.js')
-const server = require('./server.js')
-const request = require('./request.js')
+const hook = require('./hook')
+const server = require('./server')
 const port = program.port || 8080
-const allow = (program.strict ? ['music.163.com', 'music.126.net'] : [''])
-const deny = ['apm.music.163.com', 'mam.netease.com', 'clientlog.music.163.com', 'music.httpdns.c.163.com', '223.252.199.66', '223.252.199.67']
+let allow = (program.strict ? ['music.163.com', 'music.126.net'] : [''])
+let deny = ['music.httpdns.c.163.com', '223.252.199.66', '223.252.199.67']
 
 global.proxy = program.proxyUrl ? parse(program.proxyUrl) : null
 global.switchHost = host => ((hook.host.includes(host) && program.forceHost) ? program.forceHost : host)
 global.proxyPermit = host => (allow.some(domain => host.endsWith(domain)) && !deny.includes(host))
 
-request('POST', 'https://music.httpdns.c.163.com/d', {}, 'music.163.com')
-.then(response => {
-	JSON.parse(response.body).dns[0].ips.forEach(ip => {deny.push(ip)})
+const dns = host =>
+	new Promise((resolve, reject) => require('dns').resolve4(host, (e, addresses) => e? reject(e) : resolve(addresses)))
+
+const httpdns = host =>
+	require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => JSON.parse(response.body).dns[0].ips)
+
+Promise.all([dns(hook.host[0]),httpdns(hook.host[0])])
+.then(result => {
+	result.forEach(set => deny = deny.concat(set))
+	deny = Array.from(new Set(deny))
 	server.listen(port)
 	console.log(`Server running @ http://0.0.0.0:${port}`)
 })
+.catch(e => console.log(e))

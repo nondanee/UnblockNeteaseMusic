@@ -2,9 +2,9 @@ const http = require('http')
 const net = require('net')
 const parse = require('url').parse
 
-const hook = require('./hook.js')
-const crypto = require('./crypto.js')
-const request = require('./request.js')
+const hook = require('./hook')
+const crypto = require('./crypto')
+const request = require('./request')
 
 module.exports = http.createServer()
 .on('request', (req, res) => {

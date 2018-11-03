@@ -1,14 +1,14 @@
-const find = require('./find.js')
-const crypto = require('../crypto.js')
-const request = require('../request.js')
+const find = require('./find')
+const crypto = require('../crypto')
+const request = require('../request')
 
-const qq = require('./qq.js')
-const xiami = require('./xiami.js')
-const baidu = require('./baidu.js')
-const kugou = require('./kugou.js')
-const kuwo = require('./kuwo.js')
-const migu = require('./migu.js')
-const joox = require('./joox.js')
+const qq = require('./qq')
+const xiami = require('./xiami')
+const baidu = require('./baidu')
+const kugou = require('./kugou')
+const kuwo = require('./kuwo')
+const migu = require('./migu')
+const joox = require('./joox')
 const provider = [qq, xiami, baidu]
 
 const search = id => {
