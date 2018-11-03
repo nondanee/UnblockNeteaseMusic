@@ -41,12 +41,12 @@ global.switchHost = host => ((hook.host.includes(host) && program.forceHost) ? p
 global.proxyPermit = host => (allow.some(domain => host.endsWith(domain)) && !deny.includes(host))
 
 const dns = host =>
-	new Promise((resolve, reject) => require('dns').resolve4(host, (e, addresses) => e? reject(e) : resolve(addresses)))
+	new Promise((resolve, reject) => require('dns').lookup(host, (e, addresses) => e? reject(e) : resolve(addresses)))
 
 const httpdns = host =>
 	require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => JSON.parse(response.body).dns[0].ips)
 
-Promise.all([dns(hook.host[0]),httpdns(hook.host[0])])
+Promise.all([httpdns(hook.host[0])].concat(hook.host.map(host => dns(host))))
 .then(result => {
 	result.forEach(set => deny = deny.concat(set))
 	deny = Array.from(new Set(deny))
