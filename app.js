@@ -1,4 +1,4 @@
-#! /usr/bin/env node
+#!/usr/bin/env node
 
 const package = require('./package.json')
 let program = {}
@@ -14,26 +14,24 @@ try{
 		.option('-u, --proxy-url <url>', 'request through another proxy')
 		.option('-s, --strict', 'enable proxy limitation')
 		.parse(process.argv)
-
-	if(program.port && (program.port < 1 || program.port > 65535)){
-		console.log('Port must be higher than 0 and lower than 65535.')
-		process.exit(1)
-	}
-
-	if(program.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(program.forceHost)){
-		console.log('Please check the server host.')
-		process.exit(1)
-	}
-
-	if(program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)){
-		console.log('Please check the proxy url.')
-		process.exit(1)
-	}
 }
 catch(e){
 	program.port = global.port
 	program.proxyUrl = global.proxyUrl
 	program.forceHost = global.forceHost
+}
+
+if(program.port && (program.port < 1 || program.port > 65535)){
+	console.log('Port must be higher than 0 and lower than 65535.')
+	process.exit(1)
+}
+if(program.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(program.forceHost)){
+	console.log('Please check the server host.')
+	process.exit(1)
+}
+if(program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)){
+	console.log('Please check the proxy url.')
+	process.exit(1)
 }
 
 const parse = require('url').parse
