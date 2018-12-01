@@ -63,7 +63,7 @@ const before = ctx => {
 								ids: '["' + query.param.id + '"]',
 								br: '320000'
 							}
-							data.url = data.url.replace('download','player')
+							data.url = data.url.replace('download', 'player')
 							data.params = query.param
 							let eparams = crypto.linuxapi.encryptRequest(data)
 							req.body = 'eparams=' + eparams + body.slice(pad)
@@ -75,8 +75,8 @@ const before = ctx => {
 								e_r: query.param.e_r,
 								header: query.param.header
 							}
-							let params = crypto.eapi.encryptRequest(turn.replace('download','player'), query.param)
-							ctx.url.parse(turn.replace('download','player').replace('api','eapi'))
+							let params = crypto.eapi.encryptRequest(turn.replace('download', 'player'), query.param)
+							ctx.url.parse(turn.replace('download', 'player').replace('api', 'eapi'))
 							req.body = 'params=' + params + body.slice(pad)
 						}
 					}

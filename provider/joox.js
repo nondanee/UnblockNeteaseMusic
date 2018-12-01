@@ -38,7 +38,7 @@ const track = id => {
 
 	return request('GET', url, extraHeaders)
 	.then(response => {
-		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(')+1,response.body.length-1))
+		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, response.body.length - 1))
 		let songUrl = jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl
 		if(songUrl)
 			return songUrl

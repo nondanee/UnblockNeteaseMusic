@@ -64,7 +64,7 @@ const track = id => {
 }
 
 const improve = origin => {
-	let updated = origin.replace('m128','m320')
+	let updated = origin.replace('m128', 'm320')
 	return request('HEAD', updated)
 	.then(response => response.status == 200 ? updated : origin)
 	.catch(e => origin)

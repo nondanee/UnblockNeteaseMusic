@@ -46,7 +46,7 @@ const track = id => {
 
 	return request('GET', url, extraHeaders)
 	.then(response => {
-		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(')+1,response.body.length-1))
+		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, response.body.length - 1))
 		let vkey = jsonBody.data.items[0].vkey
 		// let songUrl = 
 		// 	'http://dl.stream.qqmusic.qq.com/C400' + id +

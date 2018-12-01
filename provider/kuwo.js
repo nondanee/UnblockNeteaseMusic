@@ -14,7 +14,7 @@ const search = info => {
 
 	return request('GET', url)
 	.then(response => {
-		let jsonBody = JSON.parse(response.body.replace(/\'/g, '"').replace('try {var jsondata =','').replace(';song(jsondata);}catch(e){jsonError(e)}',''))
+		let jsonBody = JSON.parse(response.body.replace(/\'/g, '"').replace('try {var jsondata =', '').replace(';song(jsondata);}catch(e){jsonError(e)}', ''))
 		let chief = jsonBody['abslist'][0]
 		if(chief)
 			return chief.MUSICRID.split('_').pop()
