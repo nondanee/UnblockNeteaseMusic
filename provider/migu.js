@@ -1,3 +1,4 @@
+const cache = require('./cache')()
 const request = require('../request')
 
 const search = info => {
@@ -18,6 +19,6 @@ const search = info => {
 	})
 }
 
-const check = info => search(info).catch(e => {})
+const check = info => cache(info, search).catch(e => {})
 
 module.exports = {check}

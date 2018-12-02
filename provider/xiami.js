@@ -1,3 +1,4 @@
+const cache = require('./cache')()
 const request = require('../request')
 
 let extraHeaders = {
@@ -70,6 +71,6 @@ const improve = origin => {
 	.catch(e => origin)
 }
 
-const check = info => search(info).then(id => (typeof(id) === 'number' ? track(id) : id)).then(url => improve(url)).catch(e => {})
+const check = info => cache(info, search).then(id => (!isNaN(id) ? track(id) : id)).then(url => improve(url)).catch(e => {})
 
 module.exports = {check}

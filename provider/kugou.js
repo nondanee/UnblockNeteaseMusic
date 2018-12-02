@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const cache = require('./cache')()
 const request = require('../request')
 
 const search = info => {
@@ -33,6 +34,6 @@ const track = id => {
 	})
 }
 
-const check = info => search(info).then(id => track(id)).catch(e => {})
+const check = info => cache(info, search).then(id => track(id)).catch(e => {})
 
 module.exports = {check}

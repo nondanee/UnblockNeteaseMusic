@@ -1,3 +1,4 @@
+const cache = require('./cache')()
 const request = require('../request')
 
 let extraHeaders = {
@@ -20,4 +21,4 @@ const find = id => {
 	})
 }
 
-module.exports = find
+module.exports = id => cache(id, find)
