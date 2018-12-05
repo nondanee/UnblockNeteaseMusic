@@ -6,37 +6,41 @@
 
 ## 特性
 
-- 使用QQ/虾米/百度/~~酷狗/酷我/咕咪/JOOX~~音源替换变灰歌曲链接(如有需要请自行启用)
+- 使用QQ/虾米/百度/酷狗/酷我/咕咪/JOOX音源替换变灰歌曲链接(默认仅启用前三，可通过 `-o` 设置)
 - 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器IP，支持设置上游HTTP/HTTPS代理
 - 完整的流量代理功能(HTTP/HTTPS)，可直接作为系统代理(同时支持PAC)
 
 ## 运行
 
-```
+```bash
 $ node app.js
 ```
 
 或使用 Docker
 
+```bash
+$ docker run nondanee/unblockneteasemusic
 ```
-$ docker-compose up -d
+
+```bash
+$ docker-compose up
 ```
 
 ### 配置参数
 
-```
+```bash
 $ node app.js -h
+Usage: unblockneteasemusic [options] [value ...]
 
-  Usage: unblockneteasemusic [options] [value ...]
+Options:
 
-  Options:
-
-    -V, --version            output the version number
-    -p, --port <port>        specify server port
-    -f, --force-host <host>  force the netease server ip
-    -u, --proxy-url <url>    request through another proxy
-    -s, --strict             enable proxy limitation
-    -h, --help               output usage information
+  -V, --version                 output the version number
+  -p, --port <port>             specify server port
+  -u, --proxy-url <url>         request through another proxy
+  -f, --force-host <host>       force the netease server ip
+  -o, --match-order <name,...>  set priority of sources
+  -s, --strict                  enable proxy limitation
+  -h, --help                    output usage information
 ```
 
 ### 使用

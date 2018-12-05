@@ -2,21 +2,23 @@ const find = require('./find')
 const crypto = require('../crypto')
 const request = require('../request')
 
-const qq = require('./qq')
-const xiami = require('./xiami')
-const baidu = require('./baidu')
-const kugou = require('./kugou')
-const kuwo = require('./kuwo')
-const migu = require('./migu')
-const joox = require('./joox')
-const provider = [qq, xiami, baidu]
+const provider = {
+	qq: require('./qq'),
+	xiami: require('./xiami'),
+	baidu: require('./baidu'),
+	kugou: require('./kugou'),
+	kuwo: require('./kuwo'),
+	migu: require('./migu'),
+	joox: require('./joox')
+}
 
-const search = id => {
-	let meta
+const match = (id, source) => {
+	let meta = {}
+	let candidate = (source || global.source || ['qq', 'xiami', 'baidu']).filter(name => name in provider)
 	return find(id)
 	.then(info => {
 		meta = info
-		return Promise.all(provider.map(source => source.check(info)))
+		return Promise.all(candidate.map(name => provider[name].check(info)))
 	})
 	.then(urls => {
 		urls = urls.filter(url => url)
@@ -53,4 +55,4 @@ const check = url => {
 	})
 }
 
-module.exports = search
+module.exports = match

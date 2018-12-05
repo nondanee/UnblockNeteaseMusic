@@ -1,7 +1,7 @@
 const parse = require('url').parse
 const request = require('./request')
 const crypto = require('./crypto')
-const search = require('./provider/search')
+const match = require('./provider/match')
 
 const host = [
 	'music.163.com',
@@ -191,7 +191,7 @@ const after = ctx => {
 
 					const modify = item => {
 						if(item.code != 200 && (target == 0 || item.id == target)){
-							return search(item.id)
+							return match(item.id)
 							.then(song => {
 								item.url = `http://music.163.com/package/${crypto.base64.encode(song.url)}/${item.id}.mp3`
 								item.md5 = song.md5
@@ -217,7 +217,7 @@ const after = ctx => {
 						target = parseInt(JSON.parse(query.param.ids)[0].replace('_0', '')) //reduce time cost
 						tasks = jsonBody['data'].map(item => modify(item))
 					}
-					
+
 					Promise.all(tasks).then(done).catch(done)
 				}
 				else{

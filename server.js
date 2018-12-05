@@ -28,8 +28,8 @@ module.exports = http.createServer()
 			let url = parse(crypto.base64.decode(data[0]))
 			let id = data[1].replace('.mp3', '')
 
-			let options = request.init(req.method, url, req.headers)
-			request.make(url)(options)
+			let options = request.configure(req.method, url, req.headers)
+			request.create(url)(options)
 			.on('response', proxyRes => {
 				res.writeHead(proxyRes.statusCode, proxyRes.headers)
 				proxyRes.pipe(res)
@@ -65,21 +65,16 @@ module.exports = http.createServer()
 	socket.on('error', () => {
 		socket.end()
 	})
-	if(!proxyPermit(url.hostname)){
+	if(global.ban && ban(url.hostname)){
 		socket.end()
 	}
 	else if(hook.host.includes(url.hostname)){
 		socket.write(handshake)
 		socket.end()
 	}
-	else if(proxy){
-		let options = {
-			port: proxy.port,
-			hostname: proxy.hostname,
-			method: 'CONNECT',
-			path: req.url
-		}
-		request.make(proxy)(options)
+	else if(global.proxy){
+		let options = request.configure(req.method, url, req.headers, true)
+		request.create(proxy)(options)
 		.on('connect', (_, proxySocket) => {
 			socket.write(handshake)
 			socket.pipe(proxySocket)
@@ -91,7 +86,7 @@ module.exports = http.createServer()
 		.end()
 	}
 	else{
-		let proxySocket = net.connect(url.port || 443, hosts[url.hostname] || url.hostname)
+		let proxySocket = net.connect(url.port || 443, request.translate(url.hostname))
 		.on('connect', () => {
 			socket.write(handshake)
 			proxySocket.write(head)
@@ -106,9 +101,9 @@ module.exports = http.createServer()
 
 const access = ctx => {
 	return new Promise((resolve, reject) => {
-		if(!proxyPermit(ctx.url.hostname)) return reject()
-		let options = request.init(ctx.req.method, ctx.url, ctx.req.headers, true)
-		ctx.proxyReq = request.make(ctx.url)(options)
+		if(global.ban && ban(ctx.url.hostname)) return reject()
+		let options = request.configure(ctx.req.method, ctx.url, ctx.req.headers, true)
+		ctx.proxyReq = request.create(ctx.url)(options)
 		.on('response', proxyRes => {
 			ctx.proxyRes = proxyRes, resolve()
 		})

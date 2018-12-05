@@ -10,8 +10,9 @@ try{
 		.version(package.version)
 		.usage('[options] [value ...]')
 		.option('-p, --port <port>', 'specify server port')
-		.option('-f, --force-host <host>', 'force the netease server ip')
 		.option('-u, --proxy-url <url>', 'request through another proxy')
+		.option('-f, --force-host <host>', 'force the netease server ip')
+		.option('-o, --match-order <name,...>', 'set priority of sources')
 		.option('-s, --strict', 'enable proxy limitation')
 		.parse(process.argv)
 }
@@ -19,19 +20,33 @@ catch(error){
 	program.port = global.port
 	program.proxyUrl = global.proxyUrl
 	program.forceHost = global.forceHost
+	program.matchOrder = global.matchOrder
 }
 
 if(program.port && (program.port < 1 || program.port > 65535)){
 	console.log('Port must be higher than 0 and lower than 65535.')
 	process.exit(1)
 }
+if(program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)){
+	console.log('Please check the proxy url.')
+	process.exit(1)
+}
 if(program.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(program.forceHost)){
 	console.log('Please check the server host.')
 	process.exit(1)
 }
-if(program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)){
-	console.log('Please check the proxy url.')
-	process.exit(1)
+if(program.matchOrder){
+	const provider = ['qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox']
+	const candidate = program.matchOrder.split(/\s*\W\s*/)
+	if(candidate.some((key, index) => index != candidate.indexOf(key))){
+		console.log('Please check the duplication in match order.')
+		process.exit(1)
+	}
+	else if(candidate.some(key => !provider.includes(key))){
+		console.log('Please check the validation of match order.')
+		process.exit(1)
+	}
+	global.source = candidate
 }
 
 const parse = require('url').parse
@@ -43,7 +58,7 @@ let deny = ['music.httpdns.c.163.com', '223.252.199.66', '223.252.199.67']
 
 global.proxy = program.proxyUrl ? parse(program.proxyUrl) : null
 global.hosts = {}, hook.host.forEach(host => global.hosts[host] = program.forceHost)
-global.proxyPermit = host => (allow.some(domain => host.endsWith(domain)) && !deny.includes(host))
+global.ban = host => (!allow.some(domain => host.endsWith(domain)) || deny.includes(host))
 
 const dns = host =>
 	new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
