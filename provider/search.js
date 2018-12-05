@@ -48,7 +48,7 @@ const check = url => {
 		song.url = url
 		return song
 	})
-	.catch(e => {
+	.catch(() => {
 		return song
 	})
 }

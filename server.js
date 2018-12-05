@@ -34,12 +34,12 @@ module.exports = http.createServer()
 				res.writeHead(proxyRes.statusCode, proxyRes.headers)
 				proxyRes.pipe(res)
 			})
-			.on('error', e => {
+			.on('error', () => {
 				res.end()
 			})
 			.end()
 		}
-		catch(e){
+		catch(error){
 			res.writeHead(400)
 			res.end()
 		}
@@ -80,7 +80,7 @@ module.exports = http.createServer()
 			path: req.url
 		}
 		request.make(proxy)(options)
-		.on('connect', (res, proxySocket, proxyHead) => {
+		.on('connect', (_, proxySocket) => {
 			socket.write(handshake)
 			socket.pipe(proxySocket)
 			proxySocket.pipe(socket)
@@ -91,7 +91,7 @@ module.exports = http.createServer()
 		.end()
 	}
 	else{
-		let proxySocket = net.connect(url.port || 443, switchHost(url.hostname))
+		let proxySocket = net.connect(url.port || 443, hosts[url.hostname] || url.hostname)
 		.on('connect', () => {
 			socket.write(handshake)
 			proxySocket.write(head)
@@ -112,22 +112,16 @@ const access = ctx => {
 		.on('response', proxyRes => {
 			ctx.proxyRes = proxyRes, resolve()
 		})
-		.on('error', e => {
-			ctx.error = e, reject()
+		.on('error', error => {
+			ctx.error = error, reject()
 		})
-		if(ctx.req.readable)
-			ctx.req.pipe(ctx.proxyReq)
-		else
-			ctx.proxyReq.end(ctx.req.body)
+		ctx.req.readable ? ctx.req.pipe(ctx.proxyReq) : ctx.proxyReq.end(ctx.req.body)			
 	})
 }
 
 const finish = ctx => {
 	ctx.res.writeHead(ctx.proxyRes.statusCode, ctx.proxyRes.headers)
-	if(ctx.proxyRes.readable)
-		ctx.proxyRes.pipe(ctx.res)
-	else
-		ctx.res.end(ctx.proxyRes.body)
+	ctx.proxyRes.readable ? ctx.proxyRes.pipe(ctx.res) : ctx.res.end(ctx.proxyRes.body)
 }
 
 const terminate = ctx => {

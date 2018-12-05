@@ -83,8 +83,8 @@ const before = ctx => {
 				}
 				resolve()
 			})
-			.catch(e => {
-				ctx.error = e
+			.catch(error => {
+				ctx.error = error
 				reject()
 			})
 		}
@@ -110,7 +110,7 @@ const after = ctx => {
 					encrypted = false
 					jsonBody = JSON.parse(buffer.toString())
 				}
-				catch(e){
+				catch(error){
 					encrypted = true
 					jsonBody = JSON.parse(crypto.eapi.decrypt(buffer).toString())
 				}
@@ -149,7 +149,7 @@ const after = ctx => {
 							jsonBody = JSON.parse(response.body)
 							done()
 						})
-						.catch(e => {
+						.catch(() => {
 							done()
 						})
 					}
@@ -178,7 +178,7 @@ const after = ctx => {
 							}
 							done()
 						})
-						.catch(e => {
+						.catch(() => {
 							done()
 						})
 					}
@@ -200,7 +200,7 @@ const after = ctx => {
 								item.br = 320000
 								item.type = 'mp3'
 							})
-							.catch(e => {
+							.catch(() => {
 								return
 							})
 						}
@@ -217,21 +217,15 @@ const after = ctx => {
 						target = parseInt(JSON.parse(query.param.ids)[0].replace('_0', '')) //reduce time cost
 						tasks = jsonBody['data'].map(item => modify(item))
 					}
-
-					Promise.all(tasks)
-					.then(() => {
-						done()
-					})
-					.catch(e => {
-						done()
-					})
+					
+					Promise.all(tasks).then(done).catch(done)
 				}
 				else{
 					done()
 				}
 			})
-			.catch(e => {
-				ctx.error = e
+			.catch(error => {
+				ctx.error = error
 				reject()
 			})
 		}

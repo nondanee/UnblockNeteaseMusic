@@ -15,7 +15,7 @@ try{
 		.option('-s, --strict', 'enable proxy limitation')
 		.parse(process.argv)
 }
-catch(e){
+catch(error){
 	program.port = global.port
 	program.proxyUrl = global.proxyUrl
 	program.forceHost = global.forceHost
@@ -42,11 +42,11 @@ let allow = (program.strict ? ['music.163.com', 'music.126.net'] : [''])
 let deny = ['music.httpdns.c.163.com', '223.252.199.66', '223.252.199.67']
 
 global.proxy = program.proxyUrl ? parse(program.proxyUrl) : null
-global.switchHost = host => ((hook.host.includes(host) && program.forceHost) ? program.forceHost : host)
+global.hosts = {}, hook.host.forEach(host => global.hosts[host] = program.forceHost)
 global.proxyPermit = host => (allow.some(domain => host.endsWith(domain)) && !deny.includes(host))
 
 const dns = host =>
-	new Promise((resolve, reject) => require('dns').lookup(host, (e, addresses) => e? reject(e) : resolve(addresses)))
+	new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
 
 const httpdns = host =>
 	require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => JSON.parse(response.body).dns[0].ips)
@@ -58,4 +58,4 @@ Promise.all([httpdns(hook.host[0])].concat(hook.host.map(host => dns(host))))
 	server.listen(port)
 	console.log(`Server running @ http://0.0.0.0:${port}`)
 })
-.catch(e => console.log(e))
+.catch(error => console.log(error))

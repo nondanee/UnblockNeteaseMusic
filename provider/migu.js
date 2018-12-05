@@ -19,6 +19,6 @@ const search = info => {
 	})
 }
 
-const check = info => cache(info, search).catch(e => {})
+const check = info => cache(info, search).catch(error => {})
 
 module.exports = {check}
