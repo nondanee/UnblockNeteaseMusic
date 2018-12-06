@@ -103,16 +103,17 @@ Options:
 ```javascript
 const match = require('./UnblockNeteaseMusic')
 
-// 如有需要设置代理
+/** 
+ * Set proxy or hosts if needed
+ */
 global.proxy = require('url').parse('http://127.0.0.1:1080')
-// 如有需要设置hosts
 global.hosts = {'i.y.qq.com': '59.37.96.220'}
 
 /**
- * 通过各大音源匹配歌曲
- * @param {number} id 网易云音乐歌曲id
- * @param {Array<string>||undefined} source 音源列表(支持qq, xiami, baidu, kugou, kuwo, migu, joox)
- * @return {Promise<object>}
+ * Find matching song from other platforms
+ * @param {Number} id netease song id
+ * @param {Array<String>||undefined} source support qq, xiami, baidu, kugou, kuwo, migu, joox
+ * @return {Promise<Object>}
  */
 match(557581404, ['qq', 'xiami', 'baidu']).then(song => console.log(song))
 ```
