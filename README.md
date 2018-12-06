@@ -12,23 +12,23 @@
 
 ## 运行
 
-```bash
+```
 $ node app.js
 ```
 
 或使用 Docker
 
-```bash
+```
 $ docker run nondanee/unblockneteasemusic
 ```
 
-```bash
+```
 $ docker-compose up
 ```
 
 ### 配置参数
 
-```bash
+```
 $ node app.js -h
 Usage: unblockneteasemusic [options] [value ...]
 
@@ -95,6 +95,27 @@ Options:
 > USER-AGENT,NeteaseMusic*,UnblockNeteaseMusic 
 > FINAL,DIRECT
 > ```
+
+#### ✳方法3. 调用接口
+
+> [编程层面] 作为依赖库使用 (在纠结要不要发布到NPM)
+
+```javascript
+const match = require('./UnblockNeteaseMusic')
+
+// 如有需要设置代理
+global.proxy = require('url').parse('http://127.0.0.1:1080')
+// 如有需要设置hosts
+global.hosts = {'i.y.qq.com': '59.37.96.220'}
+
+/**
+ * 通过各大音源匹配歌曲
+ * @param {number} id 网易云音乐歌曲id
+ * @param {Array<string>||undefined} source 音源列表(支持qq, xiami, baidu, kugou, kuwo, migu, joox)
+ * @return {Promise<object>}
+ */
+match(557581404, ['qq', 'xiami', 'baidu']).then(song => console.log(song))
+```
 
 ## 效果
 
