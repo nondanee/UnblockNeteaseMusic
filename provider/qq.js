@@ -16,28 +16,21 @@ const playable = song => {
 }
 
 const search = info => {
-	let url =
-		'http://i.y.qq.com/s.music/fcgi-bin/search_for_qq_cp?' + 
-		'g_tk=938407465&uin=0&format=jsonp&inCharset=utf-8' + 
-		'&outCharset=utf-8&notice=0&platform=h5&needNewCode=1' + 
-		'&w=' + encodeURIComponent(info.keyword) + '&zhidaqu=1&catZhida=1' + 
-		'&t=0&flag=1&ie=utf-8&sem=1&aggr=0&perpage=20&n=20&p=1' + 
-		'&remoteplace=txt.mqq.all&_=1459991037831&jsonpCallback=jsonp4'
 
-	// let url = 
-	// 	'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 
-	// 	'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center' + 
-	// 	'&searchid=46804741196796149&t=0&aggr=1&cr=1&catZhida=1&lossless=0'
-	// 	'&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + 	
-	// 	'&g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' +
-	// 	'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
+	let url = 		
+		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 
+		'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center' + 
+		'&searchid=46804741196796149&t=0&aggr=1&cr=1&catZhida=1&lossless=0' +
+		'&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + 
+		'&g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0' +
+		'&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
 
-	return request('GET', url, extraHeaders)
+	return request('GET', url)
 	.then(response => {
-		let jsonBody = JSON.parse(response.body.slice('jsonp4('.length, -')'.length))
+		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
 		let chief = jsonBody['data']['song']['list'][0]
-		if(playable(chief))
-			return chief.songmid
+		if(chief)
+			return chief['file']['media_mid']
 		else
 			return Promise.reject()
 	})
@@ -56,7 +49,7 @@ const ticket = () => {
 	
 	return request('GET', url, extraHeaders)
 	.then(response => {
-		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, response.body.length - 1))
+		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
 		return jsonBody.data.items[0].vkey
 	})
 }
