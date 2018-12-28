@@ -24,6 +24,14 @@ const search = info => {
 		'&t=0&flag=1&ie=utf-8&sem=1&aggr=0&perpage=20&n=20&p=1' + 
 		'&remoteplace=txt.mqq.all&_=1459991037831&jsonpCallback=jsonp4'
 
+	// let url = 
+	// 	'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 
+	// 	'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center' + 
+	// 	'&searchid=46804741196796149&t=0&aggr=1&cr=1&catZhida=1&lossless=0'
+	// 	'&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + 	
+	// 	'&g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' +
+	// 	'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
+
 	return request('GET', url, extraHeaders)
 	.then(response => {
 		let jsonBody = JSON.parse(response.body.slice('jsonp4('.length, -')'.length))
@@ -35,7 +43,8 @@ const search = info => {
 	})
 }
 
-const track = id => {
+const ticket = () => {
+	const id = '003OUlho2HcRHC'
 	let url =
 		'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
 		'?g_tk=195219765&jsonpCallback=MusicJsonCallback004680169373158849' + 
@@ -44,11 +53,17 @@ const track = id => {
 		'&cid=205361747&callback=MusicJsonCallback004680169373158849' + 
 		'&uin=1297716249&songmid='+ id +
 		'&filename=C400'+ id + '.m4a&guid=7332953645'
-
+	
 	return request('GET', url, extraHeaders)
 	.then(response => {
 		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, response.body.length - 1))
-		let vkey = jsonBody.data.items[0].vkey
+		return jsonBody.data.items[0].vkey
+	})
+}
+
+const track = id => {
+	return cache(ticket, 'vkey')
+	.then(vkey => {
 		// let songUrl = 
 		// 	'http://dl.stream.qqmusic.qq.com/C400' + id +
 		// 	'.m4a?vkey=' + vkey +
@@ -61,6 +76,6 @@ const track = id => {
 	})
 }
 
-const check = info => cache(info, search).then(id => track(id)).catch(() => {})
+const check = info => cache(search, info).then(id => track(id)).catch(() => {})
 
 module.exports = {check}

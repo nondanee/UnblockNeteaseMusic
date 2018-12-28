@@ -21,4 +21,4 @@ const find = id => {
 	})
 }
 
-module.exports = id => cache(id, find)
+module.exports = id => cache(find, id)

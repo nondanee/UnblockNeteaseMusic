@@ -71,6 +71,6 @@ const improve = origin => {
 	.catch(() => origin)
 }
 
-const check = info => cache(info, search).then(id => (!isNaN(id) ? track(id) : id)).then(url => improve(url)).catch(() => {})
+const check = info => cache(search, info).then(id => (!isNaN(id) ? track(id) : id)).then(url => improve(url)).catch(() => {})
 
 module.exports = {check}
