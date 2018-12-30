@@ -1,7 +1,7 @@
 const cache = require('./cache')()
 const request = require('../request')
 
-let extraHeaders = {
+let headers = {
 	'origin': 'http://y.qq.com/',
 	'referer': 'http://y.qq.com/'
 }
@@ -46,8 +46,8 @@ const ticket = () => {
 		'&cid=205361747&callback=MusicJsonCallback004680169373158849' + 
 		'&uin=1297716249&songmid='+ id +
 		'&filename=C400'+ id + '.m4a&guid=7332953645'
-	
-	return request('GET', url, extraHeaders)
+
+	return request('GET', url, headers)
 	.then(response => {
 		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
 		return jsonBody.data.items[0].vkey

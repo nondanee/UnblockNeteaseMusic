@@ -28,6 +28,7 @@ module.exports = http.createServer()
 			let url = parse(crypto.base64.decode(data[0]))
 			let id = data[1].replace('.mp3', '')
 
+			if('host' in req.headers) delete req.headers['host']
 			let options = request.configure(req.method, url, req.headers)
 			request.create(url)(options)
 			.on('response', proxyRes => {
@@ -73,7 +74,7 @@ module.exports = http.createServer()
 		socket.end()
 	}
 	else if(global.proxy){
-		let options = request.configure(req.method, url, req.headers, true)
+		let options = request.configure(req.method, url, req.headers)
 		request.create(proxy)(options)
 		.on('connect', (_, proxySocket) => {
 			socket.write(handshake)
@@ -102,7 +103,7 @@ module.exports = http.createServer()
 const access = ctx => {
 	return new Promise((resolve, reject) => {
 		if(global.ban && ban(ctx.url.hostname)) return reject()
-		let options = request.configure(ctx.req.method, ctx.url, ctx.req.headers, true)
+		let options = request.configure(ctx.req.method, ctx.url, ctx.req.headers)
 		ctx.proxyReq = request.create(ctx.url)(options)
 		.on('response', proxyRes => {
 			ctx.proxyRes = proxyRes, resolve()

@@ -14,25 +14,18 @@ const translate = host => (global.hosts || {})[host] || host
 
 const create = url => global.proxy ? (proxy.protocol == 'https:' ? https.request : http.request) : (url.protocol == 'https:' ? https.request : http.request)
 
-const configure = (method, url, headers, protect) => {
+const configure = (method, url, headers) => {
 	headers = headers || {}
-	let options = {}
-	
-	if(!protect){
-		Object.keys(preset).forEach(key => headers[key] = headers[key] || preset[key])
-		headers.host = url.host
-	}
 	if('content-length' in headers) delete headers['content-length']
 	
+	let options = {}
 	options.headers = headers
 	options.method = (global.proxy && url.protocol == 'https:') ? 'CONNECT' : method
 
 	if(global.proxy){
 		options.hostname = translate(proxy.hostname)
 		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)
-		options.path = (url.protocol != 'https:') ?
-			('http://' + translate(url.hostname) + url.path) :
-			(translate(url.hostname) + ':' + (url.port || 443))
+		options.path = (url.protocol != 'https:') ? ('http://' + translate(url.hostname) + url.path) : (translate(url.hostname) + ':' + (url.port || 443))
 	}
 	else{
 		options.hostname = translate(url.hostname)
@@ -42,17 +35,13 @@ const configure = (method, url, headers, protect) => {
 	return options
 }
 
-const request = (method, url, extraHeaders, body, raw) => {
+const request = (method, url, headers, body, raw) => {
 	url = parse(url)
-	let options = configure(method, url, extraHeaders)
+	let options = configure(method, url, Object.assign({}, preset, headers))
 
 	return new Promise((resolve, reject) => {
 		create(url)(options)
-		.on('response', response => {
-			read(response, raw)
-			.then(body => resolve({status: response.statusCode, headers: response.headers, body: body}))
-			.catch(error => reject(error))
-		})
+		.on('response', response => resolve(response))
 		.on('connect', (_, socket) => {
 			https.request({
 				method: method,
@@ -62,17 +51,16 @@ const request = (method, url, extraHeaders, body, raw) => {
 				socket: socket,
 				agent: false
 			})
-			.on('response', response => {
-				read(response, raw)
-				.then(body => resolve({status: response.statusCode, headers: response.headers, body: body}))
-				.catch(error => reject(error))
-			})
+			.on('response', response => resolve(response))
 			.on('error', error => reject(error))
 			.end(body)
 		})
 		.on('error', error => reject(error))
 		.end(body)
 	})
+	.then(response => 
+		read(response, raw).then(body => ({status: response.statusCode, headers: response.headers, body: body}))
+	)
 }
 
 const read = (connect, raw) => {

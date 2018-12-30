@@ -1,7 +1,7 @@
 const cache = require('./cache')()
 const request = require('../request')
 
-let extraHeaders = {
+let headers = {
 	'cookie': 'user_from=2;XMPLAYER_addSongsToggler=0;XMPLAYER_isOpen=0;_xiamitoken=cb8bfadfe130abdbf5e2282c30f0b39a;',
 	'origin': 'http://www.xiami.com/',
 	'referer': 'http://www.xiami.com/'
@@ -30,7 +30,7 @@ const search = info => {
 		'&key=' + encodeURIComponent(info.keyword) + '&page=1' +
 		'&limit=20&callback=jsonp154&r=search/songs'
 
-	return request('GET', url, extraHeaders)
+	return request('GET', url, headers)
 	.then(response => {
 		let jsonBody = JSON.parse(response.body.slice('jsonp154('.length, -')'.length))
 		let chief = jsonBody['data']['songs'][0]
@@ -50,7 +50,7 @@ const track = id => {
 		'https://www.xiami.com/song/playlist/id/' + id +
 		'/object_name/default/object_id/0/cat/json'
 
-	return request('GET', url, extraHeaders)
+	return request('GET', url, headers)
 	.then(response => {
 		let jsonBody = JSON.parse(response.body)
 		if(jsonBody.data.trackList == null){

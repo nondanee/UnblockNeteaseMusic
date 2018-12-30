@@ -1,7 +1,7 @@
 const cache = require('./cache')()
 const request = require('../request')
 
-let extraHeaders = {
+let headers = {
 	'origin': 'http://www.joox.com',
 	'referer': 'http://www.joox.com'
 }
@@ -20,7 +20,7 @@ const search = info => {
 		'country=hk&lang=zh_TW&' + 
 		'search_input=' + encodeURIComponent(keyword) + '&sin=0&ein=30'
 
-	return request('GET', url, extraHeaders)
+	return request('GET', url, headers)
 	.then(response => {
 		let jsonBody = JSON.parse(response.body.replace(/(\')/g, '"'))
 		let chief = jsonBody['itemlist'][0]
@@ -37,7 +37,7 @@ const track = id => {
 		'songid=' + id + '&country=hk&lang=zh_cn&from_type=-1&' + 
 		'channel_id=-1&_=' + (new Date).getTime()
 
-	return request('GET', url, extraHeaders)
+	return request('GET', url, headers)
 	.then(response => {
 		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
 		let songUrl = jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl
