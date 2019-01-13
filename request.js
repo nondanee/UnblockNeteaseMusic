@@ -3,13 +3,6 @@ const http = require('http')
 const https = require('https')
 const parse = require('url').parse
 
-const preset = {
-	'accept': 'application/json, text/plain, */*',
-	'accept-encoding': 'gzip, deflate',
-	'accept-language': 'zh-CN,zh;q=0.9',
-	'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
-}
-
 const translate = host => (global.hosts || {})[host] || host
 
 const create = url => global.proxy ? (proxy.protocol == 'https:' ? https.request : http.request) : (url.protocol == 'https:' ? https.request : http.request)
@@ -37,7 +30,12 @@ const configure = (method, url, headers) => {
 
 const request = (method, url, headers, body, raw) => {
 	url = parse(url)
-	let options = configure(method, url, Object.assign({}, preset, headers))
+	let options = configure(method, url, Object.assign({
+		'accept': 'application/json, text/plain, */*',
+		'accept-encoding': 'gzip, deflate',
+		'accept-language': 'zh-CN,zh;q=0.9',
+		'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
+	}, headers))
 
 	return new Promise((resolve, reject) => {
 		create(url)(options)

@@ -48,6 +48,6 @@ const track = id => {
 	})
 }
 
-const check = info => cache(search, info).then(id => track(id)).catch(() => {})
+const check = info => cache(search, info).then(track).catch(() => {})
 
 module.exports = {check}

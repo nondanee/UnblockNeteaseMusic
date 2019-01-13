@@ -16,7 +16,6 @@ const playable = song => {
 }
 
 const search = info => {
-
 	let url = 		
 		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 
 		'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center' + 
@@ -37,7 +36,9 @@ const search = info => {
 }
 
 const ticket = () => {
-	const id = '003OUlho2HcRHC'
+	const exclusive = ['003OUlho2HcRHC', '0039MnYb0qxYhV', '003aAYrm3GE0Ac', '001J5QJL1pRQYB', '004Z8Ihr0JIu5s', '002MXZNu1GToOk', '002qU5aY3Qu24y', '001xd0HI0X9GNq', '001zMQr71F1Qo8', '0009BCJK1nRaad']
+	const id = exclusive[Math.floor(exclusive.length * Math.random())]
+
 	let url =
 		'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
 		'?g_tk=195219765&jsonpCallback=MusicJsonCallback004680169373158849' + 
@@ -51,6 +52,9 @@ const ticket = () => {
 	.then(response => {
 		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
 		return jsonBody.data.items[0].vkey
+	})
+	.then(vkey => {
+		return vkey ? vkey : request('GET', 'https://public.nondanee.tk/qq/ticket').then(response => response.body)
 	})
 }
 
@@ -69,6 +73,6 @@ const track = id => {
 	})
 }
 
-const check = info => cache(search, info).then(id => track(id)).catch(() => {})
+const check = info => cache(search, info).then(track).catch(() => {})
 
-module.exports = {check}
+module.exports = {check, ticket}

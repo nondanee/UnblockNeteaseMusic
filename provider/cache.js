@@ -1,6 +1,5 @@
-module.exports = () => {
+module.exports = (ttl = 30 * 60 * 1000) => {
     const cache = {}
-    const ttl = 30 * 60 * 1000
     return (fetch, data) => new Promise(resolve => {
         const key = typeof(data) === 'object' ? data.id : data
         if(!(key in cache) || cache[key].expiration < Date.now())
