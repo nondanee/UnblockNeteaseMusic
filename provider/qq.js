@@ -56,19 +56,40 @@ const ticket = () => {
 	.then(vkey => {
 		return vkey ? vkey : request('GET', 'https://public.nondanee.tk/qq/ticket').then(response => response.body)
 	})
+
+	// let url = 'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' + 
+	// 	encodeURIComponent(JSON.stringify({
+	// 		req_0: {
+	// 			module: 'vkey.GetVkeyServer',
+	// 			method: 'CgiGetVkey',
+	// 			param: {
+	// 				guid: '7332953645',
+	// 				songmid: [id],
+	// 				songtype: [0],
+	// 				uin: '',
+	// 				platform: '20'
+	// 			}
+	// 		}
+	// 	}))
+
+	// return request('GET', url).then(response => {
+	// 	let jsonBody = JSON.parse(response.body)
+	// 	return jsonBody.req_0.data.midurlinfo[0].vkey
+	// })
 }
 
 const track = id => {
 	return cache(ticket, 'vkey')
 	.then(vkey => {
+		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com'][0]
 		// let songUrl = 
 		// 	'http://dl.stream.qqmusic.qq.com/C400' + id +
 		// 	'.m4a?vkey=' + vkey +
 		// 	'&uin=1297716249&fromtag=0&guid=7332953645'
 		let songUrl = 
-			'http://dl.stream.qqmusic.qq.com/M800' + id + 
+			'http://' + host + '/M800' + id + 
 			'.mp3?vkey=' + vkey + 
-			'&uin=0&fromtag=53&guid=7332953645'
+			'&uin=0&fromtag=8&guid=7332953645'
 		return songUrl
 	})
 }

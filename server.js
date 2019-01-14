@@ -28,7 +28,7 @@ module.exports = http.createServer()
 			let url = parse(crypto.base64.decode(data[0]))
 			let id = data[1].replace('.mp3', '')
 
-			if('host' in req.headers) delete req.headers['host']
+			req.headers['host'] = url.host
 			let options = request.configure(req.method, url, req.headers)
 			request.create(url)(options)
 			.on('response', proxyRes => {
