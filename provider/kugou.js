@@ -1,5 +1,5 @@
-const crypto = require('crypto')
 const cache = require('./cache')()
+const crypto = require('../crypto')
 const request = require('../request')
 
 const search = info => {
@@ -19,10 +19,9 @@ const search = info => {
 }
 
 const track = id => {
-	let md5 = crypto.createHash('md5')
 	let url =
 		'http://trackercdnbj.kugou.com/i/v2/?cmd=23&pid=1&behavior=download' +
-		'&hash=' + id  + '&key=' + md5.update(id + 'kgcloudv2').digest('hex')
+		'&hash=' + id  + '&key=' + crypto.md5(id + 'kgcloudv2')
 
 	return request('GET', url)
 	.then(response => {
