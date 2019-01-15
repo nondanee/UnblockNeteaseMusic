@@ -15,7 +15,7 @@ const encrypt = (buffer, key) => {
 }
 
 module.exports = {
-	eapi:{
+	eapi: {
 		encrypt: buffer => encrypt(buffer, eapiKey),
 		decrypt: buffer => decrypt(buffer, eapiKey),
 		encryptRequest: (url, object) => {
@@ -26,7 +26,7 @@ module.exports = {
 			return encrypt(Buffer.from(data), eapiKey).toString('hex').toUpperCase()
 		}
 	},
-	linuxapi:{
+	linuxapi: {
 		encrypt: buffer => encrypt(buffer, linuxapiKey),
 		decrypt: buffer => decrypt(buffer, linuxapiKey),
 		encryptRequest: object => {

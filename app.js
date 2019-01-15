@@ -16,8 +16,6 @@ try{
 	.parse(process.argv))
 }catch(error){}
 
-console.log(config)
-
 if(config.port && (isNaN(config.port) || config.port < 1 || config.port > 65535)){
 	console.log('Port must be a number higher than 0 and lower than 65535.')
 	process.exit(1)

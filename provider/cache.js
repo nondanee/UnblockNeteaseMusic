@@ -1,6 +1,6 @@
-module.exports = (ttl = 30 * 60 * 1000) => {
+module.exports = () => {
     const cache = {}
-    return (fetch, data) => new Promise(resolve => {
+    return (fetch, data, ttl = 30 * 60 * 1000) => new Promise(resolve => {
         const key = typeof(data) === 'object' ? data.id : data
         if(!(key in cache) || cache[key].expiration < Date.now())
             fetch(data)
