@@ -1,43 +1,38 @@
 #!/usr/bin/env node
 
 const package = require('./package.json')
-let program = {}
+const config = require('./config.json')
 
 try{
-	program = require('commander')
-	program
-		.name(package.name)
-		.version(package.version)
-		.usage('[options] [value ...]')
-		.option('-p, --port <port>', 'specify server port')
-		.option('-u, --proxy-url <url>', 'request through another proxy')
-		.option('-f, --force-host <host>', 'force the netease server ip')
-		.option('-o, --match-order <name,...>', 'set priority of sources')
-		.option('-s, --strict', 'enable proxy limitation')
-		.parse(process.argv)
-}
-catch(error){
-	program.port = global.port
-	program.proxyUrl = global.proxyUrl
-	program.forceHost = global.forceHost
-	program.matchOrder = global.matchOrder
-}
+	Object.assign(config, require('commander')
+	.name(package.name)
+	.version(package.version, '-v, --version')
+	.usage('[options] [value ...]')
+	.option('-p, --port <port>', 'specify server port')
+	.option('-u, --proxy-url <url>', 'request through another proxy')
+	.option('-f, --force-host <host>', 'force the netease server ip')
+	.option('-o, --match-order <name,...>', 'set priority of sources')
+	.option('-s, --strict', 'enable proxy limitation')
+	.parse(process.argv))
+}catch(error){}
 
-if(program.port && (program.port < 1 || program.port > 65535)){
-	console.log('Port must be higher than 0 and lower than 65535.')
+console.log(config)
+
+if(config.port && (isNaN(config.port) || config.port < 1 || config.port > 65535)){
+	console.log('Port must be a number higher than 0 and lower than 65535.')
 	process.exit(1)
 }
-if(program.proxyUrl && !/http(s?):\/\/.+:\d+/.test(program.proxyUrl)){
+if(config.proxyUrl && !/http(s?):\/\/.+:\d+/.test(config.proxyUrl)){
 	console.log('Please check the proxy url.')
 	process.exit(1)
 }
-if(program.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(program.forceHost)){
+if(config.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(config.forceHost)){
 	console.log('Please check the server host.')
 	process.exit(1)
 }
-if(program.matchOrder){
+if(config.matchOrder){
 	const provider = ['qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox']
-	const candidate = program.matchOrder.split(/\s*\W\s*/)
+	const candidate = config.matchOrder.split(/\s*\W\s*/)
 	if(candidate.some((key, index) => index != candidate.indexOf(key))){
 		console.log('Please check the duplication in match order.')
 		process.exit(1)
@@ -52,12 +47,12 @@ if(program.matchOrder){
 const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
-const port = program.port || 8080
-let allow = (program.strict ? ['music.163.com', 'music.126.net'] : [''])
+const port = config.port
+let allow = (config.strict ? ['music.163.com', 'music.126.net'] : [''])
 let deny = ['music.httpdns.c.163.com', '223.252.199.66', '223.252.199.67']
 
-global.proxy = program.proxyUrl ? parse(program.proxyUrl) : null
-global.hosts = {}, hook.host.forEach(host => global.hosts[host] = program.forceHost)
+global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
+global.hosts = {}, hook.host.forEach(host => global.hosts[host] = config.forceHost)
 global.ban = host => (!allow.some(domain => host.endsWith(domain)) || deny.includes(host))
 
 const dns = host =>
