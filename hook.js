@@ -1,15 +1,15 @@
 const parse = require('url').parse
-const request = require('./request')
 const crypto = require('./crypto')
+const request = require('./request')
 const match = require('./provider/match')
 
 const hook = {
 	http: {
-		before: () => Promise.resolve(),
-		after: () => Promise.resolve(),
+		before: () => {},
+		after: () => {},
 	},
 	https: {
-		before: () => Promise.resolve()
+		before: () => {}
 	},
 	target: {
 		host: [],

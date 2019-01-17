@@ -99,8 +99,12 @@ const proxy = {
 		connect: ctx => new Promise((resolve, reject) => {
 			if(ctx.decision === 'close') return reject(ctx.error = ctx.decision)
 			const req = ctx.req
+			const socket = ctx.socket
 			const head = ctx.head
 			const url = parse('https://' + req.url)
+			socket.on('error', error => {
+				return reject(ctx.error = error)
+			})
 			if(global.proxy){
 				const options = request.configure(req.method, url, req.headers)
 				request.create(proxy)(options)
