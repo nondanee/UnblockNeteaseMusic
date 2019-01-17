@@ -133,13 +133,13 @@ const proxy = {
 			const message = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
 			socket.write(message)
 		},
-		pipe: ctx => {
+		pipe: ctx => new Promise((resolve, reject) => {
 			if(ctx.decision === 'blank') return reject(ctx.error = ctx.decision)
 			const socket = ctx.socket
 			const proxySocket = ctx.proxySocket
 			socket.pipe(proxySocket)
 			proxySocket.pipe(socket)
-		},
+		}),
 		close: ctx => {
 			ctx.socket.end()
 		}
