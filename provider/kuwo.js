@@ -14,8 +14,9 @@ const search = info => {
 		'ARTIST=' + encodeURIComponent(info.artists[0].name)
 
 	return request('GET', url)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body.replace(/\'/g, '"').replace('try {var jsondata =', '').replace(';song(jsondata);}catch(e){jsonError(e)}', ''))
+	.then(response => response.body())
+	.then(body => {
+		let jsonBody = JSON.parse(body.replace(/\'/g, '"').replace('try {var jsondata =', '').replace(';song(jsondata);}catch(e){jsonError(e)}', ''))
 		let chief = jsonBody['abslist'][0]
 		if(chief)
 			return chief.MUSICRID.split('_').pop()
@@ -31,9 +32,10 @@ const track = id => {
 		// 'type=convert_url&format=aac|mp3|wma&response=url&rid=MUSIC_' + id
 
 	return request('GET', url)
-	.then(response => {
-		if(response.body.startsWith('http'))
-			return response.body
+	.then(response => response.body())
+	.then(body => {
+		if(body.startsWith('http'))
+			return body
 		else
 			return Promise.reject()
 	})

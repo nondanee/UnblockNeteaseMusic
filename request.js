@@ -28,7 +28,7 @@ const configure = (method, url, headers) => {
 	return options
 }
 
-const request = (method, url, headers, body, raw) => {
+const request = (method, url, headers, body) => {
 	url = parse(url)
 	let options = configure(method, url, Object.assign({
 		'host': url.hostname,
@@ -57,24 +57,29 @@ const request = (method, url, headers, body, raw) => {
 		.on('error', error => reject(error))
 		.end(body)
 	})
-	.then(response => 
-		read(response, raw).then(body => ({status: response.statusCode, headers: response.headers, body: body}))
+	.then(response => {
+		if([201, 301, 302, 303, 307, 308].includes(response.statusCode))
+			return request(method, url.resolve(response.headers.location), headers, body)
+		else 
+			return Object.assign(response, {url: url, body: raw => read(response, raw), json: () => json(response), jsonp: () => jsonp(response)})
+		}
 	)
 }
 
-const read = (connect, raw) => {
-	return new Promise((resolve, reject) => {
-		let chunks = []
-		connect
-		.on('data', chunk => chunks.push(chunk))
-		.on('end', () => {
-			let buffer = Buffer.concat(chunks)
-			buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer	
-			resolve(raw == true ? buffer : buffer.toString())
-		})
-		.on('error', error => reject(error))
+const read = (connect, raw) => new Promise((resolve, reject) => {
+	let chunks = []
+	connect
+	.on('data', chunk => chunks.push(chunk))
+	.on('end', () => {
+		let buffer = Buffer.concat(chunks)
+		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer	
+		resolve(raw == true ? buffer : buffer.toString())
 	})
-}
+	.on('error', error => reject(error))
+})
+
+const json = connect => read(connect, false).then(body => JSON.parse(body))	
+const jsonp = connect => read(connect, false).then(body => JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length)))
 
 request.read = read
 request.create = create

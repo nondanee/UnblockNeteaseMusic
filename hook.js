@@ -185,11 +185,9 @@ const tryCollect = ctx => {
 	const req = ctx.req
 	const netease = ctx.netease
 	let trackId = JSON.parse(netease.param.trackIds)[0]
-	return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
-		`trackIds=[${trackId},${trackId}]&pid=${netease.param.pid}&op=${netease.param.op}`
-	)
-	.then(response => {
-		netease.jsonBody = JSON.parse(response.body)
+	return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${netease.param.pid}&op=${netease.param.op}`).then(response => response.json())
+	.then(jsonBody => {
+		netease.jsonBody = jsonBody
 	})
 	.catch(() => {})
 }
@@ -198,20 +196,17 @@ const tryLike = ctx => {
 	const req = ctx.req
 	const netease = ctx.netease
 	let pid, userId, trackId = netease.param.trackId
-	return request('GET', 'http://music.163.com/api/v1/user/info', req.headers)
-	.then(response => {
-		userId = JSON.parse(response.body).userPoint.userId
-		return request('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers)
+	return request('GET', 'http://music.163.com/api/v1/user/info', req.headers).then(response => response.json())
+	.then(jsonBody => {
+		userId = jsonBody.userPoint.userId
+		return request('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers).then(response => response.json())
 	})
-	.then(response => {
-		pid = JSON.parse(response.body).playlist[0].id
-		return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers,
-			`trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`
-		)
+	.then(jsonBody => {
+		pid = jsonBody.playlist[0].id
+		return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`).then(response => response.json())
 	})
-	.then(response => {
-		let body = JSON.parse(response.body)
-		if(body.code == 200 || body.code == 502){
+	.then(jsonBody => {
+		if(jsonBody.code == 200 || jsonBody.code == 502){
 			netease.jsonBody = {code: 200, playlistId: pid}
 		}
 	})

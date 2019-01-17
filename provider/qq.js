@@ -25,8 +25,8 @@ const search = info => {
 		'&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
 
 	return request('GET', url)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
+	.then(response => response.jsonp())
+	.then(jsonBody => {
 		let chief = jsonBody['data']['song']['list'][0]
 		if(chief)
 			return chief['file']['media_mid']
@@ -49,12 +49,12 @@ const ticket = () => {
 		'&filename=C400'+ id + '.m4a&guid=7332953645'
 
 	return request('GET', url, headers)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
+	.then(response => response.jsonp())
+	.then(jsonBody => {
 		return jsonBody.data.items[0].vkey
 	})
 	.then(vkey => {
-		return vkey ? vkey : request('GET', 'https://public.nondanee.tk/qq/ticket').then(response => response.body)
+		return vkey ? vkey : request('GET', 'https://public.nondanee.tk/qq/ticket').then(response => response.body())
 	})
 
 	// let url = 'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' + 

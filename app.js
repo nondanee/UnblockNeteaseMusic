@@ -55,7 +55,7 @@ const dns = host =>
 	new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
 
 const httpdns = host =>
-	require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => JSON.parse(response.body).dns[0].ips)
+	require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns[0].ips)
 
 Promise.all([httpdns(hook.target.host[0])].concat(hook.target.host.map(host => dns(host))))
 .then(result => {

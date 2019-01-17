@@ -11,8 +11,9 @@ const find = id => {
 		'https://music.163.com/m/song?id=' + id
 
 	return request('GET', url, headers)
-	.then(response => {
-		let part = response.body.match(/window\.REDUX_STATE = ([^;]+);/)[1]
+	.then(response => response.body())
+	.then(body => {
+		let part = body.match(/window\.REDUX_STATE = ([^;]+);/)[1]
 		let jsonBody = JSON.parse(part)
 		let info = jsonBody['Song']['info']['song']
 		info.keyword = info.name + ' - ' + info.artists[0].name

@@ -7,8 +7,8 @@ const search = info => {
 		'word=' + encodeURIComponent(info.keyword) + '&version=2&from=0'
 
 	return request('GET', url)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body)
+	.then(response => response.json())
+	.then(jsonBody => {
 		if('data' in jsonBody){
 			let chief = jsonBody['data']['song'][0]
 			return chief.songid
@@ -25,8 +25,8 @@ const track = id => {
 		'songIds=' + id + '&type=mp3'
 
 	return request('GET', url)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body)
+	.then(response => response.json())
+	.then(jsonBody => {
 		if('songList' in jsonBody.data)
 			return jsonBody.data.songList[0].songLink
 		else

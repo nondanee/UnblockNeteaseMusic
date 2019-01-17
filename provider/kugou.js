@@ -8,8 +8,8 @@ const search = info => {
 		'keyword=' + encodeURIComponent(info.keyword) + '&page=1'
 
 	return request('GET', url)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body)
+	.then(response => response.json())
+	.then(jsonBody => {
 		let chief = jsonBody['data']['lists'][0]
 		if(chief)
 			return chief.FileHash
@@ -24,8 +24,8 @@ const track = id => {
 		'&hash=' + id  + '&key=' + crypto.md5(id + 'kgcloudv2')
 
 	return request('GET', url)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body)
+	.then(response => response.json())
+	.then(jsonBody => {
 		if(jsonBody.status == '1')
 			return jsonBody.url
 		else

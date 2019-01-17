@@ -40,14 +40,14 @@ const check = url => {
 	let song = {size: 0, url: null, md5: null}
 	return request('HEAD', url)
 	.then(response => {
-		if(response.status != 200) return song
+		if(response.statusCode != 200) return song
 		if(url.includes('qq.com'))
 			song.md5 = response.headers['server-md5']
 		else if(url.includes('xiami.net') || url.includes('qianqian.com'))
 			song.md5 = response.headers['etag'].replace(/"/g, '').toLowerCase()
 		song.md5 = (song.md5) ? song.md5 : crypto.md5(url) //placeholder
 		song.size = parseInt(response.headers['content-length']) || 0
-		song.url = url
+		song.url = response.url.href
 		return song
 	})
 	.catch(() => {

@@ -21,8 +21,9 @@ const search = info => {
 		'search_input=' + encodeURIComponent(keyword) + '&sin=0&ein=30'
 
 	return request('GET', url, headers)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body.replace(/(\')/g, '"'))
+	.then(response => response.body())
+	.then(body => {
+		let jsonBody = JSON.parse(body.replace(/(\')/g, '"'))
 		let chief = jsonBody['itemlist'][0]
 		if(chief)
 			return chief.songid
@@ -38,8 +39,8 @@ const track = id => {
 		'channel_id=-1&_=' + (new Date).getTime()
 
 	return request('GET', url, headers)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body.slice(response.body.indexOf('(') + 1, -')'.length))
+	.then(response => response.jsonp())
+	.then(jsonBody => {
 		let songUrl = jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl
 		if(songUrl)
 			return songUrl

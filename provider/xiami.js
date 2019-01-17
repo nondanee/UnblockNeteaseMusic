@@ -46,8 +46,8 @@ const search = info => {
 			referer: 'https://www.xiami.com/search?key=' + encodeURIComponent(info.keyword),
 			cookie: Object.keys(cookie).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(cookie[key])).join('; ')
 		})
-		.then(response => {
-			let jsonBody = JSON.parse(response.body)
+		.then(response => response.json())
+		.then(jsonBody => {
 			let chief = jsonBody['result']['data']['songs'][0]
 			if(chief)
 				return chief.songId
@@ -84,8 +84,8 @@ const track = id => {
 		'/object_name/default/object_id/0/cat/json'
 
 	return request('GET', url, headers)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body)
+	.then(response => response.json())
+	.then(jsonBody => {
 		if(jsonBody.data.trackList == null){
 			return Promise.reject()
 		}
@@ -100,7 +100,7 @@ const track = id => {
 const improve = origin => {
 	let updated = origin.replace('m128', 'm320')
 	return request('HEAD', updated)
-	.then(response => response.status == 200 ? updated : origin)
+	.then(response => response.statusCode == 200 ? updated : origin)
 	.catch(() => origin)
 }
 

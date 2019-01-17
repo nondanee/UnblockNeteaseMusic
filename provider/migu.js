@@ -7,8 +7,8 @@ const search = info => {
 		'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1'
 
 	return request('GET', url)
-	.then(response => {
-		let jsonBody = JSON.parse(response.body)
+	.then(response => response.json())
+	.then(jsonBody => {
 		if('musics' in jsonBody){
 			let chief = jsonBody['musics'][0]
 			return chief.mp3
