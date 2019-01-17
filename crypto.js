@@ -1,6 +1,7 @@
 'use strict'
 
 const crypto = require('crypto')
+const parse = require('url').parse
 const eapiKey = 'e82ckenh8dichen8'
 const linuxapiKey = 'rFgB&h#%2?^eDg:Q'
 
@@ -19,19 +20,27 @@ module.exports = {
 		encrypt: buffer => encrypt(buffer, eapiKey),
 		decrypt: buffer => decrypt(buffer, eapiKey),
 		encryptRequest: (url, object) => {
+			url = parse(url)
 			let text = JSON.stringify(object)
-			let message = `nobody${url}use${text}md5forencrypt`
+			let message = `nobody${url.path}use${text}md5forencrypt`
 			let digest = crypto.createHash('md5').update(message).digest('hex')
-			let data = `${url}-36cd479b6b5-${text}-36cd479b6b5-${digest}`
-			return encrypt(Buffer.from(data), eapiKey).toString('hex').toUpperCase()
+			let data = `${url.path}-36cd479b6b5-${text}-36cd479b6b5-${digest}`
+			return {
+				url: url.href.replace(/\w*api/, 'eapi'),
+				body: 'params=' + encrypt(Buffer.from(data), eapiKey).toString('hex').toUpperCase()
+			}
 		}
 	},
 	linuxapi: {
 		encrypt: buffer => encrypt(buffer, linuxapiKey),
 		decrypt: buffer => decrypt(buffer, linuxapiKey),
-		encryptRequest: object => {
-			let text = JSON.stringify(object)
-			return encrypt(Buffer.from(text), linuxapiKey).toString('hex').toUpperCase()
+		encryptRequest: (url, object) => {
+			url = parse(url)
+			let text = JSON.stringify(Object.assign(object, {url: url.href}))
+			return {
+				url: url.resolve('/api/linux/forward'),
+				body: 'eparams=' + encrypt(Buffer.from(text), linuxapiKey).toString('hex').toUpperCase()
+			}
 		}
 	},
 	base64: {

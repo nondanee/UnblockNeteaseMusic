@@ -31,7 +31,7 @@ const configure = (method, url, headers) => {
 const request = (method, url, headers, body, raw) => {
 	url = parse(url)
 	let options = configure(method, url, Object.assign({
-		'host': url.host,
+		'host': url.hostname,
 		'accept': 'application/json, text/plain, */*',
 		'accept-encoding': 'gzip, deflate',
 		'accept-language': 'zh-CN,zh;q=0.9',

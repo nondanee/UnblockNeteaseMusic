@@ -3,12 +3,10 @@ const net = require('net')
 const parse = require('url').parse
 
 const hook = require('./hook')
-const crypto = require('./crypto')
 const request = require('./request')
 
-module.exports = http.createServer()
+const server = http.createServer()
 .on('request', (req, res) => {
-	// pac rule
 	if(req.url == '/proxy.pac'){
 		let url = parse('http://' + req.headers.host)
 		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
@@ -21,106 +19,127 @@ module.exports = http.createServer()
 			}
 		`)
 	}
-	// packaged song url
-	else if(req.url.includes('package')){
-		try{
-			let data = req.url.split('package/').pop().split('/')
-			let url = parse(crypto.base64.decode(data[0]))
-			let id = data[1].replace('.mp3', '')
-
-			req.headers['host'] = url.host
-			let options = request.configure(req.method, url, req.headers)
-			request.create(url)(options)
-			.on('response', proxyRes => {
-				res.writeHead(proxyRes.statusCode, proxyRes.headers)
-				proxyRes.pipe(res)
-			})
-			.on('error', () => {
-				res.end()
-			})
-			.end()
-		}
-		catch(error){
-			res.writeHead(400)
-			res.end()
-		}
-	}
-	// proxy 
 	else{
-		let url = parse(req.url.startsWith('http://') ? req.url : 'http://music.163.com' + req.url)
-		console.log('HTTP >', url.protocol + '//' + url.host)
-		const ctx = {res: res, req: req, url: url, query: {}}
+		const ctx = {res, req}
 		Promise.resolve()
-		.then(() => hook.before(ctx))
-		.then(() => access(ctx))
-		.then(() => hook.after(ctx))
-		.then(() => finish(ctx))
-		.catch(() => terminate(ctx))
+		.then(() => hook.http.before(ctx))
+		.then(() => proxy.filter(ctx))
+		.then(() => proxy.log(ctx))
+		.then(() => proxy.mitm.send(ctx))
+		.then(() => hook.http.after(ctx))
+		.then(() => proxy.mitm.receive(ctx))
+		.catch(() => proxy.mitm.close(ctx))
 	}
 })
 .on('connect', (req, socket, head) => {
-	let url = parse('https://' + req.url)
-	let handshake = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
-	console.log('HTTPS >', url.href.slice(0, -1))
-
-	socket.on('error', () => {
-		socket.end()
-	})
-	if(global.ban && ban(url.hostname)){
-		socket.end()
-	}
-	else if(hook.host.includes(url.hostname)){
-		socket.write(handshake)
-		socket.end()
-	}
-	else if(global.proxy){
-		let options = request.configure(req.method, url, req.headers)
-		request.create(proxy)(options)
-		.on('connect', (_, proxySocket) => {
-			socket.write(handshake)
-			socket.pipe(proxySocket)
-			proxySocket.pipe(socket)
-		})
-		.on('error', () => {
-			socket.end()
-		})
-		.end()
-	}
-	else{
-		let proxySocket = net.connect(url.port || 443, request.translate(url.hostname))
-		.on('connect', () => {
-			socket.write(handshake)
-			proxySocket.write(head)
-			socket.pipe(proxySocket)
-			proxySocket.pipe(socket)
-		})
-		.on('error', () => {
-			socket.end()
-		})
-	}
+	const ctx = {req, socket, head}
+	Promise.resolve()
+	.then(() => hook.https.before(ctx))
+	.then(() => proxy.filter(ctx))
+	.then(() => proxy.log(ctx))
+	.then(() => proxy.tunnel.connect(ctx))
+	.then(() => proxy.tunnel.handshake(ctx))
+	.then(() => proxy.tunnel.pipe(ctx))
+	.catch(() => proxy.tunnel.close(ctx))
 })
 
-const access = ctx => {
-	return new Promise((resolve, reject) => {
-		if(global.ban && ban(ctx.url.hostname)) return reject()
-		let options = request.configure(ctx.req.method, ctx.url, ctx.req.headers)
-		ctx.proxyReq = request.create(ctx.url)(options)
-		.on('response', proxyRes => {
-			ctx.proxyRes = proxyRes, resolve()
-		})
-		.on('error', error => {
-			ctx.error = error, reject()
-		})
-		ctx.req.readable ? ctx.req.pipe(ctx.proxyReq) : ctx.proxyReq.end(ctx.req.body)			
-	})
+server.whitelist = ['.*']
+server.blacklist  = ['.*']
+
+const proxy = {
+	log: ctx => {
+		const mark = {close: '|', blank: '-', proxy: '>'}[ctx.decision] || '>'
+		if(ctx.socket)
+			console.log('TUNNEL', mark, ctx.req.url)
+		else
+			console.log('MITM', mark, parse(ctx.req.url).host)
+	},
+	filter: ctx => {
+		const url = parse(ctx.req.url)
+		if(!ctx.decision){
+			try{
+				let allow = server.whitelist.some(pattern => url.href.search(new RegExp(pattern, 'g')) != -1)
+				let deny = server.blacklist.some(pattern => url.href.search(new RegExp(pattern, 'g')) != -1)
+				// console.log('allow', allow, 'deny', deny)
+				if(!allow && deny){	
+					ctx.decision = 'close'
+				}
+			}
+			catch(error){
+				ctx.error = error
+			}
+		}
+	},
+	mitm: {
+		send: ctx => new Promise((resolve, reject) => {
+			if(ctx.decision === 'close') return reject(ctx.error = ctx.decision)
+			const req = ctx.req
+			const url = parse(req.url)
+			const options = request.configure(req.method, url, req.headers)
+			ctx.proxyReq = request.create(url)(options)
+			.on('response', proxyRes => {
+				return resolve(ctx.proxyRes = proxyRes)
+			})
+			.on('error', error => {
+				return reject(ctx.error = error)
+			})
+			req.readable ? req.pipe(ctx.proxyReq) : ctx.proxyReq.end(req.body)
+		}),
+		receive: ctx => {
+			const res = ctx.res
+			const proxyRes = ctx.proxyRes
+			res.writeHead(proxyRes.statusCode, proxyRes.headers)
+			proxyRes.readable ? proxyRes.pipe(res) : res.end(proxyRes.body)
+		},
+		close: ctx => {
+			ctx.res.socket.end()
+		}
+	},
+	tunnel: {
+		connect: ctx => new Promise((resolve, reject) => {
+			if(ctx.decision === 'close') return reject(ctx.error = ctx.decision)
+			const req = ctx.req
+			const head = ctx.head
+			const url = parse('https://' + req.url)
+			if(global.proxy){
+				const options = request.configure(req.method, url, req.headers)
+				request.create(proxy)(options)
+				.on('connect', (_, proxySocket) => {
+					return resolve(ctx.proxySocket = proxySocket)
+				})
+				.on('error', error => {
+					return reject(ctx.error = error)
+				})
+				.end()
+			}
+			else{
+				const proxySocket = net.connect(url.port || 443, request.translate(url.hostname))
+				.on('connect', () => {
+					proxySocket.write(head)
+					return resolve(ctx.proxySocket = proxySocket)
+				})
+				.on('error', error => {
+					return reject(ctx.error = error)
+				})
+			}
+		}),
+		handshake: ctx => {
+			const req = ctx.req
+			const socket = ctx.socket
+			const message = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
+			socket.write(message)
+		},
+		pipe: ctx => {
+			if(ctx.decision === 'blank') return reject(ctx.error = ctx.decision)
+			const socket = ctx.socket
+			const proxySocket = ctx.proxySocket
+			socket.pipe(proxySocket)
+			proxySocket.pipe(socket)
+		},
+		close: ctx => {
+			ctx.socket.end()
+		}
+	}
 }
 
-const finish = ctx => {
-	ctx.res.writeHead(ctx.proxyRes.statusCode, ctx.proxyRes.headers)
-	ctx.proxyRes.readable ? ctx.proxyRes.pipe(ctx.res) : ctx.res.end(ctx.proxyRes.body)
-}
-
-const terminate = ctx => {
-	// console.log('ERROR >', ctx.error)
-	ctx.res.socket.end()
-}
+module.exports = server

@@ -46,12 +46,10 @@ const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
 const port = config.port
-let allow = (config.strict ? ['music.163.com', 'music.126.net'] : [''])
-let deny = ['music.httpdns.c.163.com', '223.252.199.66', '223.252.199.67']
 
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
-global.hosts = {}, hook.host.forEach(host => global.hosts[host] = config.forceHost)
-global.ban = host => (!allow.some(domain => host.endsWith(domain)) || deny.includes(host))
+global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
+config.strict ? server.whitelist = ['music.163.com', 'music.126.net'] : server.blanklist = []
 
 const dns = host =>
 	new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
@@ -59,10 +57,12 @@ const dns = host =>
 const httpdns = host =>
 	require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => JSON.parse(response.body).dns[0].ips)
 
-Promise.all([httpdns(hook.host[0])].concat(hook.host.map(host => dns(host))))
+Promise.all([httpdns(hook.target.host[0])].concat(hook.target.host.map(host => dns(host))))
 .then(result => {
-	result.forEach(set => deny = deny.concat(set))
-	deny = Array.from(new Set(deny))
+	let extra = []
+	result.forEach(set => extra = extra.concat(set))
+	extra = Array.from(new Set(extra))
+	hook.target.host = hook.target.host.concat(extra)
 	server.listen(port)
 	console.log(`Server running @ http://0.0.0.0:${port}`)
 })
