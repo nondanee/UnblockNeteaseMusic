@@ -48,7 +48,7 @@ Options:
 
 ## 使用
 
-**若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s`  限制代理范围 (需使用 PAC 或 hosts)，或启用 HTTP Basic Authentication `-t <name>:<password>` 设置代理用户名密码，以防代理被他人滥用**
+**若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s`  限制代理范围 (需使用 PAC 或 hosts)，~~或启用 Proxy Authentication `-t <name>:<password>` 设置代理用户名密码~~ (目前密码认证在 Windows 客户端设置和 macOS 系统设置都无法生效，请不要使用)，以防代理被他人滥用**
 
 支持 Windows 客户端，UWP 客户端，Linux 客户端，macOS 客户端和 Android 客户端
 
