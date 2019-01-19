@@ -6,11 +6,13 @@
 
 ## 特性
 
-- 使用QQ/虾米/百度/酷狗/酷我/咕咪/JOOX音源替换变灰歌曲链接(默认仅启用前三，可通过 `-o` 设置)
-- 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器IP，支持设置上游HTTP/HTTPS代理
-- 完整的流量代理功能(HTTP/HTTPS)，可直接作为系统代理(同时支持PAC)
+- 使用 QQ / 虾米 / 百度 / 酷狗 / 酷我 / 咕咪 / JOOX 音源替换变灰歌曲链接 (默认仅启用前三，可通过 `-o` 设置)
+- 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
+- 完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
 ## 运行
+
+从源码运行
 
 ```
 $ node app.js
@@ -34,56 +36,57 @@ Usage: unblockneteasemusic [options] [value ...]
 
 Options:
 
-  -V, --version                 output the version number
+  -v, --version                 output the version number
   -p, --port <port>             specify server port
-  -u, --proxy-url <url>         request through another proxy
+  -u, --proxy-url <url>         request through upstream proxy
   -f, --force-host <host>       force the netease server ip
   -o, --match-order <name,...>  set priority of sources
+  -t, --token <token>           set up http basic authentication
   -s, --strict                  enable proxy limitation
   -h, --help                    output usage information
 ```
 
-### 使用
+## 使用
 
-若将服务部署在公网，强烈建议使用代理规则或 hosts，并启用严格模式 `-s` (此模式下仅放行网易云音乐所属域名的请求) 限制代理范围，以防代理被他人滥用
+**若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s`  限制代理范围 (需使用 PAC 或 hosts)，或启用 HTTP Basic Authentication `-t <name>:<password>` 设置代理用户名密码，以防代理被他人滥用**
 
-> 支持Windows客户端，UWP客户端，Linux客户端，Mac客户端和Android客户端 (Mac客户端和Android客户端默认请求HTTPS接口，代理后端对网易云的HTTPS接口连接都会返回空数据，客户端将自动降级使用HTTP接口)
->
-> 不支持iOS客户端，因Apple强制要求使用HTTPS所以无法降级，~~要支持只能自签证书做MITM了~~ ，看其它项目提到用Surge，Shadowrocket 可以转发，有兴趣可以试试
->
-> 移除了预下载和ffmpeg转码的相关逻辑以加快返回速度，仅酷我音源是aac格式(默认未开启)应该会下载失败，其它音源均为mp3格式不受影响
+支持 Windows 客户端，UWP 客户端，Linux 客户端，macOS 客户端和 Android 客户端
 
-#### 方法1. 修改hosts
+目前除 UWP 外其它客户端都默认请求 HTTPS 接口，本代理对网易云所有 HTTPS API 连接返回空数据 (网易云网页版会被屏蔽)，促使客户端降级使用HTTP接口 (降级有时不能自动触发，若提示 "网络不给力" 请切换页面标签试试)
 
-向hosts文件添加两条规则
+测试发现 iOS 客户端设置代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级，不过播放音源地址需要 HTTPS，因此需要一个有可信任证书的 (公网)  HTTPS 接口来转发流量，无法直接使用 (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
+
+### 方法 1. 修改 hosts
+
+向 hosts 文件添加两条规则
 
 ```
 <Server IP> music.163.com
 <Server IP> interface.music.163.com
 ```
 
-> 使用此方法必须监听80端口 `-p 80` 
+> 使用此方法必须监听 80 端口 `-p 80` 
 >
-> **若在本机运行程序**，请指定网易云服务器IP `-f xxx.xxx.xxx.xxx` (可在修改hosts前通过 `ping music.163.com` 获得) **或** 使用代理 `-u http(s)://xxx.xxx.xxx.xxx:xxx`，以防请求死循环
+> **若在本机运行程序**，请指定网易云服务器 IP `-f xxx.xxx.xxx.xxx` (可在修改 hosts 前通过 `ping music.163.com` 获得) **或** 使用代理 `-u http(s)://xxx.xxx.xxx.xxx:xxx`，以防请求死循环
 >
-> **Android客户端下修改hosts无法使用**，原因和解决方法详见[云音乐安卓又搞事啦](https://jixun.moe/post/netease-android-hosts-bypass/)，[安卓免 root 绕过网易云音乐 IP 限制](https://jixun.moe/post/android-block-netease-without-root/)
+> **Android 客户端下修改 hosts 无法使用**，原因和解决方法详见[云音乐安卓又搞事啦](https://jixun.moe/post/netease-android-hosts-bypass/)，[安卓免 root 绕过网易云音乐 IP 限制](https://jixun.moe/post/android-block-netease-without-root/)
 
-#### 方法2. 设置代理
+### 方法 2. 设置代理
 
-> PAC自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
+> PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 >
 > 全局代理地址填写服务器地址和端口号即可
 
 | 平台    | 设置方法                         |
 | :------ | :------------------------------- |
-| Windows | 设置>工具>自定义代理（客户端内） |
-| UWP     | Windows设置>网络和Internet>代理  |
-| Linux   | 系统设置>网络>网络代理           |
-| macOS   | 系统偏好设置>网络>高级>代理      |
-| Android | WLAN>修改网络>高级选项>代理      |
-| iOS     | Surge / Shadowrocket 添加配置    |
+| Windows | 设置 > 工具 > 自定义代理 (客户端内) |
+| UWP     | Windows 设置 > 网络和 Internet > 代理  |
+| Linux   | 系统设置 > 网络 > 网络代理           |
+| macOS   | 系统偏好设置 > 网络 > 高级 > 代理      |
+| Android | WLAN > 修改网络 > 高级选项 > 代理      |
+| iOS     | Surge，Shadowrocket 等添加配置    |
 
-> UWP应用需要开启loopback才会使用系统代理，可借助[Fiddler](https://www.telerik.com/fiddler)，[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager)等工具
+> UWP 应用需要开启 loopback 才会使用系统代理，可借助 [Fiddler](https://www.telerik.com/fiddler)，[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager) 等工具
 
 > iOS Surge 配置
 > 
@@ -96,9 +99,9 @@ Options:
 > FINAL,DIRECT
 > ```
 
-#### ✳方法3. 调用接口
+### ✳方法 3. 调用接口
 
-> [编程层面] 作为依赖库使用 (在纠结要不要发布到NPM)
+> [编程层面] 作为依赖库使用 (在纠结要不要发布到 NPM)
 
 ```javascript
 const match = require('./UnblockNeteaseMusic')
@@ -120,31 +123,31 @@ match(557581404, ['qq', 'xiami', 'baidu']).then(song => console.log(song))
 
 ## 效果
 
-#### Windows客户端
+#### Windows 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/46274493-40ea7280-c58c-11e8-8065-8e04ddaa27cd.png" width="100%" alt="windows">
 
-#### UWP客户端
+#### UWP 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/46275283-f4546680-c58e-11e8-8041-16ee26b3dfbb.png" width="100%" alt="uwp">
 
-#### Linux客户端
+#### Linux 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/46274631-aa6a8100-c58c-11e8-89f8-e5da3564ac92.png" width="100%" alt="linux">
 
-#### macOS客户端
+#### macOS 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/46274674-d2f27b00-c58c-11e8-8ed8-6e0384a870c5.png" width="100%" alt="macos">
 
-#### Android客户端
+#### Android 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/46274600-96bf1a80-c58c-11e8-9210-9fc86ffd8557.png" width="40%" alt="android">
 
 ## 感谢
 
-感谢大佬们为逆向eapi所做的努力
+感谢大佬们为逆向 eapi 所做的努力
 
-使用的其它平台音源API出自
+使用的其它平台音源 API 出自
 
 [trazyn/ieaseMusic](https://github.com/trazyn/ieaseMusic)
 

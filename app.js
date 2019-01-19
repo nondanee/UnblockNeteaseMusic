@@ -9,9 +9,10 @@ try{
 	.version(package.version, '-v, --version')
 	.usage('[options] [value ...]')
 	.option('-p, --port <port>', 'specify server port')
-	.option('-u, --proxy-url <url>', 'request through another proxy')
+	.option('-u, --proxy-url <url>', 'request through upstream proxy')
 	.option('-f, --force-host <host>', 'force the netease server ip')
 	.option('-o, --match-order <name,...>', 'set priority of sources')
+	.option('-t, --token <token>', 'set up http basic authentication')
 	.option('-s, --strict', 'enable proxy limitation')
 	.parse(process.argv))
 }catch(error){}
@@ -41,6 +42,10 @@ if(config.matchOrder){
 	}
 	global.source = candidate
 }
+if(config.token && !/\S+:\S+/.test(config.token)){
+	console.log('Please check the authentication token.')
+	process.exit(1)
+}
 
 const parse = require('url').parse
 const hook = require('./hook')
@@ -50,6 +55,7 @@ const port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
 config.strict ? server.whitelist = ['music.163.com', 'music.126.net'] : server.blanklist = []
+server.authentication = config.token || null
 
 const dns = host =>
 	new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))

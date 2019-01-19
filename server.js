@@ -22,6 +22,7 @@ const server = http.createServer()
 	else{
 		const ctx = {res, req}
 		Promise.resolve()
+		.then(() => proxy.authenticate(ctx))
 		.then(() => hook.http.before(ctx))
 		.then(() => proxy.filter(ctx))
 		.then(() => proxy.log(ctx))
@@ -34,6 +35,7 @@ const server = http.createServer()
 .on('connect', (req, socket, head) => {
 	const ctx = {req, socket, head}
 	Promise.resolve()
+	.then(() => proxy.authenticate(ctx))
 	.then(() => hook.https.before(ctx))
 	.then(() => proxy.filter(ctx))
 	.then(() => proxy.log(ctx))
@@ -45,6 +47,7 @@ const server = http.createServer()
 
 server.whitelist = ['.*']
 server.blacklist  = ['.*']
+server.authentication = null
 
 const proxy = {
 	log: ctx => {
@@ -54,6 +57,19 @@ const proxy = {
 		else
 			console.log('MITM', mark, parse(ctx.req.url).host)
 	},
+	authenticate: ctx => {
+		const req = ctx.req
+		const res = ctx.res
+		const socket = ctx.socket
+		let credential = Buffer.from((req.headers['proxy-authorization'] || '').split(/\s+/).pop() || '', 'base64').toString()
+		if(server.authentication && credential != server.authentication){
+			if(socket)
+				socket.write('HTTP/1.1 407 Proxy Auth Required\r\nProxy-Authenticate: Basic realm="realm"\r\n\r\n')
+			else
+				res.writeHead(407, {'proxy-authenticate': 'Basic realm="realm"'})
+			return Promise.reject(ctx.error = 'authenticate')
+		}
+	},
 	filter: ctx => {
 		const url = parse(ctx.req.url)
 		if(!ctx.decision){
@@ -62,7 +78,7 @@ const proxy = {
 				let deny = server.blacklist.some(pattern => url.href.search(new RegExp(pattern, 'g')) != -1)
 				// console.log('allow', allow, 'deny', deny)
 				if(!allow && deny){	
-					ctx.decision = 'close'
+					return Promise.reject(ctx.error = 'filter')
 				}
 			}
 			catch(error){
