@@ -37,7 +37,7 @@ const token = () => {
 }
 
 const search = info => {
-	return cache(token, 'token')
+	return cache(token)
 	.then(cookie => {
 		const query = JSON.stringify({key: info.keyword, pagingVO: {page: 1, pageSize: 60}})
 		const message = cookie['xm_sg_tk'].split('_')[0] + '_xmMain_/api/search/searchSongs_' + query

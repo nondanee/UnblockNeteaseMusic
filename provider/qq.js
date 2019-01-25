@@ -79,7 +79,7 @@ const ticket = () => {
 }
 
 const track = id => {
-	return cache(ticket, 'vkey')
+	return cache(ticket)
 	.then(vkey => {
 		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com'][0]
 		// let songUrl = 
