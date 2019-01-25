@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const cache = require('./provider/cache')()
+const cache = require('./cache')
 const ticket = require('./provider/qq').ticket
 
 require('http').createServer().on('request', (req, res) => {

@@ -1,9 +1,8 @@
-const cache = require('./cache')()
+const cache = require('../cache')
 const crypto = require('../crypto')
 const request = require('../request')
 
 let headers = {
-	// 'cookie': 'user_from=2;XMPLAYER_addSongsToggler=0;XMPLAYER_isOpen=0;_xiamitoken=cb8bfadfe130abdbf5e2282c30f0b39a;',
 	'origin': 'http://www.xiami.com/',
 	'referer': 'http://www.xiami.com/'
 }
@@ -95,15 +94,14 @@ const track = id => {
 			return songUrl
 		}
 	})
+	.then(origin => {
+		let updated = origin.replace('m128', 'm320')
+		return request('HEAD', updated)
+		.then(response => response.statusCode == 200 ? updated : origin)
+		.catch(() => origin)
+	})
 }
 
-const improve = origin => {
-	let updated = origin.replace('m128', 'm320')
-	return request('HEAD', updated)
-	.then(response => response.statusCode == 200 ? updated : origin)
-	.catch(() => origin)
-}
-
-const check = info => cache(search, info).then(track).then(improve).catch(() => {})
+const check = info => cache(search, info).then(track).catch(() => {})
 
 module.exports = {check}

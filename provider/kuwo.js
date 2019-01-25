@@ -1,4 +1,4 @@
-const cache = require('./cache')()
+const cache = require('../cache')
 const request = require('../request')
 
 const search = info => {
