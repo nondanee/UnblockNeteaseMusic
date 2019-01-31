@@ -36,7 +36,7 @@ module.exports = {
 		decrypt: buffer => decrypt(buffer, linuxapiKey),
 		encryptRequest: (url, object) => {
 			url = parse(url)
-			let text = JSON.stringify(Object.assign(object, {url: url.href}))
+			let text = JSON.stringify({method: 'POST', url: url.href, params: object})
 			return {
 				url: url.resolve('/api/linux/forward'),
 				body: 'eparams=' + encrypt(Buffer.from(text), linuxapiKey).toString('hex').toUpperCase()
