@@ -34,6 +34,7 @@ hook.target.path = [
 	'/api/artist/privilege',
 	'/api/album/privilege',
 	'/api/v1/artist',
+	'/api/v1/artist/songs',
 	'/api/v1/album',
 	'/api/playlist/privilege',
 	'/api/song/enhance/player/url',
