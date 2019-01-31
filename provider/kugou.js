@@ -1,4 +1,5 @@
 const cache = require('../cache')
+const insure = require('./insure')
 const crypto = require('../crypto')
 const request = require('../request')
 
@@ -10,12 +11,13 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		let chief = jsonBody['data']['lists'][0]
-		if(chief)
-			return chief.FileHash
+		let matched = jsonBody.data.lists[0]
+		if(matched)
+			return matched.FileHash
 		else
 			return Promise.reject()
 	})
+	.catch(() => insure().kugou.search(info))
 }
 
 const track = id => {
@@ -35,4 +37,4 @@ const track = id => {
 
 const check = info => cache(search, info).then(track).catch(() => {})
 
-module.exports = {check}
+module.exports = {check, search}

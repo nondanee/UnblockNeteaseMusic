@@ -1,4 +1,5 @@
 const cache = require('../cache')
+const insure = require('./insure')
 const request = require('../request')
 
 let headers = {
@@ -27,9 +28,9 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		let chief = jsonBody['data']['song']['list'][0]
-		if(chief)
-			return chief['file']['media_mid']
+		let matched = jsonBody.data.song.list[0]
+		if(matched)
+			return matched.file.media_mid
 		else
 			return Promise.reject()
 	})
@@ -51,11 +52,13 @@ const ticket = () => {
 	return request('GET', url, headers)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		return jsonBody.data.items[0].vkey
+		let vkey = jsonBody.data.items[0].vkey
+		if(vkey)
+			return vkey
+		else
+			return Promise.reject()
 	})
-	.then(vkey => {
-		return vkey ? vkey : request('GET', 'https://public.nondanee.tk/qq/ticket').then(response => response.body())
-	})
+	.catch(() => insure().qq.ticket())
 
 	// let url = 'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' + 
 	// 	encodeURIComponent(JSON.stringify({

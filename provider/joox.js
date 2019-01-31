@@ -1,4 +1,5 @@
 const cache = require('../cache')
+const insure = require('./insure')
 const request = require('../request')
 
 let headers = {
@@ -24,9 +25,9 @@ const search = info => {
 	.then(response => response.body())
 	.then(body => {
 		let jsonBody = JSON.parse(body.replace(/(\')/g, '"'))
-		let chief = jsonBody['itemlist'][0]
-		if(chief)
-			return chief.songid
+		let matched = jsonBody.itemlist[0]
+		if(matched)
+			return matched.songid
 		else
 			return Promise.reject()
 	})
@@ -47,8 +48,9 @@ const track = id => {
 		else
 			return Promise.reject()
 	})
+	.catch(() => insure().joox.track(id))
 }
 
 const check = info => cache(search, info).then(track).catch(() => {})
 
-module.exports = {check}
+module.exports = {check, track}

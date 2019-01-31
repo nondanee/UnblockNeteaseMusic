@@ -10,8 +10,8 @@ const search = info => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		if('musics' in jsonBody){
-			let chief = jsonBody['musics'][0]
-			return chief.mp3
+			let matched = jsonBody.musics[0]
+			return matched.mp3
 		}
 		else{
 			return Promise.reject()

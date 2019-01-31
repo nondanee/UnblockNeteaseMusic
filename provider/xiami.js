@@ -1,4 +1,5 @@
 const cache = require('../cache')
+const insure = require('./insure')
 const crypto = require('../crypto')
 const request = require('../request')
 
@@ -47,9 +48,9 @@ const search = info => {
 		})
 		.then(response => response.json())
 		.then(jsonBody => {
-			let chief = jsonBody['result']['data']['songs'][0]
-			if(chief)
-				return chief.songId
+			let matched = jsonBody.result.data.songs[0]
+			if(matched)
+				return matched.songId
 			else
 				return Promise.reject()
 		})
@@ -65,12 +66,12 @@ const search = info => {
 // 	return request('GET', url, headers)
 // 	.then(response => {
 // 		let jsonBody = JSON.parse(response.body.slice('jsonp154('.length, -')'.length))
-// 		let chief = jsonBody['data']['songs'][0]
-// 		if(chief){
-// 			if(chief.listen_file)
-// 				return chief.listen_file
+// 		let matched = jsonBody.data.songs[0]
+// 		if(matched){
+// 			if(matched.listen_file)
+// 				return matched.listen_file
 // 			else
-// 				return chief.song_id
+// 				return matched.song_id
 // 		}
 // 		else
 // 			return Promise.reject()
@@ -100,8 +101,9 @@ const track = id => {
 		.then(response => response.statusCode == 200 ? updated : origin)
 		.catch(() => origin)
 	})
+	.catch(() => insure().xiami.track(id))
 }
 
 const check = info => cache(search, info).then(track).catch(() => {})
 
-module.exports = {check}
+module.exports = {check, track}

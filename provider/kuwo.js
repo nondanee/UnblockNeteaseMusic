@@ -1,4 +1,5 @@
 const cache = require('../cache')
+const insure = require('./insure')
 const request = require('../request')
 
 const search = info => {
@@ -17,9 +18,9 @@ const search = info => {
 	.then(response => response.body())
 	.then(body => {
 		let jsonBody = JSON.parse(body.replace(/\'/g, '"').replace('try {var jsondata =', '').replace(';song(jsondata);}catch(e){jsonError(e)}', ''))
-		let chief = jsonBody['abslist'][0]
-		if(chief)
-			return chief.MUSICRID.split('_').pop()
+		let matched = jsonBody.abslist[0]
+		if(matched)
+			return matched.MUSICRID.split('_').pop()
 		else
 			return Promise.reject()
 	})
@@ -39,8 +40,9 @@ const track = id => {
 		else
 			return Promise.reject()
 	})
+	.catch(() => insure().kuwo.track(id))
 }
 
 const check = info => cache(search, info).then(track).catch(() => {})
 
-module.exports = {check}
+module.exports = {check, track}

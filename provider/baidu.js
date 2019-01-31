@@ -10,8 +10,8 @@ const search = info => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		if('data' in jsonBody){
-			let chief = jsonBody['data']['song'][0]
-			return chief.songid
+			let matched = jsonBody.data.song[0]
+			return matched.songid
 		}
 		else{
 			return Promise.reject()
