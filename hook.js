@@ -22,7 +22,8 @@ hook.target.host = [
 	'interface.music.163.com',
 	'apm.music.163.com',
 	'mam.netease.com',
-	'clientlog.music.163.com'
+	// 'crash.163.com',
+	// 'clientlog.music.163.com'
 ]
 
 hook.target.path = [
