@@ -1,4 +1,5 @@
 const cache = require('../cache')
+const insure = require('./insure')
 const request = require('../request')
 
 const search = info => {
@@ -32,6 +33,7 @@ const track = id => {
 		else
 			return Promise.reject()
 	})
+	.catch(() => insure().baidu.track(id))
 }
 
 const check = info => cache(search, info).then(track).catch(() => {})

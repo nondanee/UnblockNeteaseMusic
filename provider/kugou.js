@@ -1,6 +1,5 @@
 const cache = require('../cache')
 const insure = require('./insure')
-const crypto = require('../crypto')
 const request = require('../request')
 
 const search = info => {
@@ -22,14 +21,13 @@ const search = info => {
 
 const track = id => {
 	let url =
-		'http://trackercdnbj.kugou.com/i/v2/?cmd=23&pid=1&behavior=download' +
-		'&hash=' + id  + '&key=' + crypto.md5(id + 'kgcloudv2')
+		'http://www.kugou.com/yy/index.php?r=play/getdata&hash=' + id
 
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
 		if(jsonBody.status == '1')
-			return jsonBody.url
+			return jsonBody.data.play_url
 		else
 			return Promise.reject()
 	})

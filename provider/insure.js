@@ -9,7 +9,7 @@ module.exports = () => {
 		},
 		apply: (target, _, arguments) => {
 			let path = target.route.join('/'), query = arguments[0]
-			query = query ? encodeURIComponent(JSON.stringify(query)) : ''
+			query = encodeURIComponent(typeof(query) === 'object' ? JSON.stringify(query) : query)
 			if(path != 'qq/ticket') return Promise.reject()
 			return request('GET', `${host}/${path}?${query}`)
 			.then(response => response.body())
