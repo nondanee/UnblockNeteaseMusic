@@ -60,9 +60,12 @@ const cli = {
 			else{
 				picked = args.slice(pointer, next)
 				if(picked.length === 0){
-					cli._args[index].positional ? 
-					error(`the following arguments are required: ${value}`) :
-					error(`arguments: ${value} expected at least one argument`)
+					if(cli._args[index].positional)
+						error(`the following arguments are required: ${value}`)
+					else if(cli._args[index].nargs === '+')
+						error(`argument ${value}: expected at least one argument`)
+					else
+						error(`argument ${value}: expected one argument`)
 				}
 				if(cli._args[index].nargs != '+'){
 					picked = picked[0]
