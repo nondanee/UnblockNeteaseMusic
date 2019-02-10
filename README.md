@@ -32,18 +32,19 @@ $ docker-compose up
 
 ```
 $ node app.js -h
-Usage: unblockneteasemusic [options] [value ...]
+usage: unblockneteasemusic [-v] [-p port] [-u url] [-f host]
+                           [-o source [source ...]] [-t token] [-s] [-h]
 
-Options:
-
-  -v, --version                 output the version number
-  -p, --port <port>             specify server port
-  -u, --proxy-url <url>         request through upstream proxy
-  -f, --force-host <host>       force the netease server ip
-  -o, --match-order <name,...>  set priority of sources
-  -t, --token <token>           set up http basic authentication
-  -s, --strict                  enable proxy limitation
-  -h, --help                    output usage information
+optional arguments:
+  -v, --version               output the version number
+  -p port, --port port        specify server port
+  -u url, --proxy-url url     request through upstream proxy
+  -f host, --force-host host  force the netease server ip
+  -o source [source ...], --match-order source [source ...]
+                              set priority of sources
+  -t token, --token token     set up http basic authentication
+  -s, --strict                enable proxy limitation
+  -h, --help                  output usage information
 ```
 
 ## 使用

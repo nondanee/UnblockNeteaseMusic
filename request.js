@@ -62,8 +62,7 @@ const request = (method, url, headers, body) => {
 			return request(method, url.resolve(response.headers.location), headers, body)
 		else 
 			return Object.assign(response, {url: url, body: raw => read(response, raw), json: () => json(response), jsonp: () => jsonp(response)})
-		}
-	)
+	})
 }
 
 const read = (connect, raw) => new Promise((resolve, reject) => {

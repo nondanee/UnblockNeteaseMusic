@@ -1,21 +1,17 @@
 #!/usr/bin/env node
 
 const package = require('./package.json')
-const config = require('./config.json')
-
-try{
-	Object.assign(config, require('commander')
-	.name(package.name)
-	.version(package.version, '-v, --version')
-	.usage('[options] [value ...]')
-	.option('-p, --port <port>', 'specify server port')
-	.option('-u, --proxy-url <url>', 'request through upstream proxy')
-	.option('-f, --force-host <host>', 'force the netease server ip')
-	.option('-o, --match-order <name,...>', 'set priority of sources')
-	.option('-t, --token <token>', 'set up http basic authentication')
-	.option('-s, --strict', 'enable proxy limitation')
-	.parse(process.argv))
-}catch(error){}
+const config = require('./cli.js')
+.program({name: package.name, version: package.version})
+.argument(['-v', '--version'], {action: 'version'})
+.argument(['-p', '--port'], {metavar: 'port', help: 'specify server port'})
+.argument(['-u', '--proxy-url'], {metavar: 'url', help: 'request through upstream proxy'})
+.argument(['-f', '--force-host'], {metavar: 'host', help: 'force the netease server ip'})
+.argument(['-o', '--match-order'], {metavar: 'source', nargs: '+', help: 'set priority of sources'})
+.argument(['-t', '--token'], {metavar: 'token', help: 'set up http basic authentication'})
+.argument(['-s', '--strict'], {action: 'store_true', help: 'enable proxy limitation'})
+.argument(['-h', '--help'], {action: 'help'})
+.parse(process.argv)
 
 if(config.port && (isNaN(config.port) || config.port < 1 || config.port > 65535)){
 	console.log('Port must be a number higher than 0 and lower than 65535.')
@@ -31,7 +27,7 @@ if(config.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(config.forceHost)){
 }
 if(config.matchOrder){
 	const provider = ['qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox']
-	const candidate = config.matchOrder.split(/\s*\W\s*/)
+	const candidate = config.matchOrder
 	if(candidate.some((key, index) => index != candidate.indexOf(key))){
 		console.log('Please check the duplication in match order.')
 		process.exit(1)
@@ -50,18 +46,15 @@ if(config.token && !/\S+:\S+/.test(config.token)){
 const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
-const port = config.port
+const port = config.port || 8080
 
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
 config.strict ? server.whitelist = ['music.163.com', 'music.126.net'] : server.blanklist = []
 server.authentication = config.token || null
 
-const dns = host =>
-	new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
-
-const httpdns = host =>
-	require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns[0].ips)
+const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
+const httpdns = host => require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns[0].ips)
 
 Promise.all([httpdns(hook.target.host[0])].concat(hook.target.host.map(host => dns(host))))
 .then(result => {

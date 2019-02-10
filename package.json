@@ -21,7 +21,5 @@
   },
   "author": "nondanee",
   "license": "MIT",
-  "dependencies": {
-    "commander": "^2.18.0"
-  }
+  "dependencies": {}
 }
