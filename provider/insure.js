@@ -1,7 +1,7 @@
 const request = require('../request')
 const host = 'https://public.nondanee.tk'
 
-module.exports = () => {  
+module.exports = () => {
 	const proxy = new Proxy(() => {}, {
 		get: (target, property) => {
 			target.route = (target.route || []).concat(property)

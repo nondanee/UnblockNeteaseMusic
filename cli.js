@@ -39,14 +39,14 @@ const cli = {
 		while(pointer < args.length){
 			let part = args[pointer], value = null
 			let index = part.startsWith('-') ? optionals[part] : positionals.shift()
-			if(index == undefined)  part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
+			if(index == undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
 			if(part.startsWith('-')) pointer += 1
 			let action = cli._options[index].action
 
 			if(['help', 'version'].includes(action)){
 				if(action === 'help') help()
 				else if(action === 'version') version()
-			}            
+			}
 			else if(['store_true', 'store_false'].includes(action)){
 				value = action === 'store_true'
 			}

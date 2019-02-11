@@ -2,9 +2,7 @@
 
 # UnblockNeteaseMusic
 
-![](https://img.shields.io/github/release/nondanee/UnblockNeteaseMusic.svg?colorA=24292E&colorB=505458&logo=github&logoColor=white&style=for-the-badge) ![](https://img.shields.io/docker/pulls/nondanee/unblockneteasemusic.svg?colorA=1488C6&colorB=43A0D1&logo=docker&logoColor=white&style=for-the-badge)
-
-> 解锁网易云音乐客户端变灰歌曲
+解锁网易云音乐客户端变灰歌曲
 
 ## 特性
 
@@ -104,7 +102,7 @@ optional arguments:
 
 ### ✳方法 3. 调用接口
 
-> [编程层面] 作为依赖库使用 (在纠结要不要发布到 NPM)
+> [编程层面] 作为依赖库使用
 
 ```javascript
 const match = require('./UnblockNeteaseMusic')

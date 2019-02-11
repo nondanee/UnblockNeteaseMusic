@@ -46,7 +46,7 @@ const server = http.createServer()
 })
 
 server.whitelist = ['.*']
-server.blacklist  = ['.*']
+server.blacklist = ['.*']
 server.authentication = null
 
 const proxy = {
@@ -72,10 +72,11 @@ const proxy = {
 	},
 	filter: ctx => {
 		const url = parse(ctx.req.url)
+		const match = pattern => url.href.search(new RegExp(pattern, 'g')) != -1
 		if(!ctx.decision){
 			try{
-				let allow = server.whitelist.some(pattern => url.href.search(new RegExp(pattern, 'g')) != -1)
-				let deny = server.blacklist.some(pattern => url.href.search(new RegExp(pattern, 'g')) != -1)
+				let allow = server.whitelist.some(match)
+				let deny = server.blacklist.some(match)
 				// console.log('allow', allow, 'deny', deny)
 				if(!allow && deny){	
 					return Promise.reject(ctx.error = 'filter')
