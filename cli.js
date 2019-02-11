@@ -29,8 +29,8 @@ const cli = {
 		return cli
 	},
 	parse: argv => {
-		let optionals = {}, positionals = cli._options.map((option, index) => option.positional ? index : null).filter(index => index !== null)
-		cli._options.forEach((option, index) => {if(!option.positional){option.flags.forEach(flag => optionals[flag] = index)}})
+		let positionals = cli._options.map((option, index) => option.positional ? index : null).filter(index => index !== null), optionals = {}
+		cli._options.forEach((option, index) => option.positional ? null : option.flags.forEach(flag => optionals[flag] = index))
 
 		cli._program.name = cli._program.name || require('path').parse(argv[1]).base
 		let args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
