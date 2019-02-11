@@ -1,13 +1,13 @@
 const cli = {
-	_prog: {},
-	_args: [],
-	program: (option = {}) => {
-		cli._prog = option
+	_program: {},
+	_options: [],
+	program: (information = {}) => {
+		cli._program = information
 		return cli
 	},
-	argument: (flags, option = {}) => {
+	option: (flags, addition = {}) => {
 		// name or flags - Either a name or a list of option strings, e.g. foo or -f, --foo.
-		// dest - The name of the attribute to be added to the object returned by parse_args().
+		// dest - The name of the attribute to be added to the object returned by parse_options().
 		
 		// nargs - The number of command-line arguments that should be consumed. // N, ?, *, +, REMAINDER
 		// action - The basic type of action to be taken when this argument is encountered at the command line. // store, store_true, store_false, append, append_const, count, help, version
@@ -23,64 +23,57 @@ const cli = {
 		// choices - A container of the allowable values for the argument.
 
 		flags = Array.isArray(flags) ? flags : [flags]
-		option.flags = flags
-		option.positional = !flags[0].startsWith('-')
-		option.dest = option.dest || flags.slice(-1)[0].toLowerCase().replace(/^-+/, '').replace(/-[a-z]/g, character => character.slice(1).toUpperCase())
-		option.help = option.help || {'help': 'output usage information', 'version': 'output the version number'}[option.action]
-		cli._args.push(option)
+		addition.dest = addition.dest || flags.slice(-1)[0].toLowerCase().replace(/^-+/, '').replace(/-[a-z]/g, character => character.slice(1).toUpperCase())
+		addition.help = addition.help || {'help': 'output usage information', 'version': 'output the version number'}[addition.action]
+		cli._options.push(Object.assign(addition, {flags: flags, positional: !flags[0].startsWith('-')}))
 		return cli
 	},
 	parse: argv => {
-		let optionals = {}, positionals = cli._args.map((option, index) => option.positional ? index : null).filter(index => index !== null)
-		cli._args.forEach((option, index) => {if(!option.positional){option.flags.forEach(flag => optionals[flag] = index)}})
+		let optionals = {}, positionals = cli._options.map((option, index) => option.positional ? index : null).filter(index => index !== null)
+		cli._options.forEach((option, index) => {if(!option.positional){option.flags.forEach(flag => optionals[flag] = index)}})
 
-		cli._prog.name = cli._prog.name || require('path').parse(argv[1]).base
-		let args = argv.slice(2)
-		.reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
+		cli._program.name = cli._program.name || require('path').parse(argv[1]).base
+		let args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
 		
 		let pointer = 0
-		while(pointer < args.length) {
-			let value = args[pointer]
-			let picked = null
-			let index = value.startsWith('-') ? optionals[value] : positionals.shift()
-			if(index == undefined)  value.startsWith('-') ? error(`no such option: ${value}`) : error(`extra arguments found: ${value}`)
-			if(value.startsWith('-')) pointer += 1
-			let action = cli._args[index].action
-
-			let step = args.slice(pointer).findIndex(part => part in optionals)
-			let next = step === -1 ? args.length : step + pointer
+		while(pointer < args.length){
+			let part = args[pointer], value = null
+			let index = part.startsWith('-') ? optionals[part] : positionals.shift()
+			if(index == undefined)  part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
+			if(part.startsWith('-')) pointer += 1
+			let action = cli._options[index].action
 
 			if(['help', 'version'].includes(action)){
 				if(action === 'help') help()
 				else if(action === 'version') version()
 			}            
 			else if(['store_true', 'store_false'].includes(action)){
-				picked = action === 'store_true'
+				value = action === 'store_true'
 			}
 			else{
-				picked = args.slice(pointer, next)
-				if(picked.length === 0){
-					if(cli._args[index].positional)
-						error(`the following arguments are required: ${value}`)
-					else if(cli._args[index].nargs === '+')
-						error(`argument ${value}: expected at least one argument`)
+				let gap = args.slice(pointer).findIndex(part => part in optionals)
+				let next = gap === -1 ? args.length : pointer + gap
+				value = args.slice(pointer, next)
+				if(value.length === 0){
+					if(cli._options[index].positional)
+						error(`the following arguments are required: ${part}`)
+					else if(cli._options[index].nargs === '+')
+						error(`argument ${part}: expected at least one argument`)
 					else
-						error(`argument ${value}: expected one argument`)
+						error(`argument ${part}: expected one argument`)
 				}
-				if(cli._args[index].nargs != '+'){
-					picked = picked[0]
+				if(cli._options[index].nargs != '+'){
+					value = value[0]
 					pointer += 1
 				}
 				else{
 					pointer = next
 				}
 			}
-			cli[cli._args[index].dest] = picked
+			cli[cli._options[index].dest] = value
 		}
-		if(positionals.length){
-			error(`the following arguments are required: ${positionals.map(index => cli._args[index].flags[0]).join(', ')}`)
-		}
-		// cli._args.forEach(option => console.log(option.dest, cli[option.dest]))
+		if(positionals.length) error(`the following arguments are required: ${positionals.map(index => cli._options[index].flags[0]).join(', ')}`)
+		// cli._options.forEach(option => console.log(option.dest, cli[option.dest]))
 		return cli
 	}
 }
@@ -88,7 +81,7 @@ const cli = {
 const pad = length => (new Array(length + 1)).join(' ')
 
 const usage = () => {
-	let options = cli._args.map(option => {
+	let options = cli._options.map(option => {
 		let flag = option.flags[0]
 		let name = option.metavar || option.dest
 		if(option.positional){
@@ -105,24 +98,24 @@ const usage = () => {
 			else
 				return `[${flag} ${name}]`
 		}
-	}).map(name => ' ' + name)
+	})
 	let maximum = 80
-	let prefix = `usage: ${cli._prog.name}`
-	let lines = [prefix]
+	let title = `usage: ${cli._program.name}`
+	let lines = [title]
 
-	options.forEach(option => {
+	options.map(name => ' ' + name).forEach(option => {
 		lines[lines.length - 1].length + option.length < maximum ?
 		lines[lines.length - 1] += option :
-		lines.push(pad(prefix.length) + option)
+		lines.push(pad(title.length) + option)
 	})
 	console.log(lines.join('\n'))
 }
 
 const help = () => {
 	usage()
-	let positionals = cli._args.filter(option => option.positional)
+	let positionals = cli._options.filter(option => option.positional)
 	.map(option => [option.metavar || option.dest, option.help])
-	let optionals = cli._args.filter(option => !option.positional)
+	let optionals = cli._options.filter(option => !option.positional)
 	.map(option => {
 		let flags = option.flags
 		let name = option.metavar || option.dest
@@ -150,13 +143,13 @@ const help = () => {
 }
 
 const version = () => {
-	console.log(cli._prog.version)
+	console.log(cli._program.version)
 	process.exit()
 }
 
 const error = message => {
 	usage()
-	console.log(cli._prog.name + ':', 'error:', message)
+	console.log(cli._program.name + ':', 'error:', message)
 	process.exit(1)
 }
 
