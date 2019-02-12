@@ -3,7 +3,6 @@ version: '3'
 services:
   unblockneteasemusic:
     image: nondanee/unblockneteasemusic
-    build: .
     environment:
       NODE_ENV: production
     ports:
