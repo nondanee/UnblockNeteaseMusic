@@ -1,10 +1,10 @@
-FROM node:8-alpine
+FROM node:lts-alpine
 
 ENV NODE_ENV production
 
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install --production && mv node_modules ../
+RUN npm install --production
 COPY . .
 
 EXPOSE 8080

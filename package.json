@@ -1,7 +1,7 @@
 {
   "name": "unblockneteasemusic",
   "version": "0.9.0",
-  "description": "An agent server for netease cloud music client",
+  "description": "Revive unavailable songs for Netease Cloud Music",
   "main": "provider/match.js",
   "bin": {
     "UnblockNeteaseMusic": "app.js"
