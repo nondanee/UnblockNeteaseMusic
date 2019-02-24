@@ -114,10 +114,9 @@ hook.http.after = ctx => {
 				netease.encrypted = true
 				netease.jsonBody = JSON.parse(crypto.eapi.decrypt(buffer).toString())
 			}
-
-			if(netease.path.includes('manipulate') && netease.jsonBody.code == 401)
+			if(netease.path.includes('manipulate') && [401, 512].includes(netease.jsonBody.code))
 				return tryCollect(ctx)
-			else if(netease.path == '/api/song/like' && netease.jsonBody.code == 401)
+			else if(netease.path == '/api/song/like' && [401, 512].includes(netease.jsonBody.code))
 				return tryLike(ctx)
 			else if(netease.path.includes('url'))
 				return tryMatch(ctx)
@@ -133,6 +132,8 @@ hook.http.after = ctx => {
 						value['pic'] = value['pic_str']
 					if('coverImgId_str' in value && 'coverImgId' in value) // for js precision
 						value['coverImgId'] = value['coverImgId_str']
+					if('fee' in value) value['fee'] = 0
+					if('cp' in value) value['cp'] = 0
 					if('st' in value && 'pl' in value && 'dl' in value && 'subp' in value){ // batch modify
 						value['st'] = 0
 						value['subp'] = 1
@@ -221,6 +222,7 @@ const tryMatch = ctx => {
 	let tasks = [], target = 0
 
 	const inject = item => {
+		item.flag = 0
 		if(item.code != 200 && (target == 0 || item.id == target)){
 			return match(item.id)
 			.then(song => {
