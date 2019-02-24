@@ -45,7 +45,9 @@ hook.target.path = [
 	'/api/v1/search/get',
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
-	'/api/song/like'
+	'/api/song/like',
+	'/api/v1/play/record',
+	'/api/playlist/v4/detail'
 ]
 
 hook.http.before = ctx => {
@@ -114,6 +116,7 @@ hook.http.after = ctx => {
 				netease.encrypted = true
 				netease.jsonBody = JSON.parse(crypto.eapi.decrypt(buffer).toString())
 			}
+
 			if(netease.path.includes('manipulate') && [401, 512].includes(netease.jsonBody.code))
 				return tryCollect(ctx)
 			else if(netease.path == '/api/song/like' && [401, 512].includes(netease.jsonBody.code))
