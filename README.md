@@ -55,7 +55,7 @@ optional arguments:
 
 目前除 UWP 外其它客户端都默认请求 HTTPS 接口，本代理对网易云所有 HTTPS API 连接返回空数据 (网易云网页版会被屏蔽)，促使客户端降级使用HTTP接口 (降级有时不能自动触发，若提示 "网络不给力" 请切换页面标签试试)
 
-测试发现 iOS 客户端设置代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级，不过播放音源地址需要 HTTPS，因此需要一个有可信任证书的 (公网)  HTTPS 接口来转发流量，无法直接使用 (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
+测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级，不过播放音源地址需要 HTTPS，因此需要一个有可信任证书的 (公网)  HTTPS 接口来转发流量，无法直接使用 (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
 
 ### 方法 1. 修改 hosts
 
@@ -87,7 +87,11 @@ optional arguments:
 | Android | WLAN > 修改网络 > 高级选项 > 代理      |
 | iOS     | Surge，Shadowrocket 等添加配置    |
 
-> UWP 应用需要开启 loopback 才会使用系统代理，可借助 [Fiddler](https://www.telerik.com/fiddler)，[EnableLoopback Utility](https://github.com/tiagonmas/Windows-Loopback-Exemption-Manager) 等工具
+> UWP 应用需要开启 loopback 才能会使用系统代理，请以**管理员身份**执行命令
+>
+> ```
+> checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
+> ```
 
 > iOS Surge 配置
 > 
@@ -102,7 +106,7 @@ optional arguments:
 
 ### ✳方法 3. 调用接口
 
-> [编程层面] 作为依赖库使用
+作为依赖库使用
 
 ```javascript
 const match = require('./UnblockNeteaseMusic')
