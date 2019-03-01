@@ -50,7 +50,7 @@ const port = config.port || 8080
 
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
-config.strict ? server.whitelist = ['music.163.com', 'music.126.net'] : server.blanklist = []
+config.strict ? server.whitelist = ['music.163.com', 'music.126.net', 'vod.126.net'] : server.blanklist = []
 server.authentication = config.token || null
 
 const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
