@@ -3,6 +3,7 @@ const crypto = require('../crypto')
 const request = require('../request')
 
 const provider = {
+	netease: require('./netease'),
 	qq: require('./qq'),
 	xiami: require('./xiami'),
 	baidu: require('./baidu'),
@@ -14,7 +15,7 @@ const provider = {
 
 const match = (id, source) => {
 	let meta = {}
-	let candidate = (source || global.source || ['qq', 'xiami', 'baidu']).filter(name => name in provider)
+	let candidate = (source || global.source || ['netease', 'qq', 'xiami', 'baidu']).filter(name => name in provider)
 	return find(id)
 	.then(info => {
 		meta = info

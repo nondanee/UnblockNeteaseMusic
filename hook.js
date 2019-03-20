@@ -90,8 +90,9 @@ hook.http.before = ctx => {
 			let data = req.url.split('package/').pop().split('/')
 			let url = parse(crypto.base64.decode(data[0]))
 			let id = data[1].replace('.mp3', '')
-			req.url = url
+			req.url = url.href
 			req.headers['host'] = url.hostname
+			ctx.package = {id}
 			ctx.decision = 'proxy'
 		}
 		catch(error){
@@ -103,6 +104,7 @@ hook.http.before = ctx => {
 
 hook.http.after = ctx => {
 	const netease = ctx.netease
+	const package = ctx.package
 	const proxyRes = ctx.proxyRes
 	if(netease && hook.target.path.includes(netease.path) && proxyRes.statusCode == 200){
 		return request.read(proxyRes, true)
@@ -152,6 +154,11 @@ hook.http.after = ctx => {
 			body = body.replace(/"coverImgId":"(\d+)"/g, '"coverImgId":$1')
 			proxyRes.body = (netease.encrypted ? crypto.eapi.encrypt(Buffer.from(body)) : body)
 		})
+	}
+	else if(package){
+		if(/p\d+c*.music.126.net/.test(ctx.req.url)){
+			proxyRes.headers['content-type'] = 'audio/mpeg'
+		}
 	}
 }
 
