@@ -76,7 +76,8 @@ hook.http.before = ctx => {
 				}
 				netease.path = netease.path.replace(/\/\d*$/, '')
 				ctx.netease = netease
-				
+				// console.log(netease.path, netease.param)
+
 				if(netease.path == '/api/song/enhance/download/url')
 					return pretendPlay(ctx)
 			}

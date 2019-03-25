@@ -37,20 +37,18 @@ const search = info => {
 }
 
 const ticket = () => {
-	const exclusive = ['003OUlho2HcRHC', '0039MnYb0qxYhV', '003aAYrm3GE0Ac', '001J5QJL1pRQYB', '004Z8Ihr0JIu5s', '002MXZNu1GToOk', '002qU5aY3Qu24y', '001xd0HI0X9GNq', '001zMQr71F1Qo8', '0009BCJK1nRaad']
-	const id = exclusive[Math.floor(exclusive.length * Math.random())]
+	const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
+	const id = classic[Math.floor(classic.length * Math.random())]
 
 	// let url =
 	// 	'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
-	// 	'?g_tk=195219765&jsonpCallback=MusicJsonCallback004680169373158849' + 
-	// 	'&loginUin=1297716249&hostUin=0&format=json&inCharset=utf8' + 
+	// 	'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' + 
 	// 	'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' + 
-	// 	'&cid=205361747&callback=MusicJsonCallback004680169373158849' + 
-	// 	'&uin=1297716249&songmid='+ id +
-	// 	'&filename=C400'+ id + '.m4a&guid=7332953645'
+	// 	'&cid=205361747&uin=0&guid=7332953645' + 
+	// 	'&songmid='+ id + '&filename=C400'+ id + '.m4a'
 
 	// return request('GET', url, headers)
-	// .then(response => response.jsonp())
+	// .then(response => response.json())
 	// .then(jsonBody => {
 	// 	let vkey = jsonBody.data.items[0].vkey
 	// 	if(vkey)
@@ -101,9 +99,9 @@ const ticket = () => {
 const track = id => {
 	return cache(ticket)
 	.then(vkey => {
-		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com'][2]
+		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', '183.131.60.16/amobile.music.tc.qq.com'][3]
 		let songUrl = 
-			'http://' + host + '/M500' + id + 
+			'http://' + host + '/M800' + id + 
 			'.mp3?vkey=' + vkey + 
 			'&uin=0&fromtag=8&guid=7332953645'
 		return songUrl
