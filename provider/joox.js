@@ -42,7 +42,7 @@ const track = id => {
 	return request('GET', url, headers)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		let songUrl = jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl
+		let songUrl = (jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl).replace(/M\d00([\w]+).mp3/, 'M800$1.mp3')
 		if(songUrl)
 			return songUrl
 		else

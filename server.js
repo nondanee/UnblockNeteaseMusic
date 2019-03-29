@@ -1,55 +1,51 @@
-const http = require('http')
+const fs = require('fs')
 const net = require('net')
 const parse = require('url').parse
 
 const hook = require('./hook')
 const request = require('./request')
 
-const server = http.createServer()
-.on('request', (req, res) => {
-	if(req.url == '/proxy.pac'){
-		let url = parse('http://' + req.headers.host)
-		res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
-		res.end(`
-			function FindProxyForURL(url, host) {
-				if (${hook.target.host.map(host => (`host == '${host}'`)).join(' || ')}) {
-					return 'PROXY ${url.hostname}:${url.port || 80}'
-				}
-				return 'DIRECT'
-			}
-		`)
-	}
-	else{
-		const ctx = {res, req}
-		Promise.resolve()
-		.then(() => proxy.authenticate(ctx))
-		.then(() => hook.http.before(ctx))
-		.then(() => proxy.filter(ctx))
-		.then(() => proxy.log(ctx))
-		.then(() => proxy.mitm.send(ctx))
-		.then(() => hook.http.after(ctx))
-		.then(() => proxy.mitm.receive(ctx))
-		.catch(() => proxy.mitm.close(ctx))
-	}
-})
-.on('connect', (req, socket, head) => {
-	const ctx = {req, socket, head}
-	Promise.resolve()
-	.then(() => proxy.authenticate(ctx))
-	.then(() => hook.https.before(ctx))
-	.then(() => proxy.filter(ctx))
-	.then(() => proxy.log(ctx))
-	.then(() => proxy.tunnel.connect(ctx))
-	.then(() => proxy.tunnel.handshake(ctx))
-	.then(() => proxy.tunnel.pipe(ctx))
-	.catch(() => proxy.tunnel.close(ctx))
-})
-
-server.whitelist = ['.*']
-server.blacklist = ['.*']
-server.authentication = null
-
 const proxy = {
+	core: {
+		mitm: (req, res) => {
+			if(req.url == '/proxy.pac'){
+				let url = parse('http://' + req.headers.host)
+				res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
+				res.end(`
+					function FindProxyForURL(url, host) {
+						if (${hook.target.host.map(host => (`host == '${host}'`)).join(' || ')}) {
+							return 'PROXY ${url.hostname}:${url.port || 80}'
+						}
+						return 'DIRECT'
+					}
+				`)
+			}
+			else{
+				const ctx = {res, req}
+				Promise.resolve()
+				.then(() => proxy.authenticate(ctx))
+				.then(() => hook.request.before(ctx))
+				.then(() => proxy.filter(ctx))
+				.then(() => proxy.log(ctx))
+				.then(() => proxy.mitm.request(ctx))
+				.then(() => hook.request.after(ctx))
+				.then(() => proxy.mitm.response(ctx))
+				.catch(() => proxy.mitm.close(ctx))
+			}
+		},
+		tunnel: (req, socket, head) => {
+			const ctx = {req, socket, head}
+			Promise.resolve()
+			.then(() => proxy.authenticate(ctx))
+			.then(() => hook.connect.before(ctx))
+			.then(() => proxy.filter(ctx))
+			.then(() => proxy.log(ctx))
+			.then(() => proxy.tunnel.connect(ctx))
+			.then(() => proxy.tunnel.handshake(ctx))
+			.then(() => proxy.tunnel.pipe(ctx))
+			.catch(() => proxy.tunnel.close(ctx))
+		}
+	},
 	log: ctx => {
 		const mark = {close: '|', blank: '-', proxy: '>'}[ctx.decision] || '>'
 		if(ctx.socket)
@@ -88,7 +84,7 @@ const proxy = {
 		}
 	},
 	mitm: {
-		send: ctx => new Promise((resolve, reject) => {
+		request: ctx => new Promise((resolve, reject) => {
 			if(ctx.decision === 'close') return reject(ctx.error = ctx.decision)
 			const req = ctx.req
 			const url = parse(req.url)
@@ -102,7 +98,7 @@ const proxy = {
 			})
 			req.readable ? req.pipe(ctx.proxyReq) : ctx.proxyReq.end(req.body)
 		}),
-		receive: ctx => {
+		response: ctx => {
 			const res = ctx.res
 			const proxyRes = ctx.proxyRes
 			res.writeHead(proxyRes.statusCode, proxyRes.headers)
@@ -162,5 +158,19 @@ const proxy = {
 		}
 	}
 }
+
+const options = {
+	key: fs.readFileSync('./server.key'),
+	cert: fs.readFileSync('./server.crt')
+}
+
+const server = {
+	http: require('http').createServer().on('request', proxy.core.mitm).on('connect', proxy.core.tunnel),
+	https: require('https').createServer(options).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
+}
+
+server.whitelist = ['.*']
+server.blacklist = ['.*']
+server.authentication = null
 
 module.exports = server

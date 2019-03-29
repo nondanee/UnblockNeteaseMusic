@@ -4,11 +4,11 @@ const request = require('./request')
 const match = require('./provider/match')
 
 const hook = {
-	http: {
+	request: {
 		before: () => {},
 		after: () => {},
 	},
-	https: {
+	connect: {
 		before: () => {}
 	},
 	target: {
@@ -50,9 +50,9 @@ hook.target.path = [
 	'/api/playlist/v4/detail'
 ]
 
-hook.http.before = ctx => {
+hook.request.before = ctx => {
 	const req = ctx.req
-	req.url = (req.url.startsWith('http://') ? '' : 'http://music.163.com') + req.url
+	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//music.163.com') + req.url
 	const url = parse(req.url)
 	const netease = {}
 	if((hook.target.host.includes(url.hostname)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
@@ -103,7 +103,7 @@ hook.http.before = ctx => {
 	}
 }
 
-hook.http.after = ctx => {
+hook.request.after = ctx => {
 	const netease = ctx.netease
 	const package = ctx.package
 	const proxyRes = ctx.proxyRes
@@ -163,10 +163,10 @@ hook.http.after = ctx => {
 	}
 }
 
-hook.https.before = ctx => {
+hook.connect.before = ctx => {
 	let url = parse('https://' + ctx.req.url)
 	if(hook.target.host.includes(url.hostname)){
-		ctx.decision = 'blank'
+		global.port[1] ? ctx.req.url = `localhost:${global.port[1]}` : ctx.decision = 'blank'
 	}
 }
 

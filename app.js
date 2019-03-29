@@ -13,7 +13,9 @@ const config = require('./cli.js')
 .option(['-h', '--help'], {action: 'help'})
 .parse(process.argv)
 
-if(config.port && (isNaN(config.port) || config.port < 1 || config.port > 65535)){
+config.port = (config.port || '8080').split(':').map(string => parseInt(string))
+const invalid = value => (isNaN(value) || value < 1 || value > 65535)
+if(config.port.some(invalid)){
 	console.log('Port must be a number higher than 0 and lower than 65535.')
 	process.exit(1)
 }
@@ -26,14 +28,14 @@ if(config.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(config.forceHost)){
 	process.exit(1)
 }
 if(config.matchOrder){
-	const provider = ['qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox']
+	const provider = ['netease', 'qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox']
 	const candidate = config.matchOrder
 	if(candidate.some((key, index) => index != candidate.indexOf(key))){
 		console.log('Please check the duplication in match order.')
 		process.exit(1)
 	}
 	else if(candidate.some(key => !provider.includes(key))){
-		console.log('Please check the validation of match order.')
+		console.log('Please check the availability of match sources.')
 		process.exit(1)
 	}
 	global.source = candidate
@@ -46,8 +48,8 @@ if(config.token && !/\S+:\S+/.test(config.token)){
 const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
-const port = config.port || 8080
 
+global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
 config.strict ? server.whitelist = ['music.163.com', 'music.126.net', 'vod.126.net'] : server.blanklist = []
@@ -62,7 +64,13 @@ Promise.all([httpdns(hook.target.host[0])].concat(hook.target.host.map(host => d
 	result.forEach(set => extra = extra.concat(set))
 	extra = Array.from(new Set(extra))
 	hook.target.host = hook.target.host.concat(extra)
-	server.listen(port)
-	console.log(`Server running @ http://0.0.0.0:${port}`)
+	if(port[0]){
+		server.http.listen(port[0])
+		console.log(`HTTP Server running @ http://0.0.0.0:${port[0]}`)
+	}
+	if(port[1]){
+		server.https.listen(port[1])
+		console.log(`HTTPS Server running @ http://0.0.0.0:${port[1]}`)
+	}
 })
 .catch(error => console.log(error))
