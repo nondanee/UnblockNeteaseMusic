@@ -118,7 +118,7 @@ const proxy = {
 			socket.on('error', error => {
 				return reject(ctx.error = error)
 			})
-			if(global.proxy){
+			if(global.proxy && !req.local){
 				const options = request.configure(req.method, url, req.headers)
 				request.create(proxy)(options)
 				.on('connect', (_, proxySocket) => {

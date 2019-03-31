@@ -166,7 +166,17 @@ hook.request.after = ctx => {
 hook.connect.before = ctx => {
 	let url = parse('https://' + ctx.req.url)
 	if(hook.target.host.includes(url.hostname)){
-		global.port[1] ? ctx.req.url = `localhost:${global.port[1]}` : ctx.decision = 'blank'
+		if(url.port == 80){
+			ctx.req.url = `localhost:${global.port[0]}`
+			ctx.req.local = true
+		}
+		else if(global.port[1]){
+			ctx.req.url = `localhost:${global.port[1]}`
+			ctx.req.local = true
+		}
+		else{
+			ctx.decision = 'blank'
+		}
 	}
 }
 
