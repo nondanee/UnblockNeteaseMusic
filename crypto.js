@@ -51,7 +51,7 @@ module.exports = {
 	reverse: {
 		url: id => {
 			id = id.toString().trim()
-			let string = id.split('').map((_, index) => String.fromCharCode(id.charCodeAt(index) ^ uriKey.charCodeAt(index % uriKey.length))).join('')
+			let string = Array.from(Array(id.length).keys()).map(index => String.fromCharCode(id.charCodeAt(index) ^ uriKey.charCodeAt(index % uriKey.length))).join('')
 			let result = crypto.createHash('md5').update(string).digest('base64').replace(/\//g, '_').replace(/\+/g, '-')
 			return `http://p1.music.126.net/${result}/${id}`
 		}

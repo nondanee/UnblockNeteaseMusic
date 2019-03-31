@@ -9,17 +9,17 @@ let headers = {
 }
 
 const caesar = pattern => {
-	let height = pattern[0]
+	let height = parseInt(pattern[0])
 	pattern = pattern.slice(1)
 	let width = Math.ceil(pattern.length / height)
 	let unpad = height - (width * height - pattern.length)
 	
-	let matrix = Array.apply(null, {length: height}).map((_, i) => {
+	let matrix = Array.from(Array(height).keys()).map(i => {
 		return pattern.slice(i < unpad ? i * width : unpad * width + (i - unpad) * (width - 1)).slice(0, i < unpad ? width : width - 1)
 	})
 
-	let transpose = Array.apply(null, {length: width}).map((_, x) => {
-		return Array.apply(null, {length: height}).map((_, y) => matrix[y][x]).join('')
+	let transpose = Array.from(Array(width).keys()).map(x => {
+		return Array.from(Array(height).keys()).map(y => matrix[y][x]).join('')
 	})
 	
 	return unescape(transpose.join('')).replace(/\^/g, '0')
