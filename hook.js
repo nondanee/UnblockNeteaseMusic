@@ -208,7 +208,7 @@ const pretendPlay = ctx => {
 const tryCollect = ctx => {
 	const req = ctx.req
 	const netease = ctx.netease
-	let trackId = JSON.parse(netease.param.trackIds)[0]
+	let trackId = (netease.param.trackIds instanceof Array ? netease.param.trackIds : JSON.parse(netease.param.trackIds))[0]
 	return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${netease.param.pid}&op=${netease.param.op}`).then(response => response.json())
 	.then(jsonBody => {
 		netease.jsonBody = jsonBody
@@ -266,7 +266,7 @@ const tryMatch = ctx => {
 		tasks = [inject(jsonBody.data)]
 	}
 	else{
-		target = parseInt(JSON.parse(netease.param.ids)[0].replace('_0', '')) // reduce time cost
+		target = parseInt((netease.param.ids instanceof Array ? netease.param.ids : JSON.parse(netease.param.ids))[0].toString().replace('_0', '')) // reduce time cost
 		tasks = jsonBody.data.map(item => inject(item))
 	}
 	return Promise.all(tasks).catch(() => {})
