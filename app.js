@@ -56,13 +56,11 @@ config.strict ? server.whitelist = ['music.163.com', 'music.126.net', 'vod.126.n
 server.authentication = config.token || null
 
 const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
-const httpdns = host => require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns[0].ips)
+const httpdns = host => require('./request')('POST', 'http://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns[0].ips)
 
 Promise.all([httpdns(hook.target.host[0])].concat(hook.target.host.map(host => dns(host))))
 .then(result => {
-	let extra = []
-	result.forEach(set => extra = extra.concat(set))
-	extra = Array.from(new Set(extra))
+	let extra = Array.from(new Set(result.reduce((merged, array) => merged.concat(array), [])))
 	hook.target.host = hook.target.host.concat(extra)
 	if(port[0]){
 		server.http.listen(port[0])

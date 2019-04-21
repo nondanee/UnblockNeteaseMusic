@@ -12,8 +12,15 @@ const configure = (method, url, headers) => {
 	if('content-length' in headers) delete headers['content-length']
 	
 	let options = {}
-	options.headers = headers
-	options.method = (global.proxy && url.protocol == 'https:') ? 'CONNECT' : method
+	options._headers = headers
+	if(global.proxy && url.protocol == 'https:'){
+		options.method = 'CONNECT'
+		options.headers = Object.keys(headers).filter(key => ['host', 'user-agent'].includes(key)).reduce((result, key) => Object.assign(result, {[key]: headers[key]}), {})
+	}
+	else{
+		options.method = method
+		options.headers = headers
+	}
 
 	if(global.proxy){
 		options.hostname = translate(proxy.hostname)
@@ -41,19 +48,19 @@ const request = (method, url, headers, body) => {
 	return new Promise((resolve, reject) => {
 		create(url)(options)
 		.on('response', response => resolve(response))
-		.on('connect', (_, socket) => {
+		.on('connect', (_, socket) => 
 			https.request({
 				method: method,
 				host: translate(url.hostname),
 				path: url.path,
-				headers: options.headers,
+				headers: options._headers,
 				socket: socket,
 				agent: false
 			})
 			.on('response', response => resolve(response))
 			.on('error', error => reject(error))
 			.end(body)
-		})
+		)
 		.on('error', error => reject(error))
 		.end(body)
 	})
