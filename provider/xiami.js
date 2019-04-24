@@ -13,7 +13,7 @@ const caesar = pattern => {
 	pattern = pattern.slice(1)
 	let width = Math.ceil(pattern.length / height)
 	let unpad = height - (width * height - pattern.length)
-	
+
 	let matrix = Array.from(Array(height).keys()).map(i =>
 		pattern.slice(i < unpad ? i * width : unpad * width + (i - unpad) * (width - 1)).slice(0, i < unpad ? width : width - 1)
 	)
@@ -21,7 +21,7 @@ const caesar = pattern => {
 	let transpose = Array.from(Array(width).keys()).map(x =>
 		Array.from(Array(height).keys()).map(y => matrix[y][x]).join('')
 	)
-	
+
 	return unescape(transpose.join('')).replace(/\^/g, '0')
 }
 

@@ -8,10 +8,10 @@ const cli = {
 	option: (flags, addition = {}) => {
 		// name or flags - Either a name or a list of option strings, e.g. foo or -f, --foo.
 		// dest - The name of the attribute to be added to the object returned by parse_options().
-		
+
 		// nargs - The number of command-line arguments that should be consumed. // N, ?, *, +, REMAINDER
 		// action - The basic type of action to be taken when this argument is encountered at the command line. // store, store_true, store_false, append, append_const, count, help, version
-		
+
 		// const - A constant value required by some action and nargs selections. (supporting store_const and append_const action)
 
 		// metavar - A name for the argument in usage messages.
@@ -34,7 +34,7 @@ const cli = {
 
 		cli._program.name = cli._program.name || require('path').parse(argv[1]).base
 		let args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
-		
+
 		let pointer = 0
 		while(pointer < args.length){
 			let part = args[pointer], value = null

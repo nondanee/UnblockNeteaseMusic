@@ -17,7 +17,7 @@ const playable = song => {
 }
 
 const search = info => {
-	let url = 		
+	let url =
 		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' +
 		'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center' +
 		'&searchid=46804741196796149&t=0&aggr=1&cr=1&catZhida=1&lossless=0' +

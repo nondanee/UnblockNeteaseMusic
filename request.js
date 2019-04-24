@@ -10,7 +10,7 @@ const create = url => global.proxy ? (proxy.protocol == 'https:' ? https.request
 const configure = (method, url, headers) => {
 	headers = headers || {}
 	if('content-length' in headers) delete headers['content-length']
-	
+
 	let options = {}
 	options._headers = headers
 	if(global.proxy && url.protocol == 'https:'){
@@ -78,7 +78,7 @@ const read = (connect, raw) => new Promise((resolve, reject) => {
 	.on('data', chunk => chunks.push(chunk))
 	.on('end', () => {
 		let buffer = Buffer.concat(chunks)
-		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer	
+		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer
 		resolve(raw == true ? buffer : buffer.toString())
 	})
 	.on('error', error => reject(error))
