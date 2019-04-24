@@ -49,13 +49,15 @@ optional arguments:
 
 ## 使用
 
+**警告：本项目不提供线上 demo，请不要轻易信任使用他人提供的公开代理服务，以免发生安全问题**
+
 **若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s`  限制代理范围 (需使用 PAC 或 hosts)，~~或启用 Proxy Authentication `-t <name>:<password>` 设置代理用户名密码~~ (目前密码认证在 Windows 客户端设置和 macOS 系统设置都无法生效，请不要使用)，以防代理被他人滥用**
 
-支持 Windows 客户端，UWP 客户端，Linux 客户端，macOS 客户端和 Android 客户端
+支持 Windows 客户端，UWP 客户端，Linux 客户端，macOS 客户端 (726 版本以上需要自签证书)，Android 客户端和网页版 (需要自签证书)
 
-目前除 UWP 外其它客户端都默认请求 HTTPS 接口，本代理对网易云所有 HTTPS API 连接返回空数据 (网易云网页版会被屏蔽)，促使客户端降级使用HTTP接口 (降级有时不能自动触发，若提示 "网络不给力" 请切换页面标签试试)
+目前除 UWP 外其它客户端都优先请求 HTTPS 接口，默认情况下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用HTTP接口 (降级有时不能自动触发，若提示 "网络不给力" 请切换页面标签试试)
 
-测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级，不过播放音源地址需要 HTTPS，因此需要一个有可信任证书的 (公网)  HTTPS 接口来转发流量，无法直接使用 (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
+测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级，不过播放音源地址需要 HTTPS，因此需要一个有可信任证书的 (公网)  HTTPS 接口来转发流量，设置代理无法直接使用 (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
 
 ### 方法 1. 修改 hosts
 

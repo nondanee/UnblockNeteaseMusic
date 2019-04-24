@@ -39,6 +39,7 @@ hook.target.path = [
 	'/api/v1/album',
 	'/api/playlist/privilege',
 	'/api/song/enhance/player/url',
+	'/api/song/enhance/player/url/v1',
 	'/api/song/enhance/download/url',
 	'/batch',
 	'/api/batch',
@@ -54,7 +55,6 @@ hook.request.before = ctx => {
 	const req = ctx.req
 	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//music.163.com') + req.url
 	const url = parse(req.url)
-	const netease = {}
 	if((hook.target.host.includes(url.hostname)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
 		return request.read(req)
 		.then(body => {
@@ -62,6 +62,7 @@ hook.request.before = ctx => {
 			req.headers['X-Real-IP'] = '118.88.88.88'
 			if(body){
 				let data = null
+				let netease = {}
 				netease.pad = (body.match(/%0+$/) || [''])[0]
 				netease.forward = (url.path == '/api/linux/forward')
 				if(netease.forward){
@@ -85,6 +86,9 @@ hook.request.before = ctx => {
 		.catch(error => {
 			console.log(error)
 		})
+	}
+	if((hook.target.host.includes(url.hostname)) && url.path.startsWith('/weapi/')){
+		ctx.netease = {web: true, path: url.path.replace(/^\/weapi\//, '/api/').replace(/\?.+$/, '').replace(/\/\d*$/, '')}
 	}
 	else if(req.url.includes('package')){
 		try{
@@ -120,9 +124,9 @@ hook.request.after = ctx => {
 				netease.jsonBody = JSON.parse(crypto.eapi.decrypt(buffer).toString())
 			}
 
-			if(netease.path.includes('manipulate') && [401, 512].includes(netease.jsonBody.code))
+			if(netease.path.includes('manipulate') && [401, 512].includes(netease.jsonBody.code) && !netease.web)
 				return tryCollect(ctx)
-			else if(netease.path == '/api/song/like' && [401, 512].includes(netease.jsonBody.code))
+			else if(netease.path == '/api/song/like' && [401, 512].includes(netease.jsonBody.code) && !netease.web)
 				return tryLike(ctx)
 			else if(netease.path.includes('url'))
 				return tryMatch(ctx)
@@ -266,7 +270,7 @@ const tryMatch = ctx => {
 		tasks = [inject(jsonBody.data)]
 	}
 	else{
-		target = parseInt((netease.param.ids instanceof Array ? netease.param.ids : JSON.parse(netease.param.ids))[0].toString().replace('_0', '')) // reduce time cost
+		target = netease.web ? 0 : parseInt((netease.param.ids instanceof Array ? netease.param.ids : JSON.parse(netease.param.ids))[0].toString().replace('_0', '')) // reduce time cost
 		tasks = jsonBody.data.map(item => inject(item))
 	}
 	return Promise.all(tasks).catch(() => {})
