@@ -18,10 +18,10 @@ const playable = song => {
 
 const search = info => {
 	let url = 		
-		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 
-		'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center' + 
+		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' +
+		'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center' +
 		'&searchid=46804741196796149&t=0&aggr=1&cr=1&catZhida=1&lossless=0' +
-		'&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + 
+		'&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) +
 		'&g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0' +
 		'&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
 
@@ -42,9 +42,9 @@ const ticket = () => {
 
 	// let url =
 	// 	'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
-	// 	'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' + 
-	// 	'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' + 
-	// 	'&cid=205361747&uin=0&guid=7332953645' + 
+	// 	'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
+	// 	'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
+	// 	'&cid=205361747&uin=0&guid=7332953645' +
 	// 	'&songmid='+ id + '&filename=C400'+ id + '.m4a'
 
 	// return request('GET', url, headers)
@@ -58,8 +58,8 @@ const ticket = () => {
 	// })
 	// .catch(() => insure().qq.ticket())
 
-	let url = 
-		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' + 
+	let url =
+		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
 		encodeURIComponent(JSON.stringify({
 			// req: {
 			// 	method: 'GetCdnDispatch',
@@ -100,14 +100,14 @@ const track = id => {
 	return cache(ticket)
 	.then(vkey => {
 		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', '183.131.60.16/amobile.music.tc.qq.com'][0]
-		let songUrl = 
+		let songUrl =
 			'http://' + host + '/M500' + id +
-			'.mp3?vkey=' + vkey + 
+			'.mp3?vkey=' + vkey +
 			'&uin=0&fromtag=8&guid=7332953645'
 		return songUrl
 	})
 }
 
-const check = info => cache(search, info).then(track).catch(() => {})
+const check = info => cache(search, info).then(track)
 
 module.exports = {check, ticket}

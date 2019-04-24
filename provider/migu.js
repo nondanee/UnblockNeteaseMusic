@@ -3,7 +3,7 @@ const request = require('../request')
 
 const search = info => {
 	let url =
-		'http://m.10086.cn/migu/remoting/scr_search_tag?' + 
+		'http://m.10086.cn/migu/remoting/scr_search_tag?' +
 		'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1'
 
 	return request('GET', url)
@@ -19,6 +19,6 @@ const search = info => {
 	})
 }
 
-const check = info => cache(search, info).catch(() => {})
+const check = info => cache(search, info)
 
 module.exports = {check}

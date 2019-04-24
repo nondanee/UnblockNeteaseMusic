@@ -4,7 +4,7 @@ const request = require('../request')
 
 const search = info => {
 	let url =
-		'http://sug.music.baidu.com/info/suggestion?' + 
+		'http://sug.music.baidu.com/info/suggestion?' +
 		'word=' + encodeURIComponent(info.keyword) + '&version=2&from=0'
 
 	return request('GET', url)
@@ -36,6 +36,6 @@ const track = id => {
 	.catch(() => insure().baidu.track(id))
 }
 
-const check = info => cache(search, info).then(track).catch(() => {})
+const check = info => cache(search, info).then(track)
 
 module.exports = {check}

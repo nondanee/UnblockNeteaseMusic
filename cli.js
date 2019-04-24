@@ -120,9 +120,9 @@ const help = () => {
 		let flags = option.flags
 		let name = option.metavar || option.dest
 		let use = ''
-		if(['store_true', 'store_false', 'help', 'version'].includes(option.action)) 
+		if(['store_true', 'store_false', 'help', 'version'].includes(option.action))
 			use = flags.map(flag => `${flag}`).join(', ')
-		else if(option.nargs === '+') 
+		else if(option.nargs === '+')
 			use = flags.map(flag => `${flag} ${name} [${name} ...]`).join(', ')
 		else
 			use = flags.map(flag => `${flag} ${name}`).join(', ')
@@ -131,7 +131,7 @@ const help = () => {
 	let align = Math.max.apply(null, positionals.concat(optionals).map(option => option[0].length))
 	align = align > 26 ? 26 : align
 	const publish = option => {
-		option[0].length > align ? 
+		option[0].length > align ?
 		console.log(`  ${option[0]}\n${pad(align + 4)}${option[1]}`) :
 		console.log(`  ${option[0]}${pad(align - option[0].length)}  ${option[1]}`)
 	}

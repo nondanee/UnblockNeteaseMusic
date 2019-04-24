@@ -14,27 +14,25 @@ const caesar = pattern => {
 	let width = Math.ceil(pattern.length / height)
 	let unpad = height - (width * height - pattern.length)
 	
-	let matrix = Array.from(Array(height).keys()).map(i => {
-		return pattern.slice(i < unpad ? i * width : unpad * width + (i - unpad) * (width - 1)).slice(0, i < unpad ? width : width - 1)
-	})
+	let matrix = Array.from(Array(height).keys()).map(i =>
+		pattern.slice(i < unpad ? i * width : unpad * width + (i - unpad) * (width - 1)).slice(0, i < unpad ? width : width - 1)
+	)
 
-	let transpose = Array.from(Array(width).keys()).map(x => {
-		return Array.from(Array(height).keys()).map(y => matrix[y][x]).join('')
-	})
+	let transpose = Array.from(Array(width).keys()).map(x =>
+		Array.from(Array(height).keys()).map(y => matrix[y][x]).join('')
+	)
 	
 	return unescape(transpose.join('')).replace(/\^/g, '0')
 }
 
 const token = () => {
 	return request('GET', 'https://www.xiami.com')
-	.then(response => {
-		const cookie = {}
-		response.headers['set-cookie'].map(line => line.replace(/;.+$/, '')).forEach(line => {
+	.then(response =>
+		response.headers['set-cookie'].map(line => line.replace(/;.+$/, '')).reduce((cookie, line) => {
 			line = line.split(/\s*=\s*/)
-			cookie[decodeURIComponent(line[0])] = decodeURIComponent(line[1])
-		})
-		return cookie
-	})
+			return Object.assign(cookie, {[decodeURIComponent(line[0])]: decodeURIComponent(line[1])})
+		}, {})
+	)
 }
 
 const search = info => {
@@ -59,7 +57,7 @@ const search = info => {
 
 // const search = info => {
 // 	let url =
-// 		'http://api.xiami.com/web?v=2.0&app_key=1' + 
+// 		'http://api.xiami.com/web?v=2.0&app_key=1' +
 // 		'&key=' + encodeURIComponent(info.keyword) + '&page=1' +
 // 		'&limit=20&callback=jsonp154&r=search/songs'
 
@@ -104,6 +102,6 @@ const track = id => {
 	.catch(() => insure().xiami.track(id))
 }
 
-const check = info => cache(search, info).then(track).catch(() => {})
+const check = info => cache(search, info).then(track)
 
 module.exports = {check, track}

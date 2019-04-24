@@ -48,7 +48,7 @@ const request = (method, url, headers, body) => {
 	return new Promise((resolve, reject) => {
 		create(url)(options)
 		.on('response', response => resolve(response))
-		.on('connect', (_, socket) => 
+		.on('connect', (_, socket) =>
 			https.request({
 				method: method,
 				host: translate(url.hostname),
@@ -67,7 +67,7 @@ const request = (method, url, headers, body) => {
 	.then(response => {
 		if([201, 301, 302, 303, 307, 308].includes(response.statusCode))
 			return request(method, url.resolve(response.headers.location), headers, body)
-		else 
+		else
 			return Object.assign(response, {url: url, body: raw => read(response, raw), json: () => json(response), jsonp: () => jsonp(response)})
 	})
 }
@@ -84,7 +84,7 @@ const read = (connect, raw) => new Promise((resolve, reject) => {
 	.on('error', error => reject(error))
 })
 
-const json = connect => read(connect, false).then(body => JSON.parse(body))	
+const json = connect => read(connect, false).then(body => JSON.parse(body))
 const jsonp = connect => read(connect, false).then(body => JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length)))
 
 request.read = read

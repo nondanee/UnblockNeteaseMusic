@@ -132,7 +132,7 @@ hook.request.after = ctx => {
 			if('content-encoding' in proxyRes.headers) delete proxyRes.headers['content-encoding']
 			if('content-length' in proxyRes.headers) delete proxyRes.headers['content-length']
 
-			const inject = (key, value) => { 
+			const inject = (key, value) => {
 				if(typeof(value) === 'object' && value != null){
 					if('pic_str' in value && 'pic' in value) // for js precision
 						value['pic'] = value['pic_str']

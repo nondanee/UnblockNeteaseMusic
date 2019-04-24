@@ -3,14 +3,14 @@ module.exports = (func, args, ttl = 30 * 60 * 1000) => new Promise(resolve => {
     const key = args ? (typeof(args) === 'object' ? args.id : args) : 'default'
     if(!(key in cache) || cache[key].expiration < Date.now())
         func(args)
-        .then(result => 
+        .then(result =>
             resolve(cache[key] = {
                 error: false,
                 data: result,
                 expiration: Date.now() + ttl
             })
         )
-        .catch(() => 
+        .catch(() =>
             resolve(cache[key] = {
                 error: true,
                 data: null,
@@ -20,6 +20,6 @@ module.exports = (func, args, ttl = 30 * 60 * 1000) => new Promise(resolve => {
     else
         resolve(cache[key])
 })
-.then(value => 
+.then(value =>
     value.error ? Promise.reject(value.data) : Promise.resolve(value.data)
 )

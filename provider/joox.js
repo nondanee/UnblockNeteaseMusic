@@ -17,8 +17,8 @@ const fit = info => {
 const search = info => {
 	let keyword = fit(info)
 	let url =
-		'http://api-jooxtt.sanook.com/web-fcgi-bin/web_search?' + 
-		'country=hk&lang=zh_TW&' + 
+		'http://api-jooxtt.sanook.com/web-fcgi-bin/web_search?' +
+		'country=hk&lang=zh_TW&' +
 		'search_input=' + encodeURIComponent(keyword) + '&sin=0&ein=30'
 
 	return request('GET', url, headers)
@@ -35,8 +35,8 @@ const search = info => {
 
 const track = id => {
 	let url =
-		'http://api.joox.com/web-fcgi-bin/web_get_songinfo?' + 
-		'songid=' + id + '&country=hk&lang=zh_cn&from_type=-1&' + 
+		'http://api.joox.com/web-fcgi-bin/web_get_songinfo?' +
+		'songid=' + id + '&country=hk&lang=zh_cn&from_type=-1&' +
 		'channel_id=-1&_=' + (new Date).getTime()
 
 	return request('GET', url, headers)
@@ -51,6 +51,6 @@ const track = id => {
 	.catch(() => insure().joox.track(id))
 }
 
-const check = info => cache(search, info).then(track).catch(() => {})
+const check = info => cache(search, info).then(track)
 
 module.exports = {check, track}

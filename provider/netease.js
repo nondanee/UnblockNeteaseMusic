@@ -10,21 +10,19 @@ const search = info => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		let matched = jsonBody.album.songs.find(song => song.id === info.id)
-		if(matched){
+		if(matched)
 			return matched.hMusic.dfsId || matched.mMusic.dfsId || matched.lMusic.dfsId
-		}
-		else{
+		else
 			return Promise.reject()
-		}
 	})
 }
 
 const track = id => {
-	if (!id) return Promise.reject()
+	if(!id) return Promise.reject()
 	let songUrl = crypto.reverse.url(id)
 	return songUrl.replace(/(\w\d+?)(?!c)\.music\.126\.net/, '$1c.music.126.net')
 }
 
-const check = info => cache(search, info).then(track).catch(() => {})
+const check = info => cache(search, info).then(track)
 
 module.exports = {check}

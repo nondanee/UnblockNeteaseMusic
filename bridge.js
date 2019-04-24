@@ -22,10 +22,10 @@ const distributor = (url, router) => Promise.resolve().then(() => {
 	})
 	if(miss || typeof pointer != 'function') return Promise.reject()
 	//return pointer.call(null, argument)
-	return cache(pointer, argument, 15 * 60 * 1000) 
+	return cache(pointer, argument, 15 * 60 * 1000)
 })
 
-require('http').createServer().on('request', (req, res) => 
+require('http').createServer().on('request', (req, res) =>
 	distributor(parse(req.url), router)
 	.then(data => res.write(data))
 	.catch(() => res.writeHead(404))
