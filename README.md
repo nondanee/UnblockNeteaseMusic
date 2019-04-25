@@ -84,15 +84,26 @@ optional arguments:
 | :------ | :------------------------------- |
 | Windows | 设置 > 工具 > 自定义代理 (客户端内) |
 | UWP     | Windows 设置 > 网络和 Internet > 代理  |
-| Linux   | 系统设置 > 网络 > 网络代理           |
-| macOS   | 系统偏好设置 > 网络 > 高级 > 代理      |
+| Linux   | 系统设置 > 网络 > 网络代理 或使用clash |
+| macOS   | 系统偏好设置 > 网络 > 高级 > 代理 使用surge或clash |
 | Android | WLAN > 修改网络 > 高级选项 > 代理      |
-| iOS     | Surge，Shadowrocket 等添加配置    |
+| iOS     | Surge，Shadowrocket 等添加配置 |
 
 > UWP 应用需要开启 loopback 才能会使用系统代理，请以**管理员身份**执行命令
 >
 > ```
 > checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
+> ```
+>
+> Mac Surge 配置
+>
+> ```
+> [Proxy]
+> UnblockNeteaseMusic = http,<Server Name>,<PORT>,,
+> 
+> [Rule]
+> PROCESS-NAME,NeteaseMusic,UnblockNeteaseMusic 
+> FINAL,DIRECT
 > ```
 
 > iOS Surge 配置
@@ -104,6 +115,19 @@ optional arguments:
 > [Rule]
 > USER-AGENT,NeteaseMusic*,UnblockNeteaseMusic 
 > FINAL,DIRECT
+> ```
+
+> clash配置 
+> ```
+> Proxy:
+> - { name: "UnblockNeteaseMusic", type: http, server: "<Server Name>", port: <PORT>}
+> Rule:
+> - DOMAIN-SUFFIX,126.com,UnblockNeteaseMusic
+> - DOMAIN-SUFFIX,126.net,UnblockNeteaseMusic
+> - DOMAIN-SUFFIX,127.net,UnblockNeteaseMusic
+> - DOMAIN-SUFFIX,163.com,UnblockNeteaseMusic
+> - GEOIP,CN,DIRECT
+> - MATCH,DIRECT
 > ```
 
 ### ✳方法 3. 调用接口
