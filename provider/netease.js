@@ -20,7 +20,7 @@ const search = info => {
 const track = id => {
 	if(!id) return Promise.reject()
 	let songUrl = crypto.reverse.url(id)
-	return songUrl.replace(/(\w\d+?)(?!c)\.music\.126\.net/, '$1c.music.126.net')
+	return songUrl
 }
 
 const check = info => cache(search, info).then(track)

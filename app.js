@@ -68,7 +68,7 @@ Promise.all([httpdns(hook.target.host[0])].concat(hook.target.host.map(host => d
 	}
 	if(port[1]){
 		server.https.listen(port[1])
-		console.log(`HTTPS Server running @ http://0.0.0.0:${port[1]}`)
+		console.log(`HTTPS Server running @ https://0.0.0.0:${port[1]}`)
 	}
 })
 .catch(error => console.log(error))
