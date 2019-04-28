@@ -1,3 +1,4 @@
+const zlib = require('zlib')
 const cache = require('../cache')
 const insure = require('./insure')
 const request = require('../request')
@@ -99,14 +100,30 @@ const ticket = () => {
 }
 
 const track = id => {
-	return cache(ticket)
-	.then(vkey => {
-		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', '183.131.60.16/amobile.music.tc.qq.com'][0]
-		let songUrl =
-			'http://' + host + '/M500' + id +
-			'.mp3?vkey=' + vkey +
-			'&uin=0&fromtag=8&guid=7332953645'
-		return songUrl
+	// return cache(ticket)
+	// .then(vkey => {
+	// 	let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', '183.131.60.16/amobile.music.tc.qq.com'][0]
+	// 	let songUrl =
+	// 		'http://' + host + '/M500' + id +
+	// 		'.mp3?vkey=' + vkey +
+	// 		'&uin=0&fromtag=8&guid=7332953645'
+	// 	return songUrl
+	// })
+
+	return request(
+		'POST', 'http://acc.music.qq.com/base/fcgi-bin/fcg_music_express_mobile2.fcg', {},
+		`<root>
+			<uid></uid><sid></sid><v>90</v><cv>70003</cv><ct>19</ct><OpenUDID>0</OpenUDID>
+			<mcc>460</mcc><mnc>01</mnc><chid>001</chid><webp>0</webp><gray>0</gray><patch>105</patch>
+			<jailbreak>0</jailbreak><nettype>2</nettype><qq>12345678</qq><authst></authst><localvip>2</localvip>
+			<cid>352</cid><platform>ios</platform><musicname>M800${id}.mp3</musicname><downloadfrom>0</downloadfrom>
+		</root>`.replace(/\s/, '')
+	)
+	.then(response => response.body(true))
+	.then(body => {
+		let xml = zlib.inflateSync(body.slice(5)).toString()
+		let focus = xml.match(/<item name="(.+)">(.+)<\/item>/)
+		return `http://streamoc.music.tc.qq.com/${focus[1]}?vkey=${focus[2]}&guid=0&uin=12345678&fromtag=6`
 	})
 }
 
