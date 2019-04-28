@@ -80,30 +80,19 @@ optional arguments:
 >
 > 全局代理地址填写服务器地址和端口号即可
 
-| 平台    | 设置方法                         |
+| 平台    | 基础设置 (工具/方法有很多请自行探索) |
 | :------ | :------------------------------- |
 | Windows | 设置 > 工具 > 自定义代理 (客户端内) |
-| UWP     | Windows 设置 > 网络和 Internet > 代理  |
-| Linux   | 系统设置 > 网络 > 网络代理           |
-| macOS   | 系统偏好设置 > 网络 > 高级 > 代理      |
-| Android | WLAN > 修改网络 > 高级选项 > 代理      |
-| iOS     | Surge，Shadowrocket 等添加配置    |
+| UWP     | Windows 设置 > 网络和 Internet > 代理 |
+| Linux   | 系统设置 > 网络 > 网络代理 |
+| macOS   | 系统偏好设置 > 网络 > 高级 > 代理 |
+| Android | WLAN > 修改网络 > 高级选项 > 代理 |
+| iOS     | Surge，Shadowrocket 等添加配置 |
 
-> UWP 应用需要开启 loopback 才能会使用系统代理，请以**管理员身份**执行命令
+> UWP 应用需要开启 loopback 才能使用系统代理，请以**管理员身份**执行命令
 >
 > ```
 > checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
-> ```
-
-> iOS Surge 配置
-> 
-> ```
-> [Proxy]
-> UnblockNeteaseMusic = http,<Server Name>,<PORT>,,
-> 
-> [Rule]
-> USER-AGENT,NeteaseMusic*,UnblockNeteaseMusic 
-> FINAL,DIRECT
 > ```
 
 ### ✳方法 3. 调用接口
@@ -154,7 +143,7 @@ match(557581404, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(s
 
 <img src="https://user-images.githubusercontent.com/26399680/52219399-8373e100-28d7-11e9-9011-686d0caba369.jpg" width="50%">
 
-## 感谢
+## 致谢
 
 感谢大佬们为逆向 eapi 所做的努力
 
@@ -164,7 +153,7 @@ match(557581404, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(s
 
 [listen1/listen1_chrome_extension](https://github.com/listen1/listen1_chrome_extension)
 
-向所有同类产品致敬
+向所有同类项目致敬
 
 [EraserKing/CloudMusicGear](https://github.com/EraserKing/CloudMusicGear)
 

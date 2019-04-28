@@ -30,7 +30,6 @@ hook.target.path = [
 	'/api/v3/playlist/detail',
 	'/api/v3/song/detail',
 	'/api/v6/playlist/detail',
-	// '/api/playlist/detail/dynamic',
 	'/api/album/play',
 	'/api/artist/privilege',
 	'/api/album/privilege',
@@ -88,6 +87,7 @@ hook.request.before = ctx => {
 		})
 	}
 	if((hook.target.host.includes(url.hostname)) && url.path.startsWith('/weapi/')){
+		ctx.req.headers['X-Real-IP'] = '118.88.88.88'
 		ctx.netease = {web: true, path: url.path.replace(/^\/weapi\//, '/api/').replace(/\?.+$/, '').replace(/\/\d*$/, '')}
 	}
 	else if(req.url.includes('package')){
@@ -259,6 +259,9 @@ const tryMatch = ctx => {
 				item.type = 'mp3'
 			})
 			.catch(() => {})
+		}
+		else if(item.code == 200 && netease.web){
+			item.url = item.url.replace(/(m\d+?)(?!c)\.music\.126\.net/, '$1c.music.126.net')
 		}
 	}
 
