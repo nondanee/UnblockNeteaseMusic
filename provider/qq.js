@@ -87,7 +87,9 @@ const ticket = () => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		let vkey = jsonBody.req_0.data.midurlinfo[0].vkey
+		let vkey = 
+			jsonBody.req_0.data.midurlinfo[0].vkey ||
+			(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
 		if(vkey)
 			return vkey
 		else
