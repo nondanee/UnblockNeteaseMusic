@@ -62,14 +62,15 @@ optional arguments:
 
 <details>
   <summary>iOS 食用指南</summary>
+  <br>
 
-  1.启动服务
+  1. 启动服务
 
   ```bash
   node app.js -i https://<转发音源的域名>
   ```
 
-  2.配置 `nginx` 转发音源
+  2. 配置 Nginx 转发音源
 
   ```nginx
   server {
@@ -90,16 +91,16 @@ optional arguments:
   }
   ```
 
-  3.下载 Shadowrocket 并配置 Unblock 代理
+  3. 下载 Shadowrocket 并配置 Unblock 代理
   - 右上角加号添加节点
   - 类型选择 HTTP
   - 服务器填写你的服务器公网IP
-  - 端口填写你启动服务的端口号（默认为8080）
+  - 端口填写你启动服务的端口号（默认为 8080）
   - 然后底部找到配置 点击本地文件-编辑配置
   - 添加三条规则 选项选择你刚刚添加的节点
-    - USER-AGENT: `NeteaseMusic*`
-    - DOMAIN-SUFFIX: `163.com`
-    - DOMAIN-SUFFIX: `126.com`
+    - `USER-AGENT`: `NeteaseMusic*`
+    - `DOMAIN-SUFFIX`: `163.com`
+    - `DOMAIN-SUFFIX`: `126.com`
 </details>
 
 ### 方法 1. 修改 hosts
