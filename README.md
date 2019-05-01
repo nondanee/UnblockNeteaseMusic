@@ -60,51 +60,6 @@ optional arguments:
 
 测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级，不过播放音源地址需要 HTTPS，因此需要一个有可信任证书的 (公网)  HTTPS 接口来转发流量，设置代理无法直接使用 (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
 
-<details>
-  <summary>iOS 食用指南</summary>
-  <br>
-
-  1. 启动服务
-
-  ```bash
-  node app.js -i https://<转发音源的域名>
-  ```
-
-  2. 配置 Nginx 转发音源
-
-  ```nginx
-  server {
-    listen 443;
-    server_name your_domain;
-
-    ssl on;
-    ssl_certificate 1_your_domain_bundle.crt; # 改为自己申请得到的 crt 文件的名称
-    ssl_certificate_key 2_your_domain.key; # 改为自己申请得到的 key 文件的名称
-    ssl_session_timeout 5m;
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
-    ssl_prefer_server_ciphers on;
-
-    location / {
-      proxy_pass http://localhost:8080; # 代理到 Unblock 服务地址
-    }
-  }
-  ```
-
-  3. 下载 Shadowrocket 并配置 Unblock 代理
-  - 右上角加号添加节点
-  - 类型选择 HTTP
-  - 服务器填写你的服务器公网 IP
-  - 端口填写你启动服务的端口号（默认为 8080）
-  - 然后底部找到配置 点击本地文件 -> default.conf -> 编辑配置
-  - 添加三条规则 选项选择你刚刚添加的节点
-    - `USER-AGENT`: `NeteaseMusic*`
-    - `DOMAIN-SUFFIX`: `163.com`
-    - `DOMAIN-SUFFIX`: `126.com`
-  
-  _可以在腾讯云申请免费 SSL 证书：<https://console.cloud.tencent.com/ssl>_
-</details>
-
 ### 方法 1. 修改 hosts
 
 向 hosts 文件添加两条规则
