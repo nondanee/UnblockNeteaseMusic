@@ -101,6 +101,8 @@ optional arguments:
     - `USER-AGENT`: `NeteaseMusic*`
     - `DOMAIN-SUFFIX`: `163.com`
     - `DOMAIN-SUFFIX`: `126.com`
+  
+  _可以在腾讯云申请免费 SSL 证书：<https://console.cloud.tencent.com/ssl>_
 </details>
 
 ### 方法 1. 修改 hosts
