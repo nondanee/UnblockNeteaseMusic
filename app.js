@@ -10,6 +10,7 @@ const config = require('./cli.js')
 .option(['-o', '--match-order'], {metavar: 'source', nargs: '+', help: 'set priority of sources'})
 .option(['-t', '--token'], {metavar: 'token', help: 'set up http basic authentication'})
 .option(['-s', '--strict'], {action: 'store_true', help: 'enable proxy limitation'})
+.option(['-i', '--inject-url'], {metavar: 'inject', help: 'inject https proxy url'})
 .option(['-h', '--help'], {action: 'help'})
 .parse(process.argv)
 
@@ -21,6 +22,10 @@ if(config.port.some(invalid)){
 }
 if(config.proxyUrl && !/http(s?):\/\/.+:\d+/.test(config.proxyUrl)){
 	console.log('Please check the proxy url.')
+	process.exit(1)
+}
+if(config.injectUrl && !/http(s?):\/\/.+/.test(config.injectUrl)){
+	console.log('Please check the inject url.')
 	process.exit(1)
 }
 if(config.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(config.forceHost)){
@@ -54,6 +59,7 @@ global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
 config.strict ? server.whitelist = ['music.163.com', 'music.126.net', 'vod.126.net'] : server.blanklist = []
 server.authentication = config.token || null
+config.injectUrl && (hook.injectUrl = config.injectUrl)
 
 const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
 const httpdns = host => require('./request')('POST', 'http://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns[0].ips)
