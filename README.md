@@ -33,7 +33,8 @@ $ docker-compose up
 ```
 $ node app.js -h
 usage: unblockneteasemusic [-v] [-p port] [-u url] [-f host]
-                           [-o source [source ...]] [-t token] [-s] [-h]
+                           [-o source [source ...]] [-t token] [-e url] [-s]
+                           [-h]
 
 optional arguments:
   -v, --version               output the version number
@@ -43,8 +44,8 @@ optional arguments:
   -o source [source ...], --match-order source [source ...]
                               set priority of sources
   -t token, --token token     set up http basic authentication
+  -e url, --endpoint url      replace virtual endpoint with public host
   -s, --strict                enable proxy limitation
-  -i inject, --inject-url     inject https proxy url
   -h, --help                  output usage information
 ```
 
@@ -56,9 +57,9 @@ optional arguments:
 
 支持 Windows 客户端，UWP 客户端，Linux 客户端 (1.2 版本以上需要自签证书 MITM，启动客户端需要增加 `--ignore-certificate-errors` 参数)，macOS 客户端 (726 版本以上需要自签证书)，Android 客户端和网页版 (需要自签证书，需要脚本配合)
 
-目前除 UWP 外其它客户端都优先请求 HTTPS 接口，默认配置下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用 HTTP 接口 (新版 Linux 客户端和 macOS 客户端已无法降级)
+目前除 UWP 外其它客户端均优先请求 HTTPS 接口，默认配置下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用 HTTP 接口 (新版 Linux 客户端和 macOS 客户端已无法降级)
 
-测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级，不过播放音源地址需要 HTTPS，因此需要一个有可信任证书的 (公网)  HTTPS 接口来转发流量 (可以参考 [iOS 食用指南](https://github.com/nondanee/UnblockNeteaseMusic/issues/65))，设置代理无法直接使用 (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
+测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级。不过音源播放地址需要 HTTPS，因此无法直接使用，需要一个有受信任证书的 (公网) HTTPS 接口来转发流量，有域名和证书条件的话可以参考 [@u3u](https://github.com/u3u) 的 [配置指南](https://github.com/nondanee/UnblockNeteaseMusic/issues/65) (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
 
 ### 方法 1. 修改 hosts
 
@@ -73,7 +74,7 @@ optional arguments:
 >
 > **若在本机运行程序**，请指定网易云服务器 IP `-f xxx.xxx.xxx.xxx` (可在修改 hosts 前通过 `ping music.163.com` 获得) **或** 使用代理 `-u http(s)://xxx.xxx.xxx.xxx:xxx`，以防请求死循环
 >
-> **Android 客户端下修改 hosts 无法使用**，原因和解决方法详见[云音乐安卓又搞事啦](https://jixun.moe/post/netease-android-hosts-bypass/)，[安卓免 root 绕过网易云音乐 IP 限制](https://jixun.moe/post/android-block-netease-without-root/)
+> **Android 客户端下修改 hosts 无法直接使用**，原因和解决方法详见[云音乐安卓又搞事啦](https://jixun.moe/post/netease-android-hosts-bypass/)，[安卓免 root 绕过网易云音乐 IP 限制](https://jixun.moe/post/android-block-netease-without-root/)
 
 ### 方法 2. 设置代理
 
@@ -88,7 +89,7 @@ optional arguments:
 | Linux   | 系统设置 > 网络 > 网络代理 |
 | macOS   | 系统偏好设置 > 网络 > 高级 > 代理 |
 | Android | WLAN > 修改网络 > 高级选项 > 代理 |
-| iOS     | Surge，Shadowrocket 等添加配置 |
+| iOS     | [Surge，Shadowrocket 等添加配置](https://github.com/nondanee/UnblockNeteaseMusic/issues/56) (来自 [@HenryQW](https://github.com/HenryQW)，[@kongminhao](https://github.com/kongminhao)) |
 
 > UWP 应用需要开启 loopback 才能使用系统代理，请以**管理员身份**执行命令
 >

@@ -4,7 +4,6 @@ const request = require('./request')
 const match = require('./provider/match')
 
 const hook = {
-	injectUrl: 'http://music.163.com',
 	request: {
 		before: () => {},
 		after: () => {},
@@ -252,7 +251,7 @@ const tryMatch = ctx => {
 		if(item.code != 200 && (target == 0 || item.id == target)){
 			return match(item.id)
 			.then(song => {
-				item.url = `${hook.injectUrl}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3`
+				item.url = `${global.endpoint || 'http://music.163.com'}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3`
 				item.md5 = song.md5
 				item.size = song.size
 				item.code = 200
