@@ -61,6 +61,12 @@ optional arguments:
 
 测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级。不过音源播放地址需要 HTTPS，因此无法直接使用，需要一个有受信任证书的 (公网) HTTPS 接口来转发流量，有域名和证书条件的话可以参考 [@u3u](https://github.com/u3u) 的 [配置指南](https://github.com/nondanee/UnblockNeteaseMusic/issues/65) (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
 
+因 UWP 应用存在网络隔离，限制流量发送到本机，若使用的代理在 localhost，或修改的 hosts 指向 localhost，需为 "网易云音乐 UWP" 手动开启 loopback 才能使用，请以**管理员身份**执行命令
+
+```powershell
+checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
+```
+
 ### 方法 1. 修改 hosts
 
 向 hosts 文件添加两条规则
@@ -78,11 +84,11 @@ optional arguments:
 
 ### 方法 2. 设置代理
 
-> PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
->
-> 全局代理地址填写服务器地址和端口号即可
+PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 
-| 平台    | 基础设置 (工具/方法有很多请自行探索) |
+全局代理地址填写服务器地址和端口号即可
+
+| 平台    | 基础设置 |
 | :------ | :------------------------------- |
 | Windows | 设置 > 工具 > 自定义代理 (客户端内) |
 | UWP     | Windows 设置 > 网络和 Internet > 代理 |
@@ -91,18 +97,17 @@ optional arguments:
 | Android | WLAN > 修改网络 > 高级选项 > 代理 |
 | iOS     | [Surge，Shadowrocket 等添加配置](https://github.com/nondanee/UnblockNeteaseMusic/issues/56) (来自 [@HenryQW](https://github.com/HenryQW)，[@kongminhao](https://github.com/kongminhao)) |
 
-> UWP 应用需要开启 loopback 才能使用系统代理，请以**管理员身份**执行命令
->
-> ```
-> checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
-> ```
-
+> 代理工具和方法有很多请自行探索
 ### ✳方法 3. 调用接口
 
 作为依赖库使用
 
+```
+$ npm install nondanee/UnblockNeteaseMusic
+```
+
 ```javascript
-const match = require('./UnblockNeteaseMusic')
+const match = require('unblockneteasemusic')
 
 /** 
  * Set proxy or hosts if needed
@@ -116,7 +121,7 @@ global.hosts = {'i.y.qq.com': '59.37.96.220'}
  * @param {Array<String>||undefined} source support netease, qq, xiami, baidu, kugou, kuwo, migu, joox
  * @return {Promise<Object>}
  */
-match(557581404, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(song))
+match(418602084, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(song))
 ```
 
 ## 效果
