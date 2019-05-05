@@ -7,8 +7,9 @@ const search = info => {
 		'http://music.163.com/api/album/' + info.album.id
 
 	return request('GET', url)
-	.then(response => response.json())
-	.then(jsonBody => {
+	.then(response => response.body())
+	.then(body => {
+		let jsonBody = JSON.parse(body.replace(/"dfsId":(\d+)/g, '"dfsId":"$1"')) // for js precision
 		let matched = jsonBody.album.songs.find(song => song.id === info.id)
 		if(matched)
 			return matched.hMusic.dfsId || matched.mMusic.dfsId || matched.lMusic.dfsId
@@ -18,7 +19,7 @@ const search = info => {
 }
 
 const track = id => {
-	if(!id) return Promise.reject()
+	if(!id || id === '0') return Promise.reject()
 	let songUrl = crypto.reverse.url(id)
 	return songUrl
 }
