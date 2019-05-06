@@ -9,6 +9,12 @@
   "scripts": {
     "pkg": "pkg . --out-path=dist/"
   },
+  "pkg": {
+    "assets": [
+      "server.key",
+      "server.crt"
+    ]
+  },
   "keywords": [
     "netease",
     "neteasemusic",

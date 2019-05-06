@@ -1,5 +1,6 @@
 const fs = require('fs')
 const net = require('net')
+const path = require('path')
 const parse = require('url').parse
 
 const hook = require('./hook')
@@ -160,8 +161,8 @@ const proxy = {
 }
 
 const options = {
-	key: fs.readFileSync('./server.key'),
-	cert: fs.readFileSync('./server.crt')
+	key: fs.readFileSync(path.join(__dirname, 'server.key')),
+	cert: fs.readFileSync(path.join(__dirname, 'server.crt'))
 }
 
 const server = {
