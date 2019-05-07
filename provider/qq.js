@@ -102,7 +102,7 @@ const ticket = () => {
 const track = id => {
 	return cache(ticket)
 	.then(vkey => {
-		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', '183.131.60.16/amobile.music.tc.qq.com'][0]
+		let host = ['streamoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][1]
 		let songUrl =
 			'http://' + host + '/M500' + id +
 			'.mp3?vkey=' + vkey +
