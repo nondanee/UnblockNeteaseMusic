@@ -57,7 +57,7 @@ const server = require('./server')
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
-config.strict ? server.whitelist = ['music.163.com', 'music.126.net', 'vod.126.net'] : server.blanklist = []
+config.strict ? server.whitelist = ['music.163.com', 'music.126.net', 'vod.126.net', 'localhost'] : server.blacklist = []
 server.authentication = config.token || null
 global.endpoint = config.endpoint
 

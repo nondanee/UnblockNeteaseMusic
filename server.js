@@ -75,7 +75,7 @@ const proxy = {
 				let allow = server.whitelist.some(match)
 				let deny = server.blacklist.some(match)
 				// console.log('allow', allow, 'deny', deny)
-				if(!allow && deny){
+				if(!allow || deny){
 					return Promise.reject(ctx.error = 'filter')
 				}
 			}
@@ -171,7 +171,7 @@ const server = {
 }
 
 server.whitelist = ['.*']
-server.blacklist = ['.*']
+server.blacklist = []
 server.authentication = null
 
 module.exports = server
