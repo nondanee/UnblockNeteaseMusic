@@ -191,15 +191,15 @@ const pretendPlay = ctx => {
 	let query = null
 	if(netease.linux){
 		netease.param = {
-			ids: '["' + netease.param.id + '"]',
-			br: '320000'
+			ids: `["${netease.param.id}"]`,
+			br: netease.param.br
 		}
 		query = crypto.linuxapi.encryptRequest(turn, netease.param)
 	}
 	else{
 		netease.param = {
-			ids: '["' + netease.param.id + '"]',
-			br: '320000',
+			ids: `["${netease.param.id}"]`,
+			br: netease.param.br,
 			e_r: netease.param.e_r,
 			header: netease.param.header
 		}
