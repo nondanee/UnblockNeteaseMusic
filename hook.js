@@ -143,7 +143,6 @@ hook.request.after = ctx => {
 					if('coverImgId_str' in value && 'coverImgId' in value) // for js precision
 						value['coverImgId'] = value['coverImgId_str']
 					if('fee' in value) value['fee'] = 0
-					if('cp' in value) value['cp'] = 0
 					if('st' in value && 'pl' in value && 'dl' in value && 'subp' in value){ // batch modify
 						value['st'] = 0
 						value['subp'] = 1
