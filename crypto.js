@@ -48,8 +48,8 @@ module.exports = {
 		encode: text => Buffer.from(text).toString('base64').replace(/\+/g, '-').replace(/\//g, '_'),
 		decode: text => Buffer.from(text.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('ascii')
 	},
-	reverse: {
-		url: id => {
+	uri: {
+		retrieve: id => {
 			id = id.toString().trim()
 			let string = Array.from(Array(id.length).keys()).map(index => String.fromCharCode(id.charCodeAt(index) ^ uriKey.charCodeAt(index % uriKey.length))).join('')
 			let result = crypto.createHash('md5').update(string).digest('base64').replace(/\//g, '_').replace(/\+/g, '-')

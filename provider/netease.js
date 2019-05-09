@@ -20,7 +20,7 @@ const search = info => {
 
 const track = id => {
 	if(!id || id === '0') return Promise.reject()
-	let songUrl = crypto.reverse.url(id)
+	let songUrl = crypto.uri.retrieve(id)
 	return songUrl
 }
 
