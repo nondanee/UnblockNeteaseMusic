@@ -22,3 +22,4 @@ Load unpacked extension in Developer mode
 ## Reference
 
 - [brix/crypto-js](https://github.com/brix/crypto-js)
+- [JixunMoe/cuwcl4c](https://github.com/JixunMoe/cuwcl4c)
