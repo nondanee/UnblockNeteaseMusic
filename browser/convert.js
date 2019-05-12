@@ -19,7 +19,7 @@ const converter = (input, output, processor) => {
     fs.writeFileSync(output, data)
 }
 
-converter(path.resolve('..', 'cache.js'), path.resolve('.', 'cache.js'))
+converter(path.resolve(__dirname, '..', 'cache.js'), path.resolve(__dirname, '.', 'cache.js'))
 
 fs.mkdirSync(path.resolve(__dirname, 'provider'))
 

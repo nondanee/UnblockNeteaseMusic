@@ -1,4 +1,3 @@
-const zlib = require('zlib')
 const cache = require('../cache')
 const insure = require('./insure')
 const request = require('../request')
@@ -121,7 +120,7 @@ const track = id => {
 	// )
 	// .then(response => response.body(true))
 	// .then(body => {
-	// 	let xml = zlib.inflateSync(body.slice(5)).toString()
+	// 	let xml = require('zlib').inflateSync(body.slice(5)).toString()
 	// 	let focus = xml.match(/<item name="(.+)">(.+)<\/item>/)
 	// 	return `http://streamoc.music.tc.qq.com/${focus[1]}?vkey=${focus[2]}&guid=0&uin=12345678&fromtag=6`
 	// })
