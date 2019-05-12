@@ -15,11 +15,10 @@ For test
 $ node convert.js
 ```
 
-
-##Install
+## Install
 
 Load unpacked extension in Developer mode
 
 ## Reference
 
-- [brix/crypto-js](https://github.com/)
+- [brix/crypto-js](https://github.com/brix/crypto-js)
