@@ -11,7 +11,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
 	let headers = details.responseHeaders
 	headers.push({name: 'X-Real-IP', value: '118.88.88.88'})
 	return {requestHeaders: headers}
-}, { urls: ['*://music.163.com/*'] }, ['blocking', 'requestHeaders'])
+}, {urls: ['*://music.163.com/*']}, ['blocking', 'requestHeaders'])
 
 chrome.webRequest.onHeadersReceived.addListener(details => {
 	let headers = details.responseHeaders
