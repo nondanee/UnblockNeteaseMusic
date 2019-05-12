@@ -21,7 +21,7 @@ const converter = (input, output, processor) => {
 
 converter(path.resolve(__dirname, '..', 'cache.js'), path.resolve(__dirname, '.', 'cache.js'))
 
-fs.mkdirSync(path.resolve(__dirname, 'provider'))
+if(!fs.existsSync(path.resolve(__dirname, 'provider'))) fs.mkdirSync(path.resolve(__dirname, 'provider'))
 
 fs.readdirSync(path.resolve(__dirname, '..', 'provider')).filter(file => !file.includes('test')).forEach(file => {  
     converter(path.resolve(__dirname, '..', 'provider', file), path.resolve(__dirname, 'provider', file))

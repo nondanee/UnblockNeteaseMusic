@@ -8,7 +8,7 @@ chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => 
 })
 
 chrome.webRequest.onBeforeSendHeaders.addListener(details => {
-	let headers = details.responseHeaders
+	let headers = details.requestHeaders
 	headers.push({name: 'X-Real-IP', value: '118.88.88.88'})
 	return {requestHeaders: headers}
 }, {urls: ['*://music.163.com/*']}, ['blocking', 'requestHeaders'])
