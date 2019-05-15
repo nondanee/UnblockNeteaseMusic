@@ -20,8 +20,11 @@ const hook = {
 hook.target.host = [
 	'music.163.com',
 	'interface.music.163.com',
+	'interface3.music.163.com',
 	'apm.music.163.com',
+	'apm3.music.163.com',
 	'mam.netease.com',
+	'api.iplay.163.com'
 	// 'crash.163.com',
 	// 'clientlog.music.163.com'
 ]
@@ -167,7 +170,7 @@ hook.request.after = ctx => {
 }
 
 hook.connect.before = ctx => {
-	let url = parse('https://' + ctx.req.url)
+	let url = parse('https://' + (ctx.req.headers.host || ctx.req.url))
 	if(hook.target.host.includes(url.hostname)){
 		if(url.port == 80){
 			ctx.req.url = `localhost:${global.port[0]}`
