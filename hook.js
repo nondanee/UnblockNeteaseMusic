@@ -170,7 +170,7 @@ hook.request.after = ctx => {
 }
 
 hook.connect.before = ctx => {
-	let url = parse('https://' + (ctx.req.headers.host || ctx.req.url))
+	let url = parse('https://' + ctx.req.url)
 	if(hook.target.host.includes(url.hostname)){
 		if(url.port == 80){
 			ctx.req.url = `localhost:${global.port[0]}`
