@@ -55,11 +55,9 @@ optional arguments:
 
 **若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s`  限制代理范围 (需使用 PAC 或 hosts)，~~或启用 Proxy Authentication `-t <name>:<password>` 设置代理用户名密码~~ (目前密码认证在 Windows 客户端设置和 macOS 系统设置都无法生效，请不要使用)，以防代理被他人滥用**
 
-支持 Windows 客户端，UWP 客户端，Linux 客户端 (1.2 版本以上需要自签证书 MITM，启动客户端需要增加 `--ignore-certificate-errors` 参数)，macOS 客户端 (726 版本以上需要自签证书)，Android 客户端和网页版 (需要自签证书，需要脚本配合)
+支持 Windows 客户端，UWP 客户端，Linux 客户端 (1.2 版本以上需要自签证书 MITM，启动客户端需要增加 `--ignore-certificate-errors` 参数)，macOS 客户端 (726 版本以上需要自签证书)，iOS 客户端 (配置 https endpoint 或使用自签证书)，Android 客户端和网页版 (需要自签证书，需要脚本配合)
 
 目前除 UWP 外其它客户端均优先请求 HTTPS 接口，默认配置下本代理对网易云所有 HTTPS API 连接返回空数据，促使客户端降级使用 HTTP 接口 (新版 Linux 客户端和 macOS 客户端已无法降级)
-
-测试发现 iOS 客户端设置 WLAN 代理有效果 (HD 版不行)，虽 Apple 强制要求使用 HTTPS 但 API 请求仍可以降级。不过音源播放地址需要 HTTPS，因此无法直接使用，需要一个有受信任证书的 (公网) HTTPS 接口来转发流量，有域名和证书条件的话可以参考 [@u3u](https://github.com/u3u) 的 [配置指南](https://github.com/nondanee/UnblockNeteaseMusic/issues/65) (其它项目有提到使用 Surge，Shadowrocket 可以直接转发 HTTPS 流量到 HTTP，有兴趣可以试试)
 
 因 UWP 应用存在网络隔离，限制流量发送到本机，若使用的代理在 localhost，或修改的 hosts 指向 localhost，需为 "网易云音乐 UWP" 手动开启 loopback 才能使用，请以**管理员身份**执行命令
 
@@ -95,9 +93,10 @@ PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 | Linux   | 系统设置 > 网络 > 网络代理 |
 | macOS   | 系统偏好设置 > 网络 > 高级 > 代理 |
 | Android | WLAN > 修改网络 > 高级选项 > 代理 |
-| iOS     | [Surge，Shadowrocket 等添加配置](https://github.com/nondanee/UnblockNeteaseMusic/issues/56) (来自 [@HenryQW](https://github.com/HenryQW)，[@kongminhao](https://github.com/kongminhao)) |
+| iOS     | 无线局域网 > HTTP 代理 > 配置代理 |
 
-> 代理工具和方法有很多请自行探索
+> 代理工具和方法有很多请自行探索，欢迎在 issues 讨论
+
 ### ✳方法 3. 调用接口
 
 作为依赖库使用
@@ -128,7 +127,7 @@ match(418602084, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(s
 
 #### Windows 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52214951-f24c3c80-28cd-11e9-99d0-f1e68fa6ae2e.png" width="100%">
+<img src="https://user-images.githubusercontent.com/26399680/57972590-425b9480-79cf-11e9-9761-b46a12d36249.png" width="100%">
 
 #### UWP 客户端
 
@@ -144,11 +143,11 @@ match(418602084, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(s
 
 #### Android 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52219366-7525c500-28d7-11e9-8ae8-b09e2a81f0cb.jpg" width="50%">
+<img src="https://user-images.githubusercontent.com/26399680/57972549-eabd2900-79ce-11e9-8fef-95cb60906298.png" width="50%">
 
 #### iOS 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52219399-8373e100-28d7-11e9-9011-686d0caba369.jpg" width="50%">
+<img src="https://user-images.githubusercontent.com/26399680/57972440-f90a4580-79cc-11e9-8dbf-6150ee299b9c.jpg" width="50%">
 
 ## 致谢
 
