@@ -68,7 +68,7 @@ const proxy = {
 		}
 	},
 	filter: ctx => {
-		const url = parse(ctx.req.url)
+		const url = parse((ctx.socket ? 'https://' : '') + ctx.req.url)
 		const match = pattern => url.href.search(new RegExp(pattern, 'g')) != -1
 		if(!(ctx.decision || ctx.req.local)){
 			try{
