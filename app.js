@@ -53,7 +53,7 @@ if(config.token && !/\S+:\S+/.test(config.token)){
 const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
-const escape = string => string.replace(/\./g, '\\$&')
+const escape = string => string.replace(/\./g, '\\.')
 
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
