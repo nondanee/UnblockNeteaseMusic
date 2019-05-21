@@ -1,7 +1,9 @@
 const parse = require('url').parse
 const crypto = require('./crypto')
+const nativeCrypto = require('crypto')
 const request = require('./request')
 const match = require('./provider/match')
+const cache = require('./cache')
 
 const hook = {
 	request: {
@@ -244,6 +246,19 @@ const tryLike = ctx => {
 	.catch(() => {})
 }
 
+const getFileMD5 = url => {
+	return request('GET', url)
+		.then(response => {
+			return new Promise((resolve, reject) => {
+				let file_md5 = nativeCrypto.createHash('md5')
+				response
+					.on('data', chunk => file_md5.update(chunk))
+					.on('end', () => resolve(file_md5.digest('hex')))
+					.on('error', error => reject(error))
+			})
+		})
+}
+
 const tryMatch = ctx => {
 	const netease = ctx.netease
 	const jsonBody = netease.jsonBody
@@ -262,11 +277,9 @@ const tryMatch = ctx => {
 				item.type = 'mp3'
 				if(!item.md5) {
 					if(ctx.netease.path === '/api/song/enhance/download/url') {
-						return request('GET', song.url)
-							.then(response => response.body(true))
-							.then(buffer => {
-								item.md5 = crypto.md5(buffer)
-							})
+						// 设置7天的缓存 同一个文件地址 MD5应该不会频繁不会变化
+						return cache(getFileMD5, song.url, 7 * 24 * 60 * 60 * 1000)
+							.then(md5 => item.md5 = md5)
 					} else {
 						item.md5 = crypto.md5(song.url)
 					}
