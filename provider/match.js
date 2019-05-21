@@ -42,7 +42,6 @@ const check = url => {
 			song.md5 = response.headers['server-md5']
 		else if(url.includes('xiami.net') || url.includes('qianqian.com'))
 			song.md5 = response.headers['etag'].replace(/"/g, '').toLowerCase()
-		song.md5 = (song.md5) ? song.md5 : crypto.md5(url) //placeholder
 		song.size = parseInt(response.headers['content-length']) || 0
 		song.url = response.url.href
 	})

@@ -260,6 +260,17 @@ const tryMatch = ctx => {
 				item.code = 200
 				item.br = 320000
 				item.type = 'mp3'
+				if(!item.md5) {
+					if(ctx.netease.path === '/api/song/enhance/download/url') {
+						return request('GET', song.url)
+							.then(response => response.body(true))
+							.then(buffer => {
+								item.md5 = crypto.md5(buffer)
+							})
+					} else {
+						item.md5 = crypto.md5(song.url)
+					}
+				}
 			})
 			.catch(() => {})
 		}
