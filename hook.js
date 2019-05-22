@@ -1,9 +1,7 @@
 const parse = require('url').parse
 const crypto = require('./crypto')
-const nativeCrypto = require('crypto')
 const request = require('./request')
 const match = require('./provider/match')
-const cache = require('./cache')
 
 const hook = {
 	request: {
@@ -246,19 +244,6 @@ const tryLike = ctx => {
 	.catch(() => {})
 }
 
-const getFileMD5 = url => {
-	return request('GET', url)
-		.then(response => {
-			return new Promise((resolve, reject) => {
-				let file_md5 = nativeCrypto.createHash('md5')
-				response
-					.on('data', chunk => file_md5.update(chunk))
-					.on('end', () => resolve(file_md5.digest('hex')))
-					.on('error', error => reject(error))
-			})
-		})
-}
-
 const tryMatch = ctx => {
 	const netease = ctx.netease
 	const jsonBody = netease.jsonBody
@@ -275,43 +260,6 @@ const tryMatch = ctx => {
 				item.code = 200
 				item.br = 320000
 				item.type = 'mp3'
-				if(!item.md5) {
-					const fakeMD5 = () => {
-						item.md5 = crypto.md5(song.url)
-					}
-					if(ctx.netease.path === '/api/song/enhance/download/url') {
-						// Android版 6.0.0以上 / Mac版 2.0.0以上 预下载 计算md5
-						const overVersion = (a, b) => {
-							const version_arr_a = a.split('.')
-							const version_arr_b = b.split('.')
-							return !(version_arr_a.find((single, i) => parseInt(single) < parseInt(version_arr_b[i])))
-						}
-						try {
-							let header = ctx.netease.param.header
-							if(typeof header === 'string') {
-								header = JSON.parse(ctx.netease.param.header)
-							}
-							const {os, appver} = header
-							console.log('Download device:', os, appver)
-							const limit = {
-								android: '6.0.0',
-								osx: '2.0.0'
-							}
-							if(limit[os] && overVersion(appver, limit[os])) {
-								// 设置7天的缓存 同一个文件地址 MD5应该不会频繁变化
-								return cache(getFileMD5, song.url, 7 * 24 * 60 * 60 * 1000)
-									.then(md5 => item.md5 = md5)
-							} else {
-								fakeMD5()
-							}
-						} catch (e) {
-							console.log('Unknow device')
-							fakeMD5()
-						}
-					} else {
-						fakeMD5()
-					}
-				}
 			})
 			.catch(() => {})
 		}
