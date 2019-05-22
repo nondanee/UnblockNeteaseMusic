@@ -276,12 +276,40 @@ const tryMatch = ctx => {
 				item.br = 320000
 				item.type = 'mp3'
 				if(!item.md5) {
-					if(ctx.netease.path === '/api/song/enhance/download/url') {
-						// 设置7天的缓存 同一个文件地址 MD5应该不会频繁不会变化
-						return cache(getFileMD5, song.url, 7 * 24 * 60 * 60 * 1000)
-							.then(md5 => item.md5 = md5)
-					} else {
+					const fakeMD5 = () => {
 						item.md5 = crypto.md5(song.url)
+					}
+					if(ctx.netease.path === '/api/song/enhance/download/url') {
+						// Android版 6.0.0以上 / Mac版 2.0.0以上 预下载 计算md5
+						const overVersion = (a, b) => {
+							const version_arr_a = a.split('.')
+							const version_arr_b = b.split('.')
+							return !(version_arr_a.find((single, i) => parseInt(single) < parseInt(version_arr_b[i])))
+						}
+						try {
+							let header = ctx.netease.param.header
+							if(typeof header === 'string') {
+								header = JSON.parse(ctx.netease.param.header)
+							}
+							const {os, appver} = header
+							console.log('Download device:', os, appver)
+							const limit = {
+								android: '6.0.0',
+								osx: '2.0.0'
+							}
+							if(limit[os] && overVersion(appver, limit[os])) {
+								// 设置7天的缓存 同一个文件地址 MD5应该不会频繁变化
+								return cache(getFileMD5, song.url, 7 * 24 * 60 * 60 * 1000)
+									.then(md5 => item.md5 = md5)
+							} else {
+								fakeMD5()
+							}
+						} catch (e) {
+							console.log('Unknow device')
+							fakeMD5()
+						}
+					} else {
+						fakeMD5()
 					}
 				}
 			})
