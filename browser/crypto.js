@@ -9,5 +9,7 @@ export default {
 			return `http://p1.music.126.net/${result}/${id}`
 		}
 	},
-	md5: text => CryptoJS.MD5(text).toString()
+	md5: {
+		digest: value => CryptoJS.MD5(value).toString()
+	}
 }

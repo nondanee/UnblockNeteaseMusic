@@ -56,5 +56,13 @@ module.exports = {
 			return `http://p1.music.126.net/${result}/${id}`
 		}
 	},
-	md5: text => crypto.createHash('md5').update(text).digest('hex')
+	md5: {
+		digest: value => crypto.createHash('md5').update(value).digest('hex'),
+		pipe: source => new Promise((resolve, reject) => {
+			let digest = crypto.createHash('md5').setEncoding('hex')
+			source.pipe(digest)
+			.on('error', error => reject(error))
+			.once('finish', () => resolve(digest.read()))
+		})
+	}
 }
