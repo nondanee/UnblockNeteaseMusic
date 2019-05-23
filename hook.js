@@ -273,7 +273,7 @@ const tryMatch = ctx => {
 						.map(version => version.split('.').slice(0, 3).map(number => parseInt(number) || 0))
 						.reduce((aggregation, current) => !aggregation.length ? current.map(element => [element]) : aggregation.map((element, index) => element.concat(current[index])), [])
 						.filter(pair => pair[0] != pair[1])[0]
-                    return !difference || difference[0] <= difference[1]
+					return !difference || difference[0] <= difference[1]
 				}
 				const limit = {android: '0.0.0', osx: '2.0.0'}
 				const task = {key: song.url.replace(/\?.*$/, ''), url: song.url}
