@@ -254,7 +254,7 @@ const tryMatch = ctx => {
 
 	const inject = item => {
 		item.flag = 0
-		if((item.code != 200 || item.freeTrialInfo !== null) && (target == 0 || item.id == target)){
+		if((item.code != 200 || item.freeTrialInfo) && (target == 0 || item.id == target)){
 			return match(item.id)
 			.then(song => {
 				item.url = `${global.endpoint || 'http://music.163.com'}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3`
