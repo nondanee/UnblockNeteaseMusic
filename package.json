@@ -15,12 +15,6 @@
       "server.crt"
     ]
   },
-  "keywords": [
-    "netease",
-    "neteasemusic",
-    "unblock",
-    "neteaseunblock"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/nondanee/UnblockNeteaseMusic.git"

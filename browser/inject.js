@@ -17,7 +17,7 @@
 		.filter(key => object[key] && typeof object[key] == 'function')
 		.find(key => String(object[key]).match(keyword))
 
-	if(window.top != window.self){ //in iframe
+	if(self.frameElement && self.frameElement.tagName == 'IFRAME'){ //in iframe
 		const keyOne = searchFunction(window.nej.e, '\\.dataset;if')
 		const keyTwo = searchFunction(window.nm.x, '\\.copyrightId==')
 		const keyThree = searchFunction(window.nm.x, '\\.privilege;if')
