@@ -1,3 +1,4 @@
+const cache = require('./cache')
 const parse = require('url').parse
 const crypto = require('./crypto')
 const request = require('./request')
@@ -20,8 +21,11 @@ const hook = {
 hook.target.host = [
 	'music.163.com',
 	'interface.music.163.com',
+	'interface3.music.163.com',
 	'apm.music.163.com',
+	'apm3.music.163.com',
 	'mam.netease.com',
+	'api.iplay.163.com'
 	// 'crash.163.com',
 	// 'clientlog.music.163.com'
 ]
@@ -35,6 +39,7 @@ hook.target.path = [
 	'/api/album/privilege',
 	'/api/v1/artist',
 	'/api/v1/artist/songs',
+	'/api/artist/top/song',
 	'/api/v1/album',
 	'/api/playlist/privilege',
 	'/api/song/enhance/player/url',
@@ -240,6 +245,8 @@ const tryLike = ctx => {
 	.catch(() => {})
 }
 
+const computeHash = task => request('GET', task.url).then(response => crypto.md5.pipe(response))
+
 const tryMatch = ctx => {
 	const netease = ctx.netease
 	const jsonBody = netease.jsonBody
@@ -247,15 +254,37 @@ const tryMatch = ctx => {
 
 	const inject = item => {
 		item.flag = 0
-		if(item.code != 200 && (target == 0 || item.id == target)){
+		if((item.code != 200 || item.freeTrialInfo) && (target == 0 || item.id == target)){
 			return match(item.id)
 			.then(song => {
 				item.url = `${global.endpoint || 'http://music.163.com'}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3`
-				item.md5 = song.md5
+				item.md5 = song.md5 || crypto.md5.digest(song.url)
 				item.size = song.size
 				item.code = 200
 				item.br = 320000
 				item.type = 'mp3'
+				return song
+			})
+			.then(song => {
+				if(!netease.path.includes('download') || song.md5) return
+				const newer = (base, target) => {
+					let difference =
+						Array.from([base, target])
+						.map(version => version.split('.').slice(0, 3).map(number => parseInt(number) || 0))
+						.reduce((aggregation, current) => !aggregation.length ? current.map(element => [element]) : aggregation.map((element, index) => element.concat(current[index])), [])
+						.filter(pair => pair[0] != pair[1])[0]
+					return !difference || difference[0] <= difference[1]
+				}
+				const limit = {android: '0.0.0', osx: '2.0.0'}
+				const task = {key: song.url.replace(/\?.*$/, ''), url: song.url}
+				try{
+					let header = netease.param.header
+					header = typeof header === 'string' ? JSON.parse(header) : header
+					let {os, appver} = header
+					if(os in limit && newer(limit[os], appver))
+						return cache(computeHash, task, 7 * 24 * 60 * 60 * 1000).then(value => item.md5 = value)
+				}
+				catch(e){}
 			})
 			.catch(() => {})
 		}

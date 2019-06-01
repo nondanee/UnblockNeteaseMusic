@@ -1,25 +1,10 @@
-module.exports = (func, args, ttl = 30 * 60 * 1000) => new Promise(resolve => {
-    const cache = func.cache ? func.cache : func.cache = {}
-    const key = args ? (typeof(args) === 'object' ? args.id : args) : 'default'
+module.exports = (job, parameter, live = 30 * 60 * 1000) => {
+    const cache = job.cache ? job.cache : job.cache = {}
+    const key = parameter == null ? 'default' : (parameter.id || parameter.key || parameter)
     if(!(key in cache) || cache[key].expiration < Date.now())
-        func(args)
-        .then(result =>
-            resolve(cache[key] = {
-                error: false,
-                data: result,
-                expiration: Date.now() + ttl
-            })
-        )
-        .catch(() =>
-            resolve(cache[key] = {
-                error: true,
-                data: null,
-                expiration: Date.now() + ttl
-            })
-        )
-    else
-        resolve(cache[key])
-})
-.then(value =>
-    value.error ? Promise.reject(value.data) : Promise.resolve(value.data)
-)
+        cache[key] = {
+            execution: job(parameter),
+            expiration: Date.now() + live
+        }
+    return cache[key].execution
+}

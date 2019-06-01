@@ -23,7 +23,7 @@ const track = id => {
 	let url =
 		'http://www.kugou.com/yy/index.php?r=play/getdata&hash=' + id
 
-	return request('GET', url)
+	return request('GET', url, {cookie: `kg_mid=${id.toLowerCase()}`})
 	.then(response => response.json())
 	.then(jsonBody => {
 		if(jsonBody.status == '1')

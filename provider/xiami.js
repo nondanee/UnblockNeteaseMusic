@@ -40,7 +40,7 @@ const search = info => {
 	.then(cookie => {
 		const query = JSON.stringify({key: info.keyword, pagingVO: {page: 1, pageSize: 60}})
 		const message = cookie['xm_sg_tk'].split('_')[0] + '_xmMain_/api/search/searchSongs_' + query
-		return request('GET', 'https://www.xiami.com/api/search/searchSongs?_q=' + encodeURIComponent(query) + '&_s=' + crypto.md5(message), {
+		return request('GET', 'https://www.xiami.com/api/search/searchSongs?_q=' + encodeURIComponent(query) + '&_s=' + crypto.md5.digest(message), {
 			referer: 'https://www.xiami.com/search?key=' + encodeURIComponent(info.keyword),
 			cookie: Object.keys(cookie).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(cookie[key])).join('; ')
 		})

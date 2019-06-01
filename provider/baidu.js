@@ -4,7 +4,7 @@ const request = require('../request')
 
 const search = info => {
 	let url =
-		'http://sug.music.baidu.com/info/suggestion?' +
+		'http://sug.qianqian.com/info/suggestion?' +
 		'word=' + encodeURIComponent(info.keyword) + '&version=2&from=0'
 
 	return request('GET', url)

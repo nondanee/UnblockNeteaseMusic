@@ -53,15 +53,16 @@ if(config.token && !/\S+:\S+/.test(config.token)){
 const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
+const escape = string => string.replace(/\./g, '\\.')
 
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
-server.whitelist = ['music.163.com', 'music.126.net', 'vod.126.net']
+server.whitelist = ['music.126.net', 'vod.126.net'].map(escape)
 if(config.strict) server.blacklist.push('.*')
 server.authentication = config.token || null
 global.endpoint = config.endpoint
-if(config.endpoint) server.whitelist.push(config.endpoint.replace(/^.+\/\//, ''))
+if(config.endpoint) server.whitelist.push(escape(config.endpoint))
 
 const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error? reject(error) : resolve(records.map(record => record.address))))
 const httpdns = host => require('./request')('POST', 'http://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns[0].ips)
@@ -70,6 +71,7 @@ Promise.all([httpdns(hook.target.host[0])].concat(hook.target.host.map(host => d
 .then(result => {
 	let extra = Array.from(new Set(result.reduce((merged, array) => merged.concat(array), [])))
 	hook.target.host = hook.target.host.concat(extra)
+	server.whitelist = server.whitelist.concat(hook.target.host.map(escape))
 	if(port[0]){
 		server.http.listen(port[0])
 		console.log(`HTTP Server running @ http://0.0.0.0:${port[0]}`)
