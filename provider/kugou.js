@@ -20,9 +20,9 @@ const search = info => {
 }
 
 const track = id => {
-	let url = 
+	let url =
 		'http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo&hash=' + id
-	
+
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => jsonBody.url || Promise.reject())
