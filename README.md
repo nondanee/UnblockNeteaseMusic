@@ -127,7 +127,7 @@ match(418602084, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(s
 
 #### Windows 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/57972590-425b9480-79cf-11e9-9761-b46a12d36249.png" width="100%">
+<img src="https://user-images.githubusercontent.com/26399680/60316017-87de8a80-999b-11e9-9381-16d40efbe7f6.png" width="100%">
 
 #### UWP 客户端
 
@@ -135,7 +135,7 @@ match(418602084, ['netease', 'qq', 'xiami', 'baidu']).then(song => console.log(s
 
 #### Linux 客户端
 
-<img src="https://user-images.githubusercontent.com/26399680/52214856-a7cac000-28cd-11e9-92dd-0c41dc619481.png" width="100%">
+<img src="https://user-images.githubusercontent.com/26399680/60316169-18b56600-999c-11e9-8ae5-5cd168b0edae.png" width="100%">
 
 #### macOS 客户端
 
