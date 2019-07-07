@@ -8,12 +8,12 @@ const eapiKey = 'e82ckenh8dichen8'
 const linuxapiKey = 'rFgB&h#%2?^eDg:Q'
 
 const decrypt = (buffer, key) => {
-	let decipher = crypto.createDecipheriv('aes-128-ecb', key, '')
+	let decipher = crypto.createDecipheriv('aes-128-ecb', key, null)
 	return Buffer.concat([decipher.update(buffer), decipher.final()])
 }
 
 const encrypt = (buffer, key) => {
-	let cipher = crypto.createCipheriv('aes-128-ecb', key, '')
+	let cipher = crypto.createCipheriv('aes-128-ecb', key, null)
 	return Buffer.concat([cipher.update(buffer), cipher.final()])
 }
 
@@ -56,10 +56,9 @@ module.exports = {
 				salt = salt || Buffer.alloc(0)
 				let keySize = keyLength / 8
 				let repeat = Math.ceil((keySize + ivSize * 8) / 32)
-				let buffer = Array.from(Array(repeat).keys()).reduce(result =>
+				let buffer = Buffer.concat(Array.from(Array(repeat).keys()).reduce(result =>
 					result.concat(crypto.createHash('md5').update(Buffer.concat([result.slice(-1)[0], password, salt])).digest())
-				, [Buffer.alloc(0)])
-				buffer = Buffer.concat(buffer)
+				, [Buffer.alloc(0)]))
 				return {
 					key: buffer.slice(0, keySize),
 					iv: buffer.slice(keySize, keySize + ivSize)
