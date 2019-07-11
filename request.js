@@ -72,17 +72,18 @@ const request = (method, url, headers, body) => {
 	})
 }
 
-const read = (connect, raw) => new Promise((resolve, reject) => {
-	let chunks = []
-	connect
-	.on('data', chunk => chunks.push(chunk))
-	.on('end', () => {
-		let buffer = Buffer.concat(chunks)
-		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer
-		resolve(raw == true ? buffer : buffer.toString())
+const read = (connect, raw) =>
+	new Promise((resolve, reject) => {
+		let chunks = []
+		connect
+		.on('data', chunk => chunks.push(chunk))
+		.on('end', () => resolve(Buffer.concat(chunks)))
+		.on('error', error => reject(error))
 	})
-	.on('error', error => reject(error))
-})
+	.then(buffer => {
+		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer
+		return raw == true ? buffer : buffer.toString()
+	})
 
 const json = connect => read(connect, false).then(body => JSON.parse(body))
 const jsonp = connect => read(connect, false).then(body => JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length)))
