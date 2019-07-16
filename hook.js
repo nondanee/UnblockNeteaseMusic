@@ -257,7 +257,7 @@ const tryMatch = ctx => {
 		if((item.code != 200 || item.freeTrialInfo) && (target == 0 || item.id == target)){
 			return match(item.id)
 			.then(song => {
-				item.url = `${global.endpoint || 'http://music.163.com'}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3`
+				item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3` : song.url
 				item.md5 = song.md5 || crypto.md5.digest(song.url)
 				item.size = song.size
 				item.code = 200
