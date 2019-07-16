@@ -52,7 +52,8 @@ hook.target.path = [
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
 	'/api/v1/play/record',
-	'/api/playlist/v4/detail'
+	'/api/playlist/v4/detail',
+	'/api/v1/radio/get'
 ]
 
 hook.request.before = ctx => {
