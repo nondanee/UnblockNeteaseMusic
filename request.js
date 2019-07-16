@@ -62,7 +62,7 @@ const request = (method, url, headers, body) => {
 			.end(body)
 		)
 		.on('error', error => reject(error))
-		.end(body)
+		.end(options.method.toUpperCase() === 'CONNECT' ? null : body)
 	})
 	.then(response => {
 		if([201, 301, 302, 303, 307, 308].includes(response.statusCode))
