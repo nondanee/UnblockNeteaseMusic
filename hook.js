@@ -281,8 +281,8 @@ const tryMatch = ctx => {
 				try{
 					let header = netease.param.header
 					header = typeof header === 'string' ? JSON.parse(header) : header
-					let {os, appver} = header
-					if(os in limit && newer(limit[os], appver))
+					let os = header.os, version = header.appver
+					if(os in limit && newer(limit[os], version))
 						return cache(computeHash, task, 7 * 24 * 60 * 60 * 1000).then(value => item.md5 = value)
 				}
 				catch(e){}
