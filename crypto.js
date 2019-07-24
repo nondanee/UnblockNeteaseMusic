@@ -52,7 +52,7 @@ module.exports = {
 	miguapi: {
 		encrypt: object => {
 			let text = JSON.stringify(object)
-			const EVP_BytesToKey = (password, salt, keyLength, ivSize) => {
+			const derive = (password, salt, keyLength, ivSize) => { // EVP_BytesToKey
 				salt = salt || Buffer.alloc(0)
 				let keySize = keyLength / 8
 				let repeat = Math.ceil((keySize + ivSize * 8) / 32)
@@ -66,8 +66,8 @@ module.exports = {
 			}
 			let password = Buffer.from(crypto.randomBytes(32).toString('hex')), salt = crypto.randomBytes(8),
 			key = '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8asrfSaoOb4je+DSmKdriQJKWVJ2oDZrs3wi5W67m3LwTB9QVR+cE3XWU21Nx+YBxS0yun8wDcjgQvYt625ZCcgin2ro/eOkNyUOTBIbuj9CvMnhUYiR61lC1f1IGbrSYYimqBVSjpifVufxtx/I3exReZosTByYp4Xwpb1+WAQIDAQAB\n-----END PUBLIC KEY-----'
-			let parameter = EVP_BytesToKey(password, salt, 256, 16)
-			let cipher = crypto.createCipheriv('aes-256-cbc', parameter.key, parameter.iv)
+			let secret = derive(password, salt, 256, 16)
+			let cipher = crypto.createCipheriv('aes-256-cbc', secret.key, secret.iv)
 			return bodyify({
 				data: Buffer.concat([Buffer.from('Salted__'), salt, cipher.update(Buffer.from(text)), cipher.final()]).toString('base64'),
 				secKey: crypto.publicEncrypt({key, padding: crypto.constants.RSA_PKCS1_PADDING}, password).toString('base64')
