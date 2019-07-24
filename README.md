@@ -12,10 +12,10 @@
 
 ## 运行
 
-从源码运行
+使用 npx
 
 ```
-$ node app.js
+$ npx unblockneteasemusic
 ```
 
 或使用 Docker
@@ -31,7 +31,7 @@ $ docker-compose up
 ### 配置参数
 
 ```
-$ node app.js -h
+$ UnblockNeteaseMusic -h
 usage: unblockneteasemusic [-v] [-p port] [-u url] [-f host]
                            [-o source [source ...]] [-t token] [-e url] [-s]
                            [-h]
@@ -102,7 +102,7 @@ PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 作为依赖库使用
 
 ```
-$ npm install nondanee/UnblockNeteaseMusic
+$ npm install unblockneteasemusic
 ```
 
 ```javascript
