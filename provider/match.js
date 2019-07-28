@@ -34,7 +34,7 @@ const match = (id, source) => {
 
 const check = url => {
 	let song = {size: 0, url: null, md5: null}
-	return request('HEAD', url)
+	return Promise.race([request('HEAD', url), new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000))])
 	.then(response => {
 		if(response.statusCode != 200) return
 		if(url.includes('qq.com'))
