@@ -4,7 +4,7 @@
   "description": "Revive unavailable songs for Netease Cloud Music",
   "main": "provider/match.js",
   "bin": {
-    "UnblockNeteaseMusic": "app.js"
+    "unblockneteasemusic": "app.js"
   },
   "scripts": {
     "pkg": "pkg . --out-path=dist/"
