@@ -31,22 +31,23 @@ $ docker-compose up
 ### 配置参数
 
 ```
-$ UnblockNeteaseMusic -h
-usage: unblockneteasemusic [-v] [-p port] [-u url] [-f host]
+$ unblockneteasemusic -h
+usage: unblockneteasemusic [-v] [-p port] [-a address] [-u url] [-f host]
                            [-o source [source ...]] [-t token] [-e url] [-s]
                            [-h]
 
 optional arguments:
-  -v, --version               output the version number
-  -p port, --port port        specify server port
-  -u url, --proxy-url url     request through upstream proxy
-  -f host, --force-host host  force the netease server ip
+  -v, --version                   output the version number
+  -p port, --port port            specify server port
+  -a address, --address address   specify server host
+  -u url, --proxy-url url         request through upstream proxy
+  -f host, --force-host host      force the netease server ip
   -o source [source ...], --match-order source [source ...]
-                              set priority of sources
-  -t token, --token token     set up http basic authentication
-  -e url, --endpoint url      replace virtual endpoint with public host
-  -s, --strict                enable proxy limitation
-  -h, --help                  output usage information
+                                  set priority of sources
+  -t token, --token token         set up proxy authentication
+  -e url, --endpoint url          replace virtual endpoint with public host
+  -s, --strict                    enable proxy limitation
+  -h, --help                      output usage information
 ```
 
 ## 使用
