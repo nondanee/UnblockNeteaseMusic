@@ -61,7 +61,7 @@ hook.request.before = ctx => {
 	const req = ctx.req
 	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//music.163.com') + req.url
 	const url = parse(req.url)
-	if((hook.target.host.includes(url.hostname)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
+	if([url.hostname, req.headers.host].some(host => hook.target.host.includes(host)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
 		return request.read(req)
 		.then(body => {
 			req.body = body
@@ -171,7 +171,7 @@ hook.request.after = ctx => {
 
 hook.connect.before = ctx => {
 	let url = parse('https://' + ctx.req.url)
-	if(hook.target.host.includes(url.hostname)){
+	if([url.hostname, ctx.req.headers.host].some(host => hook.target.host.includes(host))){
 		if(url.port == 80){
 			ctx.req.url = `${global.address || 'localhost'}:${global.port[0]}`
 			ctx.req.local = true
