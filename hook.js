@@ -10,7 +10,8 @@ const hook = {
 		after: () => {},
 	},
 	connect: {
-		before: () => {}
+		before: () => {},
+		after: () => {}
 	},
 	target: {
 		host: [],
@@ -186,6 +187,16 @@ hook.connect.before = ctx => {
 		else{
 			ctx.decision = 'blank'
 		}
+	}
+}
+
+hook.connect.after = ctx => {
+	let url = parse('https://' + ctx.req.url)
+	let socket = ctx.socket
+	let target = hook.target.host
+	if(!ctx.req.local && target.includes(socket.sni) && !target.includes(url.hostname)){
+		hook.target.host = Array.from(new Set([url.hostname].concat(target)))
+		return Promise.reject(ctx.error = 'terminate')
 	}
 }
 

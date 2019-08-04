@@ -3,6 +3,7 @@ const net = require('net')
 const path = require('path')
 const parse = require('url').parse
 
+const sni = require('./sni')
 const hook = require('./hook')
 const request = require('./request')
 
@@ -45,6 +46,7 @@ const proxy = {
 			.then(() => proxy.log(ctx))
 			.then(() => proxy.tunnel.connect(ctx))
 			.then(() => proxy.tunnel.handshake(ctx))
+			.then(() => hook.connect.after(ctx))
 			.then(() => proxy.tunnel.pipe(ctx))
 			.catch(() => proxy.tunnel.close(ctx))
 		}
@@ -153,16 +155,22 @@ const proxy = {
 				})
 			}
 		}),
-		handshake: ctx => {
+		handshake: ctx => new Promise(resolve => {
 			const req = ctx.req
 			const socket = ctx.socket
 			const message = `HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`
-			socket.write(message)
-		},
+			const proxySocket = ctx.proxySocket.on('error', () => proxy.abort(ctx.proxySocket, 'proxySocket'))
+			socket
+			.once('data', data => {
+				proxySocket.write(data)
+				return resolve(socket.sni = sni(data))
+			})
+			.write(message)
+		}),
 		pipe: ctx => {
 			if(ctx.decision === 'blank') return Promise.reject(ctx.error = ctx.decision)
 			const socket = ctx.socket
-			const proxySocket = ctx.proxySocket.on('error', () => proxy.abort(ctx.proxySocket, 'proxySocket'))
+			const proxySocket = ctx.proxySocket
 			socket.pipe(proxySocket)
 			proxySocket.pipe(socket)
 		},
