@@ -39,7 +39,7 @@ if(config.matchOrder){
 	const candidate = config.matchOrder
 	if(candidate.some((key, index) => index != candidate.indexOf(key))){
 		console.log('Please check the duplication in match order.')
-		process.exit(1)	
+		process.exit(1)
 	}
 	else if(candidate.some(key => !provider.includes(key))){
 		console.log('Please check the availability of match sources.')
