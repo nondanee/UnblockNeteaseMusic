@@ -10,8 +10,10 @@ const hook = {
 		after: () => {},
 	},
 	connect: {
-		before: () => {},
-		after: () => {}
+		before: () => {}
+	},
+	negotiate: {
+		before: () => {}
 	},
 	target: {
 		host: [],
@@ -190,13 +192,14 @@ hook.connect.before = ctx => {
 	}
 }
 
-hook.connect.after = ctx => {
+hook.negotiate.before = ctx => {
 	let url = parse('https://' + ctx.req.url)
 	let socket = ctx.socket
 	let target = hook.target.host
-	if(!ctx.req.local && target.includes(socket.sni) && !target.includes(url.hostname)){
+	if(ctx.req.local || ctx.decision) return
+	if(target.includes(socket.sni) && !target.includes(url.hostname)){
 		hook.target.host = Array.from(new Set([url.hostname].concat(target)))
-		return Promise.reject(ctx.error = 'terminate')
+		ctx.decision = 'blank'
 	}
 }
 
