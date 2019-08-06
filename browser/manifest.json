@@ -15,5 +15,6 @@
 		"matches": ["*://music.163.com/*"]
 	},
 	"manifest_version": 2,
-	"permissions": ["*://*/*", "webRequest", "webRequestBlocking"]
+	"permissions": ["*://*/*", "webRequest", "webRequestBlocking"],
+	"content_security_policy": "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net; object-src 'self'"
 }

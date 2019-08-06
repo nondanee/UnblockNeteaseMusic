@@ -19,7 +19,13 @@ $ node convert.js
 
 Load unpacked extension in Developer mode
 
+## Known Issue
+
+Audio resources from `kuwo`, `kugou` and `migu` are limited in http protocol only and hence can't load
+Most audio resources from `qq` don't support preflight request (OPTIONS) and make playbar buggy
+
 ## Reference
 
 - [brix/crypto-js](https://github.com/brix/crypto-js)
+- [travist/jsencrypt](https://github.com/travist/jsencrypt)
 - [JixunMoe/cuwcl4c](https://github.com/JixunMoe/cuwcl4c)
