@@ -9,7 +9,7 @@ let headers = {
 
 const search = info => {
 	let url =
-		'http://m.10086.cn/migu/remoting/scr_search_tag?' +
+		'http://m.music.migu.cn/migu/remoting/scr_search_tag?' +
 		'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1'
 
 	return request('GET', url)
