@@ -65,7 +65,7 @@ hook.target.path = [
 
 hook.request.before = ctx => {
 	const req = ctx.req
-	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//music.163.com') + req.url
+	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (hook.target.host.includes(req.headers.host) ? req.headers.host : null)) + req.url
 	const url = parse(req.url)
 	if([url.hostname, req.headers.host].some(host => hook.target.host.includes(host)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
 		return request.read(req)
