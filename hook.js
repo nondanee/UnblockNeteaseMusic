@@ -280,9 +280,9 @@ const tryMatch = ctx => {
 			.then(song => {
 				item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3` : song.url
 				item.md5 = song.md5 || crypto.md5.digest(song.url)
+				item.br = song.br || 128000
 				item.size = song.size
 				item.code = 200
-				item.br = 320000
 				item.type = 'mp3'
 				return song
 			})
