@@ -3,6 +3,7 @@ const parse = require('url').parse
 const crypto = require('./crypto')
 const request = require('./request')
 const match = require('./provider/match')
+const querystring = require('querystring')
 
 const hook = {
 	request: {
@@ -300,8 +301,9 @@ const tryMatch = ctx => {
 				const task = {key: song.url.replace(/\?.*$/, ''), url: song.url}
 				try{
 					let header = netease.param.header
+					let cookie = querystring.parse(ctx.req.headers.cookie.replace(/\s/g, ''), ';')
 					header = typeof(header) === 'string' ? JSON.parse(header) : header
-					let os = header.os, version = header.appver
+					let os = header.os || cookie.os, version = header.appver || cookie.appver
 					if(os in limit && newer(limit[os], version))
 						return cache(computeHash, task, 7 * 24 * 60 * 60 * 1000).then(value => item.md5 = value)
 				}
