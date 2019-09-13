@@ -12,3 +12,4 @@ COPY . .
 EXPOSE 8080 8081
 
 ENTRYPOINT ["node", "app.js"]
+CMD
