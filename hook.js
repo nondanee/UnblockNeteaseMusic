@@ -215,7 +215,7 @@ const pretendPlay = ctx => {
 	const netease = ctx.netease
 	let turn = 'http://music.163.com/api/song/enhance/player/url'
 	let query = null
-	if(netease.linux){
+	if(netease.forward){
 		netease.param = {
 			ids: `["${netease.param.id}"]`,
 			br: netease.param.br
