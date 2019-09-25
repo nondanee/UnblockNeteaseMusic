@@ -59,12 +59,15 @@ const escape = string => string.replace(/\./g, '\\.')
 
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
-global.hosts = {}, hook.target.host.forEach(host => global.hosts[host] = config.forceHost)
+global.hosts = hook.target.host.reduce((result, host) => Object.assign(result, {[host]: config.forceHost}), {})
 server.whitelist = ['music.126.net', 'vod.126.net'].map(escape)
 if(config.strict) server.blacklist.push('.*')
 server.authentication = config.token || null
 global.endpoint = config.endpoint
 if(config.endpoint) server.whitelist.push(escape(config.endpoint))
+
+hosts['music.httpdns.c.163.com'] = ['223.252.199.66', '59.111.160.195'][Math.round(Math.random())]
+hosts['httpdns.n.netease.com'] = ['59.111.179.213', '59.111.179.214'][Math.round(Math.random())]
 
 const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error ? reject(error) : resolve(records.map(record => record.address))))
 const httpdns = host => require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns.reduce((result, domain) => result.concat(domain.ips), []))
