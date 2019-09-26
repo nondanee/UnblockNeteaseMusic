@@ -6,7 +6,7 @@
 
 ## 特性
 
-- 使用~~网易云旧链~~ / QQ / 虾米 / 百度 / 酷狗 / 酷我 / 咕咪 / JOOX 音源替换变灰歌曲链接 (默认仅启用前四)
+- 使用 QQ / 虾米 / 百度 / 酷狗 / 酷我 / 咕咪 / JOOX 音源替换变灰歌曲链接 (默认仅启用一、五、六)
 - 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
 - 完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
@@ -118,10 +118,10 @@ global.hosts = {'i.y.qq.com': '59.37.96.220'}
 /**
  * Find matching song from other platforms
  * @param {Number} id netease song id
- * @param {Array<String>||undefined} source support netease, qq, xiami, baidu, kugou, kuwo, migu, joox
+ * @param {Array<String>||undefined} source support qq, xiami, baidu, kugou, kuwo, migu, joox
  * @return {Promise<Object>}
  */
-match(418602084, ['netease', 'qq', 'xiami', 'baidu']).then(console.log)
+match(418602084, ['qq', 'kuwo', 'migu']).then(console.log)
 ```
 
 ## 效果
