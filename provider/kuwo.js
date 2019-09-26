@@ -49,7 +49,8 @@ const track = id => {
 	let url =
 		'http://antiserver.kuwo.cn/anti.s?' +
 		'type=convert_url&format=mp3&response=url&rid=MUSIC_' + id
-		// 'type=convert_url&format=aac|mp3|wma&response=url&rid=MUSIC_' + id
+		// 'http://www.kuwo.cn/url?' +
+		// 'format=mp3&response=url&type=convert_url3&br=320kmp3&rid=' + id
 
 	return request('GET', url)
 	.then(response => response.body())

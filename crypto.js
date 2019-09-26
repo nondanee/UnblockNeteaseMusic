@@ -1,9 +1,9 @@
 'use strict'
 
 const crypto = require('crypto')
-const bodyify = require('querystring').stringify
 const parse = require('url').parse
-const uriKey = '3go8&$8*3*3h0k(2)2'
+const bodyify = require('querystring').stringify
+
 const eapiKey = 'e82ckenh8dichen8'
 const linuxapiKey = 'rFgB&h#%2?^eDg:Q'
 
@@ -81,7 +81,8 @@ module.exports = {
 	uri: {
 		retrieve: id => {
 			id = id.toString().trim()
-			let string = Array.from(Array(id.length).keys()).map(index => String.fromCharCode(id.charCodeAt(index) ^ uriKey.charCodeAt(index % uriKey.length))).join('')
+			let key = '3go8&$8*3*3h0k(2)2'
+			let string = Array.from(Array(id.length).keys()).map(index => String.fromCharCode(id.charCodeAt(index) ^ key.charCodeAt(index % key.length))).join('')
 			let result = crypto.createHash('md5').update(string).digest('base64').replace(/\//g, '_').replace(/\+/g, '-')
 			return `http://p1.music.126.net/${result}/${id}`
 		}

@@ -29,7 +29,7 @@ const track = id => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		if('songList' in jsonBody.data)
-			return jsonBody.data.songList[0].songLink || null
+			return jsonBody.data.songList[0].songLink || Promise.reject()
 		else
 			return Promise.reject()
 	})
