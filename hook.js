@@ -18,7 +18,8 @@ const hook = {
 	},
 	target: {
 		host: [],
-		path: []
+		path: [],
+		pathwhite: []
 	}
 }
 
@@ -64,11 +65,20 @@ hook.target.path = [
 	'/api/v1/discovery/recommend/songs'
 ]
 
+hook.target.pathwhite = [
+	'/eapi/register/'
+]
+
 hook.request.before = ctx => {
 	const req = ctx.req
-	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (hook.target.host.includes(req.headers.host) ? req.headers.host : null)) + req.url
+	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + req.headers.host) + req.url
+	if (!hook.target.host.includes(req.headers.host)){
+		console.log(req.url)
+		return
+	}
 	const url = parse(req.url)
 	if([url.hostname, req.headers.host].some(host => hook.target.host.includes(host)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))){
+		if (url.path.startsWith('/eapi/register/')) return //register can not be decrypted
 		return request.read(req)
 		.then(body => req.body = body)
 		.then(body => {
