@@ -127,7 +127,7 @@ hook.request.after = ctx => {
 	const proxyRes = ctx.proxyRes
 	if(netease && hook.target.path.includes(netease.path) && proxyRes.statusCode == 200){
 		return request.read(proxyRes, true)
-		.then(buffer => proxyRes.body = buffer)
+		.then(buffer => buffer.length ? proxyRes.body = buffer : Promise.reject())
 		.then(buffer => {
 			const patch = string => string.replace(/([^\\]"\s*:\s*)(\d{16,})(\s*[}|,])/g, '$1"$2L"$3') // for js precision
 			try{
@@ -168,7 +168,7 @@ hook.request.after = ctx => {
 			body = body.replace(/([^\\]"\s*:\s*)"(\d{16,})L"(\s*[}|,])/g, '$1$2$3') // for js precision
 			proxyRes.body = (netease.encrypted ? crypto.eapi.encrypt(Buffer.from(body)) : body)
 		})
-		.catch(error => console.log(error, ctx.req.url))
+		.catch(error => error ? console.log(error, ctx.req.url) : null)
 	}
 	else if(package){
 		const req = ctx.req
