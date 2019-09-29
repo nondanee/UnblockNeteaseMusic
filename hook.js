@@ -100,7 +100,7 @@ hook.request.before = ctx => {
 		})
 		.catch(error => console.log(error, ctx.req.url))
 	}
-	else if((hook.target.host.includes(url.hostname)) && url.path.startsWith('/weapi/')){
+	else if((hook.target.host.includes(url.hostname)) && (url.path.startsWith('/weapi/') || url.path.startsWith('/api/'))){
 		ctx.req.headers['X-Real-IP'] = '118.88.88.88'
 		ctx.netease = {web: true, path: url.path.replace(/^\/weapi\//, '/api/').replace(/\?.+$/, '').replace(/\/\d*$/, '')}
 	}
