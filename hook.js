@@ -285,6 +285,7 @@ const tryMatch = ctx => {
 				item.size = song.size
 				item.code = 200
 				item.type = 'mp3'
+				item.freeTrialInfo = null
 				return song
 			})
 			.then(song => {
