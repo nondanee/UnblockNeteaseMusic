@@ -15,7 +15,7 @@ const find = id => {
 		info.album = filter(jsonBody.songs[0].album, ['id', 'name'])
 		info.artists = jsonBody.songs[0].artists.map(artist => filter(artist, ['id', 'name']))
 		info.keyword = info.name + ' - ' + info.artists.map(artist => artist.name).join(' / ')
-		return info
+		return info.name ? info : Promise.reject()
 	})
 }
 
