@@ -21,7 +21,7 @@ const distributor = (url, router) => Promise.resolve().then(() => {
 		else return true
 	})
 	if(miss || typeof pointer != 'function') return Promise.reject()
-	//return pointer.call(null, argument)
+	// return pointer.call(null, argument)
 	return cache(pointer, argument, 15 * 60 * 1000)
 })
 
