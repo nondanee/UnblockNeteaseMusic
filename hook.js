@@ -299,7 +299,7 @@ const tryMatch = ctx => {
 					return !difference || difference[0] <= difference[1]
 				}
 				const limit = {android: '0.0.0', osx: '2.0.0'}
-				const task = {key: song.url.replace(/\?.*$/, ''), url: song.url}
+				const task = {key: song.url.replace(/\?.*$/, '').replace(/(?<=kugou\.com\/)\w+\/\w+\//, '').replace(/(?<=kuwo\.cn\/)\w+\/\w+\/resource\//, ''), url: song.url}
 				try{
 					let header = netease.param.header
 					let cookie = querystring.parse(ctx.req.headers.cookie.replace(/\s/g, ''), ';')
