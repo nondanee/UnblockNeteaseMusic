@@ -87,12 +87,13 @@ const ticket = id => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		let vkey = 
-			jsonBody.req_0.data.midurlinfo[0].vkey ||
-			(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
-		return vkey || Promise.reject()
+		// let vkey =
+		// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
+		// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
+		// return vkey || Promise.reject()
+		return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
 	})
-	.catch(() => insure().qq.ticket())
+	// .catch(() => insure().qq.ticket())
 }
 
 const track = id => {
@@ -137,6 +138,6 @@ const track = id => {
 	// })
 }
 
-const check = info => cache(search, info).then(track)
+const check = info => cache(search, info).then(ticket)
 
 module.exports = {check, ticket}
