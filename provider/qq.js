@@ -59,30 +59,9 @@ const ticket = id => {
 	// .catch(() => insure().qq.ticket())
 
 	let url =
-		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
-		encodeURIComponent(JSON.stringify({
-			// req: {
-			// 	method: 'GetCdnDispatch',
-			// 	module: 'CDN.SrfCdnDispatchServer',
-			// 	param: {
-			// 		calltype: 0,
-			// 		guid: '7332953645',
-			// 		userip: ''
-			// 	}
-			// },
-			req_0: {
-				module: 'vkey.GetVkeyServer',
-				method: 'CgiGetVkey',
-				param: {
-					guid: '7332953645',
-					loginflag: 1,
-					songmid: [id],
-					songtype: [0],
-					uin: '0',
-					platform: '20'
-				}
-			}
-		}))
+        'http://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg?format=json&platform=yqq&needNewCode=0&cid=205361747&uin=0&guid=0' +
+        `&songmid=${id}&filename=M500${id}.mp3`
+    const sip = 'http://mobileoc.music.tc.qq.com/'
 
 	return request('GET', url)
 	.then(response => response.json())
@@ -91,7 +70,9 @@ const ticket = id => {
 		// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
 		// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
 		// return vkey || Promise.reject()
-		return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+		let filename = jsonBody.data.items[0].filename
+        let vkey = jsonBody.data.items[0].vkey
+        return sip + `${filename}?guid=0&uin=0&vkey=${vkey}`
 	})
 	// .catch(() => insure().qq.ticket())
 }
