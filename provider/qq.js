@@ -30,7 +30,8 @@ const search = info => {
 	.then(jsonBody => {
 		let matched = jsonBody.data.song.list[0]
 		if(matched)
-			return matched.file.media_mid
+			return matched.mid
+			// return matched.file.media_mid
 		else
 			return Promise.reject()
 	})
@@ -40,66 +41,63 @@ const ticket = id => {
 	const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
 	id = id || classic[Math.floor(classic.length * Math.random())]
 
-	// let url =
-	// 	'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
-	// 	'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
-	// 	'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
-	// 	'&cid=205361747&uin=0&guid=7332953645' +
-	// 	'&songmid='+ id + '&filename=C400'+ id + '.m4a'
-
-	// return request('GET', url, headers)
-	// .then(response => response.json())
-	// .then(jsonBody => {
-	// 	let vkey = jsonBody.data.items[0].vkey
-	// 	if(vkey)
-	// 		return vkey
-	// 	else
-	// 		return Promise.reject()
-	// })
-	// .catch(() => insure().qq.ticket())
-
 	let url =
-		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
-		encodeURIComponent(JSON.stringify({
-			// req: {
-			// 	method: 'GetCdnDispatch',
-			// 	module: 'CDN.SrfCdnDispatchServer',
-			// 	param: {
-			// 		calltype: 0,
-			// 		guid: '7332953645',
-			// 		userip: ''
-			// 	}
-			// },
-			req_0: {
-				module: 'vkey.GetVkeyServer',
-				method: 'CgiGetVkey',
-				param: {
-					guid: '7332953645',
-					loginflag: 1,
-					songmid: [id],
-					songtype: [0],
-					uin: '0',
-					platform: '20'
-				}
-			}
-		}))
+		'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
+		'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
+		'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
+		'&cid=205361747&uin=0&guid=7332953645' +
+		'&songmid='+ id + '&filename=M500'+ id + '.mp3'
 
-	return request('GET', url)
+	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
-		// let vkey =
-		// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
-		// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
-		// return vkey || Promise.reject()
-		return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+		let vkey = jsonBody.data.items[0].vkey
+		return vkey || Promise.reject()
 	})
 	// .catch(() => insure().qq.ticket())
+
+	// let url =
+	// 	'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
+	// 	encodeURIComponent(JSON.stringify({
+	// 		// req: {
+	// 		// 	method: 'GetCdnDispatch',
+	// 		// 	module: 'CDN.SrfCdnDispatchServer',
+	// 		// 	param: {
+	// 		// 		calltype: 0,
+	// 		// 		guid: '7332953645',
+	// 		// 		userip: ''
+	// 		// 	}
+	// 		// },
+	// 		req_0: {
+	// 			module: 'vkey.GetVkeyServer',
+	// 			method: 'CgiGetVkey',
+	// 			param: {
+	// 				guid: '7332953645',
+	// 				loginflag: 1,
+	// 				songmid: [id],
+	// 				songtype: [0],
+	// 				uin: '0',
+	// 				platform: '20'
+	// 			}
+	// 		}
+	// 	}))
+
+	// return request('GET', url)
+	// .then(response => response.json())
+	// .then(jsonBody => {
+	// 	// let vkey =
+	// 	// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
+	// 	// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
+	// 	// return vkey || Promise.reject()
+	// 	return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+	// })
+	// // .catch(() => insure().qq.ticket())
 }
 
 const track = id => {
-	return cache(ticket)
+	return ticket(id)
 	.then(vkey => {
-		let host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][4]
+		let host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
 		let songUrl =
 			'http://' + host + '/M500' + id +
 			'.mp3?vkey=' + vkey +
@@ -138,6 +136,6 @@ const track = id => {
 	// })
 }
 
-const check = info => cache(search, info).then(ticket)
+const check = info => cache(search, info).then(track)
 
 module.exports = {check, ticket}
