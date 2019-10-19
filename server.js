@@ -86,20 +86,19 @@ const proxy = {
 		}
 	},
 	filter: ctx => {
+		if(ctx.decision || ctx.req.local) return
 		const url = parse((ctx.socket ? 'https://' : '') + ctx.req.url)
 		const match = pattern => url.href.search(new RegExp(pattern, 'g')) != -1
-		if(!(ctx.decision || ctx.req.local)){
-			try{
-				let allow = server.whitelist.some(match)
-				let deny = server.blacklist.some(match)
-				// console.log('allow', allow, 'deny', deny)
-				if(!allow && deny){
-					return Promise.reject(ctx.error = 'filter')
-				}
+		try{
+			let allow = server.whitelist.some(match)
+			let deny = server.blacklist.some(match)
+			// console.log('allow', allow, 'deny', deny)
+			if(!allow && deny){
+				return Promise.reject(ctx.error = 'filter')
 			}
-			catch(error){
-				ctx.error = error
-			}
+		}
+		catch(error){
+			ctx.error = error
 		}
 	},
 	mitm: {
