@@ -72,6 +72,7 @@ hook.request.before = ctx => {
 		return request.read(req)
 		.then(body => req.body = body)
 		.then(body => {
+			ctx.decision = 'proxy'
 			if('x-napm-retry' in req.headers) delete req.headers['x-napm-retry']
 			req.headers['X-Real-IP'] = '118.88.88.88'
 			if(req.url.includes('stream')) return // look living eapi can not be decrypted
