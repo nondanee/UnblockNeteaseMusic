@@ -34,7 +34,7 @@ const search = info => {
 		'http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?' +
 		'key=' + encodeURIComponent(info.keyword) + '&pn=1&rn=30'
 
-	return request('GET', url)
+	return request('GET', url, {'referer': 'http://www.kuwo.cn/search/list?key=' + encodeURIComponent(info.keyword)})
 	.then(response => response.json())
 	.then(jsonBody => {
 		let matched = jsonBody.data.list[0]
