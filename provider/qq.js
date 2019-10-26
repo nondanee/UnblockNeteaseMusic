@@ -30,23 +30,22 @@ const search = info => {
 	.then(jsonBody => {
 		let matched = jsonBody.data.song.list[0]
 		if(matched)
-			return matched.mid
-			// return matched.file.media_mid
+			return {song: matched.mid, file: matched.file.media_mid}
 		else
 			return Promise.reject()
 	})
 }
 
 const ticket = id => {
-	const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
-	id = id || classic[Math.floor(classic.length * Math.random())]
+	// const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
+	// id = id || classic[Math.floor(classic.length * Math.random())]
 
 	let url =
 		'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
 		'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
 		'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
 		'&cid=205361747&uin=0&guid=7332953645' +
-		'&songmid='+ id + '&filename=M500'+ id + '.mp3'
+		'&songmid='+ id.song + '&filename=M500'+ id.file + '.mp3'
 
 	return request('GET', url, headers)
 	.then(response => response.json())
@@ -99,11 +98,12 @@ const track = id => {
 	.then(vkey => {
 		let host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
 		let songUrl =
-			'http://' + host + '/M500' + id +
+			'http://' + host + '/M500' + id.file +
 			'.mp3?vkey=' + vkey +
 			'&uin=0&fromtag=8&guid=7332953645'
 		return songUrl
 	})
+	.catch(() => insure().qq.track(id))
 
 	// return request(
 	// 	'POST', 'http://acc.music.qq.com/base/fcgi-bin/fcg_music_express_mobile2.fcg', {},
