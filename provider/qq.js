@@ -138,4 +138,4 @@ const track = id => {
 
 const check = info => cache(search, info).then(track)
 
-module.exports = {check, ticket}
+module.exports = {check, track}
