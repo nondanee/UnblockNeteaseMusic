@@ -34,7 +34,9 @@ const search = info => {
 		'http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?' +
 		'key=' + encodeURIComponent(info.keyword) + '&pn=1&rn=30'
 
-	return request('GET', url, {'referer': 'http://www.kuwo.cn/search/list?key=' + encodeURIComponent(info.keyword)})
+	return request('GET', 'http://kuwo.cn/search/list?key=' + encodeURIComponent(info.keyword))
+	.then(response => response.headers['set-cookie'].find(line => line.includes('kw_token')).replace(/;.*/, '').split('=').pop())
+	.then(token => request('GET', url, {referer: 'http://www.kuwo.cn/search/list?key=' + encodeURIComponent(info.keyword), csrf: token, cookie: `kw_token=${token}`}))
 	.then(response => response.json())
 	.then(jsonBody => {
 		let matched = jsonBody.data.list[0]
