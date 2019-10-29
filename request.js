@@ -67,7 +67,7 @@ const request = (method, url, headers, body, proxy) => {
 	})
 	.then(response => {
 		if([201, 301, 302, 303, 307, 308].includes(response.statusCode))
-			return request(method, url.resolve(response.headers.location), headers, body, proxy)
+			return request(method, url.resolve(response.headers.location), (delete headers.host, headers), body, proxy)
 		else
 			return Object.assign(response, {url: url, body: raw => read(response, raw), json: () => json(response), jsonp: () => jsonp(response)})
 	})
