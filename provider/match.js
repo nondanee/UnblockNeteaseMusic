@@ -9,7 +9,8 @@ const provider = {
 	kugou: require('./kugou'),
 	kuwo: require('./kuwo'),
 	migu: require('./migu'),
-	joox: require('./joox')
+	joox: require('./joox'),
+	youtube: require('./youtube')
 }
 
 const match = (id, source) => {

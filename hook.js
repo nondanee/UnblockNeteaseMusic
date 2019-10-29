@@ -114,6 +114,9 @@ hook.request.before = ctx => {
 			req.headers['host'] = url.hostname
 			ctx.package = {id}
 			ctx.decision = 'proxy'
+			// if(url.href.includes('google'))
+			// 	return request('GET', req.url, req.headers, null, parse('http://127.0.0.1:1080'))
+			// 	.then(response => (ctx.res.writeHead(response.statusCode, response.headers), response.pipe(ctx.res)))
 		}
 		catch(error){
 			ctx.error = error
