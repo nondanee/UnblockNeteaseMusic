@@ -56,7 +56,7 @@ const track = id => {
         // .sort((a, b) => b.bitrate - a.bitrate)[0]
         
         let target = querystring.parse(stream.cipher)
-        return target.sp.includes('sig') ? cache(signature, null, 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url
+        return stream.url || (target.sp.includes('sig') ? cache(signature, null, 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url)
     })
 }
 
