@@ -2,10 +2,11 @@ const cache = require('../cache')
 const request = require('../request')
 const querystring = require('querystring')
 
-const proxy = require('url').parse('http://127.0.0.1:1080')
-const key = '???'
+// const proxy = require('url').parse('http://127.0.0.1:1080')
+const proxy = undefined
+const key = 'YOUR_API_KEY'
 
-const signature = ((id = '-tKVN2mAKRI') => {
+const signature = (id = '-tKVN2mAKRI') => {
     let url =
         `https://www.youtube.com/watch?v=${id}`
     
@@ -23,7 +24,7 @@ const signature = ((id = '-tKVN2mAKRI') => {
         let helperContent = new RegExp('var ' + helperName + '={[\\s\\S]+?};').exec(body)[0]
         return new Function([funcArgs], helperContent + '\n' + funcBody)
     })
-})()
+}
 
 const search = info => {
     let url =
@@ -55,7 +56,7 @@ const track = id => {
         // .sort((a, b) => b.bitrate - a.bitrate)[0]
         
         let target = querystring.parse(stream.cipher)
-        return target.sp.includes('sig') ? signature.then(sign => target.url + '&sig=' + sign(target.s)) : target.url
+        return target.sp.includes('sig') ? cache(signature, null, 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url
     })
 }
 
