@@ -56,7 +56,7 @@ module.exports = {
 				salt = salt || Buffer.alloc(0)
 				let keySize = keyLength / 8
 				let repeat = Math.ceil((keySize + ivSize * 8) / 32)
-				let buffer = Buffer.concat(Array.from(Array(repeat).keys()).reduce(result =>
+				let buffer = Buffer.concat(Array(repeat).fill(null).reduce(result =>
 					result.concat(crypto.createHash('md5').update(Buffer.concat([result.slice(-1)[0], password, salt])).digest())
 				, [Buffer.alloc(0)]))
 				return {
