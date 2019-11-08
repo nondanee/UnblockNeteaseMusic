@@ -56,6 +56,7 @@ const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
 const escape = string => string.replace(/\./g, '\\.')
+const random = array => array[Math.floor(Math.random() * array.length)]
 
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
@@ -66,8 +67,8 @@ server.authentication = config.token || null
 global.endpoint = config.endpoint
 if(config.endpoint) server.whitelist.push(escape(config.endpoint))
 
-hosts['music.httpdns.c.163.com'] = ['223.252.199.66', '59.111.160.195'][Math.round(Math.random())]
-hosts['httpdns.n.netease.com'] = ['59.111.179.213', '59.111.179.214'][Math.round(Math.random())]
+hosts['music.httpdns.c.163.com'] = random(['59.111.181.35', '59.111.181.38'])
+hosts['httpdns.n.netease.com'] = random(['59.111.179.213', '59.111.179.214'])
 
 const dns = host => new Promise((resolve, reject) => require('dns').lookup(host, {all: true}, (error, records) => error ? reject(error) : resolve(records.map(record => record.address))))
 const httpdns = host => require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns.reduce((result, domain) => result.concat(domain.ips), []))
