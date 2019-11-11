@@ -1,5 +1,5 @@
 const request = require('../request')
-const host = 'https://public.nondanee.tk'
+const host = 'http://localhost:9000'
 
 module.exports = () => {
 	const proxy = new Proxy(() => {}, {
@@ -10,7 +10,7 @@ module.exports = () => {
 		apply: (target, _, payload) => {
 			let path = target.route.join('/'), query = payload[0]
 			query = encodeURIComponent(typeof(query) === 'object' ? JSON.stringify(query) : query)
-			if(path != 'qq/ticket') return Promise.reject()
+			// if(path != 'qq/ticket') return Promise.reject()
 			return request('GET', `${host}/${path}?${query}`)
 			.then(response => response.body())
 		}
