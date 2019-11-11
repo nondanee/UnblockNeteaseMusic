@@ -1,4 +1,5 @@
 const cache = require('../cache')
+const insure = require('./insure')
 const crypto = require('../crypto')
 const request = require('../request')
 
@@ -36,8 +37,9 @@ const track = id => {
 		else
 			return Promise.reject()
 	})
+	.catch(() => insure().migu.track(id))
 }
 
 const check = info => cache(search, info).then(track)
 
-module.exports = {check}
+module.exports = {check, track}
