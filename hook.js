@@ -151,9 +151,7 @@ hook.request.after = ctx => {
 				return tryMatch(ctx)
 		})
 		.then(() => {
-			if('transfer-encoding' in proxyRes.headers) delete proxyRes.headers['transfer-encoding']
-			if('content-encoding' in proxyRes.headers) delete proxyRes.headers['content-encoding']
-			if('content-length' in proxyRes.headers) delete proxyRes.headers['content-length']
+			['transfer-encoding', 'content-encoding', 'content-length'].filter(key => key in proxyRes.headers).forEach(key => delete proxyRes.headers[key])
 
 			const inject = (key, value) => {
 				if(typeof(value) === 'object' && value != null){
