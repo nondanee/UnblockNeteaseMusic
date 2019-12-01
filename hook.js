@@ -327,7 +327,7 @@ const tryMatch = ctx => {
 		tasks = [inject(jsonBody.data)]
 	}
 	else{
-		target = netease.web ? 0 : parseInt((netease.param.ids instanceof Array ? netease.param.ids : JSON.parse(netease.param.ids))[0].toString().replace('_0', '')) // reduce time cost
+		target = netease.web ? 0 : parseInt(((netease.param.ids instanceof Array ? netease.param.ids : JSON.parse(netease.param.ids))[0] || 0).toString().replace('_0', '')) // reduce time cost
 		tasks = jsonBody.data.map(item => inject(item))
 	}
 	return Promise.all(tasks).catch(() => {})
