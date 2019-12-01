@@ -301,7 +301,7 @@ const tryMatch = ctx => {
 						.filter(pair => pair[0] != pair[1])[0]
 					return !difference || difference[0] <= difference[1]
 				}
-				const limit = {android: '0.0.0', osx: '2.0.0'}
+				const limit = {android: '0.0.0', osx: '0.0.0'}
 				const task = {key: song.url.replace(/\?.*$/, '').replace(/(?<=kugou\.com\/)\w+\/\w+\//, '').replace(/(?<=kuwo\.cn\/)\w+\/\w+\/resource\//, ''), url: song.url}
 				try{
 					let header = netease.param.header
