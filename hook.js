@@ -112,6 +112,7 @@ hook.request.before = ctx => {
 			let id = data[1].replace('.mp3', '')
 			req.url = url.href
 			req.headers['host'] = url.hostname
+			req.headers['cookie'] = null
 			ctx.package = {id}
 			ctx.decision = 'proxy'
 			// if(url.href.includes('google'))
