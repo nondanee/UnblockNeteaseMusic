@@ -4,8 +4,11 @@ const request = require('../request')
 
 let headers = {
 	'origin': 'http://y.qq.com/',
-	'referer': 'http://y.qq.com/'
+	'referer': 'http://y.qq.com/',
+	'cookie': null // uin=; qm_keyst=
 }
+
+const name = id => [headers.cookie ? 'M800' : 'M500', '.mp3'].join(id)
 
 const playable = song => {
 	let switchFlag = song['switch'].toString(2).split('')
@@ -45,7 +48,7 @@ const ticket = id => {
 		'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
 		'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
 		'&cid=205361747&uin=0&guid=7332953645' +
-		'&songmid='+ id.song + '&filename=M500'+ id.file + '.mp3'
+		'&songmid='+ id.song + '&filename='+ name(id.file)
 
 	return request('GET', url, headers)
 	.then(response => response.json())
@@ -98,8 +101,8 @@ const track = id => {
 	.then(vkey => {
 		let host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
 		let songUrl =
-			'http://' + host + '/M500' + id.file +
-			'.mp3?vkey=' + vkey +
+			'http://' + host + '/' + name(id.file) +
+			'?vkey=' + vkey +
 			'&uin=0&fromtag=8&guid=7332953645'
 		return songUrl
 	})
