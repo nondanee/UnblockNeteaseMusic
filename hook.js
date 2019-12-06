@@ -109,7 +109,7 @@ hook.request.before = ctx => {
 		try{
 			let data = req.url.split('package/').pop().split('/')
 			let url = parse(crypto.base64.decode(data[0]))
-			let id = data[1].replace('.mp3', '')
+			let id = data[1].replace(/\.\w+/, '')
 			req.url = url.href
 			req.headers['host'] = url.hostname
 			req.headers['cookie'] = null
@@ -180,7 +180,7 @@ hook.request.after = ctx => {
 			.then(response => ctx.proxyRes = response)
 		}
 		else if(/p\d+c*.music.126.net/.test(ctx.req.url)){
-			proxyRes.headers['content-type'] = 'audio/mpeg'
+			proxyRes.headers['content-type'] = 'audio/*'
 		}
 	}
 }
@@ -282,12 +282,12 @@ const tryMatch = ctx => {
 		if((item.code != 200 || item.freeTrialInfo) && (target == 0 || item.id == target)){
 			return match(item.id)
 			.then(song => {
-				item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.mp3` : song.url
+				item.type = song.br === 999000 ? 'flac' : 'mp3'
+				item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
 				item.md5 = song.md5 || crypto.md5.digest(song.url)
 				item.br = song.br || 128000
 				item.size = song.size
 				item.code = 200
-				item.type = 'mp3'
 				item.freeTrialInfo = null
 				return song
 			})
