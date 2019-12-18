@@ -30,13 +30,13 @@ const search = info => {
 	// 		return Promise.reject()
 	// })
 
-	let url =
-		'http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?' +
-		'key=' + encodeURIComponent(info.keyword) + '&pn=1&rn=30'
+	const keyword = encodeURIComponent(info.keyword.replace(' - ', ''))
 
-	return request('GET', 'http://kuwo.cn/search/list?key=' + encodeURIComponent(info.keyword))
+	let url =`http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`
+
+	return request('GET', `http://kuwo.cn/search/list?key=${keyword}`)
 	.then(response => response.headers['set-cookie'].find(line => line.includes('kw_token')).replace(/;.*/, '').split('=').pop())
-	.then(token => request('GET', url, {referer: 'http://www.kuwo.cn/search/list?key=' + encodeURIComponent(info.keyword), csrf: token, cookie: `kw_token=${token}`}))
+	.then(token => request('GET', url, {referer: `http://www.kuwo.cn/search/list?key=${keyword}`, csrf: token, cookie: `kw_token=${token}`}))
 	.then(response => response.json())
 	.then(jsonBody => {
 		let matched = jsonBody.data.list[0]
