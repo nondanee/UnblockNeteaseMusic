@@ -31,8 +31,7 @@ const search = info => {
 	// })
 
 	const keyword = encodeURIComponent(info.keyword.replace(' - ', ''))
-
-	let url =`http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`
+	let url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`
 
 	return request('GET', `http://kuwo.cn/search/list?key=${keyword}`)
 	.then(response => response.headers['set-cookie'].find(line => line.includes('kw_token')).replace(/;.*/, '').split('=').pop())
