@@ -52,6 +52,7 @@ hook.target.path = [
 	'/api/song/enhance/player/url',
 	'/api/song/enhance/player/url/v1',
 	'/api/song/enhance/download/url',
+	'/api/song/enhance/privilege',
 	'/batch',
 	'/api/batch',
 	'/api/v1/search/get',
