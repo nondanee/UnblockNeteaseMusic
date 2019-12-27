@@ -12,10 +12,13 @@ const find = id => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		let info = filter(jsonBody.songs[0], ['id', 'name', 'alias', 'duration'])
+		info.name = (info.name || '')
+			.replace(/（\s*cover[:：\s][^）]+）/i, '')
+			.replace(/\(\s*cover[:：\s][^\)]+\)/i, '')
 		info.album = filter(jsonBody.songs[0].album, ['id', 'name'])
 		info.artists = jsonBody.songs[0].artists.map(artist => filter(artist, ['id', 'name']))
-		info.keyword = info.name + ' - ' + info.artists[0].name
-		return info
+		info.keyword = info.name + ' - ' + info.artists.map(artist => artist.name).join(' / ')
+		return info.name ? info : Promise.reject()
 	})
 }
 

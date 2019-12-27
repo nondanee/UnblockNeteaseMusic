@@ -5,15 +5,16 @@ const parse = require('url').parse
 
 const translate = host => (global.hosts || {})[host] || host
 
-const create = url => global.proxy ? (proxy.protocol == 'https:' ? https.request : http.request) : (url.protocol == 'https:' ? https.request : http.request)
+const create = (url, proxy) => (proxy = (typeof(proxy) === 'undefined' ? global.proxy : proxy)) ? (proxy.protocol == 'https:' ? https.request : http.request) : (url.protocol == 'https:' ? https.request : http.request)
 
-const configure = (method, url, headers) => {
+const configure = (method, url, headers, proxy) => {
 	headers = headers || {}
+	proxy = typeof(proxy) === 'undefined' ? global.proxy : proxy
 	if('content-length' in headers) delete headers['content-length']
 
 	let options = {}
 	options._headers = headers
-	if(global.proxy && url.protocol == 'https:'){
+	if(proxy && url.protocol == 'https:'){
 		options.method = 'CONNECT'
 		options.headers = Object.keys(headers).filter(key => ['host', 'user-agent'].includes(key)).reduce((result, key) => Object.assign(result, {[key]: headers[key]}), {})
 	}
@@ -22,7 +23,7 @@ const configure = (method, url, headers) => {
 		options.headers = headers
 	}
 
-	if(global.proxy){
+	if(proxy){
 		options.hostname = translate(proxy.hostname)
 		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)
 		options.path = (url.protocol != 'https:') ? ('http://' + translate(url.hostname) + url.path) : (translate(url.hostname) + ':' + (url.port || 443))
@@ -35,7 +36,7 @@ const configure = (method, url, headers) => {
 	return options
 }
 
-const request = (method, url, headers, body) => {
+const request = (method, url, headers, body, proxy) => {
 	url = parse(url)
 	let options = configure(method, url, Object.assign({
 		'host': url.hostname,
@@ -43,10 +44,10 @@ const request = (method, url, headers, body) => {
 		'accept-encoding': 'gzip, deflate',
 		'accept-language': 'zh-CN,zh;q=0.9',
 		'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
-	}, headers))
+	}, headers), proxy)
 
 	return new Promise((resolve, reject) => {
-		create(url)(options)
+		create(url, proxy)(options)
 		.on('response', response => resolve(response))
 		.on('connect', (_, socket) =>
 			https.request({
@@ -62,27 +63,28 @@ const request = (method, url, headers, body) => {
 			.end(body)
 		)
 		.on('error', error => reject(error))
-		.end(body)
+		.end(options.method.toUpperCase() === 'CONNECT' ? null : body)
 	})
 	.then(response => {
 		if([201, 301, 302, 303, 307, 308].includes(response.statusCode))
-			return request(method, url.resolve(response.headers.location), headers, body)
+			return request(method, url.resolve(response.headers.location), (delete headers.host, headers), body, proxy)
 		else
 			return Object.assign(response, {url: url, body: raw => read(response, raw), json: () => json(response), jsonp: () => jsonp(response)})
 	})
 }
 
-const read = (connect, raw) => new Promise((resolve, reject) => {
-	let chunks = []
-	connect
-	.on('data', chunk => chunks.push(chunk))
-	.on('end', () => {
-		let buffer = Buffer.concat(chunks)
-		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer
-		resolve(raw == true ? buffer : buffer.toString())
+const read = (connect, raw) =>
+	new Promise((resolve, reject) => {
+		let chunks = []
+		connect
+		.on('data', chunk => chunks.push(chunk))
+		.on('end', () => resolve(Buffer.concat(chunks)))
+		.on('error', error => reject(error))
 	})
-	.on('error', error => reject(error))
-})
+	.then(buffer => {
+		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer
+		return raw == true ? buffer : buffer.toString()
+	})
 
 const json = connect => read(connect, false).then(body => JSON.parse(body))
 const jsonp = connect => read(connect, false).then(body => JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length)))

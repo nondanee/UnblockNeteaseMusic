@@ -4,8 +4,9 @@ const crypto = require('../crypto')
 const request = require('../request')
 
 let headers = {
-	'origin': 'http://www.xiami.com/',
-	'referer': 'http://www.xiami.com/'
+	// 'origin': 'http://www.xiami.com/',
+	// 'referer': 'http://www.xiami.com/'
+	'referer': 'https://h.xiami.com/'
 }
 
 const caesar = pattern => {
@@ -35,70 +36,80 @@ const token = () => {
 	)
 }
 
+// const search = info => {
+// 	return cache(token)
+// 	.then(cookie => {
+// 		const query = JSON.stringify({key: info.keyword, pagingVO: {page: 1, pageSize: 60}})
+// 		const message = cookie['xm_sg_tk'].split('_')[0] + '_xmMain_/api/search/searchSongs_' + query
+// 		return request('GET', 'https://www.xiami.com/api/search/searchSongs?_q=' + encodeURIComponent(query) + '&_s=' + crypto.md5.digest(message), {
+// 			referer: 'https://www.xiami.com/search?key=' + encodeURIComponent(info.keyword),
+// 			cookie: Object.keys(cookie).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(cookie[key])).join('; ')
+// 		})
+// 		.then(response => response.json())
+// 		.then(jsonBody => {
+// 			let matched = jsonBody.result.data.songs[0]
+// 			if(matched)
+// 				return matched.songId
+// 			else
+// 				return Promise.reject()
+// 		})
+// 	})
+// }
+
 const search = info => {
-	return cache(token)
-	.then(cookie => {
-		const query = JSON.stringify({key: info.keyword, pagingVO: {page: 1, pageSize: 60}})
-		const message = cookie['xm_sg_tk'].split('_')[0] + '_xmMain_/api/search/searchSongs_' + query
-		return request('GET', 'https://www.xiami.com/api/search/searchSongs?_q=' + encodeURIComponent(query) + '&_s=' + crypto.md5.digest(message), {
-			referer: 'https://www.xiami.com/search?key=' + encodeURIComponent(info.keyword),
-			cookie: Object.keys(cookie).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(cookie[key])).join('; ')
-		})
-		.then(response => response.json())
-		.then(jsonBody => {
-			let matched = jsonBody.result.data.songs[0]
-			if(matched)
-				return matched.songId
-			else
-				return Promise.reject()
-		})
+	let url =
+		'http://api.xiami.com/web?v=2.0&app_key=1' +
+		'&key=' + encodeURIComponent(info.keyword) + '&page=1' +
+		'&limit=20&callback=jsonp&r=search/songs'
+
+	return request('GET', url, headers)
+	.then(response => response.jsonp())
+	.then(jsonBody => {
+		let matched = jsonBody.data.songs[0]
+		if(matched){
+			return matched.song_id
+		}
+		else
+			return Promise.reject()
 	})
 }
 
-// const search = info => {
+// const track = id => {
 // 	let url =
-// 		'http://api.xiami.com/web?v=2.0&app_key=1' +
-// 		'&key=' + encodeURIComponent(info.keyword) + '&page=1' +
-// 		'&limit=20&callback=jsonp154&r=search/songs'
+// 		'https://emumo.xiami.com/song/playlist/id/' + id +
+// 		'/object_name/default/object_id/0/cat/json'
 
 // 	return request('GET', url, headers)
-// 	.then(response => {
-// 		let jsonBody = JSON.parse(response.body.slice('jsonp154('.length, -')'.length))
-// 		let matched = jsonBody.data.songs[0]
-// 		if(matched){
-// 			if(matched.listen_file)
-// 				return matched.listen_file
-// 			else
-// 				return matched.song_id
-// 		}
-// 		else
+// 	.then(response => response.json())
+// 	.then(jsonBody => {
+// 		if(jsonBody.data.trackList == null){
 // 			return Promise.reject()
+// 		}
+// 		else{
+// 			let location = jsonBody.data.trackList[0].location
+// 			let songUrl = 'http:' + caesar(location)
+// 			return songUrl
+// 		}
 // 	})
+// 	.then(origin => {
+// 		let updated = origin.replace('m128', 'm320')
+// 		return request('HEAD', updated)
+// 		.then(response => response.statusCode == 200 ? updated : origin)
+// 		.catch(() => origin)
+// 	})
+// 	.catch(() => insure().xiami.track(id))
 // }
 
 const track = id => {
 	let url =
-		'https://www.xiami.com/song/playlist/id/' + id +
-		'/object_name/default/object_id/0/cat/json'
+		'https://api.xiami.com/web?v=2.0&app_key=1' +
+		'&id=' + id + '&callback=jsonp&r=song/detail'
 
 	return request('GET', url, headers)
-	.then(response => response.json())
-	.then(jsonBody => {
-		if(jsonBody.data.trackList == null){
-			return Promise.reject()
-		}
-		else{
-			let location = jsonBody.data.trackList[0].location
-			let songUrl = 'http:' + caesar(location)
-			return songUrl
-		}
-	})
-	.then(origin => {
-		let updated = origin.replace('m128', 'm320')
-		return request('HEAD', updated)
-		.then(response => response.statusCode == 200 ? updated : origin)
-		.catch(() => origin)
-	})
+	.then(response => response.jsonp())
+	.then(jsonBody =>
+		jsonBody.data.song.listen_file || Promise.reject()
+	)
 	.catch(() => insure().xiami.track(id))
 }
 
