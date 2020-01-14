@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 const importReplacer = (match, state, alias, file) => {
-	file = file.endsWith('.js') ? file : file + '.js'
+	file = file + (file.endsWith('.js') ? '' : '.js')
 	return `import ${alias} from '${file}'`
 }
 
