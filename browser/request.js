@@ -6,7 +6,7 @@ export default (method, url, headers, body) => new Promise((resolve, reject) => 
 	xhr.open(method, url, true)
 	const safe = {}, unsafe = {}
 	Object.keys(headers).filter(key => (['origin', 'referer'].includes(key.toLowerCase()) ? unsafe : safe)[key] = headers[key])
-	Object.entries(safe).forEach(entry => xhr.setRequestHeader.apply(null, entry))
+	Object.entries(safe).forEach(entry => xhr.setRequestHeader.apply(xhr, entry))
 	if(Object.keys(unsafe)) xhr.setRequestHeader('Additional-Headers', btoa(JSON.stringify(unsafe)))
 	xhr.send(body)
 }).then(xhr => Object.assign(xhr, {
