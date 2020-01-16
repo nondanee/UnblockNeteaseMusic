@@ -1,6 +1,6 @@
 const cache = require('../cache')
 const request = require('../request')
-const parse = query => query.split('&').map(pair => pair.split('=')).reduce((result, item) => Object.assign({}, result, {[item[0]]: item[1]}), {})
+const querystring = require('querystring')
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined
