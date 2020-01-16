@@ -4,7 +4,8 @@ const querystring = require('querystring')
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined
-const key = 'YOUR_API_KEY'
+// YouTube Data API v3
+const key = undefined
 
 const signature = (id = '-tKVN2mAKRI') => {
 	let url =
@@ -26,6 +27,10 @@ const signature = (id = '-tKVN2mAKRI') => {
 	})
 }
 
+/**
+ * @description 使用 Youtube Data API 搜索
+ * @information 需要申请 API key, 当无匹配结果时尝试调用 searchWithoutKey
+ */
 const search = info => {
 	let url =
 		`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key}`
@@ -34,12 +39,32 @@ const search = info => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		let matched = jsonBody.items[0]
-		if(matched)
+		if (matched)
 			return matched.id.videoId
 		else
-			return Promise.reject()
+			return searchWithoutKey(info)
 	})
-	
+}
+
+/**
+ * @description 爬搜索网页，正则匹配，返回第一个视频的 id
+ * @information 这里需要使用非 Chrome 的 User-Agent
+ */
+const searchWithoutKey = info => {
+	const query = encodeURIComponent(info.keyword)
+	const url = `https://www.youtube.com/results?search_query=${query}&app=desktop`
+	const customHeader = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1 WOW64 rv:33.0) Gecko/20120101 Firefox/33.0'}
+
+	return request('GET', url, customHeader, null, proxy)
+	.then(response => response.body())
+	.then(html => {
+		const matched = html.match(/data-context-item-id="(.{11})"/g)[0]
+		if (matched) {
+			matched.match(/.*="(.{11})"/)
+			return RegExp.$1
+		}
+		return Promise.reject()
+	})
 }
 
 const track = id => {
@@ -60,6 +85,9 @@ const track = id => {
 	})
 }
 
-const check = info => cache(search, info).then(track)
+const check = info => {
+	const searchFunc = key ? search : searchWithoutKey
+	return cache(searchFunc, info).then(track)
+}
 
 module.exports = {check, track}
