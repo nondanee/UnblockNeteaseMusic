@@ -10,16 +10,14 @@ let headers = {
 
 const search = info => {
 	let url =
-		'http://pd.musicapp.migu.cn/MIGUM2.0/v1.0/content/search_all.do?' +
-		'text=' + encodeURIComponent(info.keyword) + '&pageNo=1&pageSize=20&' +
-		'searchSwitch={"song":1,"album":0,"singer":0,"tagSong":0,"mvSong":0,"songlist":0,"bestShow":0}'
+		'http://m.music.migu.cn/migu/remoting/scr_search_tag?' +
+		'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1'
 
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		let match = jsonBody.songResultData.result[0]
-		if(match)
-			return match.copyrightId
+		if('musics' in jsonBody)
+			return jsonBody.musics[0].copyrightId
 		else
 			return Promise.reject()
 	})
