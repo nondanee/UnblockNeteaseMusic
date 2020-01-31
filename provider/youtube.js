@@ -1,11 +1,10 @@
 const cache = require('../cache')
 const request = require('../request')
-const parse = query => query.split('&').reduce((result, item) => (item = item.split('=').map(decodeURIComponent), Object.assign({}, result, {[item[0]]: item[1]})), {})
+const parse = query => (query || '').split('&').reduce((result, item) => (item = item.split('=').map(decodeURIComponent), Object.assign({}, result, {[item[0]]: item[1]})), {})
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined
-// YouTube Data API v3
-const key = undefined
+const key = undefined // YouTube Data API v3
 
 const signature = (id = '-tKVN2mAKRI') => {
 	let url =
@@ -26,11 +25,7 @@ const signature = (id = '-tKVN2mAKRI') => {
 	})
 }
 
-/**
- * @description 使用 Youtube Data API 搜索
- * @information 需要申请 API key, 当无匹配结果时尝试调用 searchWithoutKey
- */
-const search = info => {
+const apiSearch = info => {
 	let url =
 		`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key}`
 
@@ -41,28 +36,23 @@ const search = info => {
 		if (matched)
 			return matched.id.videoId
 		else
-			return searchWithoutKey(info)
+			return Promise.reject()
 	})
 }
 
-/**
- * @description 爬搜索网页，正则匹配，返回第一个视频的 id
- * @information 这里需要使用非 Chrome 的 User-Agent
- */
-const searchWithoutKey = info => {
-	const query = encodeURIComponent(info.keyword)
-	const url = `https://www.youtube.com/results?search_query=${query}&app=desktop`
-	const customHeader = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1 WOW64 rv:33.0) Gecko/20120101 Firefox/33.0'}
+const search = info => {
+	const url =
+		`https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`
 
-	return request('GET', url, customHeader, null, proxy)
+	return request('GET', url, {}, null, proxy)
 	.then(response => response.body())
-	.then(html => {
-		const matched = html.match(/data-context-item-id="(.{11})"/g)[0]
-		if (matched) {
-			matched.match(/.*="(.{11})"/)
-			return RegExp.$1
-		}
-		return Promise.reject()
+	.then(body => {
+		const initialData = JSON.parse(body.match(/window\["ytInitialData"\]\s*=\s*([^;]+);/)[1])
+		const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0]
+		if (matched)
+			return matched.videoRenderer.videoId
+		else
+			return Promise.reject()
 	})
 }
 
@@ -83,9 +73,6 @@ const track = id => {
 	})
 }
 
-const check = info => {
-	const searchFunc = key ? search : searchWithoutKey
-	return cache(searchFunc, info).then(track)
-}
+const check = info => cache(key ? apiSearch : search, info).then(track)
 
 module.exports = {check, track}
