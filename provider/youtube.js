@@ -19,11 +19,10 @@ const signature = (id = '-tKVN2mAKRI') => {
 		return request('GET', 'https://youtube.com' + assets.js, {}, null, proxy).then(response => response.body())
 	})
 	.then(body => {
-		let funcName = /\.set\([^,]*,encodeURIComponent\(([^(]*)\(/.exec(body)[1]
-		let [_, funcArgs, funcBody] = new RegExp(funcName + '=function\\((.+?)\\){(.+?)}').exec(body)
+		let [_, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body)
 		let helperName = /;(.+?)\..+?\(/.exec(funcBody)[1]
-		let helperContent = new RegExp('var ' + helperName + '={[\\s\\S]+?};').exec(body)[0]
-		return new Function([funcArgs], helperContent + '\n' + funcBody)
+		let helperContent = new RegExp(`var ${helperName}={[\\s\\S]+?};`).exec(body)[0]
+		return new Function([funcArg], helperContent + '\n' + funcBody)
 	})
 }
 
