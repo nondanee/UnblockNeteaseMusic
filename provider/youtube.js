@@ -1,6 +1,6 @@
 const cache = require('../cache')
 const request = require('../request')
-const querystring = require('querystring')
+const parse = query => query.split('&').reduce((result, item) => (item = item.split('=').map(decodeURIComponent), Object.assign({}, result, {[item[0]]: item[1]})), {})
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined
@@ -73,14 +73,13 @@ const track = id => {
 
 	return request('GET', url, {}, null, proxy)
 	.then(response => response.body())
-	.then(body => JSON.parse(querystring.parse(body).player_response).streamingData)
+	.then(body => JSON.parse(parse(body).player_response).streamingData)
 	.then(streamingData => {
 		let stream = streamingData.formats.concat(streamingData.adaptiveFormats)
 		.find(format => format.itag === 140)
 		// .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
 		// .sort((a, b) => b.bitrate - a.bitrate)[0]
-		
-		let target = querystring.parse(stream.cipher)
+		let target = parse(stream.cipher)
 		return stream.url || (target.sp.includes('sig') ? cache(signature, null, 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url)
 	})
 }
