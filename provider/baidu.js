@@ -3,7 +3,7 @@ const insure = require('./insure')
 const request = require('../request')
 
 const search = info => {
-	let url =
+	const url =
 		'http://sug.qianqian.com/info/suggestion?' +
 		'word=' + encodeURIComponent(info.keyword) + '&version=2&from=0'
 
@@ -11,7 +11,7 @@ const search = info => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		if ('data' in jsonBody) {
-			let matched = jsonBody.data.song[0]
+			const matched = jsonBody.data.song[0]
 			return matched.songid
 		}
 		else {
@@ -21,7 +21,7 @@ const search = info => {
 }
 
 const track = id => {
-	let url =
+	const url =
 		'http://music.taihe.com/data/music/fmlink?' +
 		'songIds=' + id + '&type=mp3'
 

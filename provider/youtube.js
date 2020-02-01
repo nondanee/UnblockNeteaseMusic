@@ -7,7 +7,7 @@ const proxy = undefined
 const key = undefined // YouTube Data API v3
 
 const signature = (id = '-tKVN2mAKRI') => {
-	let url =
+	const url =
 		`https://www.youtube.com/watch?v=${id}`
 
 	return request('GET', url, {}, null, proxy)
@@ -18,21 +18,21 @@ const signature = (id = '-tKVN2mAKRI') => {
 		return request('GET', 'https://youtube.com' + assets.js, {}, null, proxy).then(response => response.body())
 	})
 	.then(body => {
-		let [_, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body)
-		let helperName = /;(.+?)\..+?\(/.exec(funcBody)[1]
-		let helperContent = new RegExp(`var ${helperName}={[\\s\\S]+?};`).exec(body)[0]
+		const [_, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body)
+		const helperName = /;(.+?)\..+?\(/.exec(funcBody)[1]
+		const helperContent = new RegExp(`var ${helperName}={[\\s\\S]+?};`).exec(body)[0]
 		return new Function([funcArg], helperContent + '\n' + funcBody)
 	})
 }
 
 const apiSearch = info => {
-	let url =
+	const url =
 		`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key}`
 
 	return request('GET', url, {accept: 'application/json'}, null, proxy)
 	.then(response => response.json())
 	.then(jsonBody => {
-		let matched = jsonBody.items[0]
+		const matched = jsonBody.items[0]
 		if (matched)
 			return matched.id.videoId
 		else
@@ -57,18 +57,18 @@ const search = info => {
 }
 
 const track = id => {
-	let url =
+	const url =
 		`https://www.youtube.com/get_video_info?video_id=${id}&el=detailpage`
 
 	return request('GET', url, {}, null, proxy)
 	.then(response => response.body())
 	.then(body => JSON.parse(parse(body).player_response).streamingData)
 	.then(streamingData => {
-		let stream = streamingData.formats.concat(streamingData.adaptiveFormats)
+		const stream = streamingData.formats.concat(streamingData.adaptiveFormats)
 		.find(format => format.itag === 140)
 		// .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
 		// .sort((a, b) => b.bitrate - a.bitrate)[0]
-		let target = parse(stream.cipher)
+		const target = parse(stream.cipher)
 		return stream.url || (target.sp.includes('sig') ? cache(signature, null, 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url)
 	})
 }

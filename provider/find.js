@@ -5,13 +5,13 @@ const filter = (object, keys) => Object.keys(object).filter(key => keys.includes
 // Object.keys(object).filter(key => !keys.includes(key)).forEach(key => delete object[key])
 
 const find = id => {
-	let url =
+	const url =
 		'https://music.163.com/api/song/detail?ids=[' + id + ']'
 
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		let info = filter(jsonBody.songs[0], ['id', 'name', 'alias', 'duration'])
+		const info = filter(jsonBody.songs[0], ['id', 'name', 'alias', 'duration'])
 		info.name = (info.name || '')
 			.replace(/（\s*cover[:：\s][^）]+）/i, '')
 			.replace(/\(\s*cover[:：\s][^\)]+\)/i, '')

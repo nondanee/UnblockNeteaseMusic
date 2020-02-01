@@ -2,7 +2,7 @@ const cache = require('../cache')
 const insure = require('./insure')
 const request = require('../request')
 
-let headers = {
+const headers = {
 	'origin': 'http://y.qq.com/',
 	'referer': 'http://y.qq.com/',
 	'cookie': null // uin=; qm_keyst=
@@ -11,16 +11,16 @@ let headers = {
 const name = id => [headers.cookie ? 'M800' : 'M500', '.mp3'].join(id)
 
 const playable = song => {
-	let switchFlag = song['switch'].toString(2).split('')
+	const switchFlag = song['switch'].toString(2).split('')
 	switchFlag.pop()
 	switchFlag.reverse()
-	let playFlag = switchFlag[0]
-	let tryFlag = switchFlag[13]
+	const playFlag = switchFlag[0]
+	const tryFlag = switchFlag[13]
 	return ((playFlag == 1) || ((playFlag == 1) && (tryFlag == 1)))
 }
 
 const search = info => {
-	let url =
+	const url =
 		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' +
 		'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center&' +
 		'searchid=46804741196796149&t=0&aggr=1&cr=1&catZhida=1&lossless=0&' +
@@ -31,7 +31,7 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		let matched = jsonBody.data.song.list[0]
+		const matched = jsonBody.data.song.list[0]
 		if (matched)
 			return {song: matched.mid, file: matched.file.media_mid}
 		else
@@ -43,7 +43,7 @@ const ticket = id => {
 	// const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
 	// id = id || classic[Math.floor(classic.length * Math.random())]
 
-	let url =
+	const url =
 		'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
 		'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
 		'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
@@ -53,12 +53,12 @@ const ticket = id => {
 	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
-		let vkey = jsonBody.data.items[0].vkey
+		const vkey = jsonBody.data.items[0].vkey
 		return vkey || Promise.reject()
 	})
 	// .catch(() => insure().qq.ticket())
 
-	// let url =
+	// const url =
 	// 	'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
 	// 	encodeURIComponent(JSON.stringify({
 	// 		// req: {
@@ -87,7 +87,7 @@ const ticket = id => {
 	// return request('GET', url)
 	// .then(response => response.json())
 	// .then(jsonBody => {
-	// 	// let vkey =
+	// 	// const vkey =
 	// 	// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
 	// 	// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
 	// 	// return vkey || Promise.reject()
@@ -99,11 +99,8 @@ const ticket = id => {
 const track = id => {
 	return ticket(id)
 	.then(vkey => {
-		let host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
-		let songUrl =
-			'http://' + host + '/' + name(id.file) +
-			'?vkey=' + vkey +
-			'&uin=0&fromtag=8&guid=7332953645'
+		const host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
+		const songUrl = `http://${host}/${name(id.file)}?vkey=${vkey}&uin=0&fromtag=8&guid=7332953645`
 		return songUrl
 	})
 	.catch(() => insure().qq.track(id))
@@ -119,19 +116,19 @@ const track = id => {
 	// )
 	// .then(response => response.body(true))
 	// .then(body => {
-	// 	let xml = require('zlib').inflateSync(body.slice(5)).toString()
-	// 	let focus = xml.match(/<item name="(.+)">(.+)<\/item>/)
+	// 	const xml = require('zlib').inflateSync(body.slice(5)).toString()
+	// 	const focus = xml.match(/<item name="(.+)">(.+)<\/item>/)
 	// 	return `http://streamoc.music.tc.qq.com/${focus[1]}?vkey=${focus[2]}&guid=0&uin=12345678&fromtag=6`
 	// })
 
-	// let url =
+	// const url =
 	// 	'https://i.y.qq.com/v8/playsong.html?ADTAG=newyqq.song&songmid=' + id
 
-	// let mobile = {'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'}
+	// const mobile = {'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'}
 	// return request('GET', url, mobile)
 	// .then(response => response.body())
 	// .then(body => {
-	// 	let audio = body.match(/<audio[^>]+src="([^"]+)"[^>]*>/)
+	// 	const audio = body.match(/<audio[^>]+src="([^"]+)"[^>]*>/)
 	// 	if (audio)
 	// 		return audio[1].replace(/C400(\w+)\.m4a/, 'M500$1.mp3')
 	// 	else

@@ -3,23 +3,23 @@ const insure = require('./insure')
 const crypto = require('../crypto')
 const request = require('../request')
 
-let headers = {
+const headers = {
 	// 'origin': 'http://www.xiami.com/',
 	// 'referer': 'http://www.xiami.com/'
 	'referer': 'https://h.xiami.com/'
 }
 
 const caesar = pattern => {
-	let height = parseInt(pattern[0])
+	const height = parseInt(pattern[0])
 	pattern = pattern.slice(1)
-	let width = Math.ceil(pattern.length / height)
-	let unpad = height - (width * height - pattern.length)
+	const width = Math.ceil(pattern.length / height)
+	const unpad = height - (width * height - pattern.length)
 
-	let matrix = Array.from(Array(height).keys()).map(i =>
+	const matrix = Array.from(Array(height).keys()).map(i =>
 		pattern.slice(i < unpad ? i * width : unpad * width + (i - unpad) * (width - 1)).slice(0, i < unpad ? width : width - 1)
 	)
 
-	let transpose = Array.from(Array(width).keys()).map(x =>
+	const transpose = Array.from(Array(width).keys()).map(x =>
 		Array.from(Array(height).keys()).map(y => matrix[y][x]).join('')
 	)
 
@@ -29,10 +29,9 @@ const caesar = pattern => {
 const token = () => {
 	return request('GET', 'https://www.xiami.com')
 	.then(response =>
-		response.headers['set-cookie'].map(line => line.replace(/;.+$/, '')).reduce((cookie, line) => {
-			line = line.split(/\s*=\s*/)
-			return Object.assign(cookie, {[decodeURIComponent(line[0])]: decodeURIComponent(line[1])})
-		}, {})
+		response.headers['set-cookie'].map(line => line.replace(/;.+$/, '')).reduce(
+			(cookie, line) => (line = line.split(/\s*=\s*/).map(decodeURIComponent), Object.assign(cookie, {[line[0]]: line[1]})), {}
+		)
 	)
 }
 
@@ -47,7 +46,7 @@ const token = () => {
 // 		})
 // 		.then(response => response.json())
 // 		.then(jsonBody => {
-// 			let matched = jsonBody.result.data.songs[0]
+// 			const matched = jsonBody.result.data.songs[0]
 // 			if (matched)
 // 				return matched.songId
 // 			else
@@ -57,7 +56,7 @@ const token = () => {
 // }
 
 const search = info => {
-	let url =
+	const url =
 		'http://api.xiami.com/web?v=2.0&app_key=1' +
 		'&key=' + encodeURIComponent(info.keyword) + '&page=1' +
 		'&limit=20&callback=jsonp&r=search/songs'
@@ -65,17 +64,16 @@ const search = info => {
 	return request('GET', url, headers)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		let matched = jsonBody.data.songs[0]
-		if (matched) {
+		const matched = jsonBody.data.songs[0]
+		if (matched)
 			return matched.song_id
-		}
 		else
 			return Promise.reject()
 	})
 }
 
 // const track = id => {
-// 	let url =
+// 	const url =
 // 		'https://emumo.xiami.com/song/playlist/id/' + id +
 // 		'/object_name/default/object_id/0/cat/json'
 
@@ -86,13 +84,13 @@ const search = info => {
 // 			return Promise.reject()
 // 		}
 // 		else {
-// 			let location = jsonBody.data.trackList[0].location
-// 			let songUrl = 'http:' + caesar(location)
+// 			const location = jsonBody.data.trackList[0].location
+// 			const songUrl = 'http:' + caesar(location)
 // 			return songUrl
 // 		}
 // 	})
 // 	.then(origin => {
-// 		let updated = origin.replace('m128', 'm320')
+// 		const updated = origin.replace('m128', 'm320')
 // 		return request('HEAD', updated)
 // 		.then(response => response.statusCode == 200 ? updated : origin)
 // 		.catch(() => origin)
@@ -101,7 +99,7 @@ const search = info => {
 // }
 
 const track = id => {
-	let url =
+	const url =
 		'https://api.xiami.com/web?v=2.0&app_key=1' +
 		'&id=' + id + '&callback=jsonp&r=song/detail'
 
