@@ -43,7 +43,7 @@ const cli = {
 			const index = part.startsWith('-') ? optionals[part] : positionals.shift()
 			if (index == undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
 			if (part.startsWith('-')) pointer += 1
-			const action = cli._options[index].action
+			const {action} = cli._options[index]
 
 			if (['help', 'version'].includes(action)) {
 				if (action === 'help') help()
@@ -119,7 +119,7 @@ const help = () => {
 	.map(option => [option.metavar || option.dest, option.help])
 	const optionals = cli._options.filter(option => !option.positional)
 	.map(option => {
-		const flags = option.flags
+		const {flags} = option
 		const name = option.metavar || option.dest
 		let use = ''
 		if (['store_true', 'store_false', 'help', 'version'].includes(option.action))

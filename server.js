@@ -57,24 +57,21 @@ const proxy = {
 		if (socket && !socket.destroyed) socket.destroy()
 	},
 	protect: ctx => {
-		const req = ctx.req
-		const res = ctx.res
-		const socket = ctx.socket
+		const {req, res, socket} = ctx
 		if (req) req.on('error', () => proxy.abort(req.socket, 'req'))
 		if (res) res.on('error', () => proxy.abort(res.socket, 'res'))
 		if (socket) socket.on('error', () => proxy.abort(socket, 'socket'))
 	},
 	log: ctx => {
-		const mark = {close: '|', blank: '-', proxy: '>'}[ctx.decision] || '>'
-		if (ctx.socket)
-			console.log('TUNNEL', mark, ctx.req.url)
+		const {req, socket, decision} = ctx
+		const mark = {close: '|', blank: '-', proxy: '>'}[decision] || '>'
+		if (socket)
+			console.log('TUNNEL', mark, req.url)
 		else
-			console.log('MITM', mark, parse(ctx.req.url).host, ctx.req.socket.encrypted ? '(ssl)' : '')
+			console.log('MITM', mark, parse(req.url).host, req.socket.encrypted ? '(ssl)' : '')
 	},
 	authenticate: ctx => {
-		const req = ctx.req
-		const res = ctx.res
-		const socket = ctx.socket
+		const {req, res, socket} = ctx
 		const credential = Buffer.from((req.headers['proxy-authorization'] || '').split(/\s+/).pop() || '', 'base64').toString()
 		if ('proxy-authorization' in req.headers) delete req.headers['proxy-authorization']
 		if (server.authentication && credential != server.authentication && (socket || req.url.startsWith('http://'))) {
@@ -104,7 +101,7 @@ const proxy = {
 	mitm: {
 		request: ctx => new Promise((resolve, reject) => {
 			if (ctx.decision === 'close') return reject(ctx.error = ctx.decision)
-			const req = ctx.req
+			const {req} = ctx
 			const url = parse(req.url)
 			const options = request.configure(req.method, url, req.headers)
 			ctx.proxyReq = request.create(url)(options)
@@ -113,8 +110,8 @@ const proxy = {
 			req.readable ? req.pipe(ctx.proxyReq) : ctx.proxyReq.end(req.body)
 		}),
 		response: ctx => {
-			const res = ctx.res
-			const proxyRes = ctx.proxyRes.on('error', () => proxy.abort(ctx.proxyRes.socket, 'proxyRes'))
+			const {res, proxyRes} = ctx
+			proxyRes.on('error', () => proxy.abort(proxyRes.socket, 'proxyRes'))
 			res.writeHead(proxyRes.statusCode, proxyRes.headers)
 			proxyRes.readable ? proxyRes.pipe(res) : res.end(proxyRes.body)
 		},
@@ -125,7 +122,7 @@ const proxy = {
 	tunnel: {
 		connect: ctx => new Promise((resolve, reject) => {
 			if (ctx.decision === 'close') return reject(ctx.error = ctx.decision)
-			const req = ctx.req
+			const {req} = ctx
 			const url = parse('https://' + req.url)
 			if (global.proxy && !req.local) {
 				const options = request.configure(req.method, url, req.headers)
@@ -141,17 +138,15 @@ const proxy = {
 			}
 		}),
 		dock: ctx => new Promise(resolve => {
-			const req = ctx.req
-			const socket = ctx.socket
+			const {req, head, socket} = ctx
 			socket
-			.once('data', data => resolve(ctx.head = Buffer.concat([ctx.head, data])))
+			.once('data', data => resolve(ctx.head = Buffer.concat([head, data])))
 			.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
 		}).then(data => ctx.socket.sni = sni(data)).catch(() => {}),
 		pipe: ctx => {
 			if (ctx.decision === 'blank') return Promise.reject(ctx.error = ctx.decision)
-			const head = ctx.head
-			const socket = ctx.socket
-			const proxySocket = ctx.proxySocket.on('error', () => proxy.abort(ctx.proxySocket, 'proxySocket'))
+			const {head, socket, proxySocket} = ctx
+			proxySocket.on('error', () => proxy.abort(ctx.proxySocket, 'proxySocket'))
 			proxySocket.write(head)
 			socket.pipe(proxySocket)
 			proxySocket.pipe(socket)

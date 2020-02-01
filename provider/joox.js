@@ -24,7 +24,7 @@ const search = info => {
 	return request('GET', url, headers)
 	.then(response => response.body())
 	.then(body => {
-		const jsonBody = JSON.parse(body.replace(/(\')/g, '"'))
+		const jsonBody = JSON.parse(body.replace(/'/g, '"'))
 		const matched = jsonBody.itemlist[0]
 		if (matched)
 			return matched.songid

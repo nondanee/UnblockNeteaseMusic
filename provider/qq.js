@@ -53,7 +53,7 @@ const ticket = id => {
 	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const vkey = jsonBody.data.items[0].vkey
+		const {vkey} = jsonBody.data.items[0]
 		return vkey || Promise.reject()
 	})
 	// .catch(() => insure().qq.ticket())
