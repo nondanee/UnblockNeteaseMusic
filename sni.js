@@ -15,29 +15,29 @@ module.exports = data => {
 	pointer += 1 + data[pointer]
 
 	if (pointer + 2 > end || nan()) return null
-	let extensionsLength = data.readInt16BE(pointer)
+	const extensionsLength = data.readInt16BE(pointer)
 	pointer += 2
-	let extensionsEnd = pointer + extensionsLength
+	const extensionsEnd = pointer + extensionsLength
 
 	if (extensionsEnd > end || nan(extensionsEnd)) return null
 	end = extensionsEnd
 
 	while (pointer + 4 <= end || nan()) {
-		let extensionType = data.readInt16BE(pointer)
-		let extensionSize = data.readInt16BE(pointer + 2)
+		const extensionType = data.readInt16BE(pointer)
+		const extensionSize = data.readInt16BE(pointer + 2)
 		pointer += 4
 		if (extensionType !== 0) {
 			pointer += extensionSize
 			continue
 		}
 		if (pointer + 2 > end || nan()) return null
-		let nameListLength = data.readInt16BE(pointer)
+		const nameListLength = data.readInt16BE(pointer)
 		pointer += 2
 		if (pointer + nameListLength > end) return null
 
 		while (pointer + 3 <= end || nan()) {
-			let nameType = data[pointer]
-			let nameLength = data.readInt16BE(pointer + 1)
+			const nameType = data[pointer]
+			const nameLength = data.readInt16BE(pointer + 1)
 			pointer += 3
 			if (nameType !== 0) {
 				pointer += nameLength

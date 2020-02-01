@@ -15,7 +15,7 @@ const provider = {
 
 const match = (id, source) => {
 	let meta = {}
-	let candidate = (source || global.source || ['qq', 'kuwo', 'migu']).filter(name => name in provider)
+	const candidate = (source || global.source || ['qq', 'kuwo', 'migu']).filter(name => name in provider)
 	return find(id)
 	.then(info => {
 		meta = info
@@ -34,7 +34,7 @@ const match = (id, source) => {
 }
 
 const check = url => {
-	let song = {size: 0, br: null, url: null, md5: null}
+	const song = {size: 0, br: null, url: null, md5: null}
 	return Promise.race([request('GET', url, {'range': 'bytes=0-8191'}), new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000))])
 	.then(response => {
 		if (!response.statusCode.toString().startsWith('2')) return Promise.reject()
@@ -47,7 +47,7 @@ const check = url => {
 		return response.headers['content-length'] === '8192' ? response.body(true) : Promise.reject()
 	})
 	.then(data => {
-		let bitrate = decode(data)
+		const bitrate = decode(data)
 		song.br = (bitrate && !isNaN(bitrate)) ? bitrate * 1000 : null
 	})
 	.catch(() => {})
@@ -73,10 +73,10 @@ const decode = buffer => {
 	if (buffer.slice(0, 4).toString() === 'fLaC') return 999
 	if (buffer.slice(0, 3).toString() === 'ID3') {
 		pointer = 6
-		let size = buffer.slice(pointer, pointer + 4).reduce((summation, value, index) => summation + (value & 0x7f) << (7 * (3 - index)), 0)
+		const size = buffer.slice(pointer, pointer + 4).reduce((summation, value, index) => summation + (value & 0x7f) << (7 * (3 - index)), 0)
 		pointer = 10 + size
 	}
-	let header = buffer.slice(pointer, pointer + 4)
+	const header = buffer.slice(pointer, pointer + 4)
 
 	// https://www.allegro.cc/forums/thread/591512/674023
 	if (
@@ -87,9 +87,9 @@ const decode = buffer => {
 		((header[2] >> 4) & 0xf) !== 0xf &&
 		((header[2] >> 2) & 0x3) !== 0x3
 	) {
-		let version = (header[1] >> 3) & 0x3
-		let layer = (header[1] >> 1) & 0x3
-		let bitrate = header[2] >> 4
+		const version = (header[1] >> 3) & 0x3
+		const layer = (header[1] >> 1) & 0x3
+		const bitrate = header[2] >> 4
 		return map[version][layer][bitrate]
 	}
 }

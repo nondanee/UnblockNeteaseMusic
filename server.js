@@ -11,7 +11,7 @@ const proxy = {
 	core: {
 		mitm: (req, res) => {
 			if (req.url == '/proxy.pac') {
-				let url = parse('http://' + req.headers.host)
+				const url = parse('http://' + req.headers.host)
 				res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 				res.end(`
 					function FindProxyForURL(url, host) {
@@ -75,7 +75,7 @@ const proxy = {
 		const req = ctx.req
 		const res = ctx.res
 		const socket = ctx.socket
-		let credential = Buffer.from((req.headers['proxy-authorization'] || '').split(/\s+/).pop() || '', 'base64').toString()
+		const credential = Buffer.from((req.headers['proxy-authorization'] || '').split(/\s+/).pop() || '', 'base64').toString()
 		if ('proxy-authorization' in req.headers) delete req.headers['proxy-authorization']
 		if (server.authentication && credential != server.authentication && (socket || req.url.startsWith('http://'))) {
 			if (socket)
@@ -90,8 +90,8 @@ const proxy = {
 		const url = parse((ctx.socket ? 'https://' : '') + ctx.req.url)
 		const match = pattern => url.href.search(new RegExp(pattern, 'g')) != -1
 		try {
-			let allow = server.whitelist.some(match)
-			let deny = server.blacklist.some(match)
+			const allow = server.whitelist.some(match)
+			const deny = server.blacklist.some(match)
 			// console.log('allow', allow, 'deny', deny)
 			if (!allow && deny) {
 				return Promise.reject(ctx.error = 'filter')

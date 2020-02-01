@@ -12,7 +12,7 @@ const configure = (method, url, headers, proxy) => {
 	proxy = typeof(proxy) === 'undefined' ? global.proxy : proxy
 	if ('content-length' in headers) delete headers['content-length']
 
-	let options = {}
+	const options = {}
 	options._headers = headers
 	if (proxy && url.protocol == 'https:') {
 		options.method = 'CONNECT'
@@ -38,7 +38,7 @@ const configure = (method, url, headers, proxy) => {
 
 const request = (method, url, headers, body, proxy) => {
 	url = parse(url)
-	let options = configure(method, url, Object.assign({
+	const options = configure(method, url, Object.assign({
 		'host': url.hostname,
 		'accept': 'application/json, text/plain, */*',
 		'accept-encoding': 'gzip, deflate',
@@ -62,7 +62,7 @@ const request = (method, url, headers, body, proxy) => {
 			.end(body)
 		)
 		.on('error', error => reject(error))
-		.end(options.method.toUpperCase() === 'CONNECT' ? null : body)
+		.end(options.method.toUpperCase() === 'CONNECT' ? undefined : body)
 	})
 	.then(response => {
 		if ([201, 301, 302, 303, 307, 308].includes(response.statusCode))
@@ -74,7 +74,7 @@ const request = (method, url, headers, body, proxy) => {
 
 const read = (connect, raw) =>
 	new Promise((resolve, reject) => {
-		let chunks = []
+		const chunks = []
 		connect
 		.on('data', chunk => chunks.push(chunk))
 		.on('end', () => resolve(Buffer.concat(chunks)))

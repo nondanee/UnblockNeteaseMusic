@@ -76,7 +76,7 @@ const httpdns2 = host => require('./request')('GET', 'https://httpdns.n.netease.
 
 Promise.all([httpdns, httpdns2].map(query => query(hook.target.host.join(','))).concat(hook.target.host.map(host => dns(host))))
 .then(result => {
-	let extra = Array.from(new Set(result.reduce((merged, array) => merged.concat(array), [])))
+	const extra = Array.from(new Set(result.reduce((merged, array) => merged.concat(array), [])))
 	hook.target.host = hook.target.host.concat(extra)
 	server.whitelist = server.whitelist.concat(hook.target.host.map(escape))
 	if (port[0]) {
