@@ -8,7 +8,7 @@ let headers = {
 }
 
 const fit = info => {
-	if(/[\u0800-\u4e00]/.test(info.name)) //is japanese
+	if (/[\u0800-\u4e00]/.test(info.name)) //is japanese
 		return info.name
 	else
 		return info.keyword
@@ -26,7 +26,7 @@ const search = info => {
 	.then(body => {
 		let jsonBody = JSON.parse(body.replace(/(\')/g, '"'))
 		let matched = jsonBody.itemlist[0]
-		if(matched)
+		if (matched)
 			return matched.songid
 		else
 			return Promise.reject()
@@ -43,7 +43,7 @@ const track = id => {
 	.then(response => response.jsonp())
 	.then(jsonBody => {
 		let songUrl = (jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl).replace(/M\d00([\w]+).mp3/, 'M800$1.mp3')
-		if(songUrl)
+		if (songUrl)
 			return songUrl
 		else
 			return Promise.reject()

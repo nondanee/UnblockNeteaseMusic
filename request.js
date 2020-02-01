@@ -10,25 +10,25 @@ const create = (url, proxy) => (proxy = (typeof(proxy) === 'undefined' ? global.
 const configure = (method, url, headers, proxy) => {
 	headers = headers || {}
 	proxy = typeof(proxy) === 'undefined' ? global.proxy : proxy
-	if('content-length' in headers) delete headers['content-length']
+	if ('content-length' in headers) delete headers['content-length']
 
 	let options = {}
 	options._headers = headers
-	if(proxy && url.protocol == 'https:'){
+	if (proxy && url.protocol == 'https:') {
 		options.method = 'CONNECT'
 		options.headers = Object.keys(headers).filter(key => ['host', 'user-agent'].includes(key)).reduce((result, key) => Object.assign(result, {[key]: headers[key]}), {})
 	}
-	else{
+	else {
 		options.method = method
 		options.headers = headers
 	}
 
-	if(proxy){
+	if (proxy) {
 		options.hostname = translate(proxy.hostname)
 		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)
 		options.path = (url.protocol != 'https:') ? ('http://' + translate(url.hostname) + url.path) : (translate(url.hostname) + ':' + (url.port || 443))
 	}
-	else{
+	else {
 		options.hostname = translate(url.hostname)
 		options.port = url.port || ((url.protocol == 'https:') ? 443 : 80)
 		options.path = url.path
@@ -65,7 +65,7 @@ const request = (method, url, headers, body, proxy) => {
 		.end(options.method.toUpperCase() === 'CONNECT' ? null : body)
 	})
 	.then(response => {
-		if([201, 301, 302, 303, 307, 308].includes(response.statusCode))
+		if ([201, 301, 302, 303, 307, 308].includes(response.statusCode))
 			return request(method, url.resolve(response.headers.location), (delete headers.host, headers), body, proxy)
 		else
 			return Object.assign(response, {url: url, body: raw => read(response, raw), json: () => json(response), jsonp: () => jsonp(response)})

@@ -24,7 +24,7 @@ const search = info => {
 	// 		.replace(/;\s*song\s*\(.+\)\s*;\s*/, '') + ')'
 	// 	)
 	// 	let matched = jsonBody.abslist[0]
-	// 	if(matched)
+	// 	if (matched)
 	// 		return matched.MUSICRID.split('_').pop()
 	// 	else
 	// 		return Promise.reject()
@@ -39,7 +39,7 @@ const search = info => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		let matched = jsonBody.data.list[0]
-		if(matched)
+		if (matched)
 			return matched.musicrid.split('_').pop()
 		else
 			return Promise.reject()
@@ -56,7 +56,7 @@ const track = id => {
 	return request('GET', url)
 	.then(response => response.body())
 	.then(body => {
-		if(body.startsWith('http'))
+		if (body.startsWith('http'))
 			return body
 		else
 			return Promise.reject()

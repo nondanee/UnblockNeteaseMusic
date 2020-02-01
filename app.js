@@ -18,36 +18,36 @@ const config = require('./cli.js')
 global.address = config.address
 config.port = (config.port || '8080').split(':').map(string => parseInt(string))
 const invalid = value => (isNaN(value) || value < 1 || value > 65535)
-if(config.port.some(invalid)){
+if (config.port.some(invalid)) {
 	console.log('Port must be a number higher than 0 and lower than 65535.')
 	process.exit(1)
 }
-if(config.proxyUrl && !/http(s?):\/\/.+:\d+/.test(config.proxyUrl)){
+if (config.proxyUrl && !/http(s?):\/\/.+:\d+/.test(config.proxyUrl)) {
 	console.log('Please check the proxy url.')
 	process.exit(1)
 }
-if(config.endpoint && !/http(s?):\/\/.+/.test(config.endpoint)){
+if (config.endpoint && !/http(s?):\/\/.+/.test(config.endpoint)) {
 	console.log('Please check the endpoint host.')
 	process.exit(1)
 }
-if(config.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(config.forceHost)){
+if (config.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(config.forceHost)) {
 	console.log('Please check the server host.')
 	process.exit(1)
 }
-if(config.matchOrder){
+if (config.matchOrder) {
 	const provider = ['netease', 'qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox', 'youtube']
 	const candidate = config.matchOrder
-	if(candidate.some((key, index) => index != candidate.indexOf(key))){
+	if (candidate.some((key, index) => index != candidate.indexOf(key))) {
 		console.log('Please check the duplication in match order.')
 		process.exit(1)
 	}
-	else if(candidate.some(key => !provider.includes(key))){
+	else if (candidate.some(key => !provider.includes(key))) {
 		console.log('Please check the availability of match sources.')
 		process.exit(1)
 	}
 	global.source = candidate
 }
-if(config.token && !/\S+:\S+/.test(config.token)){
+if (config.token && !/\S+:\S+/.test(config.token)) {
 	console.log('Please check the authentication token.')
 	process.exit(1)
 }
@@ -62,10 +62,10 @@ global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = hook.target.host.reduce((result, host) => Object.assign(result, {[host]: config.forceHost}), {})
 server.whitelist = ['music.126.net', 'vod.126.net'].map(escape)
-if(config.strict) server.blacklist.push('.*')
+if (config.strict) server.blacklist.push('.*')
 server.authentication = config.token || null
 global.endpoint = config.endpoint
-if(config.endpoint) server.whitelist.push(escape(config.endpoint))
+if (config.endpoint) server.whitelist.push(escape(config.endpoint))
 
 hosts['music.httpdns.c.163.com'] = random(['59.111.181.35', '59.111.181.38'])
 hosts['httpdns.n.netease.com'] = random(['59.111.179.213', '59.111.179.214'])
@@ -79,11 +79,11 @@ Promise.all([httpdns, httpdns2].map(query => query(hook.target.host.join(','))).
 	let extra = Array.from(new Set(result.reduce((merged, array) => merged.concat(array), [])))
 	hook.target.host = hook.target.host.concat(extra)
 	server.whitelist = server.whitelist.concat(hook.target.host.map(escape))
-	if(port[0]){
+	if (port[0]) {
 		server.http.listen(port[0], address)
 		console.log(`HTTP Server running @ http://${address || '0.0.0.0'}:${port[0]}`)
 	}
-	if(port[1]){
+	if (port[1]) {
 		server.https.listen(port[1], address)
 		console.log(`HTTPS Server running @ https://${address || '0.0.0.0'}:${port[1]}`)
 	}

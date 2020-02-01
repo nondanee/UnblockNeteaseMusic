@@ -20,7 +20,7 @@ const distribute = (url, router) =>
 		let pointer = router, argument = decodeURIComponent(url.query)
 		try {argument = JSON.parse(argument)} catch(e) {}
 		const miss = route.some(path => {
-			if(path in pointer) pointer = pointer[path]
+			if (path in pointer) pointer = pointer[path]
 			else return true
 		})
 		if (miss || typeof pointer != 'function') return Promise.reject()

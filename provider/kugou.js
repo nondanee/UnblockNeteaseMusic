@@ -12,7 +12,7 @@ const search = info => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		let matched = jsonBody.data.lists[0]
-		if(matched)
+		if (matched)
 			return matched.FileHash
 		else
 			return Promise.reject()

@@ -37,43 +37,43 @@ const cli = {
 		let args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
 
 		let pointer = 0
-		while(pointer < args.length){
+		while (pointer < args.length) {
 			let part = args[pointer], value = null
 			let index = part.startsWith('-') ? optionals[part] : positionals.shift()
-			if(index == undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
-			if(part.startsWith('-')) pointer += 1
+			if (index == undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
+			if (part.startsWith('-')) pointer += 1
 			let action = cli._options[index].action
 
-			if(['help', 'version'].includes(action)){
-				if(action === 'help') help()
-				else if(action === 'version') version()
+			if (['help', 'version'].includes(action)) {
+				if (action === 'help') help()
+				else if (action === 'version') version()
 			}
-			else if(['store_true', 'store_false'].includes(action)){
+			else if (['store_true', 'store_false'].includes(action)) {
 				value = action === 'store_true'
 			}
-			else{
+			else {
 				let gap = args.slice(pointer).findIndex(part => part in optionals)
 				let next = gap === -1 ? args.length : pointer + gap
 				value = args.slice(pointer, next)
-				if(value.length === 0){
-					if(cli._options[index].positional)
+				if (value.length === 0) {
+					if (cli._options[index].positional)
 						error(`the following arguments are required: ${part}`)
-					else if(cli._options[index].nargs === '+')
+					else if (cli._options[index].nargs === '+')
 						error(`argument ${part}: expected at least one argument`)
 					else
 						error(`argument ${part}: expected one argument`)
 				}
-				if(cli._options[index].nargs != '+'){
+				if (cli._options[index].nargs != '+') {
 					value = value[0]
 					pointer += 1
 				}
-				else{
+				else {
 					pointer = next
 				}
 			}
 			cli[cli._options[index].dest] = value
 		}
-		if(positionals.length) error(`the following arguments are required: ${positionals.map(index => cli._options[index].flags[0]).join(', ')}`)
+		if (positionals.length) error(`the following arguments are required: ${positionals.map(index => cli._options[index].flags[0]).join(', ')}`)
 		// cli._options.forEach(option => console.log(option.dest, cli[option.dest]))
 		return cli
 	}
@@ -85,16 +85,16 @@ const usage = () => {
 	let options = cli._options.map(option => {
 		let flag = option.flags[0]
 		let name = option.metavar || option.dest
-		if(option.positional){
-			if(option.nargs === '+')
+		if (option.positional) {
+			if (option.nargs === '+')
 				return `${name} [${name} ...]`
 			else
 				return `${name}`
 		}
-		else{
-			if(['store_true', 'store_false', 'help', 'version'].includes(option.action))
+		else {
+			if (['store_true', 'store_false', 'help', 'version'].includes(option.action))
 				return `[${flag}]`
-			else if(option.nargs === '+')
+			else if (option.nargs === '+')
 				return `[${flag} ${name} [${name} ...]]`
 			else
 				return `[${flag} ${name}]`
@@ -121,9 +121,9 @@ const help = () => {
 		let flags = option.flags
 		let name = option.metavar || option.dest
 		let use = ''
-		if(['store_true', 'store_false', 'help', 'version'].includes(option.action))
+		if (['store_true', 'store_false', 'help', 'version'].includes(option.action))
 			use = flags.map(flag => `${flag}`).join(', ')
-		else if(option.nargs === '+')
+		else if (option.nargs === '+')
 			use = flags.map(flag => `${flag} ${name} [${name} ...]`).join(', ')
 		else
 			use = flags.map(flag => `${flag} ${name}`).join(', ')
@@ -141,9 +141,9 @@ const help = () => {
 		console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`) :
 		console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`)
 	}
-	if(positionals.length) console.log('\npositional arguments:')
+	if (positionals.length) console.log('\npositional arguments:')
 	positionals.forEach(publish)
-	if(optionals.length) console.log('\noptional arguments:')
+	if (optionals.length) console.log('\noptional arguments:')
 	optionals.forEach(publish)
 	process.exit()
 }

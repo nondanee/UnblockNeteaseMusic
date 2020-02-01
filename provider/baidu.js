@@ -10,11 +10,11 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		if('data' in jsonBody){
+		if ('data' in jsonBody) {
 			let matched = jsonBody.data.song[0]
 			return matched.songid
 		}
-		else{
+		else {
 			return Promise.reject()
 		}
 	})
@@ -28,7 +28,7 @@ const track = id => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		if('songList' in jsonBody.data)
+		if ('songList' in jsonBody.data)
 			return jsonBody.data.songList[0].songLink || Promise.reject()
 		else
 			return Promise.reject()

@@ -6,9 +6,9 @@ const collector = (job, cycle) =>
 
 module.exports = (job, parameter, live = 30 * 60 * 1000) => {
 	const cache = job.cache ? job.cache : job.cache = {}
-	if(!job.collector) job.collector = collector(job, live / 2)
+	if (!job.collector) job.collector = collector(job, live / 2)
 	const key = parameter == null ? 'default' : (parameter.id || parameter.key || parameter)
-	if(!cache[key] || cache[key].expiration < Date.now())
+	if (!cache[key] || cache[key].expiration < Date.now())
 		cache[key] = {
 			execution: job(parameter),
 			expiration: Date.now() + live

@@ -11,7 +11,7 @@ module.exports = () => {
 			if (module.exports.disable) return Promise.reject()
 			let path = target.route.join('/'), query = payload[0]
 			query = encodeURIComponent(typeof(query) === 'object' ? JSON.stringify(query) : query)
-			// if(path != 'qq/ticket') return Promise.reject()
+			// if (path != 'qq/ticket') return Promise.reject()
 			return request('GET', `${host}/${path}?${query}`)
 			.then(response => response.body())
 		}

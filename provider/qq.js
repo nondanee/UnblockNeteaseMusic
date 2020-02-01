@@ -32,7 +32,7 @@ const search = info => {
 	.then(response => response.jsonp())
 	.then(jsonBody => {
 		let matched = jsonBody.data.song.list[0]
-		if(matched)
+		if (matched)
 			return {song: matched.mid, file: matched.file.media_mid}
 		else
 			return Promise.reject()
@@ -132,7 +132,7 @@ const track = id => {
 	// .then(response => response.body())
 	// .then(body => {
 	// 	let audio = body.match(/<audio[^>]+src="([^"]+)"[^>]*>/)
-	// 	if(audio)
+	// 	if (audio)
 	// 		return audio[1].replace(/C400(\w+)\.m4a/, 'M500$1.mp3')
 	// 	else
 	// 		return Promise.reject()

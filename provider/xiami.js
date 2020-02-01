@@ -48,7 +48,7 @@ const token = () => {
 // 		.then(response => response.json())
 // 		.then(jsonBody => {
 // 			let matched = jsonBody.result.data.songs[0]
-// 			if(matched)
+// 			if (matched)
 // 				return matched.songId
 // 			else
 // 				return Promise.reject()
@@ -66,7 +66,7 @@ const search = info => {
 	.then(response => response.jsonp())
 	.then(jsonBody => {
 		let matched = jsonBody.data.songs[0]
-		if(matched){
+		if (matched) {
 			return matched.song_id
 		}
 		else
@@ -82,10 +82,10 @@ const search = info => {
 // 	return request('GET', url, headers)
 // 	.then(response => response.json())
 // 	.then(jsonBody => {
-// 		if(jsonBody.data.trackList == null){
+// 		if (jsonBody.data.trackList == null) {
 // 			return Promise.reject()
 // 		}
-// 		else{
+// 		else {
 // 			let location = jsonBody.data.trackList[0].location
 // 			let songUrl = 'http:' + caesar(location)
 // 			return songUrl

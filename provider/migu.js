@@ -16,7 +16,7 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		if('musics' in jsonBody)
+		if ('musics' in jsonBody)
 			return jsonBody.musics[0].copyrightId
 		else
 			return Promise.reject()
@@ -32,7 +32,7 @@ const track = id => {
 	.then(response => response.json())
 	.then(jsonBody => {
 		let playInfo = [/*'sqPlayInfo'*/, 'hqPlayInfo', 'bqPlayInfo'].find(key => (key in jsonBody.data) && jsonBody.data[key].playUrl)
-		if(playInfo)
+		if (playInfo)
 			return encodeURI(jsonBody.data[playInfo].playUrl)
 		else
 			return Promise.reject()
