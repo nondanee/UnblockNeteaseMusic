@@ -31,7 +31,7 @@ const track = id => {
 	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const playInfo = [/*'sqPlayInfo'*/, 'hqPlayInfo', 'bqPlayInfo'].find(key => (key in jsonBody.data) && jsonBody.data[key].playUrl)
+		const playInfo = ['sqPlayInfo', 'hqPlayInfo', 'bqPlayInfo'].slice(1).find(key => (key in jsonBody.data) && jsonBody.data[key].playUrl)
 		if (playInfo)
 			return encodeURI(jsonBody.data[playInfo].playUrl)
 		else

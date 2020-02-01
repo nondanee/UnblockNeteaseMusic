@@ -5,10 +5,8 @@ const request = require('../request')
 const headers = {
 	'origin': 'http://y.qq.com/',
 	'referer': 'http://y.qq.com/',
-	'cookie': null // uin=; qm_keyst=
+	'cookie': null // 'uin=; qm_keyst=',
 }
-
-const name = id => [headers.cookie ? 'M800' : 'M500', '.mp3'].join(id)
 
 const playable = song => {
 	const switchFlag = song['switch'].toString(2).split('')
@@ -39,7 +37,7 @@ const search = info => {
 	})
 }
 
-const ticket = id => {
+const ticket = (id, format) => {
 	// const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
 	// id = id || classic[Math.floor(classic.length * Math.random())]
 
@@ -48,7 +46,7 @@ const ticket = id => {
 		'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
 		'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
 		'&cid=205361747&uin=0&guid=7332953645' +
-		'&songmid='+ id.song + '&filename='+ name(id.file)
+		'&songmid='+ id.song + '&filename='+ format.join(id.file)
 
 	return request('GET', url, headers)
 	.then(response => response.json())
@@ -97,11 +95,15 @@ const ticket = id => {
 }
 
 const track = id => {
-	return ticket(id)
-	.then(vkey => {
+	return Promise.all(
+		[['F000', '.flac'], ['M800', '.mp3'], ['M500', '.mp3']].slice((headers.cookie || typeof(window) !== 'undefined') ? 1 : 2)
+		.map(format => ticket(id, format).catch(() => null).then(vkey => ({vkey, format})))
+	)
+	.then(result => {
+		const {vkey, format} = (result.find(item => item.vkey) || {})
+		if (!vkey) return Promise.reject()
 		const host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
-		const songUrl = `http://${host}/${name(id.file)}?vkey=${vkey}&uin=0&fromtag=8&guid=7332953645`
-		return songUrl
+		return `http://${host}/${format.join(id.file)}?vkey=${vkey}&uin=0&fromtag=8&guid=7332953645`
 	})
 	.catch(() => insure().qq.track(id))
 
