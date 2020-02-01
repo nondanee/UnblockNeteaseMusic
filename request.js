@@ -5,7 +5,7 @@ const parse = require('url').parse
 
 const translate = host => (global.hosts || {})[host] || host
 
-const create = (url, proxy) => (proxy = (typeof(proxy) === 'undefined' ? global.proxy : proxy)) ? (proxy.protocol == 'https:' ? https.request : http.request) : (url.protocol == 'https:' ? https.request : http.request)
+const create = (url, proxy) => (((typeof(proxy) === 'undefined' ? global.proxy : proxy) || url).protocol === 'https:' ? https : http)['request']
 
 const configure = (method, url, headers, proxy) => {
 	headers = headers || {}
@@ -14,7 +14,7 @@ const configure = (method, url, headers, proxy) => {
 
 	const options = {}
 	options._headers = headers
-	if (proxy && url.protocol == 'https:') {
+	if (proxy && url.protocol === 'https:') {
 		options.method = 'CONNECT'
 		options.headers = Object.keys(headers).filter(key => ['host', 'user-agent'].includes(key)).reduce((result, key) => Object.assign(result, {[key]: headers[key]}), {})
 	}
@@ -25,12 +25,12 @@ const configure = (method, url, headers, proxy) => {
 
 	if (proxy) {
 		options.hostname = translate(proxy.hostname)
-		options.port = proxy.port || ((proxy.protocol == 'https:') ? 443 : 80)
-		options.path = (url.protocol != 'https:') ? ('http://' + translate(url.hostname) + url.path) : (translate(url.hostname) + ':' + (url.port || 443))
+		options.port = proxy.port || ((proxy.protocol === 'https:') ? 443 : 80)
+		options.path = (url.protocol === 'https:') ? (translate(url.hostname) + ':' + (url.port || 443)) : ('http://' + translate(url.hostname) + url.path) 
 	}
 	else {
 		options.hostname = translate(url.hostname)
-		options.port = url.port || ((url.protocol == 'https:') ? 443 : 80)
+		options.port = url.port || ((url.protocol === 'https:') ? 443 : 80)
 		options.path = url.path
 	}
 	return options
@@ -38,6 +38,7 @@ const configure = (method, url, headers, proxy) => {
 
 const request = (method, url, headers, body, proxy) => {
 	url = parse(url)
+	headers = headers || {}
 	const options = configure(method, url, Object.assign({
 		'host': url.hostname,
 		'accept': 'application/json, text/plain, */*',
@@ -82,7 +83,7 @@ const read = (connect, raw) =>
 	})
 	.then(buffer => {
 		buffer = (buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding'])) ? zlib.unzipSync(buffer) : buffer
-		return raw == true ? buffer : buffer.toString()
+		return raw ? buffer : buffer.toString()
 	})
 
 const json = connect => read(connect, false).then(body => JSON.parse(body))
