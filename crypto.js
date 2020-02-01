@@ -65,8 +65,8 @@ module.exports = {
 					iv: buffer.slice(keySize, keySize + ivSize)
 				}
 			}
-			const password = Buffer.from(crypto.randomBytes(32).toString('hex')), salt = crypto.randomBytes(8),
-			key = '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8asrfSaoOb4je+DSmKdriQJKWVJ2oDZrs3wi5W67m3LwTB9QVR+cE3XWU21Nx+YBxS0yun8wDcjgQvYt625ZCcgin2ro/eOkNyUOTBIbuj9CvMnhUYiR61lC1f1IGbrSYYimqBVSjpifVufxtx/I3exReZosTByYp4Xwpb1+WAQIDAQAB\n-----END PUBLIC KEY-----'
+			const password = Buffer.from(crypto.randomBytes(32).toString('hex')), salt = crypto.randomBytes(8)
+			const key = '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8asrfSaoOb4je+DSmKdriQJKWVJ2oDZrs3wi5W67m3LwTB9QVR+cE3XWU21Nx+YBxS0yun8wDcjgQvYt625ZCcgin2ro/eOkNyUOTBIbuj9CvMnhUYiR61lC1f1IGbrSYYimqBVSjpifVufxtx/I3exReZosTByYp4Xwpb1+WAQIDAQAB\n-----END PUBLIC KEY-----'
 			const secret = derive(password, salt, 256, 16)
 			const cipher = crypto.createCipheriv('aes-256-cbc', secret.key, secret.iv)
 			return bodyify({

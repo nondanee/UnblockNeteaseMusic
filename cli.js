@@ -138,9 +138,9 @@ const help = () => {
 			Array.from(Array(Math.ceil(string.length / rest)).keys())
 			.map(index => string.slice(index * rest, (index + 1) * rest))
 			.join('\n' + pad(align + 4))
-		option[0].length < align ?
-		console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`) :
-		console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`)
+		option[0].length < align
+			? console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`)
+			: console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`)
 	}
 	if (positionals.length) console.log('\npositional arguments:')
 	positionals.forEach(publish)
