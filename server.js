@@ -173,7 +173,7 @@ const server = {
 }
 
 server.whitelist = []
-server.blacklist = ['//127\.\d+\.\d+\.\d+', '//localhost']
+server.blacklist = ['//127\\.\\d+\\.\\d+\\.\\d+', '//localhost']
 server.authentication = null
 
 module.exports = server
