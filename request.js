@@ -52,7 +52,6 @@ const request = (method, url, headers, body, proxy) => {
 		.on('connect', (_, socket) =>
 			https.request({
 				method: method,
-				host: translate(url.hostname),
 				path: url.path,
 				headers: options._headers,
 				socket: socket,
