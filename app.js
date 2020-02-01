@@ -30,7 +30,7 @@ if (config.endpoint && !/http(s?):\/\/.+/.test(config.endpoint)) {
 	console.log('Please check the endpoint host.')
 	process.exit(1)
 }
-if (config.forceHost && !/\d+\.\d+\.\d+\.\d+/.test(config.forceHost)) {
+if (config.forceHost && require('net').isIP(config.forceHost) === 0) {
 	console.log('Please check the server host.')
 	process.exit(1)
 }
