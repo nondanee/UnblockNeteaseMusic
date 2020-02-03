@@ -95,6 +95,7 @@ const ticket = (id, format) => {
 }
 
 const track = id => {
+	id.key = id.file
 	return Promise.all(
 		[['F000', '.flac'], ['M800', '.mp3'], ['M500', '.mp3']].slice((headers.cookie || typeof(window) !== 'undefined') ? 1 : 2)
 		.map(format => ticket(id, format).catch(() => null).then(vkey => ({vkey, format})))
