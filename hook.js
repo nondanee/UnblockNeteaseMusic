@@ -129,6 +129,7 @@ hook.request.before = ctx => {
 
 hook.request.after = ctx => {
 	const {req, proxyRes, netease, package} = ctx
+	if (req.headers.host === 'tyst.migu.cn' && proxyRes.headers['content-range'] && proxyRes.statusCode === 200) proxyRes.statusCode = 206
 	if (netease && hook.target.path.includes(netease.path) && proxyRes.statusCode == 200) {
 		return request.read(proxyRes, true)
 		.then(buffer => buffer.length ? proxyRes.body = buffer : Promise.reject())
@@ -306,6 +307,8 @@ const tryMatch = ctx => {
 					const os = header.os || cookie.os, version = header.appver || cookie.appver
 					if (os in limit && newer(limit[os], version))
 						return cache(computeHash, task, 7 * 24 * 60 * 60 * 1000).then(value => item.md5 = value)
+
+					console.log('skip', os, version)
 				}
 				catch(e) {}
 			})
