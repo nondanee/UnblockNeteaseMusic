@@ -307,8 +307,6 @@ const tryMatch = ctx => {
 					const os = header.os || cookie.os, version = header.appver || cookie.appver
 					if (os in limit && newer(limit[os], version))
 						return cache(computeHash, task, 7 * 24 * 60 * 60 * 1000).then(value => item.md5 = value)
-
-					console.log('skip', os, version)
 				}
 				catch(e) {}
 			})
