@@ -1,11 +1,23 @@
 const cache = require('../cache')
 const insure = require('./insure')
+const select = require('./select')
 const crypto = require('../crypto')
 const request = require('../request')
 
 const headers = {
 	'origin': 'http://music.migu.cn/',
 	'referer': 'http://music.migu.cn/'
+}
+
+const formatter = song => {
+	const singerId = song.singerId.split(/\s*,\s*/)
+	const singerName = song.singerName.split(/\s*,\s*/)
+	return {
+		id: song.copyrightId,
+		name: song.title,
+		album: {id: song.albumId, name: song.albumName},
+		artists: singerId.map((id, index) => ({id, name: singerName[index]}))
+	}
 }
 
 const search = info => {
@@ -16,8 +28,10 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		if ('musics' in jsonBody)
-			return jsonBody.musics[0].copyrightId
+		const list = ((jsonBody || {}).musics || []).map(formatter)
+		const matched = select(list, info)
+		if (matched)
+			return matched.id
 		else
 			return Promise.reject()
 	})

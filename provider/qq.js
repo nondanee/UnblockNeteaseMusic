@@ -1,5 +1,6 @@
 const cache = require('../cache')
 const insure = require('./insure')
+const select = require('./select')
 const request = require('../request')
 
 const headers = {
@@ -17,6 +18,14 @@ const playable = song => {
 	return ((playFlag == 1) || ((playFlag == 1) && (tryFlag == 1)))
 }
 
+const formatter = song => ({
+	id: {song: song.mid, file: song.file.media_mid},
+	name: song.name,
+	duration: song.interval * 1000,
+	album: {id: song.album.mid, name: song.album.name},
+	artists: song.singer.map(({mid, name}) => ({id: mid, name}))
+})
+
 const search = info => {
 	const url =
 		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' +
@@ -29,9 +38,10 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		const matched = jsonBody.data.song.list[0]
+		const list = jsonBody.data.song.list.map(formatter)
+		const matched = select(list, info)
 		if (matched)
-			return {song: matched.mid, file: matched.file.media_mid}
+			return matched.id
 		else
 			return Promise.reject()
 	})

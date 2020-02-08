@@ -1,7 +1,19 @@
 const cache = require('../cache')
 const insure = require('./insure')
+const select = require('./select')
 const crypto = require('../crypto')
 const request = require('../request')
+
+const formatter = song => {
+	const SingerName = song.SingerName.split('、')
+	return {
+		id: song.FileHash,
+		name: song.SongName,
+		duration: song.Duration * 1000,
+		album: {id: song.AlbumID, name: song.AlbumName},
+		artists: song.SingerId.map((id, index) => ({id, name: SingerName[index]}))
+	}
+}
 
 const search = info => {
 	const url =
@@ -11,9 +23,10 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const matched = jsonBody.data.lists[0]
+		const list = jsonBody.data.lists.map(formatter)
+		const matched = select(list, info)
 		if (matched)
-			return matched.FileHash
+			return matched.id
 		else
 			return Promise.reject()
 	})

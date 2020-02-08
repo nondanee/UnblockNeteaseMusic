@@ -1,6 +1,15 @@
 const cache = require('../cache')
 const insure = require('./insure')
+const select = require('./select')
 const request = require('../request')
+
+const formatter = song => ({
+	id: song.musicrid.split('_').pop(),
+	name: song.name,
+	duration: song.songTimeMinutes.split(':').reduce((minute, second) => minute * 60 + parseFloat(second), 0) * 1000,
+	album: {id: song.albumid, name: song.album},
+	artists: song.artist.split('&').map((name, index) => ({id: index ? null : song.artistid, name}))
+})
 
 const search = info => {
 	// const url =
@@ -38,9 +47,10 @@ const search = info => {
 	.then(token => request('GET', url, {referer: `http://www.kuwo.cn/search/list?key=${keyword}`, csrf: token, cookie: `kw_token=${token}`}))
 	.then(response => response.json())
 	.then(jsonBody => {
-		const matched = jsonBody.data.list[0]
+		const list = jsonBody.data.list.map(formatter)
+		const matched = select(list, info)
 		if (matched)
-			return matched.musicrid.split('_').pop()
+			return matched.id
 		else
 			return Promise.reject()
 	})

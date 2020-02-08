@@ -1,7 +1,16 @@
 const cache = require('../cache')
 const insure = require('./insure')
+const select = require('./select')
 const request = require('../request')
 
+const formatter = song => ({
+	id: song.songid,
+	name: song.songname,
+	album: {},
+	artists: song.artistname.split(/\s*,\s*/).map(name => ({name}))
+})
+
+// need update (help wanted)
 const search = info => {
 	const url =
 		'http://sug.qianqian.com/info/suggestion?' +
@@ -10,13 +19,12 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		if ('data' in jsonBody) {
-			const matched = jsonBody.data.song[0]
-			return matched.songid
-		}
-		else {
+		const list = ((jsonBody.data || {}).song || []).map(formatter)
+		const matched = select(list, info)
+		if (matched)
+			return matched.id
+		else
 			return Promise.reject()
-		}
 	})
 }
 

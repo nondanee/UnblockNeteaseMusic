@@ -1,5 +1,7 @@
 const cache = require('../cache')
 const insure = require('./insure')
+const select = require('./select')
+const crypto = require('../crypto')
 const request = require('../request')
 
 const headers = {
@@ -14,6 +16,17 @@ const fit = info => {
 		return info.keyword
 }
 
+const formatter = song => {
+	const {decode} = crypto.base64
+	return {
+		id: song.songid,
+		name: decode(song.info1 || ''),
+		duration: song.playtime * 1000,
+		album: {id: song.albummid, name: decode(song.info3 || '')},
+		artists: song.singer_list.map(({id, name}) => ({id, name: decode(name || '')}))
+	}
+}
+
 const search = info => {
 	const keyword = fit(info)
 	const url =
@@ -25,9 +38,10 @@ const search = info => {
 	.then(response => response.body())
 	.then(body => {
 		const jsonBody = JSON.parse(body.replace(/'/g, '"'))
-		const matched = jsonBody.itemlist[0]
+		const list = jsonBody.itemlist.map(formatter)
+		const matched = select(list, info)
 		if (matched)
-			return matched.songid
+			return matched.id
 		else
 			return Promise.reject()
 	})
