@@ -5,7 +5,7 @@ const parse = require('url').parse
 
 const translate = host => (global.hosts || {})[host] || host
 
-const create = (url, proxy) => (((typeof(proxy) === 'undefined' ? global.proxy : proxy) || url).protocol === 'https:' ? https : http)['request']
+const create = (url, proxy) => (((typeof(proxy) === 'undefined' ? global.proxy : proxy) || url).protocol === 'https:' ? https : http).request
 
 const configure = (method, url, headers, proxy) => {
 	headers = headers || {}
