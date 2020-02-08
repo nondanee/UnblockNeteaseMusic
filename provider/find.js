@@ -4,6 +4,13 @@ const request = require('../request')
 const filter = (object, keys) => Object.keys(object).filter(key => keys.includes(key)).reduce((result, key) => Object.assign(result, {[key]: object[key]}), {})
 // Object.keys(object).filter(key => !keys.includes(key)).forEach(key => delete object[key])
 
+const limit = text => {
+	const output = [text[0]]
+	const length = () => output.reduce((sum, token) => sum + token.length, 0)
+	text.slice(1).some(token => length() > 15 ? true : (output.push(token), false))
+	return output
+}
+
 const find = id => {
 	const url =
 		'https://music.163.com/api/song/detail?ids=[' + id + ']'
@@ -17,7 +24,7 @@ const find = id => {
 			.replace(/\(\s*cover[:：\s][^\)]+\)/i, '')
 		info.album = filter(jsonBody.songs[0].album, ['id', 'name'])
 		info.artists = jsonBody.songs[0].artists.map(artist => filter(artist, ['id', 'name']))
-		info.keyword = info.name + ' - ' + info.artists.map(artist => artist.name).join(' / ')
+		info.keyword = info.name + ' - ' + limit(info.artists.map(artist => artist.name)).join(' / ')
 		return info.name ? info : Promise.reject()
 	})
 }
