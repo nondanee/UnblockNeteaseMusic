@@ -79,13 +79,8 @@ Promise.all([httpdns, httpdns2].map(query => query(hook.target.host.join(','))).
 	const extra = Array.from(new Set(result.reduce((merged, array) => merged.concat(array), [])))
 	hook.target.host = hook.target.host.concat(extra)
 	server.whitelist = server.whitelist.concat(hook.target.host.map(escape))
-	if (port[0]) {
-		server.http.listen(port[0], address)
-		console.log(`HTTP Server running @ http://${address || '0.0.0.0'}:${port[0]}`)
-	}
-	if (port[1]) {
-		server.https.listen(port[1], address)
-		console.log(`HTTPS Server running @ https://${address || '0.0.0.0'}:${port[1]}`)
-	}
+	const log = type => console.log(`${['HTTP', 'HTTPS'][type]} Server running @ http://${address || '0.0.0.0'}:${port[type]}`)
+	if (port[0]) server.http.listen(port[0], address).once('listening', () => log(0))
+	if (port[1]) server.https.listen(port[1], address).once('listening', () => log(1))
 })
 .catch(error => console.log(error))
