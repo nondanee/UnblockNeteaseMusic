@@ -3,7 +3,7 @@ const insure = require('./insure')
 const select = require('./select')
 const request = require('../request')
 
-const formatter = song => ({
+const format = song => ({
 	id: song.musicrid.split('_').pop(),
 	name: song.name,
 	duration: song.songTimeMinutes.split(':').reduce((minute, second) => minute * 60 + parseFloat(second), 0) * 1000,
@@ -47,12 +47,9 @@ const search = info => {
 	.then(token => request('GET', url, {referer: `http://www.kuwo.cn/search/list?key=${keyword}`, csrf: token, cookie: `kw_token=${token}`}))
 	.then(response => response.json())
 	.then(jsonBody => {
-		const list = jsonBody.data.list.map(formatter)
+		const list = jsonBody.data.list.map(format)
 		const matched = select(list, info)
-		if (matched)
-			return matched.id
-		else
-			return Promise.reject()
+		return matched ? matched.id : Promise.reject()
 	})
 }
 

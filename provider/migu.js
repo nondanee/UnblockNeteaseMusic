@@ -9,7 +9,7 @@ const headers = {
 	'referer': 'http://music.migu.cn/'
 }
 
-const formatter = song => {
+const format = song => {
 	const singerId = song.singerId.split(/\s*,\s*/)
 	const singerName = song.singerName.split(/\s*,\s*/)
 	return {
@@ -28,12 +28,9 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const list = ((jsonBody || {}).musics || []).map(formatter)
+		const list = ((jsonBody || {}).musics || []).map(format)
 		const matched = select(list, info)
-		if (matched)
-			return matched.id
-		else
-			return Promise.reject()
+		return matched ? matched.id : Promise.reject()
 	})
 }
 

@@ -16,7 +16,7 @@ const fit = info => {
 		return info.keyword
 }
 
-const formatter = song => {
+const format = song => {
 	const {decode} = crypto.base64
 	return {
 		id: song.songid,
@@ -38,12 +38,9 @@ const search = info => {
 	.then(response => response.body())
 	.then(body => {
 		const jsonBody = JSON.parse(body.replace(/'/g, '"'))
-		const list = jsonBody.itemlist.map(formatter)
+		const list = jsonBody.itemlist.map(format)
 		const matched = select(list, info)
-		if (matched)
-			return matched.id
-		else
-			return Promise.reject()
+		return matched ? matched.id : Promise.reject()
 	})
 }
 

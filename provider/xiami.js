@@ -10,7 +10,7 @@ const headers = {
 	'referer': 'https://h.xiami.com/'
 }
 
-const formatter = song => ({
+const format = song => ({
 	id: song.song_id,
 	name: song.song_name,
 	album: {id: song.album_id, name: song.album_name},
@@ -72,12 +72,9 @@ const search = info => {
 	return request('GET', url, headers)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		const list = jsonBody.data.songs.map(formatter)
+		const list = jsonBody.data.songs.map(format)
 		const matched = select(list, info)
-		if (matched)
-			return matched.id
-		else
-			return Promise.reject()
+		return matched ? matched.id : Promise.reject()
 	})
 }
 

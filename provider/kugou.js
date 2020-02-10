@@ -4,7 +4,7 @@ const select = require('./select')
 const crypto = require('../crypto')
 const request = require('../request')
 
-const formatter = song => {
+const format = song => {
 	const SingerName = song.SingerName.split('、')
 	return {
 		id: song.FileHash,
@@ -23,12 +23,9 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const list = jsonBody.data.lists.map(formatter)
+		const list = jsonBody.data.lists.map(format)
 		const matched = select(list, info)
-		if (matched)
-			return matched.id
-		else
-			return Promise.reject()
+		return matched ? matched.id : Promise.reject()
 	})
 	.catch(() => insure().kugou.search(info))
 }

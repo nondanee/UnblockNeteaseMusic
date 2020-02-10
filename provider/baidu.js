@@ -3,7 +3,7 @@ const insure = require('./insure')
 const select = require('./select')
 const request = require('../request')
 
-const formatter = song => ({
+const format = song => ({
 	id: song.songid,
 	name: song.songname,
 	album: {},
@@ -19,12 +19,9 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const list = ((jsonBody.data || {}).song || []).map(formatter)
+		const list = ((jsonBody.data || {}).song || []).map(format)
 		const matched = select(list, info)
-		if (matched)
-			return matched.id
-		else
-			return Promise.reject()
+		return matched ? matched.id : Promise.reject()
 	})
 }
 

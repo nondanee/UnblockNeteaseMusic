@@ -18,7 +18,7 @@ const playable = song => {
 	return ((playFlag == 1) || ((playFlag == 1) && (tryFlag == 1)))
 }
 
-const formatter = song => ({
+const format = song => ({
 	id: {song: song.mid, file: song.file.media_mid},
 	name: song.name,
 	duration: song.interval * 1000,
@@ -38,12 +38,9 @@ const search = info => {
 	return request('GET', url)
 	.then(response => response.jsonp())
 	.then(jsonBody => {
-		const list = jsonBody.data.song.list.map(formatter)
+		const list = jsonBody.data.song.list.map(format)
 		const matched = select(list, info)
-		if (matched)
-			return matched.id
-		else
-			return Promise.reject()
+		return matched ? matched.id : Promise.reject()
 	})
 }
 
