@@ -13,4 +13,4 @@ npm-debug.log
 Dockerfile*
 *.yml
 hooks/
-browser/
+src/browser/
