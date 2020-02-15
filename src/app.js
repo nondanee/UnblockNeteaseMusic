@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const package = require('./package.json')
+const package = require('../package.json')
 const config = require('./cli.js')
 .program({name: package.name.replace(/@.+\//, ''), version: package.version})
 .option(['-v', '--version'], {action: 'version'})

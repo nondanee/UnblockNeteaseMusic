@@ -158,8 +158,8 @@ const proxy = {
 }
 
 const options = {
-	key: fs.readFileSync(path.join(__dirname, 'server.key')),
-	cert: fs.readFileSync(path.join(__dirname, 'server.crt'))
+	key: fs.readFileSync(path.join(__dirname, '..', 'server.key')),
+	cert: fs.readFileSync(path.join(__dirname, '..', 'server.crt'))
 }
 
 const server = {
