@@ -37,7 +37,7 @@ const search = info => {
 const track = id => {
 	const url =
 		'http://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
-		'dataType=2&' + crypto.miguapi.encrypt({copyrightId: id.toString()})
+		'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString()})
 
 	return request('GET', url, headers)
 	.then(response => response.json())

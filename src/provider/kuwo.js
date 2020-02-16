@@ -1,6 +1,7 @@
 const cache = require('../cache')
 const insure = require('./insure')
 const select = require('./select')
+const crypto = require('../crypto')
 const request = require('../request')
 
 const format = song => ({
@@ -54,19 +55,19 @@ const search = info => {
 }
 
 const track = id => {
-	const url =
-		'http://antiserver.kuwo.cn/anti.s?' +
-		'type=convert_url&format=mp3&response=url&rid=MUSIC_' + id
-		// 'http://www.kuwo.cn/url?' +
-		// 'format=mp3&response=url&type=convert_url3&br=320kmp3&rid=' + id
+	const url = (crypto.kuwoapi
+		? 'http://mobi.kuwo.cn/mobi.s?f=kuwo&q=' + crypto.kuwoapi.encryptQuery(
+			'corp=kuwo&p2p=1&type=convert_url2&sig=0&format=' + ['flac', 'mp3'].slice(1).join('|') + '&rid=' + id
+		)
+		: 'http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3&response=url&rid=MUSIC_' + id // flac refuse
+		// : 'http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3&br=320kmp3&rid=' + id // flac refuse
+	)
 
-	return request('GET', url)
+	return request('GET', url, {'user-agent': 'okhttp/3.10.0'})
 	.then(response => response.body())
 	.then(body => {
-		if (body.startsWith('http'))
-			return body
-		else
-			return Promise.reject()
+		const url = (body.match(/http[^\s$"]+/) || [])[0]
+		return url || Promise.reject()
 	})
 	.catch(() => insure().kuwo.track(id))
 }
