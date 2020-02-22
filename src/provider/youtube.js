@@ -4,7 +4,7 @@ const parse = query => (query || '').split('&').reduce((result, item) => (item =
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined
-const key = undefined // YouTube Data API v3
+const key = process.env.YOUTUBE_KEY || null // YouTube Data API v3
 
 const signature = (id = '-tKVN2mAKRI') => {
 	const url =
