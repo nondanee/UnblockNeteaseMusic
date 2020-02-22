@@ -218,19 +218,13 @@ const pretendPlay = ctx => {
 	const turn = 'http://music.163.com/api/song/enhance/player/url'
 	let query = null
 	if (netease.forward) {
-		netease.param = {
-			ids: `["${netease.param.id}"]`,
-			br: netease.param.br
-		}
+		const {id, br} = netease.param
+		netease.param = {ids: `["${id}"]`, br}
 		query = crypto.linuxapi.encryptRequest(turn, netease.param)
 	}
 	else {
-		netease.param = {
-			ids: `["${netease.param.id}"]`,
-			br: netease.param.br,
-			e_r: netease.param.e_r,
-			header: netease.param.header
-		}
+		const {id, br, e_r, header} = netease.param
+		netease.param = {ids: `["${id}"]`, br, e_r, header}
 		query = crypto.eapi.encryptRequest(turn, netease.param)
 	}
 	req.url = query.url
@@ -239,8 +233,9 @@ const pretendPlay = ctx => {
 
 const tryCollect = ctx => {
 	const {req, netease} = ctx
-	const trackId = (Array.isArray(netease.param.trackIds) ? netease.param.trackIds : JSON.parse(netease.param.trackIds))[0]
-	return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${netease.param.pid}&op=${netease.param.op}`).then(response => response.json())
+	const {trackIds, pid, op} = netease.param
+	const trackId = (Array.isArray(trackIds) ? trackIds : JSON.parse(trackIds))[0]
+	return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=${op}`).then(response => response.json())
 	.then(jsonBody => {
 		netease.jsonBody = jsonBody
 	})
@@ -249,7 +244,8 @@ const tryCollect = ctx => {
 
 const tryLike = ctx => {
 	const {req, netease} = ctx
-	let pid, userId, trackId = netease.param.trackId
+	const {trackId} = netease.param
+	let pid = 0, userId = 0
 	return request('GET', 'http://music.163.com/api/v1/user/info', req.headers).then(response => response.json())
 	.then(jsonBody => {
 		userId = jsonBody.userPoint.userId
@@ -260,7 +256,7 @@ const tryLike = ctx => {
 		return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`).then(response => response.json())
 	})
 	.then(jsonBody => {
-		if (jsonBody.code == 200 || jsonBody.code == 502) {
+		if ([200, 502].includes(jsonBody.code)) {
 			netease.jsonBody = {code: 200, playlistId: pid}
 		}
 	})
