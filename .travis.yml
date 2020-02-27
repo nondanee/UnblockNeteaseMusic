@@ -5,6 +5,7 @@ node_js:
 script: echo "NOP"
 
 deploy:
+  edge: true
   provider: npm
   email: "$NPM_EMAIL"
   api_key: "$NPM_TOKEN"

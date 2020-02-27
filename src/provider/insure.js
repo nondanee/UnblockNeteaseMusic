@@ -8,10 +8,11 @@ module.exports = () => {
 			return proxy
 		},
 		apply: (target, _, payload) => {
-			let path = target.route.join('/'), query = payload[0]
-			query = encodeURIComponent(typeof(query) === 'object' ? JSON.stringify(query) : query)
-			// if(path != 'qq/ticket') return Promise.reject()
-			return request('GET', `${host}/${path}?${query}`)
+			if (module.exports.disable) return Promise.reject()
+			const path = target.route.join('/')
+			const query = typeof(payload[0]) === 'object' ? JSON.stringify(payload[0]) : payload[0]
+			// if (path != 'qq/ticket') return Promise.reject()
+			return request('GET', `${host}/${path}?${encodeURIComponent(query)}`)
 			.then(response => response.body())
 		}
 	})

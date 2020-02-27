@@ -1,13 +1,13 @@
 export default (method, url, headers, body) => new Promise((resolve, reject) => {
 	headers = headers || {}
 	const xhr = new XMLHttpRequest()
-	xhr.onreadystatechange = () => {if(xhr.readyState == 4) resolve(xhr)}
+	xhr.onreadystatechange = () => {if (xhr.readyState == 4) resolve(xhr)}
 	xhr.onerror = error => reject(error)
 	xhr.open(method, url, true)
 	const safe = {}, unsafe = {}
 	Object.keys(headers).filter(key => (['origin', 'referer'].includes(key.toLowerCase()) ? unsafe : safe)[key] = headers[key])
-	Object.entries(safe).forEach(entry => xhr.setRequestHeader.apply(null, entry))
-	if(Object.keys(unsafe)) xhr.setRequestHeader('Additional-Headers', btoa(JSON.stringify(unsafe)))
+	Object.entries(safe).forEach(entry => xhr.setRequestHeader.apply(xhr, entry))
+	if (Object.keys(unsafe)) xhr.setRequestHeader('Additional-Headers', btoa(JSON.stringify(unsafe)))
 	xhr.send(body)
 }).then(xhr => Object.assign(xhr, {
 	statusCode: xhr.status,

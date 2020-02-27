@@ -68,5 +68,5 @@ typings/
 dist/
 
 # es6 transformation
-browser/provider
-browser/cache.js
+src/browser/provider
+src/browser/cache.js
