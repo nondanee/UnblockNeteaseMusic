@@ -276,7 +276,11 @@ const tryMatch = ctx => {
 			return match(item.id)
 			.then(song => {
 				item.type = song.br === 999000 ? 'flac' : 'mp3'
-				item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
+				if (song.url.indexOf('qq') > -1) 
+					item.url = song.url
+				else 
+					item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
+				//item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
 				item.md5 = song.md5 || crypto.md5.digest(song.url)
 				item.br = song.br || 128000
 				item.size = song.size
