@@ -55,14 +55,13 @@ if (config.token && !/\S+:\S+/.test(config.token)) {
 const parse = require('url').parse
 const hook = require('./hook')
 const server = require('./server')
-const escape = string => string.replace(/\./g, '\\.')
 const random = array => array[Math.floor(Math.random() * array.length)]
 const target = Array.from(hook.target.host)
 
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
 global.hosts = target.reduce((result, host) => Object.assign(result, {[host]: config.forceHost}), {})
-server.whitelist = ['music.126.net', 'vod.126.net'].map(escape)
+server.whitelist = ['://[\\w.]*music\\.126\\.net', '://[\\w.]*vod\\.126\\.net']
 if (config.strict) server.blacklist.push('.*')
 server.authentication = config.token || null
 global.endpoint = config.endpoint
