@@ -15,7 +15,7 @@ const proxy = {
 				res.writeHead(200, {'Content-Type': 'application/x-ns-proxy-autoconfig'})
 				res.end(`
 					function FindProxyForURL(url, host) {
-						if (${hook.target.host.map(host => (`host == '${host}'`)).join(' || ')}) {
+						if (${Array.from(hook.target.host).map(host => (`host == '${host}'`)).join(' || ')}) {
 							return 'PROXY ${url.hostname}:${url.port || 80}'
 						}
 						return 'DIRECT'

@@ -17,12 +17,12 @@ const hook = {
 		before: () => {}
 	},
 	target: {
-		host: [],
-		path: []
+		host: new Set(),
+		path: new Set()
 	}
 }
 
-hook.target.host = [
+hook.target.host = new Set([
 	'music.163.com',
 	'interface.music.163.com',
 	'interface3.music.163.com',
@@ -34,9 +34,9 @@ hook.target.host = [
 	// 'crash.163.com',
 	// 'clientlog.music.163.com',
 	// 'clientlog3.music.163.com'
-]
+])
 
-hook.target.path = [
+hook.target.path = new Set([
 	'/api/v3/playlist/detail',
 	'/api/v3/song/detail',
 	'/api/v6/playlist/detail',
@@ -63,14 +63,14 @@ hook.target.path = [
 	'/api/playlist/v4/detail',
 	'/api/v1/radio/get',
 	'/api/v1/discovery/recommend/songs'
-]
+])
 
 hook.request.before = ctx => {
 	const {req} = ctx
 	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (['music.163.com', 'music.126.net'].some(domain => (req.headers.host || '').endsWith(domain)) ? req.headers.host : null)) + req.url
 	const url = parse(req.url)
 	if ([url.hostname, req.headers.host].some(host => host.includes('music.163.com'))) ctx.decision = 'proxy'
-	if ([url.hostname, req.headers.host].some(host => hook.target.host.includes(host)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))) {
+	if ([url.hostname, req.headers.host].some(host => hook.target.host.has(host)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))) {
 		return request.read(req)
 		.then(body => req.body = body)
 		.then(body => {
@@ -102,7 +102,7 @@ hook.request.before = ctx => {
 		})
 		.catch(error => console.log(error, req.url))
 	}
-	else if ((hook.target.host.includes(url.hostname)) && (url.path.startsWith('/weapi/') || url.path.startsWith('/api/'))) {
+	else if ((hook.target.host.has(url.hostname)) && (url.path.startsWith('/weapi/') || url.path.startsWith('/api/'))) {
 		req.headers['X-Real-IP'] = '118.88.88.88'
 		ctx.netease = {web: true, path: url.path.replace(/^\/weapi\//, '/api/').replace(/\?.+$/, '').replace(/\/\d*$/, '')}
 	}
@@ -130,7 +130,7 @@ hook.request.before = ctx => {
 hook.request.after = ctx => {
 	const {req, proxyRes, netease, package} = ctx
 	if (req.headers.host === 'tyst.migu.cn' && proxyRes.headers['content-range'] && proxyRes.statusCode === 200) proxyRes.statusCode = 206
-	if (netease && hook.target.path.includes(netease.path) && proxyRes.statusCode == 200) {
+	if (netease && hook.target.path.has(netease.path) && proxyRes.statusCode == 200) {
 		return request.read(proxyRes, true)
 		.then(buffer => buffer.length ? proxyRes.body = buffer : Promise.reject())
 		.then(buffer => {
@@ -144,12 +144,11 @@ hook.request.after = ctx => {
 				netease.jsonBody = JSON.parse(patch(crypto.eapi.decrypt(buffer).toString()))
 			}
 
-			if (netease.path.includes('manipulate') && [401, 512].includes(netease.jsonBody.code) && !netease.web)
-				return tryCollect(ctx)
-			else if (netease.path == '/api/song/like' && [401, 512].includes(netease.jsonBody.code) && !netease.web)
-				return tryLike(ctx)
-			else if (netease.path.includes('url'))
-				return tryMatch(ctx)
+			if (new Set([401, 512]).has(netease.jsonBody.code) && !netease.web) {
+				if (netease.path.includes('manipulate')) return tryCollect(ctx)
+				else if (netease.path == '/api/song/like') return tryLike(ctx)
+			}
+			else if (netease.path.includes('url')) return tryMatch(ctx)
 		})
 		.then(() => {
 			['transfer-encoding', 'content-encoding', 'content-length'].filter(key => key in proxyRes.headers).forEach(key => delete proxyRes.headers[key])
@@ -174,7 +173,7 @@ hook.request.after = ctx => {
 		.catch(error => error ? console.log(error, req.url) : null)
 	}
 	else if (package) {
-		if ([201, 301, 302, 303, 307, 308].includes(proxyRes.statusCode)) {
+		if (new Set([201, 301, 302, 303, 307, 308]).has(proxyRes.statusCode)) {
 			return request(req.method, parse(req.url).resolve(proxyRes.headers.location), req.headers)
 			.then(response => ctx.proxyRes = response)
 		}
@@ -187,7 +186,7 @@ hook.request.after = ctx => {
 hook.connect.before = ctx => {
 	const {req} = ctx
 	const url = parse('https://' + req.url)
-	if ([url.hostname, req.headers.host].some(host => hook.target.host.includes(host))) {
+	if ([url.hostname, req.headers.host].some(host => hook.target.host.has(host))) {
 		if (url.port == 80) {
 			req.url = `${global.address || 'localhost'}:${global.port[0]}`
 			req.local = true
@@ -207,8 +206,8 @@ hook.negotiate.before = ctx => {
 	const url = parse('https://' + req.url)
 	const target = hook.target.host
 	if (req.local || decision) return
-	if (target.includes(socket.sni) && !target.includes(url.hostname)) {
-		hook.target.host = Array.from(new Set([url.hostname].concat(target)))
+	if (target.has(socket.sni) && !target.has(url.hostname)) {
+		target.add(url.hostname)
 		ctx.decision = 'blank'
 	}
 }
@@ -256,7 +255,7 @@ const tryLike = ctx => {
 		return request('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`).then(response => response.json())
 	})
 	.then(jsonBody => {
-		if ([200, 502].includes(jsonBody.code)) {
+		if (new Set([200, 502]).has(jsonBody.code)) {
 			netease.jsonBody = {code: 200, playlistId: pid}
 		}
 	})

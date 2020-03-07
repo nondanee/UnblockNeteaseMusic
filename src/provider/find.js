@@ -1,7 +1,7 @@
 const cache = require('../cache')
 const request = require('../request')
 
-const filter = (object, keys) => Object.keys(object).filter(key => keys.includes(key)).reduce((result, key) => Object.assign(result, {[key]: object[key]}), {})
+const filter = (object, keys) => Object.keys(object).reduce((result, key) => Object.assign(result, keys.includes(key) && {[key]: object[key]}), {})
 // Object.keys(object).filter(key => !keys.includes(key)).forEach(key => delete object[key])
 
 const limit = text => {

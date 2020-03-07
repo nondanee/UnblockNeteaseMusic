@@ -35,13 +35,13 @@ if (config.forceHost && require('net').isIP(config.forceHost) === 0) {
 	process.exit(1)
 }
 if (config.matchOrder) {
-	const provider = ['netease', 'qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox', 'youtube']
+	const provider = new Set(['netease', 'qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox', 'youtube'])
 	const candidate = config.matchOrder
 	if (candidate.some((key, index) => index != candidate.indexOf(key))) {
 		console.log('Please check the duplication in match order.')
 		process.exit(1)
 	}
-	else if (candidate.some(key => !provider.includes(key))) {
+	else if (candidate.some(key => !provider.has(key))) {
 		console.log('Please check the availability of match sources.')
 		process.exit(1)
 	}
@@ -57,10 +57,11 @@ const hook = require('./hook')
 const server = require('./server')
 const escape = string => string.replace(/\./g, '\\.')
 const random = array => array[Math.floor(Math.random() * array.length)]
+const target = Array.from(hook.target.host)
 
 global.port = config.port
 global.proxy = config.proxyUrl ? parse(config.proxyUrl) : null
-global.hosts = hook.target.host.reduce((result, host) => Object.assign(result, {[host]: config.forceHost}), {})
+global.hosts = target.reduce((result, host) => Object.assign(result, {[host]: config.forceHost}), {})
 server.whitelist = ['music.126.net', 'vod.126.net'].map(escape)
 if (config.strict) server.blacklist.push('.*')
 server.authentication = config.token || null
@@ -74,11 +75,11 @@ const dns = host => new Promise((resolve, reject) => require('dns').lookup(host,
 const httpdns = host => require('./request')('POST', 'https://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns.reduce((result, domain) => result.concat(domain.ips), []))
 const httpdns2 = host => require('./request')('GET', 'https://httpdns.n.netease.com/httpdns/v2/d?domain=' + host).then(response => response.json()).then(jsonBody => Object.keys(jsonBody.data).map(key => jsonBody.data[key]).reduce((result, value) => result.concat(value.ip || []), []))
 
-Promise.all([httpdns, httpdns2].map(query => query(hook.target.host.join(','))).concat(hook.target.host.map(host => dns(host))))
+Promise.all([httpdns, httpdns2].map(query => query(target.join(','))).concat(target.map(dns)))
 .then(result => {
-	const extra = Array.from(new Set(result.reduce((merged, array) => merged.concat(array), [])))
-	hook.target.host = hook.target.host.concat(extra)
-	server.whitelist = server.whitelist.concat(hook.target.host.map(escape))
+	const {host} = hook.target
+	result.forEach(array => array.forEach(host.add, host))
+	server.whitelist = server.whitelist.concat(Array.from(host).map(escape))
 	const log = type => console.log(`${['HTTP', 'HTTPS'][type]} Server running @ http://${address || '0.0.0.0'}:${port[type]}`)
 	if (port[0]) server.http.listen(port[0], address).once('listening', () => log(0))
 	if (port[1]) server.https.listen(port[1], address).once('listening', () => log(1))
