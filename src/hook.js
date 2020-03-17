@@ -199,6 +199,7 @@ hook.connect.before = ctx => {
 			ctx.decision = 'blank'
 		}
 	}
+	else if (url.href.includes(global.endpoint)) ctx.decision = 'proxy'
 }
 
 hook.negotiate.before = ctx => {
