@@ -30,50 +30,51 @@ const cli = {
 		return cli
 	},
 	parse: argv => {
-		let positionals = cli._options.map((option, index) => option.positional ? index : null).filter(index => index !== null), optionals = {}
+		const positionals = cli._options.map((option, index) => option.positional ? index : null).filter(index => index !== null), optionals = {}
 		cli._options.forEach((option, index) => option.positional ? null : option.flags.forEach(flag => optionals[flag] = index))
 
 		cli._program.name = cli._program.name || require('path').parse(argv[1]).base
-		let args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
+		const args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
 
 		let pointer = 0
-		while(pointer < args.length){
-			let part = args[pointer], value = null
-			let index = part.startsWith('-') ? optionals[part] : positionals.shift()
-			if(index == undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
-			if(part.startsWith('-')) pointer += 1
-			let action = cli._options[index].action
+		while (pointer < args.length) {
+			let value = null
+			const part = args[pointer]
+			const index = part.startsWith('-') ? optionals[part] : positionals.shift()
+			if (index == undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
+			if (part.startsWith('-')) pointer += 1
+			const {action} = cli._options[index]
 
-			if(['help', 'version'].includes(action)){
-				if(action === 'help') help()
-				else if(action === 'version') version()
+			if (['help', 'version'].includes(action)) {
+				if (action === 'help') help()
+				else if (action === 'version') version()
 			}
-			else if(['store_true', 'store_false'].includes(action)){
+			else if (['store_true', 'store_false'].includes(action)) {
 				value = action === 'store_true'
 			}
-			else{
-				let gap = args.slice(pointer).findIndex(part => part in optionals)
-				let next = gap === -1 ? args.length : pointer + gap
+			else {
+				const gap = args.slice(pointer).findIndex(part => part in optionals)
+				const next = gap === -1 ? args.length : pointer + gap
 				value = args.slice(pointer, next)
-				if(value.length === 0){
-					if(cli._options[index].positional)
+				if (value.length === 0) {
+					if (cli._options[index].positional)
 						error(`the following arguments are required: ${part}`)
-					else if(cli._options[index].nargs === '+')
+					else if (cli._options[index].nargs === '+')
 						error(`argument ${part}: expected at least one argument`)
 					else
 						error(`argument ${part}: expected one argument`)
 				}
-				if(cli._options[index].nargs != '+'){
+				if (cli._options[index].nargs !== '+') {
 					value = value[0]
 					pointer += 1
 				}
-				else{
+				else {
 					pointer = next
 				}
 			}
 			cli[cli._options[index].dest] = value
 		}
-		if(positionals.length) error(`the following arguments are required: ${positionals.map(index => cli._options[index].flags[0]).join(', ')}`)
+		if (positionals.length) error(`the following arguments are required: ${positionals.map(index => cli._options[index].flags[0]).join(', ')}`)
 		// cli._options.forEach(option => console.log(option.dest, cli[option.dest]))
 		return cli
 	}
@@ -82,48 +83,48 @@ const cli = {
 const pad = length => (new Array(length + 1)).join(' ')
 
 const usage = () => {
-	let options = cli._options.map(option => {
-		let flag = option.flags[0]
-		let name = option.metavar || option.dest
-		if(option.positional){
-			if(option.nargs === '+')
+	const options = cli._options.map(option => {
+		const flag = option.flags.sort((a, b) => a.length - b.length)[0]
+		const name = option.metavar || option.dest
+		if (option.positional) {
+			if (option.nargs === '+')
 				return `${name} [${name} ...]`
 			else
 				return `${name}`
 		}
-		else{
-			if(['store_true', 'store_false', 'help', 'version'].includes(option.action))
+		else {
+			if (['store_true', 'store_false', 'help', 'version'].includes(option.action))
 				return `[${flag}]`
-			else if(option.nargs === '+')
+			else if (option.nargs === '+')
 				return `[${flag} ${name} [${name} ...]]`
 			else
 				return `[${flag} ${name}]`
 		}
 	})
-	let maximum = cli.width
-	let title = `usage: ${cli._program.name}`
-	let lines = [title]
+	const maximum = cli.width
+	const title = `usage: ${cli._program.name}`
+	const lines = [title]
 
 	options.map(name => ' ' + name).forEach(option => {
-		lines[lines.length - 1].length + option.length < maximum ?
-		lines[lines.length - 1] += option :
-		lines.push(pad(title.length) + option)
+		lines[lines.length - 1].length + option.length < maximum
+			? lines[lines.length - 1] += option
+			: lines.push(pad(title.length) + option)
 	})
 	console.log(lines.join('\n'))
 }
 
 const help = () => {
 	usage()
-	let positionals = cli._options.filter(option => option.positional)
+	const positionals = cli._options.filter(option => option.positional)
 	.map(option => [option.metavar || option.dest, option.help])
-	let optionals = cli._options.filter(option => !option.positional)
+	const optionals = cli._options.filter(option => !option.positional)
 	.map(option => {
-		let flags = option.flags
-		let name = option.metavar || option.dest
+		const {flags} = option
+		const name = option.metavar || option.dest
 		let use = ''
-		if(['store_true', 'store_false', 'help', 'version'].includes(option.action))
+		if (['store_true', 'store_false', 'help', 'version'].includes(option.action))
 			use = flags.map(flag => `${flag}`).join(', ')
-		else if(option.nargs === '+')
+		else if (option.nargs === '+')
 			use = flags.map(flag => `${flag} ${name} [${name} ...]`).join(', ')
 		else
 			use = flags.map(flag => `${flag} ${name}`).join(', ')
@@ -131,19 +132,19 @@ const help = () => {
 	})
 	let align = Math.max.apply(null, positionals.concat(optionals).map(option => option[0].length))
 	align = align > 30 ? 30 : align
-	rest = cli.width - align - 4
+	const rest = cli.width - align - 4
 	const publish = option => {
 		const slice = string =>
 			Array.from(Array(Math.ceil(string.length / rest)).keys())
 			.map(index => string.slice(index * rest, (index + 1) * rest))
 			.join('\n' + pad(align + 4))
-		option[0].length < align ?
-		console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`) :
-		console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`)
+		option[0].length < align
+			? console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`)
+			: console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`)
 	}
-	if(positionals.length) console.log('\npositional arguments:')
+	if (positionals.length) console.log('\npositional arguments:')
 	positionals.forEach(publish)
-	if(optionals.length) console.log('\noptional arguments:')
+	if (optionals.length) console.log('\noptional arguments:')
 	optionals.forEach(publish)
 	process.exit()
 }
