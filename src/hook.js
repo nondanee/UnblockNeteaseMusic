@@ -83,7 +83,6 @@ hook.request.before = ctx => {
 			if ('x-napm-retry' in req.headers) delete req.headers['x-napm-retry']
 			req.headers['X-Real-IP'] = '118.88.88.88'
 			if (req.url.includes('stream')) return // look living eapi can not be decrypted
-			if (req.url.includes('miniprogram')) return // miniprogram eapi can not be decrypted
 			if (body) {
 				let data = null
 				const netease = {}
