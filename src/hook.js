@@ -57,6 +57,7 @@ hook.target.path = new Set([
 	'/api/batch',
 	'/api/v1/search/get',
 	'/api/v1/search/song/get',
+	'/api/search/complex/get',
 	'/api/cloudsearch/pc',
 	'/api/v1/playlist/manipulate/tracks',
 	'/api/song/like',
