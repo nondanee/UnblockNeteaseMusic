@@ -1,5 +1,5 @@
 const request = require('../request')
-const host = 'http://localhost:9000'
+const host = null // 'http://localhost:9000'
 
 module.exports = () => {
 	const proxy = new Proxy(() => {}, {
@@ -8,7 +8,7 @@ module.exports = () => {
 			return proxy
 		},
 		apply: (target, _, payload) => {
-			if (module.exports.disable) return Promise.reject()
+			if (module.exports.disable || !host) return Promise.reject()
 			const path = target.route.join('/')
 			const query = typeof(payload[0]) === 'object' ? JSON.stringify(payload[0]) : payload[0]
 			// if (path != 'qq/ticket') return Promise.reject()
