@@ -69,7 +69,7 @@ const track = id => {
 		// .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
 		// .sort((a, b) => b.bitrate - a.bitrate)[0]
 		const target = parse(stream.cipher)
-		return stream.url || (target.sp.includes('sig') ? cache(signature, null, 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url)
+		return stream.url || (target.sp.includes('sig') ? cache(signature, undefined, 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url)
 	})
 }
 
