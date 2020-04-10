@@ -13,8 +13,8 @@ const limit = text => {
 
 const find = id => {
 	const url =
-		'https://music.163.com/api/song/detail?ids=[' + id + ']'
-
+		'http://music.163.com/api/song/detail?ids=[' + id + ']'
+        // https changed to http: this may not be necessary. It's probably due to my own network restrictions.
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {

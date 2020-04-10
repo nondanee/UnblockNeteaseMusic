@@ -6,7 +6,8 @@ const parse = query => (query || '').split('&').reduce((result, item) => (item =
 const proxy = undefined
 const key = process.env.YOUTUBE_KEY || null // YouTube Data API v3
 
-const signature = (id = '-tKVN2mAKRI') => {
+const signature = id => {
+	id = '-tKVN2mAKRI'
 	const url =
 		`https://www.youtube.com/watch?v=${id}`
 
@@ -18,7 +19,13 @@ const signature = (id = '-tKVN2mAKRI') => {
 		return request('GET', 'https://youtube.com' + assets.js, {}, null, proxy).then(response => response.body())
 	})
 	.then(body => {
-		const [_, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body)
+		//Decode function changes in youtube
+		const fnNameResult = /=([a-zA-Z0-9\$]+?)\(decodeURIComponent\(c/.exec(body)
+		const fnName = fnNameResult[1]
+		const _argNameFnBodyResult = new RegExp(
+			fnName + '=function\\((.+?)\\){(.+?)}'
+			).exec(body)
+		const [_, funcArg, funcBody] = _argNameFnBodyResult
 		const helperName = /;(.+?)\..+?\(/.exec(funcBody)[1]
 		const helperContent = new RegExp(`var ${helperName}={[\\s\\S]+?};`).exec(body)[0]
 		return new Function([funcArg], helperContent + '\n' + funcBody)
