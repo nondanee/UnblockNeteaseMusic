@@ -3,23 +3,27 @@ const insure = require('./insure')
 const select = require('./select')
 const request = require('../request')
 
-const format = song => ({
-	id: song.songid,
-	name: song.songname,
-	album: {},
-	artists: song.artistname.split(/\s*,\s*/).map(name => ({name}))
-})
+const format = song => {
+	const artistId = song.all_artist_id.split(',')
+	return {
+		id: song.song_id,
+		name: song.title,
+		album: {id: song.album_id, name: song.album_title},
+		artists: song.author.split(',').map((name, index) => ({id: artistId[index], name}))
+	}
+}
 
-// need update (help wanted)
 const search = info => {
 	const url =
-		'http://sug.qianqian.com/info/suggestion?' +
-		'word=' + encodeURIComponent(info.keyword) + '&version=2&from=0'
+		'http://musicapi.taihe.com/v1/restserver/ting?' +
+		'from=qianqianmini&method=baidu.ting.search.merge&' +
+		'isNew=1&platform=darwin&page_no=1&page_size=30&' +
+		`query=${encodeURIComponent(info.keyword)}&version=11.2.1`
 
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const list = ((jsonBody.data || {}).song || []).map(format)
+		const list = jsonBody.result.song_info.song_list.map(format)
 		const matched = select(list, info)
 		return matched ? matched.id : Promise.reject()
 	})
