@@ -48,57 +48,58 @@ const ticket = (id, format) => {
 	// const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
 	// id = id || classic[Math.floor(classic.length * Math.random())]
 
-	const url =
-		'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
-		'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
-		'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
-		'&cid=205361747&uin=0&guid=7332953645' +
-		'&songmid='+ id.song + '&filename='+ format.join(id.file)
-
-	return request('GET', url, headers)
-	.then(response => response.json())
-	.then(jsonBody => {
-		const {vkey} = jsonBody.data.items[0]
-		return vkey || Promise.reject()
-	})
-	// .catch(() => insure().qq.ticket())
-
 	// const url =
-	// 	'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
-	// 	encodeURIComponent(JSON.stringify({
-	// 		// req: {
-	// 		// 	method: 'GetCdnDispatch',
-	// 		// 	module: 'CDN.SrfCdnDispatchServer',
-	// 		// 	param: {
-	// 		// 		calltype: 0,
-	// 		// 		guid: '7332953645',
-	// 		// 		userip: ''
-	// 		// 	}
-	// 		// },
-	// 		req_0: {
-	// 			module: 'vkey.GetVkeyServer',
-	// 			method: 'CgiGetVkey',
-	// 			param: {
-	// 				guid: '7332953645',
-	// 				loginflag: 1,
-	// 				songmid: [id],
-	// 				songtype: [0],
-	// 				uin: '0',
-	// 				platform: '20'
-	// 			}
-	// 		}
-	// 	}))
+	// 	'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
+	// 	'?g_tk=0&loginUin=0&hostUin=0&format=json&inCharset=utf8' +
+	// 	'&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0' +
+	// 	'&cid=205361747&uin=0&guid=7332953645' +
+	// 	'&songmid='+ id.song + '&filename='+ format.join(id.file)
 
-	// return request('GET', url)
+	// return request('GET', url, headers)
 	// .then(response => response.json())
 	// .then(jsonBody => {
-	// 	// const vkey =
-	// 	// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
-	// 	// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
-	// 	// return vkey || Promise.reject()
-	// 	return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+	// 	const {vkey} = jsonBody.data.items[0]
+	// 	return vkey || Promise.reject()
 	// })
-	// // .catch(() => insure().qq.ticket())
+	// .catch(() => insure().qq.ticket())
+
+	const url =
+		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
+		encodeURIComponent(JSON.stringify({
+			// req: {
+			// 	method: 'GetCdnDispatch',
+			// 	module: 'CDN.SrfCdnDispatchServer',
+			// 	param: {
+			// 		calltype: 0,
+			// 		guid: '7332953645',
+			// 		userip: ''
+			// 	}
+			// },
+			req_0: {
+				module: 'vkey.GetVkeyServer',
+				method: 'CgiGetVkey',
+				param: {
+					guid: '7332953645',
+					loginflag: 1,
+					filename: [format.join(id.file)],
+					songmid: [id.song],
+					songtype: [0],
+					uin: '0',
+					platform: '20'
+				}
+			}
+		}))
+
+	return request('GET', url)
+	.then(response => response.json())
+	.then(jsonBody => {
+		const vkey =
+			jsonBody.req_0.data.midurlinfo[0].vkey ||
+			(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
+		return vkey || Promise.reject()
+		// return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+	})
+	// .catch(() => insure().qq.ticket())
 }
 
 const track = id => {
