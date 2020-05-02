@@ -34,22 +34,26 @@ const search = info => {
 	})
 }
 
-const track = id => {
+const single = (id, format) => {
 	const url =
 		'http://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
-		'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString()})
+		'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
 
 	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const playInfo = ['sqPlayInfo', 'hqPlayInfo', 'bqPlayInfo'].slice(select.ENABLE_FLAC ? 0 : 1).find(key => (key in jsonBody.data) && jsonBody.data[key].playUrl)
-		if (playInfo)
-			return encodeURI(jsonBody.data[playInfo].playUrl)
-		else
-			return Promise.reject()
+		const {playUrl} = jsonBody.data
+		return playUrl ? encodeURI(playUrl) : Promise.reject()
 	})
-	.catch(() => insure().migu.track(id))
 }
+
+const track = id =>
+	Promise.all(
+		[3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
+		.map(format => single(id, format).catch(() => null))
+	)
+	.then(result => result.find(url => url) || Promise.reject())
+	.catch(() => insure().migu.track(id))
 
 const check = info => cache(search, info).then(track)
 
