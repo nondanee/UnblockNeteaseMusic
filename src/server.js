@@ -41,12 +41,11 @@ const proxy = {
 			Promise.resolve()
 			.then(() => proxy.protect(ctx))
 			.then(() => proxy.authenticate(ctx))
+			.then(() => proxy.tunnel.reveal(ctx))
 			.then(() => hook.connect.before(ctx))
 			.then(() => proxy.filter(ctx))
 			.then(() => proxy.log(ctx))
 			.then(() => proxy.tunnel.connect(ctx))
-			.then(() => proxy.tunnel.dock(ctx))
-			.then(() => hook.negotiate.before(ctx))
 			.then(() => proxy.tunnel.pipe(ctx))
 			.catch(() => proxy.tunnel.close(ctx))
 		}
@@ -120,8 +119,14 @@ const proxy = {
 		}
 	},
 	tunnel: {
+		reveal: ctx => new Promise(resolve => {
+			const {req, head, socket} = ctx
+			socket
+			.once('data', data => resolve(ctx.head = Buffer.concat([head, data])))
+			.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
+		}).then(data => ctx.req.sni = sni(data)).catch(() => {}),
 		connect: ctx => new Promise((resolve, reject) => {
-			if (ctx.decision === 'close') return reject(ctx.error = ctx.decision)
+			if (new Set(['close', 'blank']).has(ctx.decision)) return reject(ctx.error = ctx.decision)
 			const {req} = ctx
 			const url = parse('https://' + req.url)
 			if (global.proxy && !req.local) {
@@ -137,14 +142,7 @@ const proxy = {
 				.on('error', error => reject(ctx.error = error))
 			}
 		}),
-		dock: ctx => new Promise(resolve => {
-			const {req, head, socket} = ctx
-			socket
-			.once('data', data => resolve(ctx.head = Buffer.concat([head, data])))
-			.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
-		}).then(data => ctx.socket.sni = sni(data)).catch(() => {}),
 		pipe: ctx => {
-			if (ctx.decision === 'blank') return Promise.reject(ctx.error = ctx.decision)
 			const {head, socket, proxySocket} = ctx
 			proxySocket.on('error', () => proxy.abort(ctx.proxySocket, 'proxySocket'))
 			proxySocket.write(head)
