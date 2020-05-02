@@ -44,9 +44,15 @@ const search = info => {
 	})
 }
 
-const ticket = (id, format) => {
+const single = (id, format) => {
 	// const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
 	// id = id || classic[Math.floor(classic.length * Math.random())]
+
+	const concatenate = vkey => {
+		if (!vkey) return Promise.reject()
+		const host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
+		return `http://${host}/${format.join(id.file)}?vkey=${vkey}&uin=0&fromtag=8&guid=7332953645`
+	}
 
 	// const url =
 	// 	'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
@@ -59,9 +65,8 @@ const ticket = (id, format) => {
 	// .then(response => response.json())
 	// .then(jsonBody => {
 	// 	const {vkey} = jsonBody.data.items[0]
-	// 	return vkey || Promise.reject()
+	// 	return concatenate(vkey)
 	// })
-	// .catch(() => insure().qq.ticket())
 
 	const url =
 		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
@@ -93,27 +98,21 @@ const ticket = (id, format) => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
-		const vkey =
-			jsonBody.req_0.data.midurlinfo[0].vkey ||
-			(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
-		return vkey || Promise.reject()
-		// return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+		// const vkey =
+		// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
+		// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
+		// return concatenate(vkey)
+		return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
 	})
-	// .catch(() => insure().qq.ticket())
 }
 
 const track = id => {
 	id.key = id.file
 	return Promise.all(
 		[['F000', '.flac'], ['M800', '.mp3'], ['M500', '.mp3']].slice((headers.cookie || typeof(window) !== 'undefined') ? (select.ENABLE_FLAC ? 0 : 1) : 2)
-		.map(format => ticket(id, format).catch(() => null).then(vkey => ({vkey, format})))
+		.map(format => single(id, format).catch(() => null))
 	)
-	.then(result => {
-		const {vkey, format} = (result.find(item => item.vkey) || {})
-		if (!vkey) return Promise.reject()
-		const host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
-		return `http://${host}/${format.join(id.file)}?vkey=${vkey}&uin=0&fromtag=8&guid=7332953645`
-	})
+	.then(result => result.find(url => url) || Promise.reject())
 	.catch(() => insure().qq.track(id))
 
 	// return request(
