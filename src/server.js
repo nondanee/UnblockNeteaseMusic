@@ -119,12 +119,16 @@ const proxy = {
 		}
 	},
 	tunnel: {
-		reveal: ctx => new Promise(resolve => {
-			const {req, head, socket} = ctx
-			socket
-			.once('data', data => resolve(ctx.head = Buffer.concat([head, data])))
-			.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
-		}).then(data => ctx.req.sni = sni(data)).catch(() => {}),
+		reveal: ctx => {
+			const {req, socket} = ctx
+			socket.write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`)
+			return new Promise(resolve => socket.once('data', resolve))
+			.then(data => {
+				ctx.head = Buffer.concat([ctx.head, data])
+				if (!sni.contain(ctx.head)) return
+				req.sni = sni.extract(ctx.head)
+			})
+		},
 		connect: ctx => new Promise((resolve, reject) => {
 			if (new Set(['close', 'blank']).has(ctx.decision)) return reject(ctx.error = ctx.decision)
 			const {req} = ctx
