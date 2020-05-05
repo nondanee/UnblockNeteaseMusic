@@ -26,8 +26,8 @@ hook.target.host = new Set([
 	'music.163.com',
 	'interface.music.163.com',
 	'interface3.music.163.com',
-	'apm.music.163.com',
-	'apm3.music.163.com',
+	// 'apm.music.163.com',
+	// 'apm3.music.163.com',
 	// 'mam.netease.com',
 	// 'api.iplay.163.com', // look living
 	// 'ac.dun.163yun.com',
@@ -191,10 +191,11 @@ hook.request.after = ctx => {
 
 hook.connect.before = ctx => {
 	const {req} = ctx
+	const target = hook.target.host
 	const url = parse('https://' + req.url)
 	const hostname = [url.hostname, req.sni]
 	if (appertain(hostname) || url.href.includes(global.endpoint)) ctx.decision = 'proxy'
-	if (hostname.some(host => hook.target.host.has(host))) {
+	if (hostname.some(host => target.has(host))) {
 		if (url.port == 80) {
 			req.url = `${global.address || 'localhost'}:${global.port[0]}`
 			req.local = true
@@ -207,6 +208,7 @@ hook.connect.before = ctx => {
 			ctx.decision = 'blank'
 		}
 	}
+	if (req.sni && target.has(req.sni) && !target.has(url.hostname)) target.add(url.hostname)
 }
 
 const pretendPlay = ctx => {
