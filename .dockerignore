@@ -12,5 +12,4 @@ npm-debug.log
 
 Dockerfile*
 *.yml
-hooks/
 src/browser/
