@@ -4,5 +4,4 @@
 
 Dockerfile*
 *.yml
-hooks/
 src/browser/
