@@ -67,9 +67,17 @@ hook.target.path = new Set([
 	'/api/v1/discovery/recommend/songs'
 ])
 
+const domainList = [
+	'music.163.com', 
+	'music.126.net',
+	'iplay.163.com',
+	'look.163.com',
+	'y.163.com',
+]
+
 hook.request.before = ctx => {
 	const {req} = ctx
-	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + req.headers.host) + req.url
+	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (domainList.some(domain => (req.headers.host || '').endsWith(domain)) ? req.headers.host : null)) + req.url
 	const url = parse(req.url)
 	if ([url.hostname, req.headers.host].some(host => host.includes('music.163.com'))) ctx.decision = 'proxy'
 	if ([url.hostname, req.headers.host].some(host => hook.target.host.has(host)) && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))) {
@@ -94,7 +102,7 @@ hook.request.before = ctx => {
 					netease.path = data[0]
 					netease.param = JSON.parse(data[1])
 				}
-				netease.path = netease.path.replace(/\/\d*$/, '')
+				netease.path = netease.path.replace(/\/\d*$/, '') 
 				ctx.netease = netease
 				// console.log(netease.path, netease.param)
 
