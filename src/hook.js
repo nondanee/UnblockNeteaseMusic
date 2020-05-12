@@ -102,7 +102,7 @@ hook.request.before = ctx => {
 					netease.path = data[0]
 					netease.param = JSON.parse(data[1])
 				}
-				netease.path = netease.path.replace(/\/\d*$/, '') 
+				netease.path = netease.path.replace(/\/\d*$/, '')
 				ctx.netease = netease
 				// console.log(netease.path, netease.param)
 
