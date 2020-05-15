@@ -98,11 +98,12 @@ const single = (id, format) => {
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => {
+		const { sip, midurlinfo } = jsonBody.req_0.data
 		// const vkey =
 		// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
 		// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
 		// return concatenate(vkey)
-		return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+		return midurlinfo[0].purl ? sip[0] + midurlinfo[0].purl : Promise.reject()
 	})
 }
 
