@@ -67,17 +67,19 @@ hook.target.path = new Set([
 	'/api/v1/discovery/recommend/songs'
 ])
 
-const appertain = host => Array.isArray(host)
-	? host.some(appertain)
+const appertain = hostname => Array.isArray(hostname)
+	? hostname.some(appertain)
 	: ['music.163.com', 'music.126.net', 'vod.126.net', 'iplay.163.com', 'look.163.com', 'y.163.com']
-	.some(domain => (host || '').endsWith(domain))
+	.some(domain => (hostname || '').endsWith(domain))
+
+const portless = host => (host || '').replace(/:\d+/, '')
 
 hook.request.before = ctx => {
 	const {req} = ctx
-	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (appertain(req.headers.host) ? req.headers.host : null)) + req.url
+	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (appertain(portless(req.headers.host)) ? req.headers.host : null)) + req.url
 	const url = parse(req.url)
-	const hostname = [url.hostname, (req.headers.host || '').replace(/:\d+/, '')]
-	const hit = hostname.some(host => hook.target.host.has(host))
+	const hostname = [url.hostname, portless(req.headers.host)]
+	const hit = hostname.some(item => hook.target.host.has(item))
 	if (appertain(hostname)) ctx.decision = 'proxy'
 	if (hit && req.method == 'POST' && (url.path == '/api/linux/forward' || url.path.startsWith('/eapi/'))) {
 		return request.read(req)
@@ -198,7 +200,7 @@ hook.connect.before = ctx => {
 	const url = parse('https://' + req.url)
 	const hostname = [url.hostname, req.sni]
 	if (appertain(hostname) || url.href.includes(global.endpoint)) ctx.decision = 'proxy'
-	if (hostname.some(host => target.has(host))) {
+	if (hostname.some(item => target.has(item))) {
 		if (url.port == 80) {
 			req.url = `${global.address || 'localhost'}:${global.port[0]}`
 			req.local = true
