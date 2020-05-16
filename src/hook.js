@@ -74,7 +74,7 @@ const appertain = host => Array.isArray(host)
 
 hook.request.before = ctx => {
 	const {req} = ctx
-	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + appertain(req.headers.host) ? req.headers.host : null) + req.url
+	req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (appertain(req.headers.host) ? req.headers.host : null)) + req.url
 	const url = parse(req.url)
 	const hostname = [url.hostname, (req.headers.host || '').replace(/:\d+/, '')]
 	const hit = hostname.some(host => hook.target.host.has(host))
