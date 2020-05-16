@@ -43,3 +43,20 @@ jobs:
         name: Check Manifest
         run: |
           docker buildx imagetools inspect ${{ steps.prepare.outputs.image_name }}
+
+  npm:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          registry-url: https://registry.npmjs.org/
+      -
+        name: Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
