@@ -47,6 +47,7 @@ const search = info => {
 const single = (id, format) => {
 	// const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
 	// id = id || classic[Math.floor(classic.length * Math.random())]
+	const uin = ((headers.cookie || '').match(/uin=(\d+)/) || [])[1] || '0'
 
 	const concatenate = vkey => {
 		if (!vkey) return Promise.reject()
@@ -89,20 +90,21 @@ const single = (id, format) => {
 					filename: [format.join(id.file)],
 					songmid: [id.song],
 					songtype: [0],
-					uin: '0',
+					uin,
 					platform: '20'
 				}
 			}
 		}))
 
-	return request('GET', url)
+	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
+		const { sip, midurlinfo } = jsonBody.req_0.data
 		// const vkey =
 		// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
 		// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
 		// return concatenate(vkey)
-		return jsonBody.req_0.data.sip[0] + jsonBody.req_0.data.midurlinfo[0].purl
+		return midurlinfo[0].purl ? sip[0] + midurlinfo[0].purl : Promise.reject()
 	})
 }
 

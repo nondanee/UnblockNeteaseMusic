@@ -67,7 +67,10 @@ hook.target.path = new Set([
 	'/api/v1/discovery/recommend/songs'
 ])
 
-const appertain = host => Array.isArray(host) ? host.some(appertain) : ['music.163.com', 'music.126.net', 'vod.126.net'].some(domain => (host || '').endsWith(domain))
+const appertain = host => Array.isArray(host)
+	? host.some(appertain)
+	: ['music.163.com', 'music.126.net', 'vod.126.net', 'iplay.163.com', 'look.163.com', 'y.163.com']
+	.some(domain => (host || '').endsWith(domain))
 
 hook.request.before = ctx => {
 	const {req} = ctx
