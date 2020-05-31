@@ -36,7 +36,8 @@ const configure = (method, url, headers, proxy) => {
 	return options
 }
 
-const request = (method, url, headers, body, proxy) => {
+const request = (method, url, headers, body, proxy, redirect = 0) => {
+	if (redirect > 9) return Promise.reject(new Error('ERR_TOO_MANY_REDIRECTS'))
 	url = parse(url)
 	headers = headers || {}
 	const options = configure(method, url, Object.assign({
@@ -67,7 +68,7 @@ const request = (method, url, headers, body, proxy) => {
 	})
 	.then(response => {
 		if (new Set([201, 301, 302, 303, 307, 308]).has(response.statusCode))
-			return request(method, url.resolve(response.headers.location || url.href), (delete headers.host, headers), body, proxy)
+			return request(method, url.resolve(response.headers.location || url.href), (delete headers.host, headers), body, proxy, redirect + 1)
 		else
 			return Object.assign(response, {url: url, body: raw => read(response, raw), json: () => json(response), jsonp: () => jsonp(response)})
 	})
