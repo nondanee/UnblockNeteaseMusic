@@ -67,10 +67,12 @@ hook.target.path = new Set([
 	'/api/v1/discovery/recommend/songs'
 ])
 
-const appertain = hostname => Array.isArray(hostname)
-	? hostname.some(appertain)
-	: ['music.163.com', 'music.126.net', 'vod.126.net', 'iplay.163.com', 'look.163.com', 'y.163.com']
+const appertain = hostname => {
+	if (Array.isArray(hostname)) return hostname.some(appertain)
+	if (!hostname || !['163.com', '126.net'].some(domain => hostname.includes(domain))) return false
+	return ['music.163.com', 'music.126.net', 'vod.126.net', 'iplay.163.com', 'look.163.com', 'y.163.com']
 	.some(domain => (hostname || '').endsWith(domain))
+}
 
 const portless = host => (host || '').replace(/:\d+/, '')
 
