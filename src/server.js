@@ -22,6 +22,18 @@ const proxy = {
 					}
 				`)
 			}
+			else if (req.url == '/clash.classical.rule.yaml') {
+				res.end(`payload: \n${Array.from(hook.target.host).map(host =>  `  - ${
+( net.isIPv4(host) && ( `SRC-IP-CIDR,${host}/0`   )  )  ||
+( net.isIPv6(host) && ( `SRC-IP-CIDR,[${host}]/0` )  )  ||
+( `DOMAIN,${host}` ) }` ).join('\n') } `)
+			}
+			else if (req.url == '/clash.of.ipcidr.rule.yaml') {
+				res.end(`payload: \n${ Array.from(hook.target.host).filter(host => net.isIP(host)).map(host => `  - ${host}/0`).join('\n')}`)
+			}
+			else if (req.url == '/clash.of.domain.rule.yaml') {
+				res.end(`payload: \n${Array.from(hook.target.host).filter(host => !net.isIP(host)).map(host => `  - ${host}`).join('\n')}`)
+			}
 			else {
 				const ctx = {res, req}
 				Promise.resolve()
