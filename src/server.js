@@ -24,12 +24,12 @@ const proxy = {
 			}
 			else if (req.url == '/clash.classical.rule.yaml') {
 				res.end(`payload: \n${Array.from(hook.target.host).map(host =>  `  - ${
-( net.isIPv4(host) && ( `SRC-IP-CIDR,${host}/0`   )  )  ||
-( net.isIPv6(host) && ( `SRC-IP-CIDR,[${host}]/0` )  )  ||
+( net.isIPv4(host) && ( `SRC-IP-CIDR,${host}/32`   )  )  ||
+( net.isIPv6(host) && ( `SRC-IP-CIDR,[${host}]/128` )  )  ||
 ( `DOMAIN,${host}` ) }` ).join('\n') } `)
 			}
 			else if (req.url == '/clash.of.ipcidr.rule.yaml') {
-				res.end(`payload: \n${ Array.from(hook.target.host).filter(host => net.isIP(host)).map(host => `  - ${host}/0`).join('\n')}`)
+				res.end(`payload: \n${ Array.from(hook.target.host).filter(host => net.isIP(host)).map(host => `  - ${net.isIPv6(host)?`${host}/128`:`${host}/32`}`).join('\n')}`)
 			}
 			else if (req.url == '/clash.of.domain.rule.yaml') {
 				res.end(`payload: \n${Array.from(hook.target.host).filter(host => !net.isIP(host)).map(host => `  - ${host}`).join('\n')}`)
