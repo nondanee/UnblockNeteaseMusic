@@ -1,0 +1,23 @@
+[Unit]
+Description=UnblockNeteaseMusic
+After=network.target 
+#Requires=redis.service
+#Wants=pf_ring.service cluster.service
+#PartOf=pf_ring.service cluster.service
+
+[Service]
+Type=simple
+
+#ExecStartPre=/bin/sh -c '/usr/bin/ntopng-utils-manage-config -a check-restore  && /usr/bin/ntopng-utils-manage-config -a restore || true'
+#ExecStartPre=/bin/sh -c '/bin/sed "/^[ ]*-e.*$\\|^[ ]*-G.*\\|^[ ]*--daemon.*\\|^[ ]*--pid.*/s/^/#/" /etc/ntopng/ntopng.conf > /run/ntopng.conf'
+
+ExecStart=/usr/bin/node /home/oyy/Pro/UnblockNeteaseMusic/app.js  -p 80:4433
+
+#ExecStopPost=-/bin/rm -rf /run/ntopng.conf
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+Alias=
