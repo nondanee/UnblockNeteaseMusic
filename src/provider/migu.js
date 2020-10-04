@@ -36,14 +36,14 @@ const search = info => {
 
 const single = (id, format) => {
 	const url =
-		'http://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
+		'https://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
 		'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
 
 	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
 		const {playUrl} = jsonBody.data
-		return playUrl ? encodeURI(playUrl) : Promise.reject()
+		return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
 	})
 }
 
