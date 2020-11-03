@@ -83,4 +83,7 @@ Promise.all([httpdns, httpdns2].map(query => query(target.join(','))).concat(tar
 	if (port[0]) server.http.listen(port[0], address).once('listening', () => log(0))
 	if (port[1]) server.https.listen(port[1], address).once('listening', () => log(1))
 })
-.catch(error => console.log(error))
+.catch(error => {
+	console.log(error)
+	process.exit(1)
+})
