@@ -7,7 +7,8 @@ const request = require('../request')
 const format = song => ({
 	id: song.musicrid.split('_').pop(),
 	name: song.name,
-	duration: song.songTimeMinutes.split(':').reduce((minute, second) => minute * 60 + parseFloat(second), 0) * 1000,
+	// duration: song.songTimeMinutes.split(':').reduce((minute, second) => minute * 60 + parseFloat(second), 0) * 1000,
+	duration: (song.duration) * 1000,
 	album: {id: song.albumid, name: song.album},
 	artists: song.artist.split('&').map((name, index) => ({id: index ? null : song.artistid, name}))
 })
