@@ -13,10 +13,10 @@ const provider = {
 	youtube: require('./youtube')
 }
 
-const match = (id, source) => {
+const match = (id, source, data) => {
 	let meta = {}
 	const candidate = (source || global.source || ['qq', 'kuwo', 'migu']).filter(name => name in provider)
-	return find(id)
+	return find(id, data)
 	.then(info => {
 		meta = info
 		return Promise.all(candidate.map(name => provider[name].check(info).catch(() => {})))
