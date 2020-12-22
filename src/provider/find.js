@@ -11,24 +11,43 @@ const limit = text => {
 	return output
 }
 
-const find = id => {
-	const url =
-		'https://music.163.com/api/song/detail?ids=[' + id + ']'
+const getFormatData = (data) => {
+  try {
+    const info = filter(data, ["id", "name", "alias", "duration"]);
+    info.name = (info.name || "")
+      .replace(/（\s*cover[:：\s][^）]+）/i, "")
+      .replace(/\(\s*cover[:：\s][^\)]+\)/i, "")
+      .replace(/（\s*翻自[:：\s][^）]+）/, "")
+      .replace(/\(\s*翻自[:：\s][^\)]+\)/, "");
+    info.album = filter(data.album, ["id", "name"]);
+    info.artists = data.artists.map((artist) => filter(artist, ["id", "name"]));
+    info.keyword = info.name + " - " + limit(info.artists.map((artist) => artist.name)).join(" / ");
+    return info;
+  } catch (err) {
+    console.log("getFormatData err: ", err);
+    return {};
+  }
+};
 
-	return request('GET', url)
-	.then(response => response.json())
-	.then(jsonBody => {
-		const info = filter(jsonBody.songs[0], ['id', 'name', 'alias', 'duration'])
-		info.name = (info.name || '')
-			.replace(/（\s*cover[:：\s][^）]+）/i, '')
-			.replace(/\(\s*cover[:：\s][^\)]+\)/i, '')
-			.replace(/（\s*翻自[:：\s][^）]+）/, '')
-			.replace(/\(\s*翻自[:：\s][^\)]+\)/, '')
-		info.album = filter(jsonBody.songs[0].album, ['id', 'name'])
-		info.artists = jsonBody.songs[0].artists.map(artist => filter(artist, ['id', 'name']))
-		info.keyword = info.name + ' - ' + limit(info.artists.map(artist => artist.name)).join(' / ')
-		return info.name ? info : Promise.reject()
-	})
-}
+const find = (id, data) => {
+  if (data) {
+    const info = getFormatData(data);
+    return info.name ? Promise.resolve(info) : Promise.reject();
+  } else {
+    const url = "https://music.163.com/api/song/detail?ids=[" + id + "]";
+    return request("GET", url)
+      .then((response) => response.json())
+      .then((jsonBody) => {
+        const info = getFormatData(jsonBody.songs[0]);
+        return info.name ? info : Promise.reject();
+      });
+  }
+};
 
-module.exports = id => cache(find, id)
+module.exports = (id, data) => {
+  if (data) {
+    return find(id, data);
+  } else {
+    return cache(find, id);
+  }
+};
