@@ -3,7 +3,7 @@
 # UnblockNeteaseMusic
 
 解锁网易云音乐客户端变灰歌曲
-
+一键部署在Heroku上：[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 ## 特性
 
 - 使用 QQ / 虾米 / 百度 / 酷狗 / 酷我 / 咪咕 / JOOX 音源替换变灰歌曲链接 (默认仅启用一、五、六)
