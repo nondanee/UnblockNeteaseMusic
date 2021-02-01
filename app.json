@@ -1,0 +1,8 @@
+{
+    "name": "Node.JS-UnblockNeteaseMusic",
+    "description": "Node.JS-UnblockNeteaseMusic on Heroku with caddy",
+    "repository": "https://github.com/LittleRey/Go-UnblockNeteaseMusic",
+    "website": "https://127.0.0.1/",
+    "keywords": ["UnblockNeteaseMusic"],
+    "stack": "container"
+  }
