@@ -10,7 +10,6 @@ COPY . .
 COPY run.sh /usr/src/app/run.sh
 COPY wwwroot.tar.gz /wwwroot/wwwroot.tar.gz
 
-EXPOSE 8080 8081
 
 ENTRYPOINT ["node", "app.js"]
 
