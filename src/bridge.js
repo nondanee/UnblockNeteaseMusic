@@ -10,7 +10,8 @@ const router = {
 	kugou: require('./provider/kugou'),
 	kuwo: require('./provider/kuwo'),
 	migu: require('./provider/migu'),
-	joox: require('./provider/joox')
+	joox: require('./provider/joox'),
+	bilibili: require('./provider/bilibili')
 }
 
 const distribute = (url, router) =>
