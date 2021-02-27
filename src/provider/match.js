@@ -10,12 +10,13 @@ const provider = {
 	kuwo: require('./kuwo'),
 	migu: require('./migu'),
 	joox: require('./joox'),
-	youtube: require('./youtube')
+	youtube: require('./youtube'),
+	bilibili: require('./bilibili')
 }
 
 const match = (id, source, data) => {
 	let meta = {}
-	const candidate = (source || global.source || ['qq', 'kuwo', 'migu']).filter(name => name in provider)
+	const candidate = (source || global.source || ['bilibili','qq', 'kuwo', 'migu']).filter(name => name in provider)
 	return find(id, data)
 	.then(info => {
 		meta = info
@@ -35,7 +36,13 @@ const match = (id, source, data) => {
 
 const check = url => {
 	const song = {size: 0, br: null, url: null, md5: null}
-	return Promise.race([request('GET', url, {'range': 'bytes=0-8191'}), new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000))])
+	let header = {'range': 'bytes=0-8191'}
+	if (url.includes("bilivideo.com")){
+		header  = {'range': 'bytes=0-8191',
+			'referer':"https://www.bilibili.com/"
+		}
+	}
+	return Promise.race([request('GET', url, header), new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000))])
 	.then(response => {
 		if (!response.statusCode.toString().startsWith('2')) return Promise.reject()
 		if (url.includes('qq.com'))
