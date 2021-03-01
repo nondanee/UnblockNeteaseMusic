@@ -6,7 +6,7 @@ const request = require('../request')
 
 const headers = {
 	'origin': 'http://music.migu.cn/',
-	'referer': 'http://music.migu.cn/'
+	'referer': 'http://m.music.migu.cn/v3/'
 }
 
 const format = song => {
@@ -22,10 +22,10 @@ const format = song => {
 
 const search = info => {
 	const url =
-		'http://m.music.migu.cn/migu/remoting/scr_search_tag?' +
+		'https://m.music.migu.cn/migu/remoting/scr_search_tag?' +
 		'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1'
 
-	return request('GET', url)
+	return request('GET', url, headers)
 	.then(response => response.json())
 	.then(jsonBody => {
 		const list = ((jsonBody || {}).musics || []).map(format)
