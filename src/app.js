@@ -35,7 +35,7 @@ if (config.forceHost && require('net').isIP(config.forceHost) === 0) {
 	process.exit(1)
 }
 if (config.matchOrder) {
-	const provider = new Set(['netease', 'qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox', 'youtube', 'bilibili'])
+	const provider = new Set(['netease', 'qq', 'xiami', 'baidu', 'kugou', 'kuwo', 'migu', 'joox', 'youtube', 'bilibili', 'pyncmd'])
 	const candidate = config.matchOrder
 	if (candidate.some((key, index) => index != candidate.indexOf(key))) {
 		console.log('Please check the duplication in match order.')

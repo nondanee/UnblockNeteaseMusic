@@ -11,7 +11,8 @@ const router = {
 	kuwo: require('./provider/kuwo'),
 	migu: require('./provider/migu'),
 	joox: require('./provider/joox'),
-	bilibili: require('./provider/bilibili')
+	bilibili: require('./provider/bilibili'),
+	pyncmd: require('./provider/pyncmd')
 }
 
 const distribute = (url, router) =>
