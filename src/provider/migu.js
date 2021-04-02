@@ -6,7 +6,8 @@ const request = require('../request')
 
 const headers = {
 	'origin': 'http://music.migu.cn/',
-	'referer': 'http://m.music.migu.cn/v3/'
+	'referer': 'http://m.music.migu.cn/v3/',
+	'cookie': 'migu_music_sid=' + (process.env.MIGU_COOKIE || null)
 }
 
 const format = song => {
