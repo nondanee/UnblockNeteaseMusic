@@ -61,7 +61,7 @@ const single = (id, format) => {
 const track = id =>
 	Promise.all(
 		// [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
-		['SQ', 'HQ', 'PQ'].slice(select.ENABLE_FLAC ? 0 : 1)
+		['ZQ', 'SQ', 'HQ', 'PQ'].slice(select.ENABLE_FLAC ? 0 : 2)
 		.map(format => single(id, format).catch(() => null))
 	)
 	.then(result => result.find(url => url) || Promise.reject())
