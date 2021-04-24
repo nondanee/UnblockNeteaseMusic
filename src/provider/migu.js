@@ -53,8 +53,11 @@ const single = (id, format) => {
 	.then(jsonBody => {
 		// const {playUrl} = jsonBody.data
 		// return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
-		const {url} = jsonBody.data
-		return url ? url : Promise.reject()
+		const {formatType} = jsonBody.data
+		if (formatType !== format)
+			return Promise.reject()
+		else
+			return url ? jsonBody.data.url : Promise.reject()
 	})
 }
 
