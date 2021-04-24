@@ -51,7 +51,7 @@ const check = url => {
 			song.md5 = url.split('/').slice(-1)[0].replace(/\..*/g,'')
 		else if (url.includes('qq.com'))
 			song.md5 = response.headers['server-md5']
-		else if (url.includes('xiami.net') || url.includes('qianqian.com'))
+		else if (url.includes('xiami.net') || url.includes('qianqian.com') || url.includes('kuwo.cn'))
 			song.md5 = response.headers['etag'].replace(/"/g, '').toLowerCase()
 		song.size = parseInt((response.headers['content-range'] || '').split('/').pop() || response.headers['content-length']) || 0
 		song.url = response.url.href
