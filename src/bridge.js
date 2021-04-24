@@ -5,7 +5,6 @@ require('./provider/insure').disable = true
 
 const router = {
 	qq: require('./provider/qq'),
-	xiami: require('./provider/xiami'),
 	baidu: require('./provider/baidu'),
 	kugou: require('./provider/kugou'),
 	kuwo: require('./provider/kuwo'),
