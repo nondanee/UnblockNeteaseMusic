@@ -43,10 +43,10 @@ const single = (id, format) => {
 	//	'https://music.migu.cn/v3/api/music/audioPlayer/getPlayInfo?' +
 	//	'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
 
-	const randomStr = Math.random().toString().substr(2)
+	const randomInt = Math.random().toString().substr(2)
 	const url =
 		'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.2?lowerQualityContentId=' +
-		randomStr + '&netType=01&resourceType=E&songId=' + id.toString() + '&toneFlag=' + format
+		randomInt + '&netType=01&resourceType=E&songId=' + id.toString() + '&toneFlag=' + format
 
 	return request('GET', url, headers)
 	.then(response => response.json())
