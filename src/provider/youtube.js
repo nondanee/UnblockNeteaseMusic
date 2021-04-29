@@ -13,9 +13,9 @@ const signature = (id = '-tKVN2mAKRI') => {
 	return request('GET', url, {}, null, proxy)
 	.then(response => response.body())
 	.then(body => {
-		let assets = /"assets":{[^}]+}/.exec(body)[0]
-		assets = JSON.parse(`{${assets}}`).assets
-		return request('GET', 'https://youtube.com' + assets.js, {}, null, proxy).then(response => response.body())
+		let assets = /"WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO":{[^}]+}/.exec(body)[0]
+		assets = JSON.parse(`{${assets}}}`).WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO
+		return request('GET', 'https://youtube.com' + assets.jsUrl, {}, null, proxy).then(response => response.body())
 	})
 	.then(body => {
 		const [_, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body)
