@@ -112,12 +112,6 @@ hook.request.before = ctx => {
 		})
 		.catch(error => console.log(error, req.url))
 	}
-	else if(req.url.includes("bilivideo.com")){
-		// console.log("rewrite mitm")
-		req.headers['referer'] = 'https://www.bilibili.com/'
-		req.headers['host'] =  url.hostname
-		req.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
-	}
 	else if ((hook.target.host.has(url.hostname)) && (url.path.startsWith('/weapi/') || url.path.startsWith('/api/'))) {
 		req.headers['X-Real-IP'] = '118.88.88.88'
 		ctx.netease = {web: true, path: url.path.replace(/^\/weapi\//, '/api/').replace(/\?.+$/, '').replace(/\/\d*$/, '')}
@@ -215,11 +209,6 @@ hook.connect.before = ctx => {
 			ctx.decision = 'blank'
 		}
 	}
-	// else if(req.url.includes("bilivideo.com")){
-	// 	req.headers['referer'] = 'https://www.bilibili.com/'
-	// 	req.headers['host'] =  url.hostname
-	// 	req.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
-	// }
 	else if (url.href.includes(global.endpoint)) ctx.decision = 'proxy'
 }
 

@@ -102,6 +102,10 @@ const proxy = {
 		request: ctx => new Promise((resolve, reject) => {
 			if (ctx.decision === 'close') return reject(ctx.error = ctx.decision)
 			const {req} = ctx
+			if (req.url.includes('bilivideo.com')) {
+				req.headers['referer'] = 'https://www.bilibili.com/'
+				req.headers['user-agent'] = 'okhttp/3.4.1'
+			}
 			const url = parse(req.url)
 			const options = request.configure(req.method, url, req.headers)
 			ctx.proxyReq = request.create(url)(options)

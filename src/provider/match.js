@@ -38,7 +38,7 @@ const check = url => {
 	const song = {size: 0, br: null, url: null, md5: null}
 	let header = {'range': 'bytes=0-8191'}
 	if (url.includes("bilivideo.com")){
-		header  = {'range': 'bytes=0-8191',
+		header = {'range': 'bytes=0-8191',
 			'referer':"https://www.bilibili.com/"
 		}
 	}
