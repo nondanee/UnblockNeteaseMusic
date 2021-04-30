@@ -70,3 +70,8 @@ dist/
 # es6 transformation
 src/browser/provider
 src/browser/cache.js
+
+# ca certificate
+ca.key
+ca.srl
+server.csr
