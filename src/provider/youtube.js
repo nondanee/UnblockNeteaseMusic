@@ -47,7 +47,7 @@ const search = info => {
 	return request('GET', url, {}, null, proxy)
 	.then(response => response.body())
 	.then(body => {
-		const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*{[^]+\};/)[0].split(';')[0].split(' = ')[1])
+		const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1])
 		const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0]
 		if (matched)
 			return matched.videoRenderer.videoId
