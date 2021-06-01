@@ -13,10 +13,12 @@ const format = song => {
 		// duration: song.Duration * 1000,
 		// album: {id: song.AlbumID, name: song.AlbumName},
 		// artists: song.SingerId.map((id, index) => ({id, name: SingerName[index]}))
-		id: song.hash.toUpperCase(),
-		name: song.songname,
-		duration: song.duration * 1000,
-		album: {id: song.album_id, name: song.album_name}
+		id: song['hash'],
+		id_hq: song['320hash'],
+		id_sq: song['sqhash'],
+		name: song['songname'],
+		duration: song['duration'] * 1000,
+		album: {id: song['album_id'], name: song['album_name']}
 	}
 }
 
@@ -32,12 +34,12 @@ const search = info => {
 		// const list = jsonBody.data.lists.map(format)
 		const list = jsonBody.data.info.map(format)
 		const matched = select(list, info)
-		return matched ? matched.id : Promise.reject()
+		return matched ? matched : Promise.reject()
 	})
 	.catch(() => insure().kugou.search(info))
 }
 
-const track = id => {
+const single = (song, format) => {
 	// const url =
 	// 	'http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo&hash=' + id
 
@@ -45,15 +47,29 @@ const track = id => {
 	// .then(response => response.json())
 	// .then(jsonBody => jsonBody.url || Promise.reject())
 
+	if (format === 'hash')
+		id = song.id
+	else if (format === 'hqhash')
+		id = song.id_hq
+	else if (format === 'sqhash')
+		id = song.id_sq
+
 	const url =
 		'http://trackercdn.kugou.com/i/v2/?' +
 		'key=' + crypto.md5.digest(`${id}kgcloudv2`) + '&hash=' + id + '&' +
-		'br=hq&appid=1005&pid=2&cmd=25&behavior=play'
-
+		'appid=1005&pid=2&cmd=25&behavior=play&album_id=' + song.album.id
 	return request('GET', url)
 	.then(response => response.json())
 	.then(jsonBody => jsonBody.url[0] || Promise.reject())
 }
+
+const track = song =>
+	Promise.all(
+		['sqhash', 'hqhash', 'hash'].slice(select.ENABLE_FLAC ? 0 : 1)
+		.map(format => single(song, format).catch(() => null))
+	)
+	.then(result => result.find(url => url) || Promise.reject())
+	.catch(() => insure().kugou.track(song))
 
 const check = info => cache(search, info).then(track)
 
