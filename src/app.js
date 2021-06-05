@@ -41,7 +41,7 @@ if (config.matchOrder) {
 		console.log('Please check the duplication in match order.')
 		process.exit(1)
 	}
-	else if (candidate.some(key => !provider.has(key))) {
+	else if (candidate.some(key => !provider.includes(key))) {
 		console.log('Please check the availability of match sources.')
 		process.exit(1)
 	}
