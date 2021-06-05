@@ -1,7 +1,7 @@
-const DEFAULT_SOURCE = ["netease", "kuwo", "migu", "bilibili", "pyncmd"];
+const DEFAULT_SOURCE = ["kuwo", "migu", "bilibili", "pyncmd"];
 const PROVIDERS = {
 	netease: require('./provider/netease'),
-	qq: require('./provider/netease'),
+	qq: require('./provider/qq'),
 	baidu: require('./provider/baidu'),
 	kugou: require('./provider/kugou'),
 	kuwo: require('./provider/kuwo'),
