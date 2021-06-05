@@ -10,18 +10,15 @@ const match = (id, source, data) => {
 	return find(id, data)
 	.then(info => {
 		meta = info
-		return Promise.all(candidate.map(name => providers[name].check(info).catch(() => {})))
+		return Promise.any(candidate.map(name => providers[name].check(info).then(data => data ? data : Promise.reject())));
 	})
-	.then(urls => {
-		urls = urls.filter(url => url)
-		return Promise.all(urls.map(url => check(url)))
+	.then(url => {
+		return check(url).then(song => song.url ? song : Promise.reject());
 	})
-	.then(songs => {
-		songs = songs.filter(song => song.url)
-		if (!songs.length) return Promise.reject()
-		console.log(`[${meta.id}] ${meta.name}\n${songs[0].url}`)
-		return songs[0]
-	})
+	.then(song => {
+		console.log(`[${meta.id}] ${meta.name}\n${song.url}`)
+		return song
+	});
 }
 
 const check = url => {
