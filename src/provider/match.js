@@ -1,26 +1,16 @@
 const find = require('./find')
 const request = require('../request')
-
-const provider = {
-	netease: require('./netease'),
-	qq: require('./qq'),
-	baidu: require('./baidu'),
-	kugou: require('./kugou'),
-	kuwo: require('./kuwo'),
-	migu: require('./migu'),
-	joox: require('./joox'),
-	youtube: require('./youtube'),
-	bilibili: require('./bilibili'),
-	pyncmd: require('./pyncmd')
-}
+const consts = require("../consts")
+const providers = consts.PROVIDERS;
+const defaultSrc = consts.DEFAULT_SOURCE;
 
 const match = (id, source, data) => {
 	let meta = {}
-	const candidate = (source || global.source || ['qq', 'kuwo', 'migu']).filter(name => name in provider)
+	const candidate = (source || global.source || defaultSrc).filter(name => name in providers)
 	return find(id, data)
 	.then(info => {
 		meta = info
-		return Promise.all(candidate.map(name => provider[name].check(info).catch(() => {})))
+		return Promise.all(candidate.map(name => providers[name].check(info).catch(() => {})))
 	})
 	.then(urls => {
 		urls = urls.filter(url => url)
