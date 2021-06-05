@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-require("./polyfills");
 const package = require('../package.json')
 const config = require('./cli.js')
 .program({name: package.name.replace(/@.+\//, ''), version: package.version})
