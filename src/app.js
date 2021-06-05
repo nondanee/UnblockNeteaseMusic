@@ -35,13 +35,13 @@ if (config.forceHost && require('net').isIP(config.forceHost) === 0) {
 	process.exit(1)
 }
 if (config.matchOrder) {
-	const provider = new Set(['netease', 'qq', 'baidu', 'kugou', 'kuwo', 'migu', 'joox', 'youtube', 'bilibili', 'pyncmd'])
+	const provider = Object.keys(require("./consts").PROVIDERS);
 	const candidate = config.matchOrder
 	if (candidate.some((key, index) => index != candidate.indexOf(key))) {
 		console.log('Please check the duplication in match order.')
 		process.exit(1)
 	}
-	else if (candidate.some(key => !provider.has(key))) {
+	else if (candidate.some(key => !provider.includes(key))) {
 		console.log('Please check the availability of match sources.')
 		process.exit(1)
 	}
