@@ -58,7 +58,7 @@ const search = info => {
 
 const track = id => {
 	const url =
-		`https://www.youtube.com/get_video_info?video_id=${id}&el=detailpage`
+		`https://www.youtube.com/get_video_info?video_id=${id}&el=detailpage&html5=1`
 
 	return request('GET', url, {}, null, proxy)
 	.then(response => response.body())
