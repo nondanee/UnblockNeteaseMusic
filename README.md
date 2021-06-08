@@ -4,33 +4,35 @@
 
 解锁网易云音乐客户端变灰歌曲
 
+fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)，仅作部分优化。十分感谢 nondanee 提供如此棒的工具！
+
 ## 特性
 
-- 使用 QQ / 虾米 / 百度 / 酷狗 / 酷我 / 咪咕 / JOOX 音源替换变灰歌曲链接 (默认仅启用一、五、六)
+- 使用 bb音乐 / QQ / 虾米 / 百度 / 酷狗 / 酷我 / 咪咕 / JOOX 音源替换变灰歌曲链接 (默认仅启用一、五、六)
 - 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
 - 完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
 ## 运行
 
-使用 npx
+### docker 作法
 
-```
-$ npx @nondanee/unblockneteasemusic
-```
-
-或使用 Docker
-
-```
-$ docker run nondanee/unblockneteasemusic
+```bash
+git clone https://github.com/1715173329/UnblockNeteaseMusic
+cd UnblockNeteaseMusic
+docker-compose up
 ```
 
-```
-$ docker-compose up
+### 传统作法
+
+```bash
+git clone https://github.com/1715173329/UnblockNeteaseMusic
+cd UnblockNeteaseMusic
+node app.js # 建议使用 screen / tmux 把 app.js 挂后台
 ```
 
 ### 配置参数
 
-```
+```bash
 $ unblockneteasemusic -h
 usage: unblockneteasemusic [-v] [-p port] [-a address] [-u url] [-f host]
                            [-o source [source ...]] [-t token] [-e url] [-s]
@@ -52,7 +54,7 @@ optional arguments:
 
 ## 使用
 
-**警告：本项目不提供线上 demo，请不要轻易信任使用他人提供的公开代理服务，以免发生安全问题**
+**警告**：本项目不提供线上 demo，请不要轻易信任使用他人提供的公开代理服务，以免发生安全问题
 
 **若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s`  限制代理范围 (需使用 PAC 或 hosts)，~~或启用 Proxy Authentication `-t <name>:<password>` 设置代理用户名密码~~ (目前密码认证在 Windows 客户端设置和 macOS 系统设置都无法生效，请不要使用)，以防代理被他人滥用**
 
@@ -70,12 +72,12 @@ checknetisolation loopbackexempt -a -n="1F8B0F94.122165AE053F_j2p0p5q0044a6"
 
 向 hosts 文件添加两条规则
 
-```
+```hosts
 <Server IP> music.163.com
 <Server IP> interface.music.163.com
 ```
 
-> 使用此方法必须监听 80 端口 `-p 80` 
+> 使用此方法必须监听 80 端口 `-p 80`
 >
 > **若在本机运行程序**，请指定网易云服务器 IP `-f xxx.xxx.xxx.xxx` (可在修改 hosts 前通过 `ping music.163.com` 获得) **或** 使用代理 `-u http(s)://xxx.xxx.xxx.xxx:xxx`，以防请求死循环
 >
@@ -102,12 +104,8 @@ PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 
 作为依赖库使用
 
-```
-$ npm install @nondanee/unblockneteasemusic
-```
-
 ```javascript
-const match = require('@nondanee/unblockneteasemusic')
+const match = require('@1715173329/unblockneteasemusic')
 
 /** 
  * Set proxy or hosts if needed
@@ -126,27 +124,27 @@ match(418602084, ['qq', 'kuwo', 'migu']).then(console.log)
 
 ## 效果
 
-#### Windows 客户端
+### Windows 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/60316017-87de8a80-999b-11e9-9381-16d40efbe7f6.png" width="100%">
 
-#### UWP 客户端
+### UWP 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/52215123-5a028780-28ce-11e9-8491-08c4c5dac3b4.png" width="100%">
 
-#### Linux 客户端
+### Linux 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/60316169-18b56600-999c-11e9-8ae5-5cd168b0edae.png" width="100%">
 
-#### macOS 客户端
+### macOS 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/52196035-51418f80-2895-11e9-8f33-78a631cdf151.png" width="100%">
 
-#### Android 客户端
+### Android 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/57972549-eabd2900-79ce-11e9-8fef-95cb60906298.png" width="50%">
 
-#### iOS 客户端
+### iOS 客户端
 
 <img src="https://user-images.githubusercontent.com/26399680/57972440-f90a4580-79cc-11e9-8dbf-6150ee299b9c.jpg" width="50%">
 
