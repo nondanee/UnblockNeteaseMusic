@@ -3,16 +3,7 @@ const cache = require('./cache')
 const parse = require('url').parse
 require('./provider/insure').disable = true
 
-const router = {
-	qq: require('./provider/qq'),
-	baidu: require('./provider/baidu'),
-	kugou: require('./provider/kugou'),
-	kuwo: require('./provider/kuwo'),
-	migu: require('./provider/migu'),
-	joox: require('./provider/joox'),
-	bilibili: require('./provider/bilibili'),
-	pyncmd: require('./provider/pyncmd')
-}
+const router = require("./consts").PROVIDERS;
 
 const distribute = (url, router) =>
 	Promise.resolve()
