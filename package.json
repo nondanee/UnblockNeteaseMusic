@@ -2,7 +2,19 @@
   "name": "@1715173329/unblockneteasemusic",
   "version": "0.26.0",
   "description": "Revive unavailable songs for Netease Cloud Music",
-  "main": "app.js",
+  "main": "src/provider/match.js",
+  "bin": {
+    "unblockneteasemusic": "app.js"
+  },
+  "scripts": {
+    "pkg": "pkg . --out-path=dist/"
+  },
+  "pkg": {
+    "assets": [
+      "server.key",
+      "server.crt"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/1715173329/UnblockNeteaseMusic.git"
