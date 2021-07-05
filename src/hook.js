@@ -285,8 +285,20 @@ const tryMatch = ctx => {
 		if ((item.code != 200 || item.freeTrialInfo) && (target == 0 || item.id == target)) {
 			return match(item.id)
 			.then(song => {
+				let os = "";
+				try {
+					let {header} = netease.param
+					header = typeof(header) === 'string' ? JSON.parse(header) : header
+					const cookie = querystring.parse(req.headers.cookie.replace(/\s/g, ''), ';')
+					os = header.os || cookie.os;
+				}
+				catch(e) {}
 				item.type = song.br === 999000 ? 'flac' : 'mp3'
-				item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
+				if (os === "pc") {
+					item.url = global.endpoint ? `${global.endpoint.replace("https://", "http://")}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
+				} else {
+					item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
+				}
 				item.md5 = song.md5 || crypto.md5.digest(song.url)
 				item.br = song.br || 128000
 				item.size = song.size
