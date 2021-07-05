@@ -294,8 +294,8 @@ const tryMatch = ctx => {
 				}
 				catch(e) {}
 				item.type = song.br === 999000 ? 'flac' : 'mp3'
-				if (os === "pc") {
-					item.url = global.endpoint ? `${global.endpoint.replace("https://", "http://")}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
+				if (os === 'pc' || os === 'uwp') {
+					item.url = global.endpoint ? `${global.endpoint.replace('https://', 'http://')}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
 				} else {
 					item.url = global.endpoint ? `${global.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url
 				}
