@@ -54,12 +54,14 @@ optional arguments:
 
 ### 环境变量
 
-- ENABLE_FLAC - bool - 启用/禁用无损音质获取
-- MIGU_COOKIE - str - 咪咕音源的 aversionid cookie
-- QQ_COOKIE - str - QQ 音源的 uin & qm_keyst cookie
-- YOUTUBE_KEY - str - Youtube 音源的 Data API v3 Key
-- SIGN_CERT - path - 自定义证书文件
-- SIGN_KEY - path - 自定义密钥文件
+| 变量名称    	| 类型 	| 描述                            	| 示例                      	|
+|-------------	|------	|---------------------------------	|---------------------------	|
+| ENABLE_FLAC 	| bool 	| 启用/禁用无损音质获取           	| `ENABLE_FLAC=true`        	|
+| MIGU_COOKIE 	| str  	| 咪咕音源的 aversionid cookie    	|                           	|
+| QQ_COOKIE   	| str  	| QQ 音源的 uin & qm_keyst cookie 	|                           	|
+| YOUTUBE_KEY 	| str  	| Youtube 音源的 Data API v3 Key  	|                           	|
+| SIGN_CERT   	| path 	| 自定义证书文件                  	| `SIGN_CERT="./ca.crt"`    	|
+| SIGN_KEY    	| path 	| 自定义密钥文件                  	| `SIGN_KEY="./server.key"` 	|
 
 ## 使用
 
