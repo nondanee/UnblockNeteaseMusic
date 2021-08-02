@@ -57,12 +57,22 @@ const search = info => {
 }
 
 const track = id => {
-	const url =
-		`https://www.youtube.com/get_video_info?video_id=${id}&el=detailpage&html5=1&c=TVHTML5&cver=6.20180913`
+	const url = 'https://youtubei.googleapis.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8'
+	const json_header = {'Content-Type': 'application/json; charset=utf-8'}
+	const json_body = `{
+		"context": {
+			"client": {
+				"hl": "en",
+				"clientName": "WEB",
+				"clientVersion": "2.20210721.00.00"
+			}
+		},
+		"videoId": "${id}"
+	}`
 
-	return request('GET', url, {}, null, proxy)
+	return request('POST', url, json_header, json_body, proxy)
 	.then(response => response.body())
-	.then(body => JSON.parse(parse(body).player_response).streamingData)
+	.then(body => JSON.parse(body).streamingData)
 	.then(streamingData => {
 		const stream = streamingData.formats.concat(streamingData.adaptiveFormats)
 		.find(format => format.itag === 140)
