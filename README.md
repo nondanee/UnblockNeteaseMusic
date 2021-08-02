@@ -14,6 +14,12 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 ## 运行
 
+### 直接打開可执行文件
+
+去右侧的 Releases 找到最新版本，然后在下方的 Assets 找到符合你系统架构的可执行文件。点两下即可使用。
+
+> macOS 因为签章问题，暂时不提供可执行文件 QQ 请先按照其他做法使用
+
 ### docker 作法
 
 ```bash
