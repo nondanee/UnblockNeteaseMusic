@@ -1,6 +1,6 @@
 {
   "name": "@1715173329/unblockneteasemusic",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "description": "Revive unavailable songs for Netease Cloud Music",
   "main": "src/provider/match.js",
   "bin": {
