@@ -362,6 +362,7 @@ const tryMatch = ctx => {
 }
 
 const unblockSoundEffects = obj => {
+	console.log("UNSE > triggered");
 	const {data,code} = obj
 	if (code === 200) {
 		if (Array.isArray(data)) data.map(item => {if (item.type) item.type=1})
