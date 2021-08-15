@@ -60,20 +60,20 @@ optional arguments:
 
 ### 环境变量
 
-| 变量名称    	| 类型 	| 描述                            	| 示例                      	|
-|-------------	|------	|---------------------------------	|---------------------------	|
-| ENABLE_FLAC 	| bool 	| 启用/禁用无损音质获取           	| `ENABLE_FLAC=true`        	|
-| MIGU_COOKIE 	| str  	| 咪咕音源的 aversionid cookie    	|                           	|
-| QQ_COOKIE   	| str  	| QQ 音源的 uin & qm_keyst cookie 	|                           	|
-| YOUTUBE_KEY 	| str  	| Youtube 音源的 Data API v3 Key  	|                           	|
-| SIGN_CERT   	| path 	| 自定义证书文件                  	| `SIGN_CERT="./ca.crt"`    	|
-| SIGN_KEY    	| path 	| 自定义密钥文件                  	| `SIGN_KEY="./server.key"` 	|
+| 变量名称    | 类型 | 描述                            | 示例                      |
+| ----------- | ---- | ------------------------------- | ------------------------- |
+| ENABLE_FLAC | bool | 启用/禁用无损音质获取           | `ENABLE_FLAC=true`        |
+| MIGU_COOKIE | str  | 咪咕音源的 aversionid cookie    |                           |
+| QQ_COOKIE   | str  | QQ 音源的 uin & qm_keyst cookie |                           |
+| YOUTUBE_KEY | str  | Youtube 音源的 Data API v3 Key  |                           |
+| SIGN_CERT   | path | 自定义证书文件                  | `SIGN_CERT="./ca.crt"`    |
+| SIGN_KEY    | path | 自定义密钥文件                  | `SIGN_KEY="./server.key"` |
 
 ## 使用
 
 **警告**：本项目不提供线上 demo，请不要轻易信任使用他人提供的公开代理服务，以免发生安全问题
 
-**若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s`  限制代理范围 (需使用 PAC 或 hosts)，~~或启用 Proxy Authentication `-t <name>:<password>` 设置代理用户名密码~~ (目前密码认证在 Windows 客户端设置和 macOS 系统设置都无法生效，请不要使用)，以防代理被他人滥用**
+**若将服务部署到公网，强烈建议使用严格模式 (此模式下仅放行网易云音乐所属域名的请求) `-s` 限制代理范围 (需使用 PAC 或 hosts)，~~或启用 Proxy Authentication `-t <name>:<password>` 设置代理用户名密码~~ (目前密码认证在 Windows 客户端设置和 macOS 系统设置都无法生效，请不要使用)，以防代理被他人滥用**
 
 支持 Windows 客户端，UWP 客户端，Android 客户端，Linux 客户端 (1.2 版本以上需要自签证书 MITM，启动客户端需要增加 `--ignore-certificate-errors` 参数)，macOS 客户端 (726 版本以上需要自签证书)，iOS 客户端 (配置 https endpoint 或使用自签证书) 和网页版 (需要自签证书，需要脚本配合)
 
@@ -106,29 +106,29 @@ PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 
 全局代理地址填写服务器地址和端口号即可
 
-| 平台    | 基础设置 |
-| :------ | :------------------------------- |
-| Windows | 设置 > 工具 > 自定义代理 (客户端内) |
+| 平台    | 基础设置                              |
+| :------ | :------------------------------------ |
+| Windows | 设置 > 工具 > 自定义代理 (客户端内)   |
 | UWP     | Windows 设置 > 网络和 Internet > 代理 |
-| Linux   | 系统设置 > 网络 > 网络代理 |
-| macOS   | 系统偏好设置 > 网络 > 高级 > 代理 |
-| Android | WLAN > 修改网络 > 高级选项 > 代理 |
-| iOS     | 无线局域网 > HTTP 代理 > 配置代理 |
+| Linux   | 系统设置 > 网络 > 网络代理            |
+| macOS   | 系统偏好设置 > 网络 > 高级 > 代理     |
+| Android | WLAN > 修改网络 > 高级选项 > 代理     |
+| iOS     | 无线局域网 > HTTP 代理 > 配置代理     |
 
 > 代理工具和方法有很多请自行探索，欢迎在 issues 讨论
 
-### ✳方法 3. 调用接口
+### ✳ 方法 3. 调用接口
 
 作为依赖库使用
 
 ```javascript
-const match = require('@1715173329/unblockneteasemusic')
+const match = require('@1715173329/unblockneteasemusic');
 
-/** 
+/**
  * Set proxy or hosts if needed
  */
-global.proxy = require('url').parse('http://127.0.0.1:1080')
-global.hosts = {'i.y.qq.com': '59.37.96.220'}
+global.proxy = require('url').parse('http://127.0.0.1:1080');
+global.hosts = { 'i.y.qq.com': '59.37.96.220' };
 
 /**
  * Find matching song from other platforms
@@ -136,7 +136,7 @@ global.hosts = {'i.y.qq.com': '59.37.96.220'}
  * @param {Array<String>||undefined} source support qq, xiami, baidu, kugou, kuwo, migu, joox
  * @return {Promise<Object>}
  */
-match(418602084, ['qq', 'kuwo', 'migu']).then(console.log)
+match(418602084, ['qq', 'kuwo', 'migu']).then(console.log);
 ```
 
 ## 效果

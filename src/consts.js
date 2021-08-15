@@ -9,10 +9,10 @@ const PROVIDERS = {
 	joox: require('./provider/joox'),
 	youtube: require('./provider/youtube'),
 	bilibili: require('./provider/bilibili'),
-	pyncmd: require('./provider/pyncmd')
-}
+	pyncmd: require('./provider/pyncmd'),
+};
 
 module.exports = {
-    DEFAULT_SOURCE,
-    PROVIDERS,
+	DEFAULT_SOURCE,
+	PROVIDERS,
 };

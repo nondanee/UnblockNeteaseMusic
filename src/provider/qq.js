@@ -1,59 +1,68 @@
-const cache = require('../cache')
-const insure = require('./insure')
-const select = require('./select')
-const request = require('../request')
+const cache = require('../cache');
+const insure = require('./insure');
+const select = require('./select');
+const request = require('../request');
 
 const headers = {
-	'origin': 'http://y.qq.com/',
-	'referer': 'http://y.qq.com/',
-	'cookie': process.env.QQ_COOKIE || null // 'uin=; qm_keyst=',
-}
+	origin: 'http://y.qq.com/',
+	referer: 'http://y.qq.com/',
+	cookie: process.env.QQ_COOKIE || null, // 'uin=; qm_keyst=',
+};
 
-const playable = song => {
-	const switchFlag = song['switch'].toString(2).split('')
-	switchFlag.pop()
-	switchFlag.reverse()
-	const playFlag = switchFlag[0]
-	const tryFlag = switchFlag[13]
-	return ((playFlag == 1) || ((playFlag == 1) && (tryFlag == 1)))
-}
+const playable = (song) => {
+	const switchFlag = song['switch'].toString(2).split('');
+	switchFlag.pop();
+	switchFlag.reverse();
+	const playFlag = switchFlag[0];
+	const tryFlag = switchFlag[13];
+	return playFlag == 1 || (playFlag == 1 && tryFlag == 1);
+};
 
-const format = song => ({
-	id: {song: song.mid, file: song.file.media_mid},
+const format = (song) => ({
+	id: { song: song.mid, file: song.file.media_mid },
 	name: song.name,
 	duration: song.interval * 1000,
-	album: {id: song.album.mid, name: song.album.name},
-	artists: song.singer.map(({mid, name}) => ({id: mid, name}))
-})
+	album: { id: song.album.mid, name: song.album.name },
+	artists: song.singer.map(({ mid, name }) => ({ id: mid, name })),
+});
 
-const search = info => {
+const search = (info) => {
 	const url =
 		'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' +
 		'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center&' +
 		't=0&aggr=1&cr=1&catZhida=1&lossless=0&flag_qc=0&p=1&n=20&w=' +
-		encodeURIComponent(info.keyword) + '&' +
+		encodeURIComponent(info.keyword) +
+		'&' +
 		'g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' +
-		'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0'
+		'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0';
 
 	return request('GET', url)
-	.then(response => response.jsonp())
-	.then(jsonBody => {
-		const list = jsonBody.data.song.list.map(format)
-		const matched = select(list, info)
-		return matched ? matched.id : Promise.reject()
-	})
-}
+		.then((response) => response.jsonp())
+		.then((jsonBody) => {
+			const list = jsonBody.data.song.list.map(format);
+			const matched = select(list, info);
+			return matched ? matched.id : Promise.reject();
+		});
+};
 
 const single = (id, format) => {
 	// const classic = ['001yS0N33yPm1B', '000bog5B2DYgHN', '002bongo1BDtKz', '004RDW5Q2ol2jj', '001oEME64eXNbp', '001e9dH11YeXGp', '0021onBk2QNjBu', '001YoUs11jvsIK', '000SNxc91Mw3UQ', '002k94ea4379uy']
 	// id = id || classic[Math.floor(classic.length * Math.random())]
-	const uin = ((headers.cookie || '').match(/uin=(\d+)/) || [])[1] || '0'
+	const uin = ((headers.cookie || '').match(/uin=(\d+)/) || [])[1] || '0';
 
-	const concatenate = vkey => {
-		if (!vkey) return Promise.reject()
-		const host = ['streamoc.music.tc.qq.com', 'mobileoc.music.tc.qq.com', 'isure.stream.qqmusic.qq.com', 'dl.stream.qqmusic.qq.com', 'aqqmusic.tc.qq.com/amobile.music.tc.qq.com'][3]
-		return `http://${host}/${format.join(id.file)}?vkey=${vkey}&uin=0&fromtag=8&guid=7332953645`
-	}
+	const concatenate = (vkey) => {
+		if (!vkey) return Promise.reject();
+		const host = [
+			'streamoc.music.tc.qq.com',
+			'mobileoc.music.tc.qq.com',
+			'isure.stream.qqmusic.qq.com',
+			'dl.stream.qqmusic.qq.com',
+			'aqqmusic.tc.qq.com/amobile.music.tc.qq.com',
+		][3];
+		return `http://${host}/${format.join(
+			id.file
+		)}?vkey=${vkey}&uin=0&fromtag=8&guid=7332953645`;
+	};
 
 	// const url =
 	// 	'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg' +
@@ -71,51 +80,66 @@ const single = (id, format) => {
 
 	const url =
 		'https://u.y.qq.com/cgi-bin/musicu.fcg?data=' +
-		encodeURIComponent(JSON.stringify({
-			// req: {
-			// 	method: 'GetCdnDispatch',
-			// 	module: 'CDN.SrfCdnDispatchServer',
-			// 	param: {
-			// 		calltype: 0,
-			// 		guid: '7332953645',
-			// 		userip: ''
-			// 	}
-			// },
-			req_0: {
-				module: 'vkey.GetVkeyServer',
-				method: 'CgiGetVkey',
-				param: {
-					guid: '7332953645',
-					loginflag: 1,
-					filename: [format.join(id.file)],
-					songmid: [id.song],
-					songtype: [0],
-					uin,
-					platform: '20'
-				}
-			}
-		}))
+		encodeURIComponent(
+			JSON.stringify({
+				// req: {
+				// 	method: 'GetCdnDispatch',
+				// 	module: 'CDN.SrfCdnDispatchServer',
+				// 	param: {
+				// 		calltype: 0,
+				// 		guid: '7332953645',
+				// 		userip: ''
+				// 	}
+				// },
+				req_0: {
+					module: 'vkey.GetVkeyServer',
+					method: 'CgiGetVkey',
+					param: {
+						guid: '7332953645',
+						loginflag: 1,
+						filename: [format.join(id.file)],
+						songmid: [id.song],
+						songtype: [0],
+						uin,
+						platform: '20',
+					},
+				},
+			})
+		);
 
 	return request('GET', url, headers)
-	.then(response => response.json())
-	.then(jsonBody => {
-		const { sip, midurlinfo } = jsonBody.req_0.data
-		// const vkey =
-		// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
-		// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
-		// return concatenate(vkey)
-		return midurlinfo[0].purl ? sip[0] + midurlinfo[0].purl : Promise.reject()
-	})
-}
+		.then((response) => response.json())
+		.then((jsonBody) => {
+			const { sip, midurlinfo } = jsonBody.req_0.data;
+			// const vkey =
+			// 	jsonBody.req_0.data.midurlinfo[0].vkey ||
+			// 	(jsonBody.req_0.data.testfile2g.match(/vkey=(\w+)/) || [])[1]
+			// return concatenate(vkey)
+			return midurlinfo[0].purl
+				? sip[0] + midurlinfo[0].purl
+				: Promise.reject();
+		});
+};
 
-const track = id => {
-	id.key = id.file
+const track = (id) => {
+	id.key = id.file;
 	return Promise.all(
-		[['F000', '.flac'], ['M800', '.mp3'], ['M500', '.mp3']].slice((headers.cookie || typeof(window) !== 'undefined') ? (select.ENABLE_FLAC ? 0 : 1) : 2)
-		.map(format => single(id, format).catch(() => null))
+		[
+			['F000', '.flac'],
+			['M800', '.mp3'],
+			['M500', '.mp3'],
+		]
+			.slice(
+				headers.cookie || typeof window !== 'undefined'
+					? select.ENABLE_FLAC
+						? 0
+						: 1
+					: 2
+			)
+			.map((format) => single(id, format).catch(() => null))
 	)
-	.then(result => result.find(url => url) || Promise.reject())
-	.catch(() => insure().qq.track(id))
+		.then((result) => result.find((url) => url) || Promise.reject())
+		.catch(() => insure().qq.track(id));
 
 	// return request(
 	// 	'POST', 'http://acc.music.qq.com/base/fcgi-bin/fcg_music_express_mobile2.fcg', {},
@@ -146,8 +170,8 @@ const track = id => {
 	// 	else
 	// 		return Promise.reject()
 	// })
-}
+};
 
-const check = info => cache(search, info).then(track)
+const check = (info) => cache(search, info).then(track);
 
-module.exports = {check, track}
+module.exports = { check, track };

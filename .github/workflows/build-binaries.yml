@@ -1,35 +1,35 @@
 name: Build binaries for UnblockNeteaseMusic
 
 on:
-  push:
-    tags:
-      - '*'
+    push:
+        tags:
+            - '*'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
+        steps:
+            - uses: actions/checkout@v2
 
-    - name: Use Node.js 14
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
+            - name: Use Node.js 14
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 14
 
-    - name: Set up QEMU
-      id: qemu
-      uses: docker/setup-qemu-action@v1
-      with:
-        image: tonistiigi/binfmt:latest
-        platforms: all
+            - name: Set up QEMU
+              id: qemu
+              uses: docker/setup-qemu-action@v1
+              with:
+                  image: tonistiigi/binfmt:latest
+                  platforms: all
 
-    - name: Building to executable file
-      run: npx pkg --compress Brotli .
-    
-    - name: Publishing to GitHub Releases
-      uses: softprops/action-gh-release@v1
-      with:
-        draft: true
-        files: |
-          ./dist/*
+            - name: Building to executable file
+              run: npx pkg --compress Brotli .
+
+            - name: Publishing to GitHub Releases
+              uses: softprops/action-gh-release@v1
+              with:
+                  draft: true
+                  files: |
+                      ./dist/*
