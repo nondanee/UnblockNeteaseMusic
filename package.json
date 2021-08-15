@@ -30,5 +30,8 @@
   "author": "nondanee, 1715173329, pan93412",
   "license": "MIT",
   "dependencies": {},
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^2.3.2"
+  }
 }
