@@ -22,6 +22,13 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 ### Docker 作法
 
+#### Docker Hub
+
+见 [pan93412/unblock-netease-music-enhanced](https://hub.docker.com/repository/docker/pan93412/unblock-netease-music-enhanced)
+。`latest` 是从 `enhanced` 组建的最新版本；`release` 是最新 tag 的版本。
+
+#### 自行编译
+
 ```bash
 git clone https://github.com/1715173329/UnblockNeteaseMusic
 cd UnblockNeteaseMusic
