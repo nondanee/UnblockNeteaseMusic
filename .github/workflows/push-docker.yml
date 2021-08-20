@@ -1,0 +1,66 @@
+name: Build cross-platform docker image
+
+on:
+    push:
+        branches:
+            - 'enhanced'
+        paths-ignore:
+            - '**.md'
+            - '.github/**/*'
+
+    release:
+        types: [published]
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+env:
+    platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7
+    image: pan93412/unblock-netease-music-enhanced
+    develop_tag: latest
+    released_tag: release
+
+jobs:
+    build-and-publish:
+        runs-on: ubuntu-latest
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Get the current tag name
+              uses: olegtarasov/get-tag@v2.1
+              id: tagName
+
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v1
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
+
+            - name: Login to DockerHub
+              uses: docker/login-action@v1
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and push the latest version
+              uses: docker/build-push-action@v2
+              if: github.event_name != 'release'
+              with:
+                  context: .
+                  platforms: ${{ env.platforms }}
+                  push: true
+                  tags: ${{ env.image }}:${{ env.develop_tag }}
+
+            - name: Build and push the released version
+              uses: docker/build-push-action@v2
+              if: github.event_name == 'release'
+              with:
+                  context: .
+                  platforms: ${{ env.platforms }}
+                  push: true
+                  tags: >-
+                      ${{ env.image }}:${{ env.develop_tag }},
+                      ${{ env.image }}:${{ env.released_tag }},
+                      ${{ env.image }}:${{ steps.tagName.outputs.tag }}
