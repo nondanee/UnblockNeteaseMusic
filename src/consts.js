@@ -1,4 +1,4 @@
-const DEFAULT_SOURCE = ['kuwo', 'kugou', 'migu', 'qq', 'bilibili', 'youtube'];
+const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'youtube'];
 const PROVIDERS = {
 	netease: require('./provider/netease'),
 	qq: require('./provider/qq'),

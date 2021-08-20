@@ -8,7 +8,7 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 ## 特性
 
-- 使用 Bilibili / QQ / 百度 / 酷狗 / 酷我 / 咪咕 / JOOX 音源替换变灰歌曲链接 (默认仅启用一、二、五、六)
+- 使用 Bilibili / QQ / ~~百度~~ / 酷狗 / 酷我 / 咪咕 / ~~JOOX~~ / Youtube 音源替换变灰歌曲链接 (默认仅启用四、五、六、八)
 - 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
 - 完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
@@ -20,7 +20,7 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 > macOS 因为签名问题，暂时不提供可执行文件。请先按照其他做法使用。
 
-### docker 作法
+### Docker 作法
 
 ```bash
 git clone https://github.com/1715173329/UnblockNeteaseMusic
@@ -35,6 +35,12 @@ git clone https://github.com/1715173329/UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 node app.js # 建议使用 screen / tmux 把 app.js 挂后台
 ```
+
+### Android Xposed 模块
+请移步至 [杜比大喇叭β版](https://github.com/nining377/dolby_beta)。
+
+### OpenWrt LuCI 插件
+请移步至 [luci-app-unblockneteasemusic](https://github.com/immortalwrt/luci-app-unblockneteasemusic)。
 
 ### 配置参数
 

@@ -2,11 +2,29 @@ name: Build binaries for UnblockNeteaseMusic
 
 on:
     push:
-        tags:
-            - '*'
+        branches:
+           - 'enhanced'
+        paths-ignore:
+           - '**.md'
+
+    pull_request:
+        types: [opened, synchronize, reopened]
+        paths-ignore:
+           - '**.md'
+
+    release:
+        types: [published]
 
 jobs:
     build:
+        strategy:
+            matrix:
+                target:
+                    - 'linux-arm64'
+                    - 'linux-x64'
+                    - 'win-arm64'
+                    - 'win-x64'
+
         runs-on: ubuntu-latest
 
         steps:
@@ -24,12 +42,25 @@ jobs:
                   image: tonistiigi/binfmt:latest
                   platforms: all
 
-            - name: Building to executable file
-              run: npx pkg --compress Brotli .
+            - name: Building executable file for ${{ matrix.target }}
+              run: |
+                  npx pkg --compress Brotli -t node14-${{ matrix.target }} .
+                  mv "$(ls dist/*)" "$(ls dist/* | sed 's/music/music-${{ matrix.target }}/g')"
+                  echo "ASSET_NAME=$(ls dist)" >> $GITHUB_ENV
+
+            - name: Publishing to GitHub Artifacts
+              uses: actions/upload-artifact@v2
+              if: github.event_name != 'release'
+              with:
+                  name: ${{ env.ASSET_NAME }}
+                  path: |
+                      ./dist/*
 
             - name: Publishing to GitHub Releases
-              uses: softprops/action-gh-release@v1
+              uses: svenstaro/upload-release-action@v2
+              if: github.event_name == 'release'
               with:
-                  draft: true
-                  files: |
-                      ./dist/*
+                  repo_token: ${{ github.token }}
+                  file: dist/*
+                  tag: ${{ github.ref }}
+                  file_glob: true
