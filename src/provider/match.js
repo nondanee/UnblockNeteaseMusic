@@ -15,16 +15,25 @@ const match = (id, source, data) => {
 		.then((info) => {
 			meta = info;
 			return Promise.any(
-				candidate.map((name) =>
-					providers[name]
-						.check(info)
-						.then((data) => (data ? data : Promise.reject()))
-				)
-			);
-		})
-		.then((url) => {
-			return check(url).then((song) =>
-				song.url ? song : Promise.reject()
+				candidate.map(async (name) => {
+					try {
+						// Get the song data.
+						const audioData = await providers[name].check(info);
+						if (!audioData) return Promise.reject();
+
+						// Get the url of the song data.
+						const song = await check(audioData);
+						if (!song || typeof song.url !== "string") return Promise.reject();
+
+						// We check if the song.url is reachable.
+						await request("GET", song.url);
+						// It will be thrown on failed.
+						return song;
+					} catch (e) {
+						if (e) console.warn(e);
+						return Promise.reject();  // .any will return the fulfilled one.
+					}
+				})
 			);
 		})
 		.then((song) => {
