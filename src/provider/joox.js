@@ -7,6 +7,10 @@ const request = require('../request');
 const headers = {
 	origin: 'http://www.joox.com',
 	referer: 'http://www.joox.com',
+	// Refer to #95, you should register an account
+	// on Joox to use their service. We allow users
+	// to specify it manually.
+	cookie: process.env.JOOX_COOKIE || null // 'wmid=<your_wmid>; session_key=<your_session_key>;'
 };
 
 const fit = (info) => {
