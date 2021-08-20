@@ -23,15 +23,16 @@ const match = (id, source, data) => {
 
 						// Get the url of the song data.
 						const song = await check(audioData);
-						if (!song || typeof song.url !== "string") return Promise.reject();
+						if (!song || typeof song.url !== 'string')
+							return Promise.reject();
 
 						// We check if the song.url is reachable.
-						await request("GET", song.url);
+						await request('GET', song.url);
 						// It will be thrown on failed.
 						return song;
 					} catch (e) {
 						if (e) console.warn(e);
-						return Promise.reject();  // .any will return the fulfilled one.
+						return Promise.reject(); // .any will return the fulfilled one.
 					}
 				})
 			);

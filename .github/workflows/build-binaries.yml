@@ -3,14 +3,14 @@ name: Build binaries for UnblockNeteaseMusic
 on:
     push:
         branches:
-           - 'enhanced'
+            - 'enhanced'
         paths-ignore:
-           - '**.md'
+            - '**.md'
 
     pull_request:
         types: [opened, synchronize, reopened]
         paths-ignore:
-           - '**.md'
+            - '**.md'
 
     release:
         types: [published]

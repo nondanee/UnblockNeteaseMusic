@@ -8,9 +8,9 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 ## 特性
 
-- 使用 Bilibili / QQ / ~~百度~~ / 酷狗 / 酷我 / 咪咕 / ~~JOOX~~ / Youtube 音源替换变灰歌曲链接 (默认仅启用四、五、六、八)
-- 为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
-- 完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
+-   使用 Bilibili / QQ / ~~百度~~ / 酷狗 / 酷我 / 咪咕 / ~~JOOX~~ / Youtube 音源替换变灰歌曲链接 (默认仅启用四、五、六、八)
+-   为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
+-   完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
 ## 运行
 
@@ -37,9 +37,11 @@ node app.js # 建议使用 screen / tmux 把 app.js 挂后台
 ```
 
 ### Android Xposed 模块
-请移步至 [杜比大喇叭β版](https://github.com/nining377/dolby_beta)。
+
+请移步至 [杜比大喇叭 β 版](https://github.com/nining377/dolby_beta)。
 
 ### OpenWrt LuCI 插件
+
 请移步至 [luci-app-unblockneteasemusic](https://github.com/immortalwrt/luci-app-unblockneteasemusic)。
 
 ### 配置参数
@@ -66,15 +68,15 @@ optional arguments:
 
 ### 环境变量
 
-| 变量名称    | 类型 | 描述                            | 示例                      |
-| ----------- | ---- | ------------------------------- | ------------------------- |
-| ENABLE_FLAC | bool | 启用/禁用无损音质获取           | `ENABLE_FLAC=true`        |
-| MIGU_COOKIE | str  | 咪咕音源的 aversionid cookie    |                           |
-| QQ_COOKIE   | str  | QQ 音源的 uin & qm_keyst cookie。格式：`uin=<your_uin>; qm_keyst=<your_qm_keyst>` |    |                        |
-| JOOX_COOKIE | str  | JOOX 音源的 wmid 和 session_key cookie。格式：`wmid=<your_wmid>; session_key=<your_session_key>;` | |
-| YOUTUBE_KEY | str  | Youtube 音源的 Data API v3 Key  |                           |
-| SIGN_CERT   | path | 自定义证书文件                  | `SIGN_CERT="./ca.crt"`    |
-| SIGN_KEY    | path | 自定义密钥文件                  | `SIGN_KEY="./server.key"` |
+| 变量名称    | 类型 | 描述                                                                                              | 示例                      |
+| ----------- | ---- | ------------------------------------------------------------------------------------------------- | ------------------------- | --- |
+| ENABLE_FLAC | bool | 启用/禁用无损音质获取                                                                             | `ENABLE_FLAC=true`        |
+| MIGU_COOKIE | str  | 咪咕音源的 aversionid cookie                                                                      |                           |
+| QQ_COOKIE   | str  | QQ 音源的 uin & qm_keyst cookie。格式：`uin=<your_uin>; qm_keyst=<your_qm_keyst>`                 |                           |     |
+| JOOX_COOKIE | str  | JOOX 音源的 wmid 和 session_key cookie。格式：`wmid=<your_wmid>; session_key=<your_session_key>;` |                           |
+| YOUTUBE_KEY | str  | Youtube 音源的 Data API v3 Key                                                                    |                           |
+| SIGN_CERT   | path | 自定义证书文件                                                                                    | `SIGN_CERT="./ca.crt"`    |
+| SIGN_KEY    | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"` |
 
 ## 使用
 
