@@ -69,10 +69,10 @@ optional arguments:
 ### 环境变量
 
 | 变量名称    | 类型 | 描述                                                                                              | 示例                      |
-| ----------- | ---- | ------------------------------------------------------------------------------------------------- | ------------------------- | --- |
+| ----------- | ---- | ------------------------------------------------------------------------------------------------- | ------------------------- |
 | ENABLE_FLAC | bool | 启用/禁用无损音质获取                                                                             | `ENABLE_FLAC=true`        |
 | MIGU_COOKIE | str  | 咪咕音源的 aversionid cookie                                                                      |                           |
-| QQ_COOKIE   | str  | QQ 音源的 uin & qm_keyst cookie。格式：`uin=<your_uin>; qm_keyst=<your_qm_keyst>`                 |                           |     |
+| QQ_COOKIE   | str  | QQ 音源的 uin & qm_keyst cookie。格式：`uin=<your_uin>; qm_keyst=<your_qm_keyst>`                 |                           |
 | JOOX_COOKIE | str  | JOOX 音源的 wmid 和 session_key cookie。格式：`wmid=<your_wmid>; session_key=<your_session_key>;` |                           |
 | YOUTUBE_KEY | str  | Youtube 音源的 Data API v3 Key                                                                    |                           |
 | SIGN_CERT   | path | 自定义证书文件                                                                                    | `SIGN_CERT="./ca.crt"`    |
