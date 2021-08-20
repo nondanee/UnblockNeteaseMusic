@@ -6,13 +6,11 @@ on:
             - 'enhanced'
         paths-ignore:
             - '**.md'
-            - '.github/**/*'
 
     pull_request:
         types: [opened, synchronize, reopened]
         paths-ignore:
             - '**.md'
-            - '.github/**/*'
 
     release:
         types: [published]

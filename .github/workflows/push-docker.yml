@@ -6,7 +6,6 @@ on:
             - 'enhanced'
         paths-ignore:
             - '**.md'
-            - '.github/**/*'
 
     release:
         types: [published]
