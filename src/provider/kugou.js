@@ -57,7 +57,7 @@ const single = (song, format) => {
 	const url =
 		'http://trackercdn.kugou.com/i/v2/?' +
 		'key=' +
-		crypto.md5.digest(`${id}kgcloudv2`) +
+		crypto.md5.digest(`${getHashId()}kgcloudv2`) +
 		'&hash=' +
 		getHashId() +
 		'&' +
