@@ -6,18 +6,11 @@
  * @return {boolean}
  */
 const isHost = (url, host) => {
-    try {
-        return new URL(url).hostname === host;
-    } catch (e) {
-        console.warn(`ISHOST > Found malformed URL %s. We use the fallback method.`, url);
-        console.warn("ISHOST > Please report this to us.")
-        if (e) console.warn(e);
-
-        // NOT SAFE: Just an unsafe fallback method.
-        // It is better to never reach this code.
-        return url.includes(host);
-    }
-}
+	// FIXME: Due to #118, we can only check the url
+	// 		  by .includes(). You are welcome to fix
+	//        it (CWE-20).
+	return url.includes(host);
+};
 
 /**
  * The wrapper of `isHost()` to simplify the code.
@@ -29,6 +22,6 @@ const isHost = (url, host) => {
 const isHostWrapper = (url) => (host) => isHost(url, host);
 
 module.exports = {
-    isHost,
-    isHostWrapper,
+	isHost,
+	isHostWrapper,
 };
