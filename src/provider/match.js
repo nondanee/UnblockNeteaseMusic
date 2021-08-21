@@ -65,7 +65,7 @@ const check = (url) => {
 				song.md5 = url.split('/').slice(-1)[0].replace(/\..*/g, '');
 			else if (isHost('qq.com'))
 				song.md5 = response.headers['server-md5'];
-			else if (url.includes('qianqian.com'))
+			else if (isHost('qianqian.com'))
 				song.md5 = response.headers['etag']
 					.replace(/"/g, '')
 					.toLowerCase();

@@ -4,6 +4,7 @@ const crypto = require('./crypto');
 const request = require('./request');
 const match = require('./provider/match');
 const querystring = require('querystring');
+const { isHost } = require('./utilities');
 
 const hook = {
 	request: {
@@ -96,7 +97,7 @@ hook.request.before = (ctx) => {
 	const url = parse(req.url);
 	if (
 		[url.hostname, req.headers.host].some((host) =>
-			host.includes('music.163.com')
+			isHost(host, 'music.163.com')
 		)
 	)
 		ctx.decision = 'proxy';
