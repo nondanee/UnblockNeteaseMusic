@@ -4,7 +4,7 @@ const request = require('../request');
 
 const track = (info) => {
 	const url =
-		'https://mos9527.tooo.top/ncm/pyncm/track/GetTrackAudio?song_ids=' +
+		'http://mos9527.tooo.top/ncm/pyncm/track/GetTrackAudio?song_ids=' +
 		info.id +
 		'&bitrate=' +
 		['999000', '320000'].slice(
