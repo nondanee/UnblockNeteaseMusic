@@ -8,7 +8,7 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 ## 特性
 
--   使用 Bilibili / QQ / ~~百度~~ / 酷狗 / 酷我 / 咪咕 / ~~JOOX~~ / Youtube 音源替换变灰歌曲链接 (默认仅启用一、四、五、六、八)
+-   使用 Bilibili / QQ / ~~百度~~ / 酷狗 / 酷我 / 咪咕 / JOOX / Youtube 等音源替换变灰歌曲链接 (默认仅启用四、五、六、八)
 -   为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
 -   完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 

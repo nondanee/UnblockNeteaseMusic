@@ -6,29 +6,30 @@
 
 const Long =
 	typeof BigInt === 'function' // BigInt support in Node 10+
-		? (n) => (
-				(n = BigInt(n)),
-				{
-					low: Number(n),
-					valueOf: () => n.valueOf(),
-					toString: () => n.toString(),
-					not: () => Long(~n),
-					isNegative: () => n < 0,
-					or: (x) => Long(n | BigInt(x)),
-					and: (x) => Long(n & BigInt(x)),
-					xor: (x) => Long(n ^ BigInt(x)),
-					equals: (x) => n === BigInt(x),
-					multiply: (x) => Long(n * BigInt(x)),
-					shiftLeft: (x) => Long(n << BigInt(x)),
-					shiftRight: (x) => Long(n >> BigInt(x)),
-				}
-		  )
+		? (n) => {
+				const bN = BigInt(n);
+
+				return {
+					low: Number(bN),
+					valueOf: () => bN.valueOf(),
+					toString: () => bN.toString(),
+					not: () => Long(~bN),
+					isNegative: () => bN < 0,
+					or: (x) => Long(bN | BigInt(x)),
+					and: (x) => Long(bN & BigInt(x)),
+					xor: (x) => Long(bN ^ BigInt(x)),
+					equals: (x) => bN === BigInt(x),
+					multiply: (x) => Long(bN * BigInt(x)),
+					shiftLeft: (x) => Long(bN << BigInt(x)),
+					shiftRight: (x) => Long(bN >> BigInt(x)),
+				};
+		  }
 		: (...args) => new (require('long'))(...args);
 
 const range = (n) => Array.from(new Array(n).keys());
 const power = (base, index) =>
 	Array(index)
-		.fill()
+		.fill(null)
 		.reduce((result) => result.multiply(base), Long(1));
 const LongArray = (...array) =>
 	array.map((n) => (n === -1 ? Long(-1, -1) : Long(n)));
@@ -465,25 +466,23 @@ const bitTransform = (arrInt, n, l) => {
 };
 
 const DES64 = (longs, l) => {
-	// long[], long
-	let out = Long(0);
-	let SOut = Long(0);
 	const pR = range(8).map(() => Long(0));
 	const pSource = [Long(0), Long(0)];
 	let L = Long(0);
 	let R = Long(0);
-	out = bitTransform(arrayIP, 64, l);
+	let out = bitTransform(arrayIP, 64, l);
 	pSource[0] = out.and(0xffffffff);
 	pSource[1] = out.and(-4294967296).shiftRight(32);
 
 	range(16).forEach((i) => {
+		let SOut = Long(0);
+
 		R = Long(pSource[1]);
 		R = bitTransform(arrayE, 64, R);
 		R = R.xor(longs[i]);
 		range(8).forEach((j) => {
 			pR[j] = R.shiftRight(j * 8).and(255);
 		});
-		SOut = Long(0);
 		range(8)
 			.reverse()
 			.forEach((sbi) => {

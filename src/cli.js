@@ -18,7 +18,7 @@ const cli = {
 		// metavar - A name for the argument in usage messages.
 		// help - A brief description of what the argument does.
 
-		// required - Whether or not the command-line option may be omitted (optionals only).
+		// required - Whether the command-line option may be omitted (optionals only).
 		// default - The value produced if the argument is absent from the command line.
 		// type - The type to which the command-line argument should be converted.
 		// choices - A container of the allowable values for the argument.
@@ -80,7 +80,7 @@ const cli = {
 			const index = part.startsWith('-')
 				? optionals[part]
 				: positionals.shift();
-			if (index == undefined)
+			if (index === undefined)
 				part.startsWith('-')
 					? error(`no such option: ${part}`)
 					: error(`extra arguments found: ${part}`);
@@ -172,7 +172,8 @@ const help = () => {
 		.map((option) => {
 			const { flags } = option;
 			const name = option.metavar || option.dest;
-			let use = '';
+			/** @type {string} */
+			let use;
 			if (
 				['store_true', 'store_false', 'help', 'version'].includes(
 					option.action

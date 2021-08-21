@@ -1,7 +1,6 @@
 const cache = require('../cache');
 const insure = require('./insure');
 const select = require('./select');
-const crypto = require('../crypto');
 const request = require('../request');
 
 const headers = {

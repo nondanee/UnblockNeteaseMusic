@@ -3,6 +3,7 @@ require('../polyfills');
 const find = require('./find');
 const request = require('../request');
 const consts = require('../consts');
+const { isHostWrapper } = require('../utilities');
 const providers = consts.PROVIDERS;
 const defaultSrc = consts.DEFAULT_SOURCE;
 
@@ -46,12 +47,12 @@ const match = (id, source, data) => {
 const check = (url) => {
 	const song = { size: 0, br: null, url: null, md5: null };
 	let header = { range: 'bytes=0-8191' };
-	if (url.includes('bilivideo.com')) {
-		header = {
-			range: 'bytes=0-8191',
-			referer: 'https://www.bilibili.com/',
-		};
+	const isHost = isHostWrapper(url);
+
+	if (isHost('bilivideo.com')) {
+		header.referer = 'https://www.bilibili.com/';
 	}
+
 	return Promise.race([
 		request('GET', url, header),
 		new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000)),
@@ -59,10 +60,10 @@ const check = (url) => {
 		.then((response) => {
 			if (!response.statusCode.toString().startsWith('2'))
 				return Promise.reject();
-			if (url.includes('126.net'))
+			if (isHost('126.net'))
 				// song.md5 = response.headers['x-nos-meta-origin-md5'] || response.headers['etag'].replace(/"/g, '')
 				song.md5 = url.split('/').slice(-1)[0].replace(/\..*/g, '');
-			else if (url.includes('qq.com'))
+			else if (isHost('qq.com'))
 				song.md5 = response.headers['server-md5'];
 			else if (url.includes('qianqian.com'))
 				song.md5 = response.headers['etag']

@@ -14,10 +14,18 @@ const track = (info) => {
 	return request('GET', url)
 		.then((response) => response.body())
 		.then((body) => {
+			// response.body() without raw should
+			// transform the response to string.
+			if (typeof body !== 'string')
+				return Promise.reject(
+					'response.body() returns a value whose type is not string.'
+				);
+
 			const jsonBody = JSON.parse(body);
 			const matched = jsonBody.data.find((song) => song.id === info.id);
 			if (matched) return matched.url;
-			else return Promise.reject();
+
+			return Promise.reject();
 		});
 };
 

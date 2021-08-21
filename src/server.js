@@ -6,11 +6,12 @@ const parse = require('url').parse;
 const sni = require('./sni');
 const hook = require('./hook');
 const request = require('./request');
+const { isHost } = require('./utilities');
 
 const proxy = {
 	core: {
 		mitm: (req, res) => {
-			if (req.url == '/proxy.pac') {
+			if (req.url === '/proxy.pac') {
 				const url = parse('http://' + req.headers.host);
 				res.writeHead(200, {
 					'Content-Type': 'application/x-ns-proxy-autoconfig',
@@ -54,8 +55,7 @@ const proxy = {
 				.catch(() => proxy.tunnel.close(ctx));
 		},
 	},
-	abort: (socket, from) => {
-		// console.log('call abort', from)
+	abort: (socket) => {
 		if (socket) socket.end();
 		if (socket && !socket.destroyed) socket.destroy();
 	},
@@ -87,7 +87,7 @@ const proxy = {
 			delete req.headers['proxy-authorization'];
 		if (
 			server.authentication &&
-			credential != server.authentication &&
+			credential !== server.authentication &&
 			(socket || req.url.startsWith('http://'))
 		) {
 			if (socket)
@@ -105,7 +105,7 @@ const proxy = {
 		if (ctx.decision || ctx.req.local) return;
 		const url = parse((ctx.socket ? 'https://' : '') + ctx.req.url);
 		const match = (pattern) =>
-			url.href.search(new RegExp(pattern, 'g')) != -1;
+			url.href.search(new RegExp(pattern, 'g')) !== -1;
 		try {
 			const allow = server.whitelist.some(match);
 			const deny = server.blacklist.some(match);
@@ -123,7 +123,7 @@ const proxy = {
 				if (ctx.decision === 'close')
 					return reject((ctx.error = ctx.decision));
 				const { req } = ctx;
-				if (req.url.includes('bilivideo.com')) {
+				if (isHost(req.url, 'bilivideo.com')) {
 					req.headers['referer'] = 'https://www.bilibili.com/';
 					req.headers['user-agent'] = 'okhttp/3.4.1';
 				}

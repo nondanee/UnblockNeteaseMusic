@@ -5,8 +5,6 @@ const crypto = require('../crypto');
 const request = require('../request');
 
 const format = (song) => {
-	// const SingerName = song.SingerName.split('、')
-	const singername = song.singername.split('、');
 	return {
 		// id: song.FileHash,
 		// name: song.SongName,
@@ -42,23 +40,26 @@ const search = (info) => {
 };
 
 const single = (song, format) => {
-	// const url =
-	// 	'http://m.kugou.com/app/i/getSongInfo.php?cmd=playInfo&hash=' + id
-
-	// return request('GET', url)
-	// .then(response => response.json())
-	// .then(jsonBody => jsonBody.url || Promise.reject())
-
-	if (format === 'hash') id = song.id;
-	else if (format === 'hqhash') id = song.id_hq;
-	else if (format === 'sqhash') id = song.id_sq;
+	const getHashId = () => {
+		switch (format) {
+			case 'hash':
+				return song.id;
+			case 'hqhash':
+				return song.id_hq;
+			case 'sqhash':
+				return song.id_sq;
+			default:
+				break;
+		}
+		return '';
+	};
 
 	const url =
 		'http://trackercdn.kugou.com/i/v2/?' +
 		'key=' +
 		crypto.md5.digest(`${id}kgcloudv2`) +
 		'&hash=' +
-		id +
+		getHashId() +
 		'&' +
 		'appid=1005&pid=2&cmd=25&behavior=play&album_id=' +
 		song.album.id;

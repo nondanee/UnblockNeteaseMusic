@@ -12,9 +12,12 @@ const filter = (object, keys) =>
 const limit = (text) => {
 	const output = [text[0]];
 	const length = () => output.reduce((sum, token) => sum + token.length, 0);
-	text.slice(1).some((token) =>
-		length() > 15 ? true : (output.push(token), false)
-	);
+	text.slice(1).some((token) => {
+		if (length() > 15) return true;
+
+		output.push(token);
+		return false;
+	});
 	return output;
 };
 
@@ -23,9 +26,9 @@ const getFormatData = (data) => {
 		const info = filter(data, ['id', 'name', 'alias', 'duration']);
 		info.name = (info.name || '')
 			.replace(/（\s*cover[:：\s][^）]+）/i, '')
-			.replace(/\(\s*cover[:：\s][^\)]+\)/i, '')
+			.replace(/\(\s*cover[:：\s][^)]+\)/i, '')
 			.replace(/（\s*翻自[:：\s][^）]+）/, '')
-			.replace(/\(\s*翻自[:：\s][^\)]+\)/, '');
+			.replace(/\(\s*翻自[:：\s][^)]+\)/, '');
 		info.album = filter(data.album, ['id', 'name']);
 		info.artists = data.artists.map((artist) =>
 			filter(artist, ['id', 'name'])

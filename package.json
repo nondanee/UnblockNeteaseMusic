@@ -29,7 +29,9 @@
 	},
 	"author": "nondanee, 1715173329, pan93412",
 	"license": "MIT",
-	"dependencies": {},
+	"dependencies": {
+		"long": "^4.0.0"
+	},
 	"private": true,
 	"devDependencies": {
 		"prettier": "^2.3.2"
