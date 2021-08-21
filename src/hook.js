@@ -401,6 +401,7 @@ const computeHash = (task) =>
 const tryMatch = (ctx) => {
 	const { req, netease } = ctx;
 	const { jsonBody } = netease;
+	const min_br = process.env.MIN_BR || 0;
 	/** @type {Promise<any>[]} */
 	let tasks;
 	let target = 0;
@@ -408,7 +409,7 @@ const tryMatch = (ctx) => {
 	const inject = (item) => {
 		item.flag = 0;
 		if (
-			(item.code !== 200 || item.freeTrialInfo) &&
+			(item.code !== 200 || item.freeTrialInfo || item.br < min_br) &&
 			(target === 0 || item.id === target)
 		) {
 			return match(item.id)
