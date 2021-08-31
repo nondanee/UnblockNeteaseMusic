@@ -30,7 +30,8 @@
 	"author": "nondanee, 1715173329, pan93412",
 	"license": "MIT",
 	"dependencies": {
-		"long": "^4.0.0"
+		"long": "^4.0.0",
+		"node-windows": "^1.0.0-beta.5"
 	},
 	"private": true,
 	"devDependencies": {

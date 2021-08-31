@@ -75,3 +75,6 @@ src/browser/cache.js
 ca.key
 ca.srl
 server.csr
+
+# Windows daemon
+daemon/
