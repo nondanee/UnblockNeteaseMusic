@@ -53,8 +53,11 @@ const find = (id, data) => {
 		return request('GET', url)
 			.then((response) => response.json())
 			.then((jsonBody) => {
-				const info = getFormatData(jsonBody.songs[0]);
-				return info.name ? info : Promise.reject();
+				if (jsonBody && jsonBody.songs && jsonBody.songs.length) {
+					const info = getFormatData(jsonBody.songs[0]);
+					return info.name ? info : Promise.reject();
+				}
+				return Promise.reject();
 			});
 	}
 };
