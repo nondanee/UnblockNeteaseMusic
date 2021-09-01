@@ -11,6 +11,11 @@ const collector = (job, cycle) =>
 	}, cycle);
 
 module.exports = (job, parameter, live = 30 * 60 * 1000) => {
+	// Disable the cache when the NO_CACHE specified.
+	if (process.env.NO_CACHE) {
+		return job(parameter);
+	}
+
 	const cache = job.cache ? job.cache : (job.cache = {});
 	if (!job.collector) job.collector = collector(job, live / 2);
 	const key =
