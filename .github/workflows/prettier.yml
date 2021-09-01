@@ -20,6 +20,9 @@ jobs:
           node-version: 14
           cache: yarn
 
+      - name: Install dependencies
+        run: yarn
+
       - name: Run prettier
         run: yarn prettier -w .
 

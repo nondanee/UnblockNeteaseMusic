@@ -43,6 +43,9 @@ jobs:
                   image: tonistiigi/binfmt:latest
                   platforms: all
 
+            - name: Install dependencies
+              run: yarn
+
             - name: Building executable file for ${{ matrix.target }}
               run: |
                   npx pkg --compress Brotli -t node14-${{ matrix.target }} .
