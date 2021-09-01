@@ -32,7 +32,7 @@ test('Test if the default sources can get any song', async () => {
 		songList.map(async (song) => match(song, DEFAULT_SOURCE))
 	);
 
-	await expect(command).rejects.not.toThrow();
+	return expect(command).rejects.not.toThrow();
 }, 15000); // can wait for only 15s
 
 sources.forEach((source) => {
@@ -41,6 +41,6 @@ sources.forEach((source) => {
 			songList.map(async (song) => isSongExistedInSource(source, song))
 		);
 
-		await expect(command).rejects.not.toThrow();
+		return expect(command).rejects.not.toThrow();
 	}, 30000); // can wait for 30s
 });
