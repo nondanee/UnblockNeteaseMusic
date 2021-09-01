@@ -1,0 +1,33 @@
+name: Run Prettier
+
+on:
+  push:
+    branches:
+      - enhanced
+
+jobs:
+  run-prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: yarn
+
+      - name: Run prettier
+        run: yarn prettier -w .
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "style: with prettier"
+          delete-branch: true
+          title: "style: with prettier"
+          body: |
+            Please help me check this. Thanks! :-)
+          labels: style
