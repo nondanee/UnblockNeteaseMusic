@@ -1,8 +1,6 @@
 const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'youtube'];
 const PROVIDERS = {
-	netease: require('./provider/netease'),
 	qq: require('./provider/qq'),
-	baidu: require('./provider/baidu'),
 	kugou: require('./provider/kugou'),
 	kuwo: require('./provider/kuwo'),
 	migu: require('./provider/migu'),
