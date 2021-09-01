@@ -1,38 +1,38 @@
 name: Run Prettier
 
 on:
-  push:
-    branches:
-      - enhanced
-  workflow_dispatch:
+    push:
+        branches:
+            - enhanced
+    workflow_dispatch:
 
 jobs:
-  run-prettier:
-    runs-on: ubuntu-latest
+    run-prettier:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
 
-      - name: Use Node.js 14
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-          cache: yarn
+            - name: Use Node.js 14
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 14
+                  cache: yarn
 
-      - name: Install dependencies
-        run: yarn
+            - name: Install dependencies
+              run: yarn
 
-      - name: Run prettier
-        run: yarn prettier -w .
+            - name: Run prettier
+              run: yarn prettier -w .
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.PR_PAT }}
-          commit-message: "style: with prettier [skip ci]"
-          delete-branch: true
-          title: "style: with prettier"
-          body: |
-            Please help me check this. Thanks! :-)
-          labels: style
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v3
+              with:
+                  token: ${{ secrets.PR_PAT }}
+                  commit-message: 'style: with prettier [skip ci]'
+                  delete-branch: true
+                  title: 'style: with prettier'
+                  body: |
+                      Please help me check this. Thanks! :-)
+                  labels: style
