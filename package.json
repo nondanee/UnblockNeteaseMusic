@@ -1,42 +1,42 @@
 {
-  "name": "@1715173329/unblockneteasemusic",
-  "version": "0.26.1",
-  "description": "Revive unavailable songs for Netease Cloud Music",
-  "main": "src/provider/match.js",
-  "bin": {
-    "unblockneteasemusic": "app.js"
-  },
-  "scripts": {
-    "pkg": "pkg . --out-path=dist/",
-    "test": "jest"
-  },
-  "pkg": {
-    "scripts": "build/**/*.js",
-    "assets": [
-      "server.key",
-      "server.crt"
-    ],
-    "targets": [
-      "node14-linux-arm64",
-      "node14-win-arm64",
-      "node14-linux-x64",
-      "node14-win-x64"
-    ],
-    "outputPath": "dist"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/1715173329/UnblockNeteaseMusic.git"
-  },
-  "author": "nondanee, 1715173329, pan93412",
-  "license": "MIT",
-  "dependencies": {
-    "long": "^4.0.0",
-    "node-windows": "^1.0.0-beta.5"
-  },
-  "private": true,
-  "devDependencies": {
-    "jest": "^27.1.0",
-    "prettier": "^2.3.2"
-  }
+	"name": "@1715173329/unblockneteasemusic",
+	"version": "0.26.1",
+	"description": "Revive unavailable songs for Netease Cloud Music",
+	"main": "src/provider/match.js",
+	"bin": {
+		"unblockneteasemusic": "app.js"
+	},
+	"scripts": {
+		"pkg": "pkg . --out-path=dist/",
+		"test": "jest"
+	},
+	"pkg": {
+		"scripts": "build/**/*.js",
+		"assets": [
+			"server.key",
+			"server.crt"
+		],
+		"targets": [
+			"node14-linux-arm64",
+			"node14-win-arm64",
+			"node14-linux-x64",
+			"node14-win-x64"
+		],
+		"outputPath": "dist"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/1715173329/UnblockNeteaseMusic.git"
+	},
+	"author": "nondanee, 1715173329, pan93412",
+	"license": "MIT",
+	"dependencies": {
+		"long": "^4.0.0",
+		"node-windows": "^1.0.0-beta.5"
+	},
+	"private": true,
+	"devDependencies": {
+		"jest": "^27.1.0",
+		"prettier": "^2.3.2"
+	}
 }
