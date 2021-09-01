@@ -11,7 +11,7 @@ const search = (info) => {
 			const jsonBody = JSON.parse(
 				body.replace(/"dfsId":(\d+)/g, '"dfsId":"$1"')
 			); // for js precision
-			const matched = jsonBody.album.songs.find(
+			const matched = jsonBody.album?.songs.find(
 				(song) => song.id === info.id
 			);
 			if (matched)
