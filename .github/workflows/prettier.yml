@@ -29,6 +29,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
+          token: ${{ secrets.PR_PAT }}
           commit-message: "style: with prettier [skip ci]"
           delete-branch: true
           title: "style: with prettier"
