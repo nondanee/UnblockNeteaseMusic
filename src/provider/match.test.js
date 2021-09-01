@@ -14,11 +14,16 @@ beforeAll(() => {
 	process.env.NO_CACHE = 'true';
 });
 
-test('Test if the default sources can get any song', async () => {
-	return Promise.any(
-		songList.map(async (song) => match(song, DEFAULT_SOURCE))
+describe('Test if the default sources can get any song', () => {
+	songList.map(
+		(song) =>
+			test(
+				`finding: ${song}`,
+				async () => match(song, DEFAULT_SOURCE),
+				15000
+			) // can wait for only 15s
 	);
-}, 15000); // can wait for only 15s
+});
 
 /* FOR DEVS: Uncomment these if you want to test all the sources */
 // const sources = Object.keys(PROVIDERS);
