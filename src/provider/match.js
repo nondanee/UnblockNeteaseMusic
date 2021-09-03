@@ -53,7 +53,7 @@ const check = (url) => {
 		header.referer = 'https://www.bilibili.com/';
 	}
 	if (isHost('yt-download.org')) {
-		header.referer  = 'https://www.yt-download.org/';
+		header.referer = 'https://www.yt-download.org/';
 	}
 	return Promise.race([
 		request('GET', url, header),

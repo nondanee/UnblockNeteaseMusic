@@ -44,11 +44,11 @@ const track = (id) => {
 	const regex = /<a[^>]*href=["']([^"']*)["']/;
 
 	return request('GET', url, {}, null, proxy)
-	.then((response) => response.body())
-	.then((body) => {
-		var matched = body.match(regex);
-		return matched ? matched[1] : Promise.reject();
-	});
+		.then((response) => response.body())
+		.then((body) => {
+			var matched = body.match(regex);
+			return matched ? matched[1] : Promise.reject();
+		});
 };
 
 const check = (info) => cache(key ? apiSearch : search, info).then(track);
