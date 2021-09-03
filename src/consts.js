@@ -6,6 +6,7 @@ const PROVIDERS = {
 	migu: require('./provider/migu'),
 	joox: require('./provider/joox'),
 	youtube: require('./provider/youtube'),
+	ytdownload: require('./provider/yt-download'),
 	bilibili: require('./provider/bilibili'),
 	pyncmd: require('./provider/pyncmd'),
 };

@@ -46,13 +46,15 @@ const match = (id, source, data) => {
 
 const check = (url) => {
 	const song = { size: 0, br: null, url: null, md5: null };
-	let header = { range: 'bytes=0-8191' };
+	let header = { range: 'bytes=0-8191', 'accept-encoding': 'identity' };
 	const isHost = isHostWrapper(url);
 
 	if (isHost('bilivideo.com')) {
 		header.referer = 'https://www.bilibili.com/';
 	}
-
+	if (isHost('yt-download.org')) {
+		header.referer  = 'https://www.yt-download.org/';
+	}
 	return Promise.race([
 		request('GET', url, header),
 		new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000)),

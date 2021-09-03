@@ -127,6 +127,9 @@ const proxy = {
 					req.headers['referer'] = 'https://www.bilibili.com/';
 					req.headers['user-agent'] = 'okhttp/3.4.1';
 				}
+				if (isHost(req.url, 'yt-download.org')) {
+					req.headers['referer'] = 'https://www.yt-download.org/';
+				}
 				const url = parse(req.url);
 				const options = request.configure(req.method, url, req.headers);
 				ctx.proxyReq = request
