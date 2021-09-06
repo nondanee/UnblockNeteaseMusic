@@ -101,7 +101,7 @@ optional arguments:
 | YOUTUBE_KEY | str  | Youtube 音源的 Data API v3 Key         | `YOUTUBE_KEY="<your_data_api_key>"`                              |
 | SIGN_CERT   | path | 自定义证书文件                         | `SIGN_CERT="./ca.crt"`                                           |
 | SIGN_KEY    | path | 自定义密钥文件                         | `SIGN_KEY="./server.key"`                                        |
-| NO_CACHE    | bool | 啟用或停用 cache                       | `NO_CACHE=true`                                                  |
+| NO_CACHE    | bool | 停用 cache                       | `NO_CACHE=true`                                                  |
 | DISABLE_HTTPDNS | bool | 停用 Netease HTTPDNS 查詢 | `DISABLE_HTTPDNS=true` |
 
 ## 使用

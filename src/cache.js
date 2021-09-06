@@ -11,8 +11,8 @@ const collector = (job, cycle) =>
 	}, cycle);
 
 module.exports = (job, parameter, live = 30 * 60 * 1000) => {
-	// Disable the cache when the NO_CACHE specified.
-	if (process.env.NO_CACHE) {
+	// Disable the cache when the NO_CACHE = true.
+	if (process.env.NO_CACHE === 'true') {
 		return job(parameter);
 	}
 
