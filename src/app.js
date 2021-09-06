@@ -128,9 +128,10 @@ const httpdns2 = (host) =>
 				.reduce((result, value) => result.concat(value.ip || []), [])
 		);
 
+// Allow disabling HTTPDNS queries with `DISABLE_HTTPDNS=true`
+if (process.env.DISABLE_HTTPDNS !== 'true')
 	Promise.all(
-		// Allow disabling HTTPDNS queries with `DISABLE_HTTPDNS=true`
-		(process.env.DISABLE_HTTPDNS !== "true" ? [httpdns, httpdns2] : [])
+		[httpdns, httpdns2]
 			.map((query) => query(target.join(',')))
 			.concat(target.map(dns))
 	)
