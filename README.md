@@ -102,6 +102,7 @@ optional arguments:
 | SIGN_CERT   | path | 自定义证书文件                         | `SIGN_CERT="./ca.crt"`                                           |
 | SIGN_KEY    | path | 自定义密钥文件                         | `SIGN_KEY="./server.key"`                                        |
 | NO_CACHE    | bool | 啟用或停用 cache                       | `NO_CACHE=true`                                                  |
+| DISABLE_HTTPDNS | bool | 停用 Netease HTTPDNS 查詢 | `DISABLE_HTTPDNS=true` |
 
 ## 使用
 
