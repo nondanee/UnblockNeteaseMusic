@@ -401,7 +401,8 @@ const computeHash = (task) =>
 const tryMatch = (ctx) => {
 	const { req, netease } = ctx;
 	const { jsonBody } = netease;
-	const min_br = process.env.MIN_BR || 0;
+	/** @type {number} */
+	const min_br = Number(process.env.MIN_BR) || 0;
 	/** @type {Promise<any>[]} */
 	let tasks;
 	let target = 0;
