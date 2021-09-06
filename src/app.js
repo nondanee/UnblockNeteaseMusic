@@ -128,36 +128,35 @@ const httpdns2 = (host) =>
 				.reduce((result, value) => result.concat(value.ip || []), [])
 		);
 
-const dnsSource = process.env.DISABLE_HTTPDNS !== 'true' ? [httpdns, httpdns2] : [];
+const dnsSource =
+	process.env.DISABLE_HTTPDNS !== 'true' ? [httpdns, httpdns2] : [];
 
-	Promise.all(
-		// Allow disabling HTTPDNS queries with `DISABLE_HTTPDNS=true`
-		dnsSource
-			.map((query) => query(target.join(',')))
-			.concat(target.map(dns))
-	)
-		.then((result) => {
-			const { host } = hook.target;
-			result.forEach((array) => array.forEach(host.add, host));
-			server.whitelist = server.whitelist.concat(
-				Array.from(host).map(escape)
+Promise.all(
+	// Allow disabling HTTPDNS queries with `DISABLE_HTTPDNS=true`
+	dnsSource.map((query) => query(target.join(','))).concat(target.map(dns))
+)
+	.then((result) => {
+		const { host } = hook.target;
+		result.forEach((array) => array.forEach(host.add, host));
+		server.whitelist = server.whitelist.concat(
+			Array.from(host).map(escape)
+		);
+		const log = (type) =>
+			console.log(
+				`${['HTTP', 'HTTPS'][type]} Server running @ http://${
+					address || '0.0.0.0'
+				}:${port[type]}`
 			);
-			const log = (type) =>
-				console.log(
-					`${['HTTP', 'HTTPS'][type]} Server running @ http://${
-						address || '0.0.0.0'
-					}:${port[type]}`
-				);
-			if (port[0])
-				server.http
-					.listen(port[0], address)
-					.once('listening', () => log(0));
-			if (port[1])
-				server.https
-					.listen(port[1], address)
-					.once('listening', () => log(1));
-		})
-		.catch((error) => {
-			console.log(error);
-			process.exit(1);
-		});
+		if (port[0])
+			server.http
+				.listen(port[0], address)
+				.once('listening', () => log(0));
+		if (port[1])
+			server.https
+				.listen(port[1], address)
+				.once('listening', () => log(1));
+	})
+	.catch((error) => {
+		console.log(error);
+		process.exit(1);
+	});
