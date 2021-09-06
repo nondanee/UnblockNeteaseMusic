@@ -129,7 +129,7 @@ const httpdns2 = (host) =>
 		);
 
 // Allow disabling HTTPDNS queries with `DISABLE_HTTPDNS=true`
-if (process.env.DISABLE_HTTPDNS !== "true")
+if (process.env.DISABLE_HTTPDNS !== 'true')
 	Promise.all(
 		[httpdns, httpdns2]
 			.map((query) => query(target.join(',')))
