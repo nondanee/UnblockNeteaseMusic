@@ -15,6 +15,27 @@ beforeAll(() => {
 });
 
 describe('Test if the default sources can get any song', () => {
+	beforeEach(() => {
+		// Enable HTTPDNS.
+		process.env.DISABLE_HTTPDNS = '';
+	});
+
+	songList.map(
+		(song) =>
+			test(
+				`finding: ${song}`,
+				async () => match(song, DEFAULT_SOURCE),
+				15000
+			) // can wait for only 15s
+	);
+});
+
+describe('Test if the default sources can get any song when the HTTPDNS disabled', () => {
+	beforeEach(() => {
+		// Enable HTTPDNS.
+		process.env.DISABLE_HTTPDNS = 'true';
+	});
+
 	songList.map(
 		(song) =>
 			test(
