@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const cache = require('./cache');
 const parse = require('url').parse;
 require('./provider/insure').disable = true;

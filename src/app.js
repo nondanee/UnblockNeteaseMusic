@@ -1,10 +1,8 @@
-#!/usr/bin/env node
-
-const package = require('../package.json');
+const packageJson = require('../package.json');
 const config = require('./cli.js')
 	.program({
-		name: package.name.replace(/@.+\//, ''),
-		version: package.version,
+		name: packageJson.name.replace(/@.+\//, ''),
+		version: packageJson.version,
 	})
 	.option(['-v', '--version'], { action: 'version' })
 	.option(['-p', '--port'], { metavar: 'port', help: 'specify server port' })
