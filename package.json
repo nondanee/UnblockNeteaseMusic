@@ -38,17 +38,14 @@
 	"private": true,
 	"devDependencies": {
 		"@babel/core": "^7.15.5",
-		"@babel/plugin-transform-runtime": "^7.15.0",
 		"@babel/preset-env": "^7.15.6",
 		"@rollup/plugin-babel": "^5.3.0",
 		"@rollup/plugin-commonjs": "^20.0.0",
 		"@rollup/plugin-json": "^4.1.0",
 		"@rollup/plugin-node-resolve": "^13.0.4",
-		"@swc/core": "^1.2.85",
-		"core-js": "3",
 		"jest": "^27.1.0",
 		"prettier": "^2.3.2",
 		"rollup": "^2.56.3",
-		"rollup-plugin-swc": "^0.2.0"
+		"core-js": "3"
 	}
 }
