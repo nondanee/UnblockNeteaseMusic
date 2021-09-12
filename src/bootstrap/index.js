@@ -8,8 +8,12 @@ const devMessage = require('./message');
 function startApp(mainEntry) {
 	if (process.env.DEVELOPMENT === 'true') {
 		console.warn(devMessage);
+		// Require the source.
 		require('../' + mainEntry);
-	} else require('../' + mainEntry);
+	} else {
+		// Require the precompiled bundle.
+		require('../../precompiled/' + mainEntry);
+	}
 }
 
 module.exports = startApp;
