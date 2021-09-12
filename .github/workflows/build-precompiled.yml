@@ -1,4 +1,4 @@
-name: Run Prettier
+name: Build precompiled JavaScript file
 
 on:
     push:
@@ -23,16 +23,16 @@ jobs:
             - name: Install dependencies
               run: yarn
 
-            - name: Run prettier
-              run: yarn prettier -w .
+            - name: Build the precompiled package
+              run: yarn build
 
             - name: Create Pull Request
               uses: peter-evans/create-pull-request@v3
               with:
                   token: ${{ secrets.PR_PAT }}
-                  commit-message: 'style: with prettier [skip ci]'
+                  commit-message: 'build(precompiled): make a bundle with the dependencies [skip ci]'
                   delete-branch: true
-                  title: 'style: with prettier'
+                  title: 'build(precompiled): make a bundle with the dependencies'
                   body: |
-                      Please help me check this. Thanks! :-)
-                  labels: ci:style
+                       Merge till a new release tagged.
+                  labels: ci:build
