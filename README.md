@@ -51,12 +51,27 @@ cd UnblockNeteaseMusic
 docker-compose up
 ```
 
-### 传统作法
+### 直接使用 Repo 最新版本
 
 ```bash
 git clone https://github.com/1715173329/UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 node app.js # 建议使用 screen / tmux 把 app.js 挂后台
+```
+
+#### 編譯最新的 package
+
+```bash
+yarn
+yarn build
+node app.js # 即可使用 repo 的最新開發內容
+```
+
+#### 採用（而不編譯）最新的 package
+
+```bash
+yarn
+DEVELOPMENT=true node app.js
 ```
 
 ### Android Xposed 模块
@@ -102,7 +117,8 @@ optional arguments:
 | SIGN_CERT       | path | 自定义证书文件                         | `SIGN_CERT="./ca.crt"`                                           |
 | SIGN_KEY        | path | 自定义密钥文件                         | `SIGN_KEY="./server.key"`                                        |
 | NO_CACHE        | bool | 停用 cache                             | `NO_CACHE=true`                                                  |
-| DISABLE_HTTPDNS | bool | 停用 Netease HTTPDNS 查詢              | `DISABLE_HTTPDNS=true`                                           |
+| ENABLE_HTTPDNS | bool | 啟用故障的 Netease HTTPDNS 查詢。不建議啟用              | `ENABLE_HTTPDNS=true`                                           |
+| DEVELOPMENT | bool | 啟用開發模式。需要自己用 `yarn` 安裝依賴 (dependencies)           | `DEVELOPMENT=true`                                           |
 
 ## 使用
 
