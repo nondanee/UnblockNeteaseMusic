@@ -30,7 +30,7 @@ jobs:
               uses: peter-evans/create-pull-request@v3
               with:
                   token: ${{ secrets.PR_PAT }}
-                  commit-message: 'build(precompiled): make a bundle with the dependencies [skip ci]'
+                  commit-message: 'build(precompiled): make a bundle with the dependencies'
                   delete-branch: true
                   title: 'build(precompiled): make a bundle with the dependencies'
                   body: |
