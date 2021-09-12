@@ -1,5 +1,3 @@
-require('../polyfills');
-
 const find = require('./find');
 const request = require('../request');
 const consts = require('../consts');
