@@ -1,2 +1,3 @@
-#!/usr/bin/env node
-require('./src/app');
+#!/usr/bin/node
+
+require('./src/bootstrap')('app');
