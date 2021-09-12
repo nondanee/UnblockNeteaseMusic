@@ -130,34 +130,31 @@ const httpdns2 = (host) =>
 // It seems broken - BETTER TO NOT ENABLE IT!
 const dnsSource = process.env.ENABLE_HTTPDNS === 'true' ? [httpdns, httpdns2] : [];
 
-	Promise.all(
-
-		dnsSource
-			.map((query) => query(target.join(',')))
-			.concat(target.map(dns))
-	)
-		.then((result) => {
-			const { host } = hook.target;
-			result.forEach((array) => array.forEach(host.add, host));
-			server.whitelist = server.whitelist.concat(
-				Array.from(host).map(escape)
+Promise.all(
+	dnsSource.map((query) => query(target.join(','))).concat(target.map(dns))
+)
+	.then((result) => {
+		const { host } = hook.target;
+		result.forEach((array) => array.forEach(host.add, host));
+		server.whitelist = server.whitelist.concat(
+			Array.from(host).map(escape)
+		);
+		const log = (type) =>
+			console.log(
+				`${['HTTP', 'HTTPS'][type]} Server running @ http://${
+					address || '0.0.0.0'
+				}:${port[type]}`
 			);
-			const log = (type) =>
-				console.log(
-					`${['HTTP', 'HTTPS'][type]} Server running @ http://${
-						address || '0.0.0.0'
-					}:${port[type]}`
-				);
-			if (port[0])
-				server.http
-					.listen(port[0], address)
-					.once('listening', () => log(0));
-			if (port[1])
-				server.https
-					.listen(port[1], address)
-					.once('listening', () => log(1));
-		})
-		.catch((error) => {
-			console.log(error);
-			process.exit(1);
-		});
+		if (port[0])
+			server.http
+				.listen(port[0], address)
+				.once('listening', () => log(0));
+		if (port[1])
+			server.https
+				.listen(port[1], address)
+				.once('listening', () => log(1));
+	})
+	.catch((error) => {
+		console.log(error);
+		process.exit(1);
+	});
