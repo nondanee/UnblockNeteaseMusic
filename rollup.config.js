@@ -3,6 +3,9 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
 
+/**
+ * @type {Partial<import('rollup').RollupOptions>}
+ */
 const commonConfig = {
 	output: {
 		dir: 'precompiled',
