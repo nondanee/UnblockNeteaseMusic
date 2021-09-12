@@ -14,9 +14,9 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 ## 运行
 
-### 直接打開可执行文件
+### 直接打开可执行文件
 
-去右侧的 Releases 找到最新版本，然后在下方的 Assets 找到符合你系统架构的可执行文件。下載回來後点两下即可使用。
+去右侧的 Releases 找到最新版本，然后在下方的 Assets 找到符合你系统架构的可执行文件。下载回来后点两下即可使用。
 
 > macOS 因为签名问题，暂时不提供可执行文件。请先按照其他做法使用。
 
@@ -59,15 +59,15 @@ cd UnblockNeteaseMusic
 node app.js # 建议使用 screen / tmux 把 app.js 挂后台
 ```
 
-#### 編譯最新的 package
+#### 编译最新的 package
 
 ```bash
 yarn
 yarn build
-node app.js # 即可使用 repo 的最新開發內容
+node app.js # 即可使用 repo 的最新开发内容
 ```
 
-#### 採用（而不編譯）最新的 package
+#### 采用（而不编译）最新的 package
 
 ```bash
 yarn
@@ -117,8 +117,8 @@ optional arguments:
 | SIGN_CERT       | path | 自定义证书文件                         | `SIGN_CERT="./ca.crt"`                                           |
 | SIGN_KEY        | path | 自定义密钥文件                         | `SIGN_KEY="./server.key"`                                        |
 | NO_CACHE        | bool | 停用 cache                             | `NO_CACHE=true`                                                  |
-| ENABLE_HTTPDNS | bool | 啟用故障的 Netease HTTPDNS 查詢。不建議啟用              | `ENABLE_HTTPDNS=true`                                           |
-| DEVELOPMENT | bool | 啟用開發模式。需要自己用 `yarn` 安裝依賴 (dependencies)           | `DEVELOPMENT=true`                                           |
+| ENABLE_HTTPDNS | bool | 启用故障的 Netease HTTPDNS 查询。不建议启用              | `ENABLE_HTTPDNS=true`                                           |
+| DEVELOPMENT | bool | 启用开发模式。需要自己用 `yarn` 安装依赖 (dependencies)           | `DEVELOPMENT=true`                                           |
 
 ## 使用
 
