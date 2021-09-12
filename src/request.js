@@ -1,10 +1,13 @@
 const zlib = require('zlib');
 const http = require('http');
 const https = require('https');
+const ON_CANCEL = require('./cancel');
+const RequestCancelled = require('./exceptions/RequestCancelled');
 const parse = require('url').parse;
+const format = require('url').format;
 
+const timeoutThreshold = 10 * 1000;
 const translate = (host) => (global.hosts || {})[host] || host;
-
 const create = (url, proxy) =>
 	(((typeof proxy === 'undefined' ? global.proxy : proxy) || url).protocol ===
 	'https:'
@@ -51,9 +54,17 @@ const configure = (method, url, headers, proxy) => {
 	return options;
 };
 
-const request = (method, url, headers, body, proxy) => {
+/**
+ * @param {string} method
+ * @param {string} url
+ * @param {Object?} headers
+ * @param {unknown?} body
+ * @param {unknown?} proxy
+ * @param {CancelRequest?} cancelRequest
+ */
+const request = (method, url, headers, body, proxy, cancelRequest) => {
 	url = parse(url);
-	headers = headers || {};
+	headers = headers || /* @type {Partial<Record<string,string>>} */ {};
 	const options = configure(
 		method,
 		url,
@@ -72,10 +83,21 @@ const request = (method, url, headers, body, proxy) => {
 	);
 
 	return new Promise((resolve, reject) => {
-		create(
-			url,
-			proxy
-		)(options)
+		const clientRequest = create(url, proxy)(options);
+		const destroyClientRequest = function () {
+			// We destroy the request and throw RequestCancelled
+			// when the request has been cancelled.
+			clientRequest.destroy(new RequestCancelled(format(url)));
+		};
+
+		cancelRequest?.on(ON_CANCEL, destroyClientRequest);
+		if (cancelRequest?.cancelled ?? false) destroyClientRequest();
+
+		clientRequest
+			.setTimeout(timeoutThreshold, () => {
+				console.warn(`TIMEOUT > ${format(url)}`);
+				destroyClientRequest();
+			})
 			.on('response', (response) => resolve(response))
 			.on('connect', (_, socket) =>
 				https
@@ -93,21 +115,26 @@ const request = (method, url, headers, body, proxy) => {
 			.on('error', (error) => reject(error))
 			.end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
 	}).then((response) => {
-		if (new Set([201, 301, 302, 303, 307, 308]).has(response.statusCode))
+		if (cancelRequest?.cancelled ?? false)
+			return Promise.reject(new RequestCancelled(format(url)));
+
+		if (new Set([201, 301, 302, 303, 307, 308]).has(response.statusCode)) {
+			delete headers.host;
 			return request(
 				method,
 				url.resolve(response.headers.location || url.href),
-				(delete headers.host, headers),
+				headers,
 				body,
 				proxy
 			);
-		else
-			return Object.assign(response, {
-				url: url,
-				body: (raw) => read(response, raw),
-				json: () => json(response),
-				jsonp: () => jsonp(response),
-			});
+		}
+
+		return Object.assign(response, {
+			url: url,
+			body: (raw) => read(response, raw),
+			json: () => json(response),
+			jsonp: () => jsonp(response),
+		});
 	});
 };
 
