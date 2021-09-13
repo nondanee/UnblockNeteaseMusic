@@ -1,10 +1,8 @@
-#!/usr/bin/env node
-
-const package = require('../package.json');
+const packageJson = require('../package.json');
 const config = require('./cli.js')
 	.program({
-		name: package.name.replace(/@.+\//, ''),
-		version: package.version,
+		name: packageJson.name.replace(/@.+\//, ''),
+		version: packageJson.version,
 	})
 	.option(['-v', '--version'], { action: 'version' })
 	.option(['-p', '--port'], { metavar: 'port', help: 'specify server port' })
@@ -128,11 +126,11 @@ const httpdns2 = (host) =>
 				.reduce((result, value) => result.concat(value.ip || []), [])
 		);
 
-const dnsSource =
-	process.env.DISABLE_HTTPDNS !== 'true' ? [httpdns, httpdns2] : [];
+// Allow enabling HTTPDNS queries with `ENABLE_HTTPDNS=true`
+// It seems broken - BETTER TO NOT ENABLE IT!
+const dnsSource = process.env.ENABLE_HTTPDNS === 'true' ? [httpdns, httpdns2] : [];
 
 Promise.all(
-	// Allow disabling HTTPDNS queries with `DISABLE_HTTPDNS=true`
 	dnsSource.map((query) => query(target.join(','))).concat(target.map(dns))
 )
 	.then((result) => {

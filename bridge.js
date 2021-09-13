@@ -1,2 +1,3 @@
-#!/usr/bin/env node
-require('./src/bridge');
+#!/usr/bin/node
+
+require('./src/bootstrap')('bridge');

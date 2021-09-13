@@ -1,17 +1,19 @@
-require('../polyfills');
-
 const find = require('./find');
 const request = require('../request');
 const consts = require('../consts');
 const { isHostWrapper } = require('../utilities');
+const { CancelRequest } = require('../cancel');
+const RequestCancelled = require('../exceptions/RequestCancelled');
 const providers = consts.PROVIDERS;
 const defaultSrc = consts.DEFAULT_SOURCE;
 
 const match = (id, source, data) => {
 	let meta = {};
+	const cancelRequest = new CancelRequest();
 	const candidate = (source || global.source || defaultSrc).filter(
 		(name) => name in providers
 	);
+
 	return find(id, data)
 		.then((info) => {
 			meta = info;
@@ -28,17 +30,28 @@ const match = (id, source, data) => {
 							return Promise.reject();
 
 						// We check if the song.url is reachable.
-						await request('GET', song.url);
-						// It will be thrown on failed.
+						// It will throw on failed.
+						await request(
+							'GET',
+							song.url,
+							undefined,
+							undefined,
+							undefined,
+							cancelRequest
+						);
 						return song;
 					} catch (e) {
-						if (e) console.warn(e);
+						if (e && !(e instanceof RequestCancelled))
+							console.warn(e);
 						return Promise.reject(); // .any will return the fulfilled one.
 					}
 				})
 			);
 		})
 		.then((song) => {
+			// We cancel the remaining request which is still running.
+			cancelRequest.cancel();
+
 			console.log(`[${meta.id}] ${meta.name}\n${song.url}`);
 			return song;
 		});

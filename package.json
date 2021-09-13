@@ -1,17 +1,17 @@
 {
 	"name": "@1715173329/unblockneteasemusic",
-	"version": "0.26.1",
+	"version": "v0.27.0-beta.1",
 	"description": "Revive unavailable songs for Netease Cloud Music",
 	"main": "src/provider/match.js",
 	"bin": {
-		"unblockneteasemusic": "app.js"
+		"unblockneteasemusic": "./precompiled/app.js"
 	},
 	"scripts": {
+		"build": "rollup -c",
 		"pkg": "pkg . --out-path=dist/",
 		"test": "jest"
 	},
 	"pkg": {
-		"scripts": "build/**/*.js",
 		"assets": [
 			"server.key",
 			"server.crt"
@@ -36,7 +36,16 @@
 	},
 	"private": true,
 	"devDependencies": {
+		"@babel/core": "^7.15.5",
+		"@babel/preset-env": "^7.15.6",
+		"@rollup/plugin-babel": "^5.3.0",
+		"@rollup/plugin-commonjs": "^20.0.0",
+		"@rollup/plugin-json": "^4.1.0",
+		"@rollup/plugin-node-resolve": "^13.0.4",
 		"jest": "^27.1.0",
-		"prettier": "^2.3.2"
+		"pkg": "^5.3.2",
+		"prettier": "^2.3.2",
+		"rollup": "^2.56.3",
+		"core-js": "3"
 	}
 }
