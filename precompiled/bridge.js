@@ -2,49 +2,41 @@
 
 'use strict';
 
-var require$$0$1 = require('path');
-var require$$1$1 = require('net');
-var require$$0$3 = require('zlib');
+var require$$0 = require('events');
+var require$$5 = require('url');
+var require$$0$1 = require('zlib');
 var require$$1 = require('http');
 var require$$2 = require('https');
-var require$$0$2 = require('events');
-var require$$5 = require('url');
-var require$$0$4 = require('crypto');
+var require$$0$2 = require('crypto');
 var require$$2$1 = require('querystring');
-var require$$0$5 = require('fs');
-var require$$8 = require('dns');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
-var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
-var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$3);
+var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
+var require$$5__default = /*#__PURE__*/_interopDefaultLegacy(require$$5);
+var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
-var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
-var require$$5__default = /*#__PURE__*/_interopDefaultLegacy(require$$5);
-var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
+var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
 var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
-var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
-var require$$8__default = /*#__PURE__*/_interopDefaultLegacy(require$$8);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var check$a = function (it) {
+var check$9 = function (it) {
   return it && it.Math == Math && it;
 }; // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 
 
 var global$i = // eslint-disable-next-line es/no-global-this -- safe
-check$a(typeof globalThis == 'object' && globalThis) || check$a(typeof window == 'object' && window) || // eslint-disable-next-line no-restricted-globals -- safe
-check$a(typeof self == 'object' && self) || check$a(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
+check$9(typeof globalThis == 'object' && globalThis) || check$9(typeof window == 'object' && window) || // eslint-disable-next-line no-restricted-globals -- safe
+check$9(typeof self == 'object' && self) || check$9(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
 function () {
   return this;
 }() || Function('return this')();
 
 var objectGetOwnPropertyDescriptor = {};
 
-var fails$8 = function (exec) {
+var fails$6 = function (exec) {
   try {
     return !!exec();
   } catch (error) {
@@ -52,9 +44,9 @@ var fails$8 = function (exec) {
   }
 };
 
-var fails$7 = fails$8; // Detect IE8's incomplete defineProperty implementation
+var fails$5 = fails$6; // Detect IE8's incomplete defineProperty implementation
 
-var descriptors = !fails$7(function () {
+var descriptors = !fails$5(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty({}, 1, {
     get: function () {
@@ -88,17 +80,17 @@ var createPropertyDescriptor$2 = function (bitmap, value) {
   };
 };
 
-var toString$2 = {}.toString;
+var toString = {}.toString;
 
 var classofRaw$1 = function (it) {
-  return toString$2.call(it).slice(8, -1);
+  return toString.call(it).slice(8, -1);
 };
 
-var fails$6 = fails$8;
+var fails$4 = fails$6;
 var classof$3 = classofRaw$1;
 var split = ''.split; // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
-var indexedObject = fails$6(function () {
+var indexedObject = fails$4(function () {
   // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
   // eslint-disable-next-line no-prototype-builtins -- safe
   return !Object('z').propertyIsEnumerable(0);
@@ -126,44 +118,44 @@ var isObject$8 = function (it) {
 
 var global$h = global$i;
 
-var aFunction$p = function (variable) {
+var aFunction$n = function (variable) {
   return typeof variable == 'function' ? variable : undefined;
 };
 
-var getBuiltIn$h = function (namespace, method) {
-  return arguments.length < 2 ? aFunction$p(global$h[namespace]) : global$h[namespace] && global$h[namespace][method];
+var getBuiltIn$g = function (namespace, method) {
+  return arguments.length < 2 ? aFunction$n(global$h[namespace]) : global$h[namespace] && global$h[namespace][method];
 };
 
-var getBuiltIn$g = getBuiltIn$h;
-var engineUserAgent = getBuiltIn$g('navigator', 'userAgent') || '';
+var getBuiltIn$f = getBuiltIn$g;
+var engineUserAgent = getBuiltIn$f('navigator', 'userAgent') || '';
 
 var global$g = global$i;
-var userAgent$5 = engineUserAgent;
+var userAgent$3 = engineUserAgent;
 var process$4 = global$g.process;
 var Deno = global$g.Deno;
 var versions = process$4 && process$4.versions || Deno && Deno.version;
 var v8 = versions && versions.v8;
-var match$2, version$2;
+var match, version;
 
 if (v8) {
-  match$2 = v8.split('.');
-  version$2 = match$2[0] < 4 ? 1 : match$2[0] + match$2[1];
-} else if (userAgent$5) {
-  match$2 = userAgent$5.match(/Edge\/(\d+)/);
+  match = v8.split('.');
+  version = match[0] < 4 ? 1 : match[0] + match[1];
+} else if (userAgent$3) {
+  match = userAgent$3.match(/Edge\/(\d+)/);
 
-  if (!match$2 || match$2[1] >= 74) {
-    match$2 = userAgent$5.match(/Chrome\/(\d+)/);
-    if (match$2) version$2 = match$2[1];
+  if (!match || match[1] >= 74) {
+    match = userAgent$3.match(/Chrome\/(\d+)/);
+    if (match) version = match[1];
   }
 }
 
-var engineV8Version = version$2 && +version$2;
+var engineV8Version = version && +version;
 
 /* eslint-disable es/no-symbol -- required for testing */
 var V8_VERSION$1 = engineV8Version;
-var fails$5 = fails$8; // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+var fails$3 = fails$6; // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 
-var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$5(function () {
+var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$3(function () {
   var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
   // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
 
@@ -175,12 +167,12 @@ var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$5(function () {
 var NATIVE_SYMBOL$1 = nativeSymbol;
 var useSymbolAsUid = NATIVE_SYMBOL$1 && !Symbol.sham && typeof Symbol.iterator == 'symbol';
 
-var getBuiltIn$f = getBuiltIn$h;
+var getBuiltIn$e = getBuiltIn$g;
 var USE_SYMBOL_AS_UID$1 = useSymbolAsUid;
-var isSymbol$3 = USE_SYMBOL_AS_UID$1 ? function (it) {
+var isSymbol$2 = USE_SYMBOL_AS_UID$1 ? function (it) {
   return typeof it == 'symbol';
 } : function (it) {
-  var $Symbol = getBuiltIn$f('Symbol');
+  var $Symbol = getBuiltIn$e('Symbol');
   return typeof $Symbol == 'function' && Object(it) instanceof $Symbol;
 };
 
@@ -234,15 +226,15 @@ var store$2 = sharedStore;
 var requireObjectCoercible = requireObjectCoercible$2; // `ToObject` abstract operation
 // https://tc39.es/ecma262/#sec-toobject
 
-var toObject$2 = function (argument) {
+var toObject$1 = function (argument) {
   return Object(requireObjectCoercible(argument));
 };
 
-var toObject$1 = toObject$2;
+var toObject = toObject$1;
 var hasOwnProperty = {}.hasOwnProperty;
 
 var has$7 = Object.hasOwn || function hasOwn(it, key) {
-  return hasOwnProperty.call(toObject$1(it), key);
+  return hasOwnProperty.call(toObject(it), key);
 };
 
 var id = 0;
@@ -275,21 +267,21 @@ var wellKnownSymbol$a = function (name) {
 };
 
 var isObject$6 = isObject$8;
-var isSymbol$2 = isSymbol$3;
+var isSymbol$1 = isSymbol$2;
 var ordinaryToPrimitive = ordinaryToPrimitive$1;
 var wellKnownSymbol$9 = wellKnownSymbol$a;
 var TO_PRIMITIVE = wellKnownSymbol$9('toPrimitive'); // `ToPrimitive` abstract operation
 // https://tc39.es/ecma262/#sec-toprimitive
 
 var toPrimitive$1 = function (input, pref) {
-  if (!isObject$6(input) || isSymbol$2(input)) return input;
+  if (!isObject$6(input) || isSymbol$1(input)) return input;
   var exoticToPrim = input[TO_PRIMITIVE];
   var result;
 
   if (exoticToPrim !== undefined) {
     if (pref === undefined) pref = 'default';
     result = exoticToPrim.call(input, pref);
-    if (!isObject$6(result) || isSymbol$2(result)) return result;
+    if (!isObject$6(result) || isSymbol$1(result)) return result;
     throw TypeError("Can't convert object to primitive value");
   }
 
@@ -298,12 +290,12 @@ var toPrimitive$1 = function (input, pref) {
 };
 
 var toPrimitive = toPrimitive$1;
-var isSymbol$1 = isSymbol$3; // `ToPropertyKey` abstract operation
+var isSymbol = isSymbol$2; // `ToPropertyKey` abstract operation
 // https://tc39.es/ecma262/#sec-topropertykey
 
 var toPropertyKey$2 = function (argument) {
   var key = toPrimitive(argument, 'string');
-  return isSymbol$1(key) ? key : String(key);
+  return isSymbol(key) ? key : String(key);
 };
 
 var global$c = global$i;
@@ -317,10 +309,10 @@ var documentCreateElement = function (it) {
 };
 
 var DESCRIPTORS$4 = descriptors;
-var fails$4 = fails$8;
+var fails$2 = fails$6;
 var createElement$1 = documentCreateElement; // Thank's IE8 for his funny defineProperty
 
-var ie8DomDefine = !DESCRIPTORS$4 && !fails$4(function () {
+var ie8DomDefine = !DESCRIPTORS$4 && !fails$2(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- requied for testing
   return Object.defineProperty(createElement$1('div'), 'a', {
     get: function () {
@@ -543,18 +535,18 @@ var TEMPLATE = String(String).split('String');
 var objectGetOwnPropertyNames = {};
 
 var ceil = Math.ceil;
-var floor$1 = Math.floor; // `ToInteger` abstract operation
+var floor = Math.floor; // `ToInteger` abstract operation
 // https://tc39.es/ecma262/#sec-tointeger
 
 var toInteger$2 = function (argument) {
-  return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor$1 : ceil)(argument);
+  return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
 };
 
 var toInteger$1 = toInteger$2;
 var min$1 = Math.min; // `ToLength` abstract operation
 // https://tc39.es/ecma262/#sec-tolength
 
-var toLength$3 = function (argument) {
+var toLength$2 = function (argument) {
   return argument > 0 ? min$1(toInteger$1(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
 };
 
@@ -570,13 +562,13 @@ var toAbsoluteIndex$1 = function (index, length) {
 };
 
 var toIndexedObject$1 = toIndexedObject$3;
-var toLength$2 = toLength$3;
+var toLength$1 = toLength$2;
 var toAbsoluteIndex = toAbsoluteIndex$1; // `Array.prototype.{ indexOf, includes }` methods implementation
 
 var createMethod = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIndexedObject$1($this);
-    var length = toLength$2(O.length);
+    var length = toLength$1(O.length);
     var index = toAbsoluteIndex(fromIndex, length);
     var value; // Array#includes uses SameValueZero equality algorithm
     // eslint-disable-next-line no-self-compare -- NaN check
@@ -638,12 +630,12 @@ var objectGetOwnPropertySymbols = {};
 
 objectGetOwnPropertySymbols.f = Object.getOwnPropertySymbols;
 
-var getBuiltIn$e = getBuiltIn$h;
+var getBuiltIn$d = getBuiltIn$g;
 var getOwnPropertyNamesModule = objectGetOwnPropertyNames;
 var getOwnPropertySymbolsModule = objectGetOwnPropertySymbols;
 var anObject$y = anObject$A; // all object keys, includes non-enumerable and symbols
 
-var ownKeys$1 = getBuiltIn$e('Reflect', 'ownKeys') || function ownKeys(it) {
+var ownKeys$1 = getBuiltIn$d('Reflect', 'ownKeys') || function ownKeys(it) {
   var keys = getOwnPropertyNamesModule.f(anObject$y(it));
   var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
   return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
@@ -665,12 +657,12 @@ var copyConstructorProperties$1 = function (target, source) {
   }
 };
 
-var fails$3 = fails$8;
+var fails$1 = fails$6;
 var replacement = /#|\.prototype\./;
 
 var isForced$2 = function (feature, detection) {
   var value = data[normalize(feature)];
-  return value == POLYFILL ? true : value == NATIVE ? false : typeof detection == 'function' ? fails$3(detection) : !!detection;
+  return value == POLYFILL ? true : value == NATIVE ? false : typeof detection == 'function' ? fails$1(detection) : !!detection;
 };
 
 var normalize = isForced$2.normalize = function (string) {
@@ -807,14 +799,14 @@ var setToStringTag$1 = function (it, TAG, STATIC) {
   }
 };
 
-var getBuiltIn$d = getBuiltIn$h;
+var getBuiltIn$c = getBuiltIn$g;
 var definePropertyModule = objectDefineProperty;
 var wellKnownSymbol$7 = wellKnownSymbol$a;
 var DESCRIPTORS = descriptors;
 var SPECIES$2 = wellKnownSymbol$7('species');
 
 var setSpecies$1 = function (CONSTRUCTOR_NAME) {
-  var Constructor = getBuiltIn$d(CONSTRUCTOR_NAME);
+  var Constructor = getBuiltIn$c(CONSTRUCTOR_NAME);
   var defineProperty = definePropertyModule.f;
 
   if (DESCRIPTORS && Constructor && !Constructor[SPECIES$2]) {
@@ -827,7 +819,7 @@ var setSpecies$1 = function (CONSTRUCTOR_NAME) {
   }
 };
 
-var aFunction$o = function (it) {
+var aFunction$m = function (it) {
   if (typeof it != 'function') {
     throw TypeError(String(it) + ' is not a function');
   }
@@ -854,10 +846,10 @@ var isArrayIteratorMethod$1 = function (it) {
   return it !== undefined && (Iterators$1.Array === it || ArrayPrototype[ITERATOR$2] === it);
 };
 
-var aFunction$n = aFunction$o; // optional / simple context binding
+var aFunction$l = aFunction$m; // optional / simple context binding
 
 var functionBindContext = function (fn, that, length) {
-  aFunction$n(fn);
+  aFunction$l(fn);
   if (that === undefined) return fn;
 
   switch (length) {
@@ -889,9 +881,9 @@ var functionBindContext = function (fn, that, length) {
 
 var wellKnownSymbol$5 = wellKnownSymbol$a;
 var TO_STRING_TAG$1 = wellKnownSymbol$5('toStringTag');
-var test$1 = {};
-test$1[TO_STRING_TAG$1] = 'z';
-var toStringTagSupport = String(test$1) === '[object z]';
+var test = {};
+test[TO_STRING_TAG$1] = 'z';
+var toStringTagSupport = String(test) === '[object z]';
 
 var TO_STRING_TAG_SUPPORT = toStringTagSupport;
 var classofRaw = classofRaw$1;
@@ -969,7 +961,7 @@ var iteratorClose$1 = function (iterator, kind, value) {
 
 var anObject$u = anObject$A;
 var isArrayIteratorMethod = isArrayIteratorMethod$1;
-var toLength$1 = toLength$3;
+var toLength = toLength$2;
 var bind$e = functionBindContext;
 var getIterator$1 = getIterator$2;
 var getIteratorMethod = getIteratorMethod$2;
@@ -980,7 +972,7 @@ var Result = function (stopped, result) {
   this.result = result;
 };
 
-var iterate$r = function (iterable, unboundFunction, options) {
+var iterate$q = function (iterable, unboundFunction, options) {
   var that = options && options.that;
   var AS_ENTRIES = !!(options && options.AS_ENTRIES);
   var IS_ITERATOR = !!(options && options.IS_ITERATOR);
@@ -1009,7 +1001,7 @@ var iterate$r = function (iterable, unboundFunction, options) {
     if (typeof iterFn != 'function') throw TypeError('Target is not iterable'); // optimisation for array iterators
 
     if (isArrayIteratorMethod(iterFn)) {
-      for (index = 0, length = toLength$1(iterable.length); length > index; index++) {
+      for (index = 0, length = toLength(iterable.length); length > index; index++) {
         result = callFn(iterable[index]);
         if (result && result instanceof Result) return result;
       }
@@ -1090,7 +1082,7 @@ var checkCorrectnessOfIteration$1 = function (exec, SKIP_CLOSING) {
 };
 
 var anObject$t = anObject$A;
-var aFunction$m = aFunction$o;
+var aFunction$k = aFunction$m;
 var wellKnownSymbol$1 = wellKnownSymbol$a;
 var SPECIES$1 = wellKnownSymbol$1('species'); // `SpeciesConstructor` abstract operation
 // https://tc39.es/ecma262/#sec-speciesconstructor
@@ -1098,21 +1090,21 @@ var SPECIES$1 = wellKnownSymbol$1('species'); // `SpeciesConstructor` abstract o
 var speciesConstructor$a = function (O, defaultConstructor) {
   var C = anObject$t(O).constructor;
   var S;
-  return C === undefined || (S = anObject$t(C)[SPECIES$1]) == undefined ? defaultConstructor : aFunction$m(S);
+  return C === undefined || (S = anObject$t(C)[SPECIES$1]) == undefined ? defaultConstructor : aFunction$k(S);
 };
 
-var getBuiltIn$c = getBuiltIn$h;
-var html$1 = getBuiltIn$c('document', 'documentElement');
+var getBuiltIn$b = getBuiltIn$g;
+var html$1 = getBuiltIn$b('document', 'documentElement');
 
-var userAgent$4 = engineUserAgent;
-var engineIsIos = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent$4);
+var userAgent$2 = engineUserAgent;
+var engineIsIos = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent$2);
 
 var classof = classofRaw$1;
 var global$6 = global$i;
 var engineIsNode = classof(global$6.process) == 'process';
 
 var global$5 = global$i;
-var fails$2 = fails$8;
+var fails = fails$6;
 var bind$d = functionBindContext;
 var html = html$1;
 var createElement = documentCreateElement;
@@ -1126,7 +1118,7 @@ var Dispatch = global$5.Dispatch;
 var counter = 0;
 var queue = {};
 var ONREADYSTATECHANGE = 'onreadystatechange';
-var location, defer, channel, port$1;
+var location, defer, channel, port;
 
 try {
   // Deno throws a ReferenceError on `location` access without `--location` flag
@@ -1195,11 +1187,11 @@ if (!set || !clear) {
 
   } else if (MessageChannel && !IS_IOS$1) {
     channel = new MessageChannel();
-    port$1 = channel.port2;
+    port = channel.port2;
     channel.port1.onmessage = listener;
-    defer = bind$d(port$1.postMessage, port$1, 1); // Browsers with postMessage, skip WebWorkers
+    defer = bind$d(port.postMessage, port, 1); // Browsers with postMessage, skip WebWorkers
     // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-  } else if (global$5.addEventListener && typeof postMessage == 'function' && !global$5.importScripts && location && location.protocol !== 'file:' && !fails$2(post)) {
+  } else if (global$5.addEventListener && typeof postMessage == 'function' && !global$5.importScripts && location && location.protocol !== 'file:' && !fails(post)) {
     defer = post;
     global$5.addEventListener('message', listener, false); // IE8-
   } else if (ONREADYSTATECHANGE in createElement('script')) {
@@ -1222,12 +1214,12 @@ var task$1 = {
   clear: clear
 };
 
-var userAgent$3 = engineUserAgent;
+var userAgent$1 = engineUserAgent;
 var global$4 = global$i;
-var engineIsIosPebble = /ipad|iphone|ipod/i.test(userAgent$3) && global$4.Pebble !== undefined;
+var engineIsIosPebble = /ipad|iphone|ipod/i.test(userAgent$1) && global$4.Pebble !== undefined;
 
-var userAgent$2 = engineUserAgent;
-var engineIsWebosWebkit = /web0s(?!.*chrome)/i.test(userAgent$2);
+var userAgent = engineUserAgent;
+var engineIsWebosWebkit = /web0s(?!.*chrome)/i.test(userAgent);
 
 var global$3 = global$i;
 var getOwnPropertyDescriptor = objectGetOwnPropertyDescriptor.f;
@@ -1325,7 +1317,7 @@ var microtask$1 = queueMicrotask || function (fn) {
 
 var newPromiseCapability$2 = {};
 
-var aFunction$l = aFunction$o;
+var aFunction$j = aFunction$m;
 
 var PromiseCapability = function (C) {
   var resolve, reject;
@@ -1334,8 +1326,8 @@ var PromiseCapability = function (C) {
     resolve = $$resolve;
     reject = $$reject;
   });
-  this.resolve = aFunction$l(resolve);
-  this.reject = aFunction$l(reject);
+  this.resolve = aFunction$j(resolve);
+  this.reject = aFunction$j(reject);
 }; // `NewPromiseCapability` abstract operation
 // https://tc39.es/ecma262/#sec-newpromisecapability
 
@@ -1367,7 +1359,7 @@ var hostReportErrors$1 = function (a, b) {
   }
 };
 
-var perform$2 = function (exec) {
+var perform$1 = function (exec) {
   try {
     return {
       error: false,
@@ -1383,9 +1375,9 @@ var perform$2 = function (exec) {
 
 var engineIsBrowser = typeof window == 'object';
 
-var $$v = _export;
+var $$t = _export;
 var global$1 = global$i;
-var getBuiltIn$b = getBuiltIn$h;
+var getBuiltIn$a = getBuiltIn$g;
 var NativePromise = nativePromiseConstructor;
 var redefine = redefine$3.exports;
 var redefineAll = redefineAll$1;
@@ -1393,18 +1385,18 @@ var setPrototypeOf = objectSetPrototypeOf;
 var setToStringTag = setToStringTag$1;
 var setSpecies = setSpecies$1;
 var isObject = isObject$8;
-var aFunction$k = aFunction$o;
+var aFunction$i = aFunction$m;
 var anInstance = anInstance$1;
 var inspectSource = inspectSource$3;
-var iterate$q = iterate$r;
+var iterate$p = iterate$q;
 var checkCorrectnessOfIteration = checkCorrectnessOfIteration$1;
 var speciesConstructor$9 = speciesConstructor$a;
 var task = task$1.set;
 var microtask = microtask$1;
 var promiseResolve = promiseResolve$1;
 var hostReportErrors = hostReportErrors$1;
-var newPromiseCapabilityModule$1 = newPromiseCapability$2;
-var perform$1 = perform$2;
+var newPromiseCapabilityModule = newPromiseCapability$2;
+var perform = perform$1;
 var InternalStateModule = internalState;
 var isForced = isForced_1;
 var wellKnownSymbol = wellKnownSymbol$a;
@@ -1422,7 +1414,7 @@ var PromiseConstructorPrototype = NativePromisePrototype;
 var TypeError$1 = global$1.TypeError;
 var document = global$1.document;
 var process$1 = global$1.process;
-var newPromiseCapability = newPromiseCapabilityModule$1.f;
+var newPromiseCapability = newPromiseCapabilityModule.f;
 var newGenericPromiseCapability = newPromiseCapability;
 var DISPATCH_EVENT = !!(document && document.createEvent && global$1.dispatchEvent);
 var NATIVE_REJECTION_EVENT = typeof PromiseRejectionEvent == 'function';
@@ -1435,7 +1427,7 @@ var HANDLED = 1;
 var UNHANDLED = 2;
 var SUBCLASSING = false;
 var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
-var FORCED$1 = isForced(PROMISE, function () {
+var FORCED = isForced(PROMISE, function () {
   var PROMISE_CONSTRUCTOR_SOURCE = inspectSource(PromiseConstructor);
   var GLOBAL_CORE_JS_PROMISE = PROMISE_CONSTRUCTOR_SOURCE !== String(PromiseConstructor); // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
   // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
@@ -1468,7 +1460,7 @@ var FORCED$1 = isForced(PROMISE, function () {
 
   return !GLOBAL_CORE_JS_PROMISE && IS_BROWSER && !NATIVE_REJECTION_EVENT;
 });
-var INCORRECT_ITERATION = FORCED$1 || !checkCorrectnessOfIteration(function (iterable) {
+var INCORRECT_ITERATION = FORCED || !checkCorrectnessOfIteration(function (iterable) {
   PromiseConstructor.all(iterable)['catch'](function () {
     /* empty */
   });
@@ -1556,7 +1548,7 @@ var onUnhandled = function (state) {
     var result;
 
     if (IS_UNHANDLED) {
-      result = perform$1(function () {
+      result = perform(function () {
         if (IS_NODE) {
           process$1.emit('unhandledRejection', value, promise);
         } else dispatchEvent(UNHANDLED_REJECTION, promise, value);
@@ -1631,11 +1623,11 @@ var internalResolve = function (state, value, unwrap) {
 }; // constructor polyfill
 
 
-if (FORCED$1) {
+if (FORCED) {
   // 25.4.3.1 Promise(executor)
   PromiseConstructor = function Promise(executor) {
     anInstance(this, PromiseConstructor, PROMISE);
-    aFunction$k(executor);
+    aFunction$i(executor);
     Internal.call(this);
     var state = getInternalState(this);
 
@@ -1690,7 +1682,7 @@ if (FORCED$1) {
     this.reject = bind$c(internalReject, state);
   };
 
-  newPromiseCapabilityModule$1.f = newPromiseCapability = function (C) {
+  newPromiseCapabilityModule.f = newPromiseCapability = function (C) {
     return C === PromiseConstructor || C === PromiseWrapper ? new OwnPromiseCapability(C) : newGenericPromiseCapability(C);
   };
 
@@ -1727,21 +1719,21 @@ if (FORCED$1) {
   }
 }
 
-$$v({
+$$t({
   global: true,
   wrap: true,
-  forced: FORCED$1
+  forced: FORCED
 }, {
   Promise: PromiseConstructor
 });
 setToStringTag(PromiseConstructor, PROMISE, false);
 setSpecies(PROMISE);
-PromiseWrapper = getBuiltIn$b(PROMISE); // statics
+PromiseWrapper = getBuiltIn$a(PROMISE); // statics
 
-$$v({
+$$t({
   target: PROMISE,
   stat: true,
-  forced: FORCED$1
+  forced: FORCED
 }, {
   // `Promise.reject` method
   // https://tc39.es/ecma262/#sec-promise.reject
@@ -1751,10 +1743,10 @@ $$v({
     return capability.promise;
   }
 });
-$$v({
+$$t({
   target: PROMISE,
   stat: true,
-  forced: FORCED$1
+  forced: FORCED
 }, {
   // `Promise.resolve` method
   // https://tc39.es/ecma262/#sec-promise.resolve
@@ -1762,7 +1754,7 @@ $$v({
     return promiseResolve(this, x);
   }
 });
-$$v({
+$$t({
   target: PROMISE,
   stat: true,
   forced: INCORRECT_ITERATION
@@ -1774,12 +1766,12 @@ $$v({
     var capability = newPromiseCapability(C);
     var resolve = capability.resolve;
     var reject = capability.reject;
-    var result = perform$1(function () {
-      var $promiseResolve = aFunction$k(C.resolve);
+    var result = perform(function () {
+      var $promiseResolve = aFunction$i(C.resolve);
       var values = [];
       var counter = 0;
       var remaining = 1;
-      iterate$q(iterable, function (promise) {
+      iterate$p(iterable, function (promise) {
         var index = counter++;
         var alreadyCalled = false;
         values.push(undefined);
@@ -1802,9 +1794,9 @@ $$v({
     var C = this;
     var capability = newPromiseCapability(C);
     var reject = capability.reject;
-    var result = perform$1(function () {
-      var $promiseResolve = aFunction$k(C.resolve);
-      iterate$q(iterable, function (promise) {
+    var result = perform(function () {
+      var $promiseResolve = aFunction$i(C.resolve);
+      iterate$p(iterable, function (promise) {
         $promiseResolve.call(C, promise).then(capability.resolve, reject);
       });
     });
@@ -1813,891 +1805,7 @@ $$v({
   }
 });
 
-var app = {};
-
-var name = "@1715173329/unblockneteasemusic";
-var version$1 = "v0.27.0-beta.1";
-var description = "Revive unavailable songs for Netease Cloud Music";
-var main = "src/provider/match.js";
-var bin = {
-	unblockneteasemusic: "./precompiled/app.js"
-};
-var scripts = {
-	build: "rollup -c",
-	pkg: "pkg . --out-path=dist/",
-	test: "jest"
-};
-var pkg = {
-	assets: [
-		"server.key",
-		"server.crt"
-	],
-	targets: [
-		"node14-linux-arm64",
-		"node14-win-arm64",
-		"node14-linux-x64",
-		"node14-win-x64"
-	],
-	outputPath: "dist"
-};
-var repository = {
-	type: "git",
-	url: "https://github.com/1715173329/UnblockNeteaseMusic.git"
-};
-var author = "nondanee, 1715173329, pan93412";
-var license = "MIT";
-var dependencies = {
-	long: "^4.0.0",
-	"node-windows": "^1.0.0-beta.5"
-};
-var devDependencies = {
-	"@babel/core": "^7.15.5",
-	"@babel/preset-env": "^7.15.6",
-	"@rollup/plugin-babel": "^5.3.0",
-	"@rollup/plugin-commonjs": "^20.0.0",
-	"@rollup/plugin-json": "^4.1.0",
-	"@rollup/plugin-node-resolve": "^13.0.4",
-	jest: "^27.1.0",
-	pkg: "^5.3.2",
-	prettier: "^2.3.2",
-	rollup: "^2.56.3",
-	"core-js": "3"
-};
-var require$$0 = {
-	name: name,
-	version: version$1,
-	description: description,
-	main: main,
-	bin: bin,
-	scripts: scripts,
-	pkg: pkg,
-	repository: repository,
-	author: author,
-	license: license,
-	dependencies: dependencies,
-	"private": true,
-	devDependencies: devDependencies
-};
-
-var isSymbol = isSymbol$3;
-
-var toString$1 = function (argument) {
-  if (isSymbol(argument)) throw TypeError('Cannot convert a Symbol value to a string');
-  return String(argument);
-};
-
-var floor = Math.floor;
-
-var mergeSort = function (array, comparefn) {
-  var length = array.length;
-  var middle = floor(length / 2);
-  return length < 8 ? insertionSort(array, comparefn) : merge(mergeSort(array.slice(0, middle), comparefn), mergeSort(array.slice(middle), comparefn), comparefn);
-};
-
-var insertionSort = function (array, comparefn) {
-  var length = array.length;
-  var i = 1;
-  var element, j;
-
-  while (i < length) {
-    j = i;
-    element = array[i];
-
-    while (j && comparefn(array[j - 1], element) > 0) {
-      array[j] = array[--j];
-    }
-
-    if (j !== i++) array[j] = element;
-  }
-
-  return array;
-};
-
-var merge = function (left, right, comparefn) {
-  var llength = left.length;
-  var rlength = right.length;
-  var lindex = 0;
-  var rindex = 0;
-  var result = [];
-
-  while (lindex < llength || rindex < rlength) {
-    if (lindex < llength && rindex < rlength) {
-      result.push(comparefn(left[lindex], right[rindex]) <= 0 ? left[lindex++] : right[rindex++]);
-    } else {
-      result.push(lindex < llength ? left[lindex++] : right[rindex++]);
-    }
-  }
-
-  return result;
-};
-
-var arraySort = mergeSort;
-
-var fails$1 = fails$8;
-
-var arrayMethodIsStrict$1 = function (METHOD_NAME, argument) {
-  var method = [][METHOD_NAME];
-  return !!method && fails$1(function () {
-    // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
-    method.call(null, argument || function () {
-      throw 1;
-    }, 1);
-  });
-};
-
-var userAgent$1 = engineUserAgent;
-var firefox = userAgent$1.match(/firefox\/(\d+)/i);
-var engineFfVersion = !!firefox && +firefox[1];
-
-var UA = engineUserAgent;
-var engineIsIeOrEdge = /MSIE|Trident/.test(UA);
-
-var userAgent = engineUserAgent;
-var webkit = userAgent.match(/AppleWebKit\/(\d+)\./);
-var engineWebkitVersion = !!webkit && +webkit[1];
-
-var $$u = _export;
-var aFunction$j = aFunction$o;
-var toObject = toObject$2;
-var toLength = toLength$3;
-var toString = toString$1;
-var fails = fails$8;
-var internalSort = arraySort;
-var arrayMethodIsStrict = arrayMethodIsStrict$1;
-var FF = engineFfVersion;
-var IE_OR_EDGE = engineIsIeOrEdge;
-var V8 = engineV8Version;
-var WEBKIT = engineWebkitVersion;
-var test = [];
-var nativeSort = test.sort; // IE8-
-
-var FAILS_ON_UNDEFINED = fails(function () {
-  test.sort(undefined);
-}); // V8 bug
-
-var FAILS_ON_NULL = fails(function () {
-  test.sort(null);
-}); // Old WebKit
-
-var STRICT_METHOD = arrayMethodIsStrict('sort');
-var STABLE_SORT = !fails(function () {
-  // feature detection can be too slow, so check engines versions
-  if (V8) return V8 < 70;
-  if (FF && FF > 3) return;
-  if (IE_OR_EDGE) return true;
-  if (WEBKIT) return WEBKIT < 603;
-  var result = '';
-  var code, chr, value, index; // generate an array with more 512 elements (Chakra and old V8 fails only in this case)
-
-  for (code = 65; code < 76; code++) {
-    chr = String.fromCharCode(code);
-
-    switch (code) {
-      case 66:
-      case 69:
-      case 70:
-      case 72:
-        value = 3;
-        break;
-
-      case 68:
-      case 71:
-        value = 4;
-        break;
-
-      default:
-        value = 2;
-    }
-
-    for (index = 0; index < 47; index++) {
-      test.push({
-        k: chr + index,
-        v: value
-      });
-    }
-  }
-
-  test.sort(function (a, b) {
-    return b.v - a.v;
-  });
-
-  for (index = 0; index < test.length; index++) {
-    chr = test[index].k.charAt(0);
-    if (result.charAt(result.length - 1) !== chr) result += chr;
-  }
-
-  return result !== 'DGBEFHACIJK';
-});
-var FORCED = FAILS_ON_UNDEFINED || !FAILS_ON_NULL || !STRICT_METHOD || !STABLE_SORT;
-
-var getSortCompare = function (comparefn) {
-  return function (x, y) {
-    if (y === undefined) return -1;
-    if (x === undefined) return 1;
-    if (comparefn !== undefined) return +comparefn(x, y) || 0;
-    return toString(x) > toString(y) ? 1 : -1;
-  };
-}; // `Array.prototype.sort` method
-// https://tc39.es/ecma262/#sec-array.prototype.sort
-
-
-$$u({
-  target: 'Array',
-  proto: true,
-  forced: FORCED
-}, {
-  sort: function sort(comparefn) {
-    if (comparefn !== undefined) aFunction$j(comparefn);
-    var array = toObject(this);
-    if (STABLE_SORT) return comparefn === undefined ? nativeSort.call(array) : nativeSort.call(array, comparefn);
-    var items = [];
-    var arrayLength = toLength(array.length);
-    var itemsLength, index;
-
-    for (index = 0; index < arrayLength; index++) {
-      if (index in array) items.push(array[index]);
-    }
-
-    items = internalSort(items, getSortCompare(comparefn));
-    itemsLength = items.length;
-    index = 0;
-
-    while (index < itemsLength) array[index] = items[index++];
-
-    while (index < arrayLength) delete array[index++];
-
-    return array;
-  }
-});
-
-const cli = {
-  width: 80,
-  _program: {},
-  _options: [],
-  program: (information = {}) => {
-    cli._program = information;
-    return cli;
-  },
-  option: (flags, addition = {}) => {
-    // name or flags - Either a name or a list of option strings, e.g. foo or -f, --foo.
-    // dest - The name of the attribute to be added to the object returned by parse_options().
-    // nargs - The number of command-line arguments that should be consumed. // N, ?, *, +, REMAINDER
-    // action - The basic type of action to be taken when this argument is encountered at the command line. // store, store_true, store_false, append, append_const, count, help, version
-    // const - A constant value required by some action and nargs selections. (supporting store_const and append_const action)
-    // metavar - A name for the argument in usage messages.
-    // help - A brief description of what the argument does.
-    // required - Whether the command-line option may be omitted (optionals only).
-    // default - The value produced if the argument is absent from the command line.
-    // type - The type to which the command-line argument should be converted.
-    // choices - A container of the allowable values for the argument.
-    flags = Array.isArray(flags) ? flags : [flags];
-    addition.dest = addition.dest || flags.slice(-1)[0].toLowerCase().replace(/^-+/, '').replace(/-[a-z]/g, character => character.slice(1).toUpperCase());
-    addition.help = addition.help || {
-      help: 'output usage information',
-      version: 'output the version number'
-    }[addition.action];
-
-    cli._options.push(Object.assign(addition, {
-      flags: flags,
-      positional: !flags[0].startsWith('-')
-    }));
-
-    return cli;
-  },
-  parse: argv => {
-    const positionals = cli._options.map((option, index) => option.positional ? index : null).filter(index => index !== null),
-          optionals = {};
-
-    cli._options.forEach((option, index) => option.positional ? null : option.flags.forEach(flag => optionals[flag] = index));
-
-    cli._program.name = cli._program.name || require$$0__default['default'].parse(argv[1]).base;
-    const args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), []);
-    let pointer = 0;
-
-    while (pointer < args.length) {
-      let value = null;
-      const part = args[pointer];
-      const index = part.startsWith('-') ? optionals[part] : positionals.shift();
-      if (index === undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`);
-      if (part.startsWith('-')) pointer += 1;
-      const {
-        action
-      } = cli._options[index];
-
-      if (['help', 'version'].includes(action)) {
-        if (action === 'help') help();else if (action === 'version') version();
-      } else if (['store_true', 'store_false'].includes(action)) {
-        value = action === 'store_true';
-      } else {
-        const gap = args.slice(pointer).findIndex(part => part in optionals);
-        const next = gap === -1 ? args.length : pointer + gap;
-        value = args.slice(pointer, next);
-
-        if (value.length === 0) {
-          if (cli._options[index].positional) error(`the following arguments are required: ${part}`);else if (cli._options[index].nargs === '+') error(`argument ${part}: expected at least one argument`);else error(`argument ${part}: expected one argument`);
-        }
-
-        if (cli._options[index].nargs !== '+') {
-          value = value[0];
-          pointer += 1;
-        } else {
-          pointer = next;
-        }
-      }
-
-      cli[cli._options[index].dest] = value;
-    }
-
-    if (positionals.length) error(`the following arguments are required: ${positionals.map(index => cli._options[index].flags[0]).join(', ')}`); // cli._options.forEach(option => console.log(option.dest, cli[option.dest]))
-
-    return cli;
-  }
-};
-
-const pad = length => new Array(length + 1).join(' ');
-
-const usage = () => {
-  const options = cli._options.map(option => {
-    const flag = option.flags.sort((a, b) => a.length - b.length)[0];
-    const name = option.metavar || option.dest;
-
-    if (option.positional) {
-      if (option.nargs === '+') return `${name} [${name} ...]`;else return `${name}`;
-    } else {
-      if (['store_true', 'store_false', 'help', 'version'].includes(option.action)) return `[${flag}]`;else if (option.nargs === '+') return `[${flag} ${name} [${name} ...]]`;else return `[${flag} ${name}]`;
-    }
-  });
-
-  const maximum = cli.width;
-  const title = `usage: ${cli._program.name}`;
-  const lines = [title];
-  options.map(name => ' ' + name).forEach(option => {
-    lines[lines.length - 1].length + option.length < maximum ? lines[lines.length - 1] += option : lines.push(pad(title.length) + option);
-  });
-  console.log(lines.join('\n'));
-};
-
-const help = () => {
-  usage();
-
-  const positionals = cli._options.filter(option => option.positional).map(option => [option.metavar || option.dest, option.help]);
-
-  const optionals = cli._options.filter(option => !option.positional).map(option => {
-    const {
-      flags
-    } = option;
-    const name = option.metavar || option.dest;
-    /** @type {string} */
-
-    let use;
-    if (['store_true', 'store_false', 'help', 'version'].includes(option.action)) use = flags.map(flag => `${flag}`).join(', ');else if (option.nargs === '+') use = flags.map(flag => `${flag} ${name} [${name} ...]`).join(', ');else use = flags.map(flag => `${flag} ${name}`).join(', ');
-    return [use, option.help];
-  });
-
-  let align = Math.max.apply(null, positionals.concat(optionals).map(option => option[0].length));
-  align = align > 30 ? 30 : align;
-  const rest = cli.width - align - 4;
-
-  const publish = option => {
-    const slice = string => Array.from(Array(Math.ceil(string.length / rest)).keys()).map(index => string.slice(index * rest, (index + 1) * rest)).join('\n' + pad(align + 4));
-
-    option[0].length < align ? console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`) : console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`);
-  };
-
-  if (positionals.length) console.log('\npositional arguments:');
-  positionals.forEach(publish);
-  if (optionals.length) console.log('\noptional arguments:');
-  optionals.forEach(publish);
-  process.exit();
-};
-
-const version = () => {
-  console.log(cli._program.version);
-  process.exit();
-};
-
-const error = message => {
-  usage();
-  console.log(cli._program.name + ':', 'error:', message);
-  process.exit(1);
-};
-
-var cli_1 = cli;
-
-var insure$6 = {exports: {}};
-
-var anObject$r = anObject$A;
-var aFunction$i = aFunction$o; // https://github.com/tc39/collection-methods
-
-var collectionAddAll$1 = function () {
-  var set = anObject$r(this);
-  var adder = aFunction$i(set.add);
-
-  for (var k = 0, len = arguments.length; k < len; k++) {
-    adder.call(set, arguments[k]);
-  }
-
-  return set;
-};
-
-var $$t = _export;
-var IS_PURE$s = isPure;
-var collectionAddAll = collectionAddAll$1; // `Set.prototype.addAll` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$t({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$s
-}, {
-  addAll: function addAll() {
-    return collectionAddAll.apply(this, arguments);
-  }
-});
-
-var anObject$q = anObject$A;
-var aFunction$h = aFunction$o; // https://github.com/tc39/collection-methods
-
-var collectionDeleteAll$2 = function () {
-  var collection = anObject$q(this);
-  var remover = aFunction$h(collection['delete']);
-  var allDeleted = true;
-  var wasDeleted;
-
-  for (var k = 0, len = arguments.length; k < len; k++) {
-    wasDeleted = remover.call(collection, arguments[k]);
-    allDeleted = allDeleted && wasDeleted;
-  }
-
-  return !!allDeleted;
-};
-
-var $$s = _export;
-var IS_PURE$r = isPure;
-var collectionDeleteAll$1 = collectionDeleteAll$2; // `Set.prototype.deleteAll` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$s({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$r
-}, {
-  deleteAll: function deleteAll() {
-    return collectionDeleteAll$1.apply(this, arguments);
-  }
-});
-
-var $$r = _export;
-var IS_PURE$q = isPure;
-var getBuiltIn$a = getBuiltIn$h;
-var anObject$p = anObject$A;
-var aFunction$g = aFunction$o;
-var speciesConstructor$8 = speciesConstructor$a;
-var iterate$p = iterate$r; // `Set.prototype.difference` method
-// https://github.com/tc39/proposal-set-methods
-
-$$r({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$q
-}, {
-  difference: function difference(iterable) {
-    var set = anObject$p(this);
-    var newSet = new (speciesConstructor$8(set, getBuiltIn$a('Set')))(set);
-    var remover = aFunction$g(newSet['delete']);
-    iterate$p(iterable, function (value) {
-      remover.call(newSet, value);
-    });
-    return newSet;
-  }
-});
-
-var getSetIterator$7 = function (it) {
-  // eslint-disable-next-line es/no-set -- safe
-  return Set.prototype.values.call(it);
-};
-
-var $$q = _export;
-var IS_PURE$p = isPure;
-var anObject$o = anObject$A;
-var bind$b = functionBindContext;
-var getSetIterator$6 = getSetIterator$7;
-var iterate$o = iterate$r; // `Set.prototype.every` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$q({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$p
-}, {
-  every: function every(callbackfn
-  /* , thisArg */
-  ) {
-    var set = anObject$o(this);
-    var iterator = getSetIterator$6(set);
-    var boundFunction = bind$b(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    return !iterate$o(iterator, function (value, stop) {
-      if (!boundFunction(value, value, set)) return stop();
-    }, {
-      IS_ITERATOR: true,
-      INTERRUPTED: true
-    }).stopped;
-  }
-});
-
-var $$p = _export;
-var IS_PURE$o = isPure;
-var getBuiltIn$9 = getBuiltIn$h;
-var anObject$n = anObject$A;
-var aFunction$f = aFunction$o;
-var bind$a = functionBindContext;
-var speciesConstructor$7 = speciesConstructor$a;
-var getSetIterator$5 = getSetIterator$7;
-var iterate$n = iterate$r; // `Set.prototype.filter` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$p({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$o
-}, {
-  filter: function filter(callbackfn
-  /* , thisArg */
-  ) {
-    var set = anObject$n(this);
-    var iterator = getSetIterator$5(set);
-    var boundFunction = bind$a(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    var newSet = new (speciesConstructor$7(set, getBuiltIn$9('Set')))();
-    var adder = aFunction$f(newSet.add);
-    iterate$n(iterator, function (value) {
-      if (boundFunction(value, value, set)) adder.call(newSet, value);
-    }, {
-      IS_ITERATOR: true
-    });
-    return newSet;
-  }
-});
-
-var $$o = _export;
-var IS_PURE$n = isPure;
-var anObject$m = anObject$A;
-var bind$9 = functionBindContext;
-var getSetIterator$4 = getSetIterator$7;
-var iterate$m = iterate$r; // `Set.prototype.find` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$o({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$n
-}, {
-  find: function find(callbackfn
-  /* , thisArg */
-  ) {
-    var set = anObject$m(this);
-    var iterator = getSetIterator$4(set);
-    var boundFunction = bind$9(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    return iterate$m(iterator, function (value, stop) {
-      if (boundFunction(value, value, set)) return stop(value);
-    }, {
-      IS_ITERATOR: true,
-      INTERRUPTED: true
-    }).result;
-  }
-});
-
-var $$n = _export;
-var IS_PURE$m = isPure;
-var getBuiltIn$8 = getBuiltIn$h;
-var anObject$l = anObject$A;
-var aFunction$e = aFunction$o;
-var speciesConstructor$6 = speciesConstructor$a;
-var iterate$l = iterate$r; // `Set.prototype.intersection` method
-// https://github.com/tc39/proposal-set-methods
-
-$$n({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$m
-}, {
-  intersection: function intersection(iterable) {
-    var set = anObject$l(this);
-    var newSet = new (speciesConstructor$6(set, getBuiltIn$8('Set')))();
-    var hasCheck = aFunction$e(set.has);
-    var adder = aFunction$e(newSet.add);
-    iterate$l(iterable, function (value) {
-      if (hasCheck.call(set, value)) adder.call(newSet, value);
-    });
-    return newSet;
-  }
-});
-
-var $$m = _export;
-var IS_PURE$l = isPure;
-var anObject$k = anObject$A;
-var aFunction$d = aFunction$o;
-var iterate$k = iterate$r; // `Set.prototype.isDisjointFrom` method
-// https://tc39.github.io/proposal-set-methods/#Set.prototype.isDisjointFrom
-
-$$m({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$l
-}, {
-  isDisjointFrom: function isDisjointFrom(iterable) {
-    var set = anObject$k(this);
-    var hasCheck = aFunction$d(set.has);
-    return !iterate$k(iterable, function (value, stop) {
-      if (hasCheck.call(set, value) === true) return stop();
-    }, {
-      INTERRUPTED: true
-    }).stopped;
-  }
-});
-
-var $$l = _export;
-var IS_PURE$k = isPure;
-var getBuiltIn$7 = getBuiltIn$h;
-var anObject$j = anObject$A;
-var aFunction$c = aFunction$o;
-var getIterator = getIterator$2;
-var iterate$j = iterate$r; // `Set.prototype.isSubsetOf` method
-// https://tc39.github.io/proposal-set-methods/#Set.prototype.isSubsetOf
-
-$$l({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$k
-}, {
-  isSubsetOf: function isSubsetOf(iterable) {
-    var iterator = getIterator(this);
-    var otherSet = anObject$j(iterable);
-    var hasCheck = otherSet.has;
-
-    if (typeof hasCheck != 'function') {
-      otherSet = new (getBuiltIn$7('Set'))(iterable);
-      hasCheck = aFunction$c(otherSet.has);
-    }
-
-    return !iterate$j(iterator, function (value, stop) {
-      if (hasCheck.call(otherSet, value) === false) return stop();
-    }, {
-      IS_ITERATOR: true,
-      INTERRUPTED: true
-    }).stopped;
-  }
-});
-
-var $$k = _export;
-var IS_PURE$j = isPure;
-var anObject$i = anObject$A;
-var aFunction$b = aFunction$o;
-var iterate$i = iterate$r; // `Set.prototype.isSupersetOf` method
-// https://tc39.github.io/proposal-set-methods/#Set.prototype.isSupersetOf
-
-$$k({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$j
-}, {
-  isSupersetOf: function isSupersetOf(iterable) {
-    var set = anObject$i(this);
-    var hasCheck = aFunction$b(set.has);
-    return !iterate$i(iterable, function (value, stop) {
-      if (hasCheck.call(set, value) === false) return stop();
-    }, {
-      INTERRUPTED: true
-    }).stopped;
-  }
-});
-
-var $$j = _export;
-var IS_PURE$i = isPure;
-var anObject$h = anObject$A;
-var getSetIterator$3 = getSetIterator$7;
-var iterate$h = iterate$r; // `Set.prototype.join` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$j({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$i
-}, {
-  join: function join(separator) {
-    var set = anObject$h(this);
-    var iterator = getSetIterator$3(set);
-    var sep = separator === undefined ? ',' : String(separator);
-    var result = [];
-    iterate$h(iterator, result.push, {
-      that: result,
-      IS_ITERATOR: true
-    });
-    return result.join(sep);
-  }
-});
-
-var $$i = _export;
-var IS_PURE$h = isPure;
-var getBuiltIn$6 = getBuiltIn$h;
-var anObject$g = anObject$A;
-var aFunction$a = aFunction$o;
-var bind$8 = functionBindContext;
-var speciesConstructor$5 = speciesConstructor$a;
-var getSetIterator$2 = getSetIterator$7;
-var iterate$g = iterate$r; // `Set.prototype.map` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$i({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$h
-}, {
-  map: function map(callbackfn
-  /* , thisArg */
-  ) {
-    var set = anObject$g(this);
-    var iterator = getSetIterator$2(set);
-    var boundFunction = bind$8(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    var newSet = new (speciesConstructor$5(set, getBuiltIn$6('Set')))();
-    var adder = aFunction$a(newSet.add);
-    iterate$g(iterator, function (value) {
-      adder.call(newSet, boundFunction(value, value, set));
-    }, {
-      IS_ITERATOR: true
-    });
-    return newSet;
-  }
-});
-
-var $$h = _export;
-var IS_PURE$g = isPure;
-var anObject$f = anObject$A;
-var aFunction$9 = aFunction$o;
-var getSetIterator$1 = getSetIterator$7;
-var iterate$f = iterate$r; // `Set.prototype.reduce` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$h({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$g
-}, {
-  reduce: function reduce(callbackfn
-  /* , initialValue */
-  ) {
-    var set = anObject$f(this);
-    var iterator = getSetIterator$1(set);
-    var noInitial = arguments.length < 2;
-    var accumulator = noInitial ? undefined : arguments[1];
-    aFunction$9(callbackfn);
-    iterate$f(iterator, function (value) {
-      if (noInitial) {
-        noInitial = false;
-        accumulator = value;
-      } else {
-        accumulator = callbackfn(accumulator, value, value, set);
-      }
-    }, {
-      IS_ITERATOR: true
-    });
-    if (noInitial) throw TypeError('Reduce of empty set with no initial value');
-    return accumulator;
-  }
-});
-
-var $$g = _export;
-var IS_PURE$f = isPure;
-var anObject$e = anObject$A;
-var bind$7 = functionBindContext;
-var getSetIterator = getSetIterator$7;
-var iterate$e = iterate$r; // `Set.prototype.some` method
-// https://github.com/tc39/proposal-collection-methods
-
-$$g({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$f
-}, {
-  some: function some(callbackfn
-  /* , thisArg */
-  ) {
-    var set = anObject$e(this);
-    var iterator = getSetIterator(set);
-    var boundFunction = bind$7(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    return iterate$e(iterator, function (value, stop) {
-      if (boundFunction(value, value, set)) return stop();
-    }, {
-      IS_ITERATOR: true,
-      INTERRUPTED: true
-    }).stopped;
-  }
-});
-
-var $$f = _export;
-var IS_PURE$e = isPure;
-var getBuiltIn$5 = getBuiltIn$h;
-var anObject$d = anObject$A;
-var aFunction$8 = aFunction$o;
-var speciesConstructor$4 = speciesConstructor$a;
-var iterate$d = iterate$r; // `Set.prototype.symmetricDifference` method
-// https://github.com/tc39/proposal-set-methods
-
-$$f({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$e
-}, {
-  symmetricDifference: function symmetricDifference(iterable) {
-    var set = anObject$d(this);
-    var newSet = new (speciesConstructor$4(set, getBuiltIn$5('Set')))(set);
-    var remover = aFunction$8(newSet['delete']);
-    var adder = aFunction$8(newSet.add);
-    iterate$d(iterable, function (value) {
-      remover.call(newSet, value) || adder.call(newSet, value);
-    });
-    return newSet;
-  }
-});
-
-var $$e = _export;
-var IS_PURE$d = isPure;
-var getBuiltIn$4 = getBuiltIn$h;
-var anObject$c = anObject$A;
-var aFunction$7 = aFunction$o;
-var speciesConstructor$3 = speciesConstructor$a;
-var iterate$c = iterate$r; // `Set.prototype.union` method
-// https://github.com/tc39/proposal-set-methods
-
-$$e({
-  target: 'Set',
-  proto: true,
-  real: true,
-  forced: IS_PURE$d
-}, {
-  union: function union(iterable) {
-    var set = anObject$c(this);
-    var newSet = new (speciesConstructor$3(set, getBuiltIn$4('Set')))(set);
-    iterate$c(iterable, aFunction$7(newSet.add), {
-      that: newSet
-    });
-    return newSet;
-  }
-});
+var bridge = {};
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -2714,214 +1822,36 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-const EventEmitter$1 = require$$0__default$1['default'];
-const ON_CANCEL$1 = 'cancel';
+var anObject$r = anObject$A;
+var aFunction$h = aFunction$m; // https://github.com/tc39/collection-methods
 
-class CancelRequest$1 extends EventEmitter$1 {
-  constructor(...args) {
-    super(...args);
+var collectionDeleteAll$2 = function () {
+  var collection = anObject$r(this);
+  var remover = aFunction$h(collection['delete']);
+  var allDeleted = true;
+  var wasDeleted;
 
-    _defineProperty(this, "cancelled", false);
+  for (var k = 0, len = arguments.length; k < len; k++) {
+    wasDeleted = remover.call(collection, arguments[k]);
+    allDeleted = allDeleted && wasDeleted;
   }
 
-  cancel() {
-    this.cancelled = true;
-    this.emit(ON_CANCEL$1);
-  }
-
-}
-
-var cancel = {
-  CancelRequest: CancelRequest$1,
-  ON_CANCEL: ON_CANCEL$1
+  return !!allDeleted;
 };
 
-class RequestCancelled$2 extends Error {
-  /**
-   * @param {string} url
-   */
-  constructor(url) {
-    super(`This request URL has been cancelled: ${url}`);
-    this.name = 'RequestCancelled';
-  }
-
-}
-
-var RequestCancelled_1 = RequestCancelled$2;
-
-const zlib = require$$0__default$2['default'];
-const http = require$$1__default['default'];
-const https = require$$2__default['default'];
-const ON_CANCEL = cancel;
-const RequestCancelled$1 = RequestCancelled_1;
-const parse$4 = require$$5__default['default'].parse;
-const format$6 = require$$5__default['default'].format;
-const timeoutThreshold = 10 * 1000;
-
-const translate = host => (commonjsGlobal.hosts || {})[host] || host;
-
-const create = (url, proxy) => (((typeof proxy === 'undefined' ? commonjsGlobal.proxy : proxy) || url).protocol === 'https:' ? https : http).request;
-
-const configure = (method, url, headers, proxy) => {
-  headers = headers || {};
-  proxy = typeof proxy === 'undefined' ? commonjsGlobal.proxy : proxy;
-  if ('content-length' in headers) delete headers['content-length'];
-  const options = {};
-  options._headers = headers;
-
-  if (proxy && url.protocol === 'https:') {
-    options.method = 'CONNECT';
-    options.headers = Object.keys(headers).reduce((result, key) => Object.assign(result, ['host', 'user-agent'].includes(key) && {
-      [key]: headers[key]
-    }), {});
-  } else {
-    options.method = method;
-    options.headers = headers;
-  }
-
-  if (proxy) {
-    options.hostname = translate(proxy.hostname);
-    options.port = proxy.port || (proxy.protocol === 'https:' ? 443 : 80);
-    options.path = url.protocol === 'https:' ? translate(url.hostname) + ':' + (url.port || 443) : 'http://' + translate(url.hostname) + url.path;
-  } else {
-    options.hostname = translate(url.hostname);
-    options.port = url.port || (url.protocol === 'https:' ? 443 : 80);
-    options.path = url.path;
-  }
-
-  return options;
-};
-/**
- * @param {string} method
- * @param {string} url
- * @param {Object?} headers
- * @param {unknown?} body
- * @param {unknown?} proxy
- * @param {CancelRequest?} cancelRequest
- */
-
-
-const request$d = (method, url, headers, body, proxy, cancelRequest) => {
-  url = parse$4(url);
-  headers = headers ||
-  /* @type {Partial<Record<string,string>>} */
-  {};
-  const options = configure(method, url, Object.assign({
-    host: url.hostname,
-    accept: 'application/json, text/plain, */*',
-    'accept-encoding': 'gzip, deflate',
-    'accept-language': 'zh-CN,zh;q=0.9',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
-  }, headers), proxy);
-  return new Promise((resolve, reject) => {
-    var _cancelRequest$cancel;
-
-    const clientRequest = create(url, proxy)(options);
-
-    const destroyClientRequest = function () {
-      // We destroy the request and throw RequestCancelled
-      // when the request has been cancelled.
-      clientRequest.destroy(new RequestCancelled$1(format$6(url)));
-    };
-
-    cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.on(ON_CANCEL, destroyClientRequest);
-    if ((_cancelRequest$cancel = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && _cancelRequest$cancel !== void 0 ? _cancelRequest$cancel : false) destroyClientRequest();
-    clientRequest.setTimeout(timeoutThreshold, () => {
-      console.warn(`TIMEOUT > ${format$6(url)}`);
-      destroyClientRequest();
-    }).on('response', response => resolve(response)).on('connect', (_, socket) => https.request({
-      method: method,
-      path: url.path,
-      headers: options._headers,
-      socket: socket,
-      agent: false
-    }).on('response', response => resolve(response)).on('error', error => reject(error)).end(body)).on('error', error => reject(error)).end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
-  }).then(response => {
-    var _cancelRequest$cancel2;
-
-    if ((_cancelRequest$cancel2 = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && _cancelRequest$cancel2 !== void 0 ? _cancelRequest$cancel2 : false) return Promise.reject(new RequestCancelled$1(format$6(url)));
-
-    if (new Set([201, 301, 302, 303, 307, 308]).has(response.statusCode)) {
-      delete headers.host;
-      return request$d(method, url.resolve(response.headers.location || url.href), headers, body, proxy);
-    }
-
-    return Object.assign(response, {
-      url: url,
-      body: raw => read(response, raw),
-      json: () => json(response),
-      jsonp: () => jsonp(response)
-    });
-  });
-};
-
-const read = (connect, raw) => new Promise((resolve, reject) => {
-  const chunks = [];
-  connect.on('data', chunk => chunks.push(chunk)).on('end', () => resolve(Buffer.concat(chunks))).on('error', error => reject(error));
-}).then(buffer => {
-  buffer = buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding']) ? zlib.unzipSync(buffer) : buffer;
-  return raw ? buffer : buffer.toString();
-});
-
-const json = connect => read(connect, false).then(body => JSON.parse(body));
-
-const jsonp = connect => read(connect, false).then(body => JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length)));
-
-request$d.read = read;
-request$d.create = create;
-request$d.translate = translate;
-request$d.configure = configure;
-var request_1 = request$d;
-
-(function (module) {
-  const request = request_1;
-  const host = null; // 'http://localhost:9000'
-
-  module.exports = () => {
-    const proxy = new Proxy(() => {}, {
-      get: (target, property) => {
-        target.route = (target.route || []).concat(property);
-        return proxy;
-      },
-      apply: (target, _, payload) => {
-        if (module.exports.disable || !host) return Promise.reject();
-        const path = target.route.join('/');
-        const query = typeof payload[0] === 'object' ? JSON.stringify(payload[0]) : payload[0]; // if (path != 'qq/ticket') return Promise.reject()
-
-        return request('GET', `${host}/${path}?${encodeURIComponent(query)}`).then(response => response.body());
-      }
-    });
-    return proxy;
-  };
-})(insure$6);
-
-var select$7 = {exports: {}};
-
-select$7.exports = (list, info) => {
-  const {
-    duration
-  } = info;
-  const song = list.slice(0, 5) // 挑前5个结果
-  .find(song => song.duration && Math.abs(song.duration - duration) < 5 * 1e3); // 第一个时长相差5s (5000ms) 之内的结果
-
-  if (song) return song;else return list[0]; // 没有就播放第一条
-};
-
-select$7.exports.ENABLE_FLAC = (process.env.ENABLE_FLAC || '').toLowerCase() === 'true';
-
-var $$d = _export;
-var IS_PURE$c = isPure;
-var collectionDeleteAll = collectionDeleteAll$2; // `Map.prototype.deleteAll` method
+var $$s = _export;
+var IS_PURE$s = isPure;
+var collectionDeleteAll$1 = collectionDeleteAll$2; // `Map.prototype.deleteAll` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$d({
+$$s({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$c
+  forced: IS_PURE$s
 }, {
   deleteAll: function deleteAll() {
-    return collectionDeleteAll.apply(this, arguments);
+    return collectionDeleteAll$1.apply(this, arguments);
   }
 });
 
@@ -2930,27 +1860,27 @@ var getMapIterator$a = function (it) {
   return Map.prototype.entries.call(it);
 };
 
-var $$c = _export;
-var IS_PURE$b = isPure;
-var anObject$b = anObject$A;
-var bind$6 = functionBindContext;
+var $$r = _export;
+var IS_PURE$r = isPure;
+var anObject$q = anObject$A;
+var bind$b = functionBindContext;
 var getMapIterator$9 = getMapIterator$a;
-var iterate$b = iterate$r; // `Map.prototype.every` method
+var iterate$o = iterate$q; // `Map.prototype.every` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$c({
+$$r({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$b
+  forced: IS_PURE$r
 }, {
   every: function every(callbackfn
   /* , thisArg */
   ) {
-    var map = anObject$b(this);
+    var map = anObject$q(this);
     var iterator = getMapIterator$9(map);
-    var boundFunction = bind$6(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    return !iterate$b(iterator, function (key, value, stop) {
+    var boundFunction = bind$b(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    return !iterate$o(iterator, function (key, value, stop) {
       if (!boundFunction(value, key, map)) return stop();
     }, {
       AS_ENTRIES: true,
@@ -2960,32 +1890,32 @@ $$c({
   }
 });
 
-var $$b = _export;
-var IS_PURE$a = isPure;
-var getBuiltIn$3 = getBuiltIn$h;
-var anObject$a = anObject$A;
-var aFunction$6 = aFunction$o;
-var bind$5 = functionBindContext;
-var speciesConstructor$2 = speciesConstructor$a;
+var $$q = _export;
+var IS_PURE$q = isPure;
+var getBuiltIn$9 = getBuiltIn$g;
+var anObject$p = anObject$A;
+var aFunction$g = aFunction$m;
+var bind$a = functionBindContext;
+var speciesConstructor$8 = speciesConstructor$a;
 var getMapIterator$8 = getMapIterator$a;
-var iterate$a = iterate$r; // `Map.prototype.filter` method
+var iterate$n = iterate$q; // `Map.prototype.filter` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$b({
+$$q({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$a
+  forced: IS_PURE$q
 }, {
   filter: function filter(callbackfn
   /* , thisArg */
   ) {
-    var map = anObject$a(this);
+    var map = anObject$p(this);
     var iterator = getMapIterator$8(map);
-    var boundFunction = bind$5(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    var newMap = new (speciesConstructor$2(map, getBuiltIn$3('Map')))();
-    var setter = aFunction$6(newMap.set);
-    iterate$a(iterator, function (key, value) {
+    var boundFunction = bind$a(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    var newMap = new (speciesConstructor$8(map, getBuiltIn$9('Map')))();
+    var setter = aFunction$g(newMap.set);
+    iterate$n(iterator, function (key, value) {
       if (boundFunction(value, key, map)) setter.call(newMap, key, value);
     }, {
       AS_ENTRIES: true,
@@ -2995,27 +1925,27 @@ $$b({
   }
 });
 
-var $$a = _export;
-var IS_PURE$9 = isPure;
-var anObject$9 = anObject$A;
-var bind$4 = functionBindContext;
+var $$p = _export;
+var IS_PURE$p = isPure;
+var anObject$o = anObject$A;
+var bind$9 = functionBindContext;
 var getMapIterator$7 = getMapIterator$a;
-var iterate$9 = iterate$r; // `Map.prototype.find` method
+var iterate$m = iterate$q; // `Map.prototype.find` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$a({
+$$p({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$9
+  forced: IS_PURE$p
 }, {
   find: function find(callbackfn
   /* , thisArg */
   ) {
-    var map = anObject$9(this);
+    var map = anObject$o(this);
     var iterator = getMapIterator$7(map);
-    var boundFunction = bind$4(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    return iterate$9(iterator, function (key, value, stop) {
+    var boundFunction = bind$9(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    return iterate$m(iterator, function (key, value, stop) {
       if (boundFunction(value, key, map)) return stop(value);
     }, {
       AS_ENTRIES: true,
@@ -3025,27 +1955,27 @@ $$a({
   }
 });
 
-var $$9 = _export;
-var IS_PURE$8 = isPure;
-var anObject$8 = anObject$A;
-var bind$3 = functionBindContext;
+var $$o = _export;
+var IS_PURE$o = isPure;
+var anObject$n = anObject$A;
+var bind$8 = functionBindContext;
 var getMapIterator$6 = getMapIterator$a;
-var iterate$8 = iterate$r; // `Map.prototype.findKey` method
+var iterate$l = iterate$q; // `Map.prototype.findKey` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$9({
+$$o({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$8
+  forced: IS_PURE$o
 }, {
   findKey: function findKey(callbackfn
   /* , thisArg */
   ) {
-    var map = anObject$8(this);
+    var map = anObject$n(this);
     var iterator = getMapIterator$6(map);
-    var boundFunction = bind$3(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    return iterate$8(iterator, function (key, value, stop) {
+    var boundFunction = bind$8(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    return iterate$l(iterator, function (key, value, stop) {
       if (boundFunction(value, key, map)) return stop(key);
     }, {
       AS_ENTRIES: true,
@@ -3062,22 +1992,22 @@ var sameValueZero$1 = function (x, y) {
   return x === y || x != x && y != y;
 };
 
-var $$8 = _export;
-var IS_PURE$7 = isPure;
-var anObject$7 = anObject$A;
+var $$n = _export;
+var IS_PURE$n = isPure;
+var anObject$m = anObject$A;
 var getMapIterator$5 = getMapIterator$a;
 var sameValueZero = sameValueZero$1;
-var iterate$7 = iterate$r; // `Map.prototype.includes` method
+var iterate$k = iterate$q; // `Map.prototype.includes` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$8({
+$$n({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$7
+  forced: IS_PURE$n
 }, {
   includes: function includes(searchElement) {
-    return iterate$7(getMapIterator$5(anObject$7(this)), function (key, value, stop) {
+    return iterate$k(getMapIterator$5(anObject$m(this)), function (key, value, stop) {
       if (sameValueZero(value, searchElement)) return stop();
     }, {
       AS_ENTRIES: true,
@@ -3087,21 +2017,21 @@ $$8({
   }
 });
 
-var $$7 = _export;
-var IS_PURE$6 = isPure;
-var anObject$6 = anObject$A;
+var $$m = _export;
+var IS_PURE$m = isPure;
+var anObject$l = anObject$A;
 var getMapIterator$4 = getMapIterator$a;
-var iterate$6 = iterate$r; // `Map.prototype.includes` method
+var iterate$j = iterate$q; // `Map.prototype.includes` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$7({
+$$m({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$6
+  forced: IS_PURE$m
 }, {
   keyOf: function keyOf(searchElement) {
-    return iterate$6(getMapIterator$4(anObject$6(this)), function (key, value, stop) {
+    return iterate$j(getMapIterator$4(anObject$l(this)), function (key, value, stop) {
       if (value === searchElement) return stop(key);
     }, {
       AS_ENTRIES: true,
@@ -3111,32 +2041,32 @@ $$7({
   }
 });
 
-var $$6 = _export;
-var IS_PURE$5 = isPure;
-var getBuiltIn$2 = getBuiltIn$h;
-var anObject$5 = anObject$A;
-var aFunction$5 = aFunction$o;
-var bind$2 = functionBindContext;
-var speciesConstructor$1 = speciesConstructor$a;
+var $$l = _export;
+var IS_PURE$l = isPure;
+var getBuiltIn$8 = getBuiltIn$g;
+var anObject$k = anObject$A;
+var aFunction$f = aFunction$m;
+var bind$7 = functionBindContext;
+var speciesConstructor$7 = speciesConstructor$a;
 var getMapIterator$3 = getMapIterator$a;
-var iterate$5 = iterate$r; // `Map.prototype.mapKeys` method
+var iterate$i = iterate$q; // `Map.prototype.mapKeys` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$6({
+$$l({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$5
+  forced: IS_PURE$l
 }, {
   mapKeys: function mapKeys(callbackfn
   /* , thisArg */
   ) {
-    var map = anObject$5(this);
+    var map = anObject$k(this);
     var iterator = getMapIterator$3(map);
-    var boundFunction = bind$2(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    var newMap = new (speciesConstructor$1(map, getBuiltIn$2('Map')))();
-    var setter = aFunction$5(newMap.set);
-    iterate$5(iterator, function (key, value) {
+    var boundFunction = bind$7(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    var newMap = new (speciesConstructor$7(map, getBuiltIn$8('Map')))();
+    var setter = aFunction$f(newMap.set);
+    iterate$i(iterator, function (key, value) {
       setter.call(newMap, boundFunction(value, key, map), value);
     }, {
       AS_ENTRIES: true,
@@ -3146,32 +2076,32 @@ $$6({
   }
 });
 
-var $$5 = _export;
-var IS_PURE$4 = isPure;
-var getBuiltIn$1 = getBuiltIn$h;
-var anObject$4 = anObject$A;
-var aFunction$4 = aFunction$o;
-var bind$1 = functionBindContext;
-var speciesConstructor = speciesConstructor$a;
+var $$k = _export;
+var IS_PURE$k = isPure;
+var getBuiltIn$7 = getBuiltIn$g;
+var anObject$j = anObject$A;
+var aFunction$e = aFunction$m;
+var bind$6 = functionBindContext;
+var speciesConstructor$6 = speciesConstructor$a;
 var getMapIterator$2 = getMapIterator$a;
-var iterate$4 = iterate$r; // `Map.prototype.mapValues` method
+var iterate$h = iterate$q; // `Map.prototype.mapValues` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$5({
+$$k({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$4
+  forced: IS_PURE$k
 }, {
   mapValues: function mapValues(callbackfn
   /* , thisArg */
   ) {
-    var map = anObject$4(this);
+    var map = anObject$j(this);
     var iterator = getMapIterator$2(map);
-    var boundFunction = bind$1(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    var newMap = new (speciesConstructor(map, getBuiltIn$1('Map')))();
-    var setter = aFunction$4(newMap.set);
-    iterate$4(iterator, function (key, value) {
+    var boundFunction = bind$6(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    var newMap = new (speciesConstructor$6(map, getBuiltIn$7('Map')))();
+    var setter = aFunction$e(newMap.set);
+    iterate$h(iterator, function (key, value) {
       setter.call(newMap, key, boundFunction(value, key, map));
     }, {
       AS_ENTRIES: true,
@@ -3181,30 +2111,30 @@ $$5({
   }
 });
 
-var $$4 = _export;
-var IS_PURE$3 = isPure;
-var anObject$3 = anObject$A;
-var aFunction$3 = aFunction$o;
-var iterate$3 = iterate$r; // `Map.prototype.merge` method
+var $$j = _export;
+var IS_PURE$j = isPure;
+var anObject$i = anObject$A;
+var aFunction$d = aFunction$m;
+var iterate$g = iterate$q; // `Map.prototype.merge` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$4({
+$$j({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$3
+  forced: IS_PURE$j
 }, {
   // eslint-disable-next-line no-unused-vars -- required for `.length`
   merge: function merge(iterable
   /* ...iterbles */
   ) {
-    var map = anObject$3(this);
-    var setter = aFunction$3(map.set);
+    var map = anObject$i(this);
+    var setter = aFunction$d(map.set);
     var argumentsLength = arguments.length;
     var i = 0;
 
     while (i < argumentsLength) {
-      iterate$3(arguments[i++], setter, {
+      iterate$g(arguments[i++], setter, {
         that: map,
         AS_ENTRIES: true
       });
@@ -3214,29 +2144,29 @@ $$4({
   }
 });
 
-var $$3 = _export;
-var IS_PURE$2 = isPure;
-var anObject$2 = anObject$A;
-var aFunction$2 = aFunction$o;
+var $$i = _export;
+var IS_PURE$i = isPure;
+var anObject$h = anObject$A;
+var aFunction$c = aFunction$m;
 var getMapIterator$1 = getMapIterator$a;
-var iterate$2 = iterate$r; // `Map.prototype.reduce` method
+var iterate$f = iterate$q; // `Map.prototype.reduce` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$3({
+$$i({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$2
+  forced: IS_PURE$i
 }, {
   reduce: function reduce(callbackfn
   /* , initialValue */
   ) {
-    var map = anObject$2(this);
+    var map = anObject$h(this);
     var iterator = getMapIterator$1(map);
     var noInitial = arguments.length < 2;
     var accumulator = noInitial ? undefined : arguments[1];
-    aFunction$2(callbackfn);
-    iterate$2(iterator, function (key, value) {
+    aFunction$c(callbackfn);
+    iterate$f(iterator, function (key, value) {
       if (noInitial) {
         noInitial = false;
         accumulator = value;
@@ -3252,27 +2182,27 @@ $$3({
   }
 });
 
-var $$2 = _export;
-var IS_PURE$1 = isPure;
-var anObject$1 = anObject$A;
-var bind = functionBindContext;
+var $$h = _export;
+var IS_PURE$h = isPure;
+var anObject$g = anObject$A;
+var bind$5 = functionBindContext;
 var getMapIterator = getMapIterator$a;
-var iterate$1 = iterate$r; // `Set.prototype.some` method
+var iterate$e = iterate$q; // `Set.prototype.some` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$2({
+$$h({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE$1
+  forced: IS_PURE$h
 }, {
   some: function some(callbackfn
   /* , thisArg */
   ) {
-    var map = anObject$1(this);
+    var map = anObject$g(this);
     var iterator = getMapIterator(map);
-    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
-    return iterate$1(iterator, function (key, value, stop) {
+    var boundFunction = bind$5(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    return iterate$e(iterator, function (key, value, stop) {
       if (boundFunction(value, key, map)) return stop();
     }, {
       AS_ENTRIES: true,
@@ -3282,39 +2212,495 @@ $$2({
   }
 });
 
-var $$1 = _export;
-var IS_PURE = isPure;
-var anObject = anObject$A;
-var aFunction$1 = aFunction$o; // `Set.prototype.update` method
+var $$g = _export;
+var IS_PURE$g = isPure;
+var anObject$f = anObject$A;
+var aFunction$b = aFunction$m; // `Set.prototype.update` method
 // https://github.com/tc39/proposal-collection-methods
 
-$$1({
+$$g({
   target: 'Map',
   proto: true,
   real: true,
-  forced: IS_PURE
+  forced: IS_PURE$g
 }, {
   update: function update(key, callback
   /* , thunk */
   ) {
-    var map = anObject(this);
+    var map = anObject$f(this);
     var length = arguments.length;
-    aFunction$1(callback);
+    aFunction$b(callback);
     var isPresentInMap = map.has(key);
 
     if (!isPresentInMap && length < 3) {
       throw TypeError('Updating absent value');
     }
 
-    var value = isPresentInMap ? map.get(key) : aFunction$1(length > 2 ? arguments[2] : undefined)(key, map);
+    var value = isPresentInMap ? map.get(key) : aFunction$b(length > 2 ? arguments[2] : undefined)(key, map);
     map.set(key, callback(value, key, map));
     return map;
   }
 });
 
+var anObject$e = anObject$A;
+var aFunction$a = aFunction$m; // https://github.com/tc39/collection-methods
+
+var collectionAddAll$1 = function () {
+  var set = anObject$e(this);
+  var adder = aFunction$a(set.add);
+
+  for (var k = 0, len = arguments.length; k < len; k++) {
+    adder.call(set, arguments[k]);
+  }
+
+  return set;
+};
+
+var $$f = _export;
+var IS_PURE$f = isPure;
+var collectionAddAll = collectionAddAll$1; // `Set.prototype.addAll` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$f({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$f
+}, {
+  addAll: function addAll() {
+    return collectionAddAll.apply(this, arguments);
+  }
+});
+
+var $$e = _export;
+var IS_PURE$e = isPure;
+var collectionDeleteAll = collectionDeleteAll$2; // `Set.prototype.deleteAll` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$e({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$e
+}, {
+  deleteAll: function deleteAll() {
+    return collectionDeleteAll.apply(this, arguments);
+  }
+});
+
+var $$d = _export;
+var IS_PURE$d = isPure;
+var getBuiltIn$6 = getBuiltIn$g;
+var anObject$d = anObject$A;
+var aFunction$9 = aFunction$m;
+var speciesConstructor$5 = speciesConstructor$a;
+var iterate$d = iterate$q; // `Set.prototype.difference` method
+// https://github.com/tc39/proposal-set-methods
+
+$$d({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$d
+}, {
+  difference: function difference(iterable) {
+    var set = anObject$d(this);
+    var newSet = new (speciesConstructor$5(set, getBuiltIn$6('Set')))(set);
+    var remover = aFunction$9(newSet['delete']);
+    iterate$d(iterable, function (value) {
+      remover.call(newSet, value);
+    });
+    return newSet;
+  }
+});
+
+var getSetIterator$7 = function (it) {
+  // eslint-disable-next-line es/no-set -- safe
+  return Set.prototype.values.call(it);
+};
+
+var $$c = _export;
+var IS_PURE$c = isPure;
+var anObject$c = anObject$A;
+var bind$4 = functionBindContext;
+var getSetIterator$6 = getSetIterator$7;
+var iterate$c = iterate$q; // `Set.prototype.every` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$c({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$c
+}, {
+  every: function every(callbackfn
+  /* , thisArg */
+  ) {
+    var set = anObject$c(this);
+    var iterator = getSetIterator$6(set);
+    var boundFunction = bind$4(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    return !iterate$c(iterator, function (value, stop) {
+      if (!boundFunction(value, value, set)) return stop();
+    }, {
+      IS_ITERATOR: true,
+      INTERRUPTED: true
+    }).stopped;
+  }
+});
+
+var $$b = _export;
+var IS_PURE$b = isPure;
+var getBuiltIn$5 = getBuiltIn$g;
+var anObject$b = anObject$A;
+var aFunction$8 = aFunction$m;
+var bind$3 = functionBindContext;
+var speciesConstructor$4 = speciesConstructor$a;
+var getSetIterator$5 = getSetIterator$7;
+var iterate$b = iterate$q; // `Set.prototype.filter` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$b({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$b
+}, {
+  filter: function filter(callbackfn
+  /* , thisArg */
+  ) {
+    var set = anObject$b(this);
+    var iterator = getSetIterator$5(set);
+    var boundFunction = bind$3(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    var newSet = new (speciesConstructor$4(set, getBuiltIn$5('Set')))();
+    var adder = aFunction$8(newSet.add);
+    iterate$b(iterator, function (value) {
+      if (boundFunction(value, value, set)) adder.call(newSet, value);
+    }, {
+      IS_ITERATOR: true
+    });
+    return newSet;
+  }
+});
+
+var $$a = _export;
+var IS_PURE$a = isPure;
+var anObject$a = anObject$A;
+var bind$2 = functionBindContext;
+var getSetIterator$4 = getSetIterator$7;
+var iterate$a = iterate$q; // `Set.prototype.find` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$a({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$a
+}, {
+  find: function find(callbackfn
+  /* , thisArg */
+  ) {
+    var set = anObject$a(this);
+    var iterator = getSetIterator$4(set);
+    var boundFunction = bind$2(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    return iterate$a(iterator, function (value, stop) {
+      if (boundFunction(value, value, set)) return stop(value);
+    }, {
+      IS_ITERATOR: true,
+      INTERRUPTED: true
+    }).result;
+  }
+});
+
+var $$9 = _export;
+var IS_PURE$9 = isPure;
+var getBuiltIn$4 = getBuiltIn$g;
+var anObject$9 = anObject$A;
+var aFunction$7 = aFunction$m;
+var speciesConstructor$3 = speciesConstructor$a;
+var iterate$9 = iterate$q; // `Set.prototype.intersection` method
+// https://github.com/tc39/proposal-set-methods
+
+$$9({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$9
+}, {
+  intersection: function intersection(iterable) {
+    var set = anObject$9(this);
+    var newSet = new (speciesConstructor$3(set, getBuiltIn$4('Set')))();
+    var hasCheck = aFunction$7(set.has);
+    var adder = aFunction$7(newSet.add);
+    iterate$9(iterable, function (value) {
+      if (hasCheck.call(set, value)) adder.call(newSet, value);
+    });
+    return newSet;
+  }
+});
+
+var $$8 = _export;
+var IS_PURE$8 = isPure;
+var anObject$8 = anObject$A;
+var aFunction$6 = aFunction$m;
+var iterate$8 = iterate$q; // `Set.prototype.isDisjointFrom` method
+// https://tc39.github.io/proposal-set-methods/#Set.prototype.isDisjointFrom
+
+$$8({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$8
+}, {
+  isDisjointFrom: function isDisjointFrom(iterable) {
+    var set = anObject$8(this);
+    var hasCheck = aFunction$6(set.has);
+    return !iterate$8(iterable, function (value, stop) {
+      if (hasCheck.call(set, value) === true) return stop();
+    }, {
+      INTERRUPTED: true
+    }).stopped;
+  }
+});
+
+var $$7 = _export;
+var IS_PURE$7 = isPure;
+var getBuiltIn$3 = getBuiltIn$g;
+var anObject$7 = anObject$A;
+var aFunction$5 = aFunction$m;
+var getIterator = getIterator$2;
+var iterate$7 = iterate$q; // `Set.prototype.isSubsetOf` method
+// https://tc39.github.io/proposal-set-methods/#Set.prototype.isSubsetOf
+
+$$7({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$7
+}, {
+  isSubsetOf: function isSubsetOf(iterable) {
+    var iterator = getIterator(this);
+    var otherSet = anObject$7(iterable);
+    var hasCheck = otherSet.has;
+
+    if (typeof hasCheck != 'function') {
+      otherSet = new (getBuiltIn$3('Set'))(iterable);
+      hasCheck = aFunction$5(otherSet.has);
+    }
+
+    return !iterate$7(iterator, function (value, stop) {
+      if (hasCheck.call(otherSet, value) === false) return stop();
+    }, {
+      IS_ITERATOR: true,
+      INTERRUPTED: true
+    }).stopped;
+  }
+});
+
+var $$6 = _export;
+var IS_PURE$6 = isPure;
+var anObject$6 = anObject$A;
+var aFunction$4 = aFunction$m;
+var iterate$6 = iterate$q; // `Set.prototype.isSupersetOf` method
+// https://tc39.github.io/proposal-set-methods/#Set.prototype.isSupersetOf
+
+$$6({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$6
+}, {
+  isSupersetOf: function isSupersetOf(iterable) {
+    var set = anObject$6(this);
+    var hasCheck = aFunction$4(set.has);
+    return !iterate$6(iterable, function (value, stop) {
+      if (hasCheck.call(set, value) === false) return stop();
+    }, {
+      INTERRUPTED: true
+    }).stopped;
+  }
+});
+
+var $$5 = _export;
+var IS_PURE$5 = isPure;
+var anObject$5 = anObject$A;
+var getSetIterator$3 = getSetIterator$7;
+var iterate$5 = iterate$q; // `Set.prototype.join` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$5({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$5
+}, {
+  join: function join(separator) {
+    var set = anObject$5(this);
+    var iterator = getSetIterator$3(set);
+    var sep = separator === undefined ? ',' : String(separator);
+    var result = [];
+    iterate$5(iterator, result.push, {
+      that: result,
+      IS_ITERATOR: true
+    });
+    return result.join(sep);
+  }
+});
+
+var $$4 = _export;
+var IS_PURE$4 = isPure;
+var getBuiltIn$2 = getBuiltIn$g;
+var anObject$4 = anObject$A;
+var aFunction$3 = aFunction$m;
+var bind$1 = functionBindContext;
+var speciesConstructor$2 = speciesConstructor$a;
+var getSetIterator$2 = getSetIterator$7;
+var iterate$4 = iterate$q; // `Set.prototype.map` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$4({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$4
+}, {
+  map: function map(callbackfn
+  /* , thisArg */
+  ) {
+    var set = anObject$4(this);
+    var iterator = getSetIterator$2(set);
+    var boundFunction = bind$1(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    var newSet = new (speciesConstructor$2(set, getBuiltIn$2('Set')))();
+    var adder = aFunction$3(newSet.add);
+    iterate$4(iterator, function (value) {
+      adder.call(newSet, boundFunction(value, value, set));
+    }, {
+      IS_ITERATOR: true
+    });
+    return newSet;
+  }
+});
+
+var $$3 = _export;
+var IS_PURE$3 = isPure;
+var anObject$3 = anObject$A;
+var aFunction$2 = aFunction$m;
+var getSetIterator$1 = getSetIterator$7;
+var iterate$3 = iterate$q; // `Set.prototype.reduce` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$3({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$3
+}, {
+  reduce: function reduce(callbackfn
+  /* , initialValue */
+  ) {
+    var set = anObject$3(this);
+    var iterator = getSetIterator$1(set);
+    var noInitial = arguments.length < 2;
+    var accumulator = noInitial ? undefined : arguments[1];
+    aFunction$2(callbackfn);
+    iterate$3(iterator, function (value) {
+      if (noInitial) {
+        noInitial = false;
+        accumulator = value;
+      } else {
+        accumulator = callbackfn(accumulator, value, value, set);
+      }
+    }, {
+      IS_ITERATOR: true
+    });
+    if (noInitial) throw TypeError('Reduce of empty set with no initial value');
+    return accumulator;
+  }
+});
+
+var $$2 = _export;
+var IS_PURE$2 = isPure;
+var anObject$2 = anObject$A;
+var bind = functionBindContext;
+var getSetIterator = getSetIterator$7;
+var iterate$2 = iterate$q; // `Set.prototype.some` method
+// https://github.com/tc39/proposal-collection-methods
+
+$$2({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$2
+}, {
+  some: function some(callbackfn
+  /* , thisArg */
+  ) {
+    var set = anObject$2(this);
+    var iterator = getSetIterator(set);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined, 3);
+    return iterate$2(iterator, function (value, stop) {
+      if (boundFunction(value, value, set)) return stop();
+    }, {
+      IS_ITERATOR: true,
+      INTERRUPTED: true
+    }).stopped;
+  }
+});
+
+var $$1 = _export;
+var IS_PURE$1 = isPure;
+var getBuiltIn$1 = getBuiltIn$g;
+var anObject$1 = anObject$A;
+var aFunction$1 = aFunction$m;
+var speciesConstructor$1 = speciesConstructor$a;
+var iterate$1 = iterate$q; // `Set.prototype.symmetricDifference` method
+// https://github.com/tc39/proposal-set-methods
+
+$$1({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE$1
+}, {
+  symmetricDifference: function symmetricDifference(iterable) {
+    var set = anObject$1(this);
+    var newSet = new (speciesConstructor$1(set, getBuiltIn$1('Set')))(set);
+    var remover = aFunction$1(newSet['delete']);
+    var adder = aFunction$1(newSet.add);
+    iterate$1(iterable, function (value) {
+      remover.call(newSet, value) || adder.call(newSet, value);
+    });
+    return newSet;
+  }
+});
+
+var $ = _export;
+var IS_PURE = isPure;
+var getBuiltIn = getBuiltIn$g;
+var anObject = anObject$A;
+var aFunction = aFunction$m;
+var speciesConstructor = speciesConstructor$a;
+var iterate = iterate$q; // `Set.prototype.union` method
+// https://github.com/tc39/proposal-set-methods
+
+$({
+  target: 'Set',
+  proto: true,
+  real: true,
+  forced: IS_PURE
+}, {
+  union: function union(iterable) {
+    var set = anObject(this);
+    var newSet = new (speciesConstructor(set, getBuiltIn('Set')))(set);
+    iterate(iterable, aFunction(newSet.add), {
+      that: newSet
+    });
+    return newSet;
+  }
+});
+
 const {
-  EventEmitter
-} = require$$0__default$1['default'];
+  EventEmitter: EventEmitter$1
+} = require$$0__default['default'];
 const CacheStorageEvents = {
   CLEANUP: 'cs@cleanup'
 };
@@ -3326,7 +2712,7 @@ const CacheStorageEvents = {
  * A cache storage for storing any type of data.
  */
 
-class CacheStorage extends EventEmitter {
+class CacheStorage extends EventEmitter$1 {
   /**
    * @type {string}
    */
@@ -3475,7 +2861,7 @@ const csgInstance$1 = CacheStorageGroup$2.getInstance();
  * @return {CacheStorage}
  */
 
-function getManagedCacheStorage$b(id) {
+function getManagedCacheStorage$a(id) {
   const cs = new CacheStorage(id);
   csgInstance$1.cacheStorages.add(cs);
   return cs;
@@ -3485,14 +2871,211 @@ var cache = {
   CacheStorage,
   CacheStorageEvents,
   CacheStorageGroup: CacheStorageGroup$2,
-  getManagedCacheStorage: getManagedCacheStorage$b
+  getManagedCacheStorage: getManagedCacheStorage$a
 };
+
+var insure$6 = {exports: {}};
+
+const EventEmitter = require$$0__default['default'];
+const ON_CANCEL$1 = 'cancel';
+
+class CancelRequest extends EventEmitter {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "cancelled", false);
+  }
+
+  cancel() {
+    this.cancelled = true;
+    this.emit(ON_CANCEL$1);
+  }
+
+}
+
+var cancel = {
+  CancelRequest,
+  ON_CANCEL: ON_CANCEL$1
+};
+
+class RequestCancelled$1 extends Error {
+  /**
+   * @param {string} url
+   */
+  constructor(url) {
+    super(`This request URL has been cancelled: ${url}`);
+    this.name = 'RequestCancelled';
+  }
+
+}
+
+var RequestCancelled_1 = RequestCancelled$1;
+
+const zlib = require$$0__default$1['default'];
+const http = require$$1__default['default'];
+const https = require$$2__default['default'];
+const ON_CANCEL = cancel;
+const RequestCancelled = RequestCancelled_1;
+const parse$2 = require$$5__default['default'].parse;
+const format$6 = require$$5__default['default'].format;
+const timeoutThreshold = 10 * 1000;
+
+const translate = host => (commonjsGlobal.hosts || {})[host] || host;
+
+const create = (url, proxy) => (((typeof proxy === 'undefined' ? commonjsGlobal.proxy : proxy) || url).protocol === 'https:' ? https : http).request;
+
+const configure = (method, url, headers, proxy) => {
+  headers = headers || {};
+  proxy = typeof proxy === 'undefined' ? commonjsGlobal.proxy : proxy;
+  if ('content-length' in headers) delete headers['content-length'];
+  const options = {};
+  options._headers = headers;
+
+  if (proxy && url.protocol === 'https:') {
+    options.method = 'CONNECT';
+    options.headers = Object.keys(headers).reduce((result, key) => Object.assign(result, ['host', 'user-agent'].includes(key) && {
+      [key]: headers[key]
+    }), {});
+  } else {
+    options.method = method;
+    options.headers = headers;
+  }
+
+  if (proxy) {
+    options.hostname = translate(proxy.hostname);
+    options.port = proxy.port || (proxy.protocol === 'https:' ? 443 : 80);
+    options.path = url.protocol === 'https:' ? translate(url.hostname) + ':' + (url.port || 443) : 'http://' + translate(url.hostname) + url.path;
+  } else {
+    options.hostname = translate(url.hostname);
+    options.port = url.port || (url.protocol === 'https:' ? 443 : 80);
+    options.path = url.path;
+  }
+
+  return options;
+};
+/**
+ * @param {string} method
+ * @param {string} url
+ * @param {Object?} headers
+ * @param {unknown?} body
+ * @param {unknown?} proxy
+ * @param {CancelRequest?} cancelRequest
+ */
+
+
+const request$9 = (method, url, headers, body, proxy, cancelRequest) => {
+  url = parse$2(url);
+  headers = headers ||
+  /* @type {Partial<Record<string,string>>} */
+  {};
+  const options = configure(method, url, Object.assign({
+    host: url.hostname,
+    accept: 'application/json, text/plain, */*',
+    'accept-encoding': 'gzip, deflate',
+    'accept-language': 'zh-CN,zh;q=0.9',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
+  }, headers), proxy);
+  return new Promise((resolve, reject) => {
+    var _cancelRequest$cancel;
+
+    const clientRequest = create(url, proxy)(options);
+
+    const destroyClientRequest = function () {
+      // We destroy the request and throw RequestCancelled
+      // when the request has been cancelled.
+      clientRequest.destroy(new RequestCancelled(format$6(url)));
+    };
+
+    cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.on(ON_CANCEL, destroyClientRequest);
+    if ((_cancelRequest$cancel = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && _cancelRequest$cancel !== void 0 ? _cancelRequest$cancel : false) destroyClientRequest();
+    clientRequest.setTimeout(timeoutThreshold, () => {
+      console.warn(`TIMEOUT > ${format$6(url)}`);
+      destroyClientRequest();
+    }).on('response', response => resolve(response)).on('connect', (_, socket) => https.request({
+      method: method,
+      path: url.path,
+      headers: options._headers,
+      socket: socket,
+      agent: false
+    }).on('response', response => resolve(response)).on('error', error => reject(error)).end(body)).on('error', error => reject(error)).end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
+  }).then(response => {
+    var _cancelRequest$cancel2;
+
+    if ((_cancelRequest$cancel2 = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && _cancelRequest$cancel2 !== void 0 ? _cancelRequest$cancel2 : false) return Promise.reject(new RequestCancelled(format$6(url)));
+
+    if (new Set([201, 301, 302, 303, 307, 308]).has(response.statusCode)) {
+      delete headers.host;
+      return request$9(method, url.resolve(response.headers.location || url.href), headers, body, proxy);
+    }
+
+    return Object.assign(response, {
+      url: url,
+      body: raw => read(response, raw),
+      json: () => json(response),
+      jsonp: () => jsonp(response)
+    });
+  });
+};
+
+const read = (connect, raw) => new Promise((resolve, reject) => {
+  const chunks = [];
+  connect.on('data', chunk => chunks.push(chunk)).on('end', () => resolve(Buffer.concat(chunks))).on('error', error => reject(error));
+}).then(buffer => {
+  buffer = buffer.length && ['gzip', 'deflate'].includes(connect.headers['content-encoding']) ? zlib.unzipSync(buffer) : buffer;
+  return raw ? buffer : buffer.toString();
+});
+
+const json = connect => read(connect, false).then(body => JSON.parse(body));
+
+const jsonp = connect => read(connect, false).then(body => JSON.parse(body.slice(body.indexOf('(') + 1, -')'.length)));
+
+request$9.read = read;
+request$9.create = create;
+request$9.translate = translate;
+request$9.configure = configure;
+var request_1 = request$9;
+
+(function (module) {
+  const request = request_1;
+  const host = null; // 'http://localhost:9000'
+
+  module.exports = () => {
+    const proxy = new Proxy(() => {}, {
+      get: (target, property) => {
+        target.route = (target.route || []).concat(property);
+        return proxy;
+      },
+      apply: (target, _, payload) => {
+        if (module.exports.disable || !host) return Promise.reject();
+        const path = target.route.join('/');
+        const query = typeof payload[0] === 'object' ? JSON.stringify(payload[0]) : payload[0]; // if (path != 'qq/ticket') return Promise.reject()
+
+        return request('GET', `${host}/${path}?${encodeURIComponent(query)}`).then(response => response.body());
+      }
+    });
+    return proxy;
+  };
+})(insure$6);
+
+var select$7 = {exports: {}};
+
+select$7.exports = (list, info) => {
+  const {
+    duration
+  } = info;
+  const song = list.slice(0, 5) // 挑前5个结果
+  .find(song => song.duration && Math.abs(song.duration - duration) < 5 * 1e3); // 第一个时长相差5s (5000ms) 之内的结果
+
+  if (song) return song;else return list[0]; // 没有就播放第一条
+};
+
+select$7.exports.ENABLE_FLAC = (process.env.ENABLE_FLAC || '').toLowerCase() === 'true';
 
 const insure$5 = insure$6.exports;
 const select$6 = select$7.exports;
-const request$c = request_1;
+const request$8 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$a
+  getManagedCacheStorage: getManagedCacheStorage$9
 } = cache;
 const headers$2 = {
   origin: 'http://y.qq.com/',
@@ -3523,7 +3106,7 @@ const format$5 = song => ({
 
 const search$7 = info => {
   const url = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center&' + 't=0&aggr=1&cr=1&catZhida=1&lossless=0&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + '&' + 'g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' + 'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0';
-  return request$c('GET', url).then(response => response.jsonp()).then(jsonBody => {
+  return request$8('GET', url).then(response => response.jsonp()).then(jsonBody => {
     const list = jsonBody.data.song.list.map(format$5);
     const matched = select$6(list, info);
     return matched ? matched.id : Promise.reject();
@@ -3547,7 +3130,7 @@ const single$2 = (id, format) => {
       }
     }
   }));
-  return request$c('GET', url, headers$2).then(response => response.json()).then(jsonBody => {
+  return request$8('GET', url, headers$2).then(response => response.json()).then(jsonBody => {
     const {
       sip,
       midurlinfo
@@ -3561,16 +3144,16 @@ const track$8 = id => {
   return Promise.all([['F000', '.flac'], ['M800', '.mp3'], ['M500', '.mp3']].slice(headers$2.cookie || typeof window !== 'undefined' ? select$6.ENABLE_FLAC ? 0 : 1 : 2).map(format => single$2(id, format).catch(() => null))).then(result => result.find(url => url) || Promise.reject()).catch(() => insure$5().qq.track(id));
 };
 
-const cs$a = getManagedCacheStorage$a('provider/qq');
+const cs$9 = getManagedCacheStorage$9('provider/qq');
 
-const check$9 = info => cs$a.cache(info, () => search$7(info)).then(track$8);
+const check$8 = info => cs$9.cache(info, () => search$7(info)).then(track$8);
 
 var qq = {
-  check: check$9,
+  check: check$8,
   track: track$8
 };
 
-var crypto$4 = {exports: {}};
+var crypto$3 = {exports: {}};
 
 var long = Long$1;
 /**
@@ -4994,7 +4577,7 @@ var kwDES = {
 
 (function (module) {
 
-  const crypto = require$$0__default$3['default'];
+  const crypto = require$$0__default$2['default'];
   const parse = require$$5__default['default'].parse;
   const bodyify = require$$2__default$1['default'].stringify;
   const eapiKey = 'e82ckenh8dichen8';
@@ -5101,14 +4684,14 @@ var kwDES = {
   try {
     module.exports.kuwoapi = kwDES;
   } catch (e) {}
-})(crypto$4);
+})(crypto$3);
 
 const insure$4 = insure$6.exports;
 const select$5 = select$7.exports;
-const crypto$3 = crypto$4.exports;
-const request$b = request_1;
+const crypto$2 = crypto$3.exports;
+const request$7 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$9
+  getManagedCacheStorage: getManagedCacheStorage$8
 } = cache;
 
 const format$4 = song => {
@@ -5133,7 +4716,7 @@ const format$4 = song => {
 const search$6 = info => {
   const url = // 'http://songsearch.kugou.com/song_search_v2?' +
   'http://mobilecdn.kugou.com/api/v3/search/song?' + 'keyword=' + encodeURIComponent(info.keyword) + '&page=1&pagesize=10';
-  return request$b('GET', url).then(response => response.json()).then(jsonBody => {
+  return request$7('GET', url).then(response => response.json()).then(jsonBody => {
     // const list = jsonBody.data.lists.map(format)
     const list = jsonBody.data.info.map(format$4);
     const matched = select$5(list, info);
@@ -5157,27 +4740,27 @@ const single$1 = (song, format) => {
     return '';
   };
 
-  const url = 'http://trackercdn.kugou.com/i/v2/?' + 'key=' + crypto$3.md5.digest(`${getHashId()}kgcloudv2`) + '&hash=' + getHashId() + '&' + 'appid=1005&pid=2&cmd=25&behavior=play&album_id=' + song.album.id;
-  return request$b('GET', url).then(response => response.json()).then(jsonBody => jsonBody.url[0] || Promise.reject());
+  const url = 'http://trackercdn.kugou.com/i/v2/?' + 'key=' + crypto$2.md5.digest(`${getHashId()}kgcloudv2`) + '&hash=' + getHashId() + '&' + 'appid=1005&pid=2&cmd=25&behavior=play&album_id=' + song.album.id;
+  return request$7('GET', url).then(response => response.json()).then(jsonBody => jsonBody.url[0] || Promise.reject());
 };
 
 const track$7 = song => Promise.all(['sqhash', 'hqhash', 'hash'].slice(select$5.ENABLE_FLAC ? 0 : 1).map(format => single$1(song, format).catch(() => null))).then(result => result.find(url => url) || Promise.reject()).catch(() => insure$4().kugou.track(song));
 
-const cs$9 = getManagedCacheStorage$9('provider/kugou');
+const cs$8 = getManagedCacheStorage$8('provider/kugou');
 
-const check$8 = info => cs$9.cache(info, () => search$6(info)).then(track$7);
+const check$7 = info => cs$8.cache(info, () => search$6(info)).then(track$7);
 
 var kugou = {
-  check: check$8,
+  check: check$7,
   search: search$6
 };
 
 const insure$3 = insure$6.exports;
 const select$4 = select$7.exports;
-const crypto$2 = crypto$4.exports;
-const request$a = request_1;
+const crypto$1 = crypto$3.exports;
+const request$6 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$8
+  getManagedCacheStorage: getManagedCacheStorage$7
 } = cache;
 
 const format$3 = song => ({
@@ -5223,7 +4806,7 @@ const search$5 = info => {
   // })
   const keyword = encodeURIComponent(info.keyword.replace(' - ', ''));
   const url = `http://www.kuwo.cn/api/www/search/searchMusicBykeyWord?key=${keyword}&pn=1&rn=30`;
-  return request$a('GET', `http://kuwo.cn/search/list?key=${keyword}`).then(response => response.headers['set-cookie'].find(line => line.includes('kw_token')).replace(/;.*/, '').split('=').pop()).then(token => request$a('GET', url, {
+  return request$6('GET', `http://kuwo.cn/search/list?key=${keyword}`).then(response => response.headers['set-cookie'].find(line => line.includes('kw_token')).replace(/;.*/, '').split('=').pop()).then(token => request$6('GET', url, {
     referer: `http://www.kuwo.cn/search/list?key=${keyword}`,
     csrf: token,
     cookie: `kw_token=${token}`
@@ -5236,10 +4819,10 @@ const search$5 = info => {
 };
 
 const track$6 = id => {
-  const url = crypto$2.kuwoapi ? 'http://mobi.kuwo.cn/mobi.s?f=kuwo&q=' + crypto$2.kuwoapi.encryptQuery('corp=kuwo&p2p=1&type=convert_url2&sig=0&format=' + ['flac', 'mp3'].slice(select$4.ENABLE_FLAC ? 0 : 1).join('|') + '&rid=' + id) : 'http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3&response=url&rid=MUSIC_' + id; // flac refuse
+  const url = crypto$1.kuwoapi ? 'http://mobi.kuwo.cn/mobi.s?f=kuwo&q=' + crypto$1.kuwoapi.encryptQuery('corp=kuwo&p2p=1&type=convert_url2&sig=0&format=' + ['flac', 'mp3'].slice(select$4.ENABLE_FLAC ? 0 : 1).join('|') + '&rid=' + id) : 'http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3&response=url&rid=MUSIC_' + id; // flac refuse
   // : 'http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3&br=320kmp3&rid=' + id // flac refuse
 
-  return request$a('GET', url, {
+  return request$6('GET', url, {
     'user-agent': 'okhttp/3.10.0'
   }).then(response => response.body()).then(body => {
     const url = (body.match(/http[^\s$"]+/) || [])[0];
@@ -5247,20 +4830,20 @@ const track$6 = id => {
   }).catch(() => insure$3().kuwo.track(id));
 };
 
-const cs$8 = getManagedCacheStorage$8('provider/kuwo');
+const cs$7 = getManagedCacheStorage$7('provider/kuwo');
 
-const check$7 = info => cs$8.cache(info, () => search$5(info)).then(track$6);
+const check$6 = info => cs$7.cache(info, () => search$5(info)).then(track$6);
 
 var kuwo = {
-  check: check$7,
+  check: check$6,
   track: track$6
 };
 
 const insure$2 = insure$6.exports;
 const select$3 = select$7.exports;
-const request$9 = request_1;
+const request$5 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$7
+  getManagedCacheStorage: getManagedCacheStorage$6
 } = cache;
 const headers$1 = {
   origin: 'http://music.migu.cn/',
@@ -5290,7 +4873,7 @@ const format$2 = song => {
 
 const search$4 = info => {
   const url = 'https://m.music.migu.cn/migu/remoting/scr_search_tag?' + 'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1';
-  return request$9('GET', url, headers$1).then(response => response.json()).then(jsonBody => {
+  return request$5('GET', url, headers$1).then(response => response.json()).then(jsonBody => {
     const list = ((jsonBody || {}).musics || []).map(format$2);
     const matched = select$3(list, info);
     return matched ? matched.id : Promise.reject();
@@ -5303,7 +4886,7 @@ const single = (id, format) => {
   //	'dataType=2&' + crypto.miguapi.encryptBody({copyrightId: id.toString(), type: format})
   const randomInt = Math.random().toString().substr(2);
   const url = 'https://app.c.nf.migu.cn/MIGUM2.0/strategy/listen-url/v2.2?lowerQualityContentId=' + randomInt + '&netType=01&resourceType=E&songId=' + id.toString() + '&toneFlag=' + format;
-  return request$9('GET', url, headers$1).then(response => response.json()).then(jsonBody => {
+  return request$5('GET', url, headers$1).then(response => response.json()).then(jsonBody => {
     // const {playUrl} = jsonBody.data
     // return playUrl ? encodeURI('http:' + playUrl) : Promise.reject()
     const {
@@ -5316,21 +4899,21 @@ const single = (id, format) => {
 const track$5 = id => Promise.all( // [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
 ['ZQ', 'SQ', 'HQ', 'PQ'].slice(select$3.ENABLE_FLAC ? 0 : 2).map(format => single(id, format).catch(() => null))).then(result => result.find(url => url) || Promise.reject()).catch(() => insure$2().migu.track(id));
 
-const cs$7 = getManagedCacheStorage$7('provider/migu');
+const cs$6 = getManagedCacheStorage$6('provider/migu');
 
-const check$6 = info => cs$7.cache(info, () => search$4(info)).then(track$5);
+const check$5 = info => cs$6.cache(info, () => search$4(info)).then(track$5);
 
 var migu = {
-  check: check$6,
+  check: check$5,
   track: track$5
 };
 
 const insure$1 = insure$6.exports;
 const select$2 = select$7.exports;
-const crypto$1 = crypto$4.exports;
-const request$8 = request_1;
+const crypto = crypto$3.exports;
+const request$4 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$6
+  getManagedCacheStorage: getManagedCacheStorage$5
 } = cache;
 const headers = {
   origin: 'http://www.joox.com',
@@ -5350,7 +4933,7 @@ const fit = info => {
 const format$1 = song => {
   const {
     decode
-  } = crypto$1.base64;
+  } = crypto.base64;
   return {
     id: song.songid,
     name: decode(song.info1 || ''),
@@ -5372,7 +4955,7 @@ const format$1 = song => {
 const search$3 = info => {
   const keyword = fit(info);
   const url = 'http://api-jooxtt.sanook.com/web-fcgi-bin/web_search?' + 'country=hk&lang=zh_TW&' + 'search_input=' + encodeURIComponent(keyword) + '&sin=0&ein=30';
-  return request$8('GET', url, headers).then(response => response.body()).then(body => {
+  return request$4('GET', url, headers).then(response => response.body()).then(body => {
     const jsonBody = JSON.parse(body.replace(/'/g, '"'));
     const list = jsonBody.itemlist.map(format$1);
     const matched = select$2(list, info);
@@ -5382,44 +4965,44 @@ const search$3 = info => {
 
 const track$4 = id => {
   const url = 'http://api.joox.com/web-fcgi-bin/web_get_songinfo?' + 'songid=' + id + '&country=hk&lang=zh_cn&from_type=-1&' + 'channel_id=-1&_=' + new Date().getTime();
-  return request$8('GET', url, headers).then(response => response.jsonp()).then(jsonBody => {
+  return request$4('GET', url, headers).then(response => response.jsonp()).then(jsonBody => {
     const songUrl = (jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl).replace(/M\d00([\w]+).mp3/, 'M800$1.mp3');
     if (songUrl) return songUrl;else return Promise.reject();
   }).catch(() => insure$1().joox.track(id));
 };
 
-const cs$6 = getManagedCacheStorage$6('provider/joox');
+const cs$5 = getManagedCacheStorage$5('provider/joox');
 
-const check$5 = info => cs$6.cache(info, () => search$3(info)).then(track$4);
+const check$4 = info => cs$5.cache(info, () => search$3(info)).then(track$4);
 
 var joox = {
-  check: check$5,
+  check: check$4,
   track: track$4
 };
 
-const request$7 = request_1;
+const request$3 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$5
+  getManagedCacheStorage: getManagedCacheStorage$4
 } = cache;
 
-const parse$3 = query => (query || '').split('&').reduce((result, item) => {
+const parse$1 = query => (query || '').split('&').reduce((result, item) => {
   const splitItem = item.split('=').map(decodeURIComponent);
   return Object.assign({}, result, {
     [splitItem[0]]: splitItem[1]
   });
 }, {});
 
-const cs$5 = getManagedCacheStorage$5('provider/youtube'); // const proxy = require('url').parse('http://127.0.0.1:1080')
+const cs$4 = getManagedCacheStorage$4('provider/youtube'); // const proxy = require('url').parse('http://127.0.0.1:1080')
 
-const proxy$2 = undefined;
-const key$2 = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
+const proxy$1 = undefined;
+const key$1 = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
 
 const signature = (id = '-tKVN2mAKRI') => {
   const url = `https://www.youtube.com/watch?v=${id}`;
-  return request$7('GET', url, {}, null, proxy$2).then(response => response.body()).then(body => {
+  return request$3('GET', url, {}, null, proxy$1).then(response => response.body()).then(body => {
     let assets = /"WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO":{[^}]+}/.exec(body)[0];
     assets = JSON.parse(`{${assets}}}`).WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_VERTICAL_LANDING_PAGE_PROMO;
-    return request$7('GET', 'https://youtube.com' + assets.jsUrl, {}, null, proxy$2).then(response => response.body());
+    return request$3('GET', 'https://youtube.com' + assets.jsUrl, {}, null, proxy$1).then(response => response.body());
   }).then(body => {
     const [, funcArg, funcBody] = /function\((\w+)\)\s*{([^}]+split\(""\)[^}]+join\(""\))};/.exec(body);
     const helperName = /;(.+?)\..+?\(/.exec(funcBody)[1];
@@ -5429,10 +5012,10 @@ const signature = (id = '-tKVN2mAKRI') => {
 };
 
 const apiSearch$1 = info => {
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key$2}`;
-  return request$7('GET', url, {
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key$1}`;
+  return request$3('GET', url, {
     accept: 'application/json'
-  }, null, proxy$2).then(response => response.json()).then(jsonBody => {
+  }, null, proxy$1).then(response => response.json()).then(jsonBody => {
     const matched = jsonBody.items[0];
     if (matched) return matched.id.videoId;else return Promise.reject();
   });
@@ -5440,7 +5023,7 @@ const apiSearch$1 = info => {
 
 const search$2 = info => {
   const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
-  return request$7('GET', url, {}, null, proxy$2).then(response => response.body()).then(body => {
+  return request$3('GET', url, {}, null, proxy$1).then(response => response.body()).then(body => {
     const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
     const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0];
     if (matched) return matched.videoRenderer.videoId;else return Promise.reject();
@@ -5462,38 +5045,38 @@ const track$3 = id => {
 		},
 		"videoId": "${id}"
 	}`;
-  return request$7('POST', url, json_header, json_body, proxy$2).then(response => response.body()).then(body => JSON.parse(body).streamingData).then(streamingData => {
+  return request$3('POST', url, json_header, json_body, proxy$1).then(response => response.body()).then(body => JSON.parse(body).streamingData).then(streamingData => {
     const stream = streamingData.formats.concat(streamingData.adaptiveFormats).find(format => format.itag === 140); // .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
     // .sort((a, b) => b.bitrate - a.bitrate)[0]
 
-    const target = parse$3(stream.signatureCipher);
-    return stream.url || (target.sp.includes('sig') ? cs$5.cache('YOUTUBE_SIGNATURE', () => signature(), Date.now() + 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url);
+    const target = parse$1(stream.signatureCipher);
+    return stream.url || (target.sp.includes('sig') ? cs$4.cache('YOUTUBE_SIGNATURE', () => signature(), Date.now() + 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url);
   });
 };
 
-const check$4 = info => cs$5.cache(info, () => {
-  if (key$2) return apiSearch$1(info);
+const check$3 = info => cs$4.cache(info, () => {
+  if (key$1) return apiSearch$1(info);
   return search$2(info);
 }).then(track$3);
 
 var youtube = {
-  check: check$4,
+  check: check$3,
   track: track$3
 };
 
-const request$6 = request_1;
+const request$2 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$4
+  getManagedCacheStorage: getManagedCacheStorage$3
 } = cache; // const proxy = require('url').parse('http://127.0.0.1:1080')
 
-const proxy$1 = undefined;
-const key$1 = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
+const proxy = undefined;
+const key = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
 
 const apiSearch = info => {
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key$1}`;
-  return request$6('GET', url, {
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(info.keyword)}&type=video&key=${key}`;
+  return request$2('GET', url, {
     accept: 'application/json'
-  }, null, proxy$1).then(response => response.json()).then(jsonBody => {
+  }, null, proxy).then(response => response.json()).then(jsonBody => {
     const matched = jsonBody.items[0];
     if (matched) return matched.id.videoId;else return Promise.reject();
   });
@@ -5501,7 +5084,7 @@ const apiSearch = info => {
 
 const search$1 = info => {
   const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
-  return request$6('GET', url, {}, null, proxy$1).then(response => response.body()).then(body => {
+  return request$2('GET', url, {}, null, proxy).then(response => response.body()).then(body => {
     const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
     const matched = initialData.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents[0];
     if (matched) return matched.videoRenderer.videoId;else return Promise.reject();
@@ -5511,32 +5094,32 @@ const search$1 = info => {
 const track$2 = id => {
   const url = `https://www.yt-download.org/api/button/mp3/${id}`;
   const regex = /<a[^>]*href=["']([^"']*)["']/;
-  return request$6('GET', url, {}, null, proxy$1).then(response => response.body()).then(body => {
+  return request$2('GET', url, {}, null, proxy).then(response => response.body()).then(body => {
     var matched = body.match(regex);
     return matched ? matched[1] : Promise.reject();
   });
 };
 
-const cs$4 = getManagedCacheStorage$4('provider/yt-download');
+const cs$3 = getManagedCacheStorage$3('provider/yt-download');
 
-const check$3 = info => cs$4.cache(info, () => {
-  if (key$1) return apiSearch(info);
+const check$2 = info => cs$3.cache(info, () => {
+  if (key) return apiSearch(info);
   return search$1(info);
 }).then(track$2);
 
 var ytDownload = {
-  check: check$3,
+  check: check$2,
   track: track$2
 };
 
 const {
   cacheStorage,
   CacheStorageGroup: CacheStorageGroup$1,
-  getManagedCacheStorage: getManagedCacheStorage$3
+  getManagedCacheStorage: getManagedCacheStorage$2
 } = cache;
 const insure = insure$6.exports;
 const select$1 = select$7.exports;
-const request$5 = request_1;
+const request$1 = request_1;
 
 const format = song => {
   return {
@@ -5552,7 +5135,7 @@ const format = song => {
 
 const search = info => {
   const url = 'https://api.bilibili.com/audio/music-service-c/s?' + 'search_type=music&page=1&pagesize=30&' + `keyword=${encodeURIComponent(info.keyword)}`;
-  return request$5('GET', url).then(response => response.json()).then(jsonBody => {
+  return request$1('GET', url).then(response => response.json()).then(jsonBody => {
     const list = jsonBody.data.result.map(format);
     const matched = select$1(list, info);
     return matched ? matched.id : Promise.reject();
@@ -5561,7 +5144,7 @@ const search = info => {
 
 const track$1 = id => {
   const url = 'https://www.bilibili.com/audio/music-service-c/web/url?rivilege=2&quality=2&' + 'sid=' + id;
-  return request$5('GET', url).then(response => response.json()).then(jsonBody => {
+  return request$1('GET', url).then(response => response.json()).then(jsonBody => {
     if (jsonBody.code === 0) {
       // bilibili music requires referer, connect do not support referer, so change to http
       return jsonBody.data.cdns[0].replace('https', 'http');
@@ -5571,24 +5154,24 @@ const track$1 = id => {
   }).catch(() => insure().bilibili.track(id));
 };
 
-const cs$3 = getManagedCacheStorage$3('provider/bilibili');
+const cs$2 = getManagedCacheStorage$2('provider/bilibili');
 
-const check$2 = info => cs$3.cache(info, () => search(info)).then(track$1);
+const check$1 = info => cs$2.cache(info, () => search(info)).then(track$1);
 
 var bilibili = {
-  check: check$2,
+  check: check$1,
   track: track$1
 };
 
 const select = select$7.exports;
-const request$4 = request_1;
+const request = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$2
+  getManagedCacheStorage: getManagedCacheStorage$1
 } = cache;
 
 const track = info => {
   const url = 'http://mos9527.tooo.top/ncm/pyncm/track/GetTrackAudio?song_ids=' + info.id + '&bitrate=' + ['999000', '320000'].slice(select.ENABLE_FLAC ? 0 : 1, select.ENABLE_FLAC ? 1 : 2);
-  return request$4('GET', url).then(response => response.body()).then(body => {
+  return request('GET', url).then(response => response.body()).then(body => {
     // response.body() without raw should
     // transform the response to string.
     if (typeof body !== 'string') return Promise.reject('response.body() returns a value whose type is not string.');
@@ -5599,12 +5182,12 @@ const track = info => {
   });
 };
 
-const cs$2 = getManagedCacheStorage$2('provider/pyncmd');
+const cs$1 = getManagedCacheStorage$1('provider/pyncmd');
 
-const check$1 = info => cs$2.cache(info, () => track(info));
+const check = info => cs$1.cache(info, () => track(info));
 
 var pyncmd = {
-  check: check$1
+  check
 };
 
 const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'youtube'];
@@ -5619,1032 +5202,42 @@ const PROVIDERS = {
   bilibili: bilibili,
   pyncmd: pyncmd
 };
-var consts$1 = {
+var consts = {
   DEFAULT_SOURCE,
   PROVIDERS
 };
 
-var $ = _export;
-var aFunction = aFunction$o;
-var getBuiltIn = getBuiltIn$h;
-var newPromiseCapabilityModule = newPromiseCapability$2;
-var perform = perform$2;
-var iterate = iterate$r;
-var PROMISE_ANY_ERROR = 'No one promise resolved'; // `Promise.any` method
-// https://tc39.es/ecma262/#sec-promise.any
-
-$({
-  target: 'Promise',
-  stat: true
-}, {
-  any: function any(iterable) {
-    var C = this;
-    var capability = newPromiseCapabilityModule.f(C);
-    var resolve = capability.resolve;
-    var reject = capability.reject;
-    var result = perform(function () {
-      var promiseResolve = aFunction(C.resolve);
-      var errors = [];
-      var counter = 0;
-      var remaining = 1;
-      var alreadyResolved = false;
-      iterate(iterable, function (promise) {
-        var index = counter++;
-        var alreadyRejected = false;
-        errors.push(undefined);
-        remaining++;
-        promiseResolve.call(C, promise).then(function (value) {
-          if (alreadyRejected || alreadyResolved) return;
-          alreadyResolved = true;
-          resolve(value);
-        }, function (error) {
-          if (alreadyRejected || alreadyResolved) return;
-          alreadyRejected = true;
-          errors[index] = error;
-          --remaining || reject(new (getBuiltIn('AggregateError'))(errors, PROMISE_ANY_ERROR));
-        });
-      });
-      --remaining || reject(new (getBuiltIn('AggregateError'))(errors, PROMISE_ANY_ERROR));
-    });
-    if (result.error) reject(result.value);
-    return capability.promise;
-  }
-});
-
-const request$3 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$1
-} = cache;
-
-const filter = (object, keys) => Object.keys(object).reduce((result, key) => Object.assign(result, keys.includes(key) && {
-  [key]: object[key]
-}), {}); // Object.keys(object).filter(key => !keys.includes(key)).forEach(key => delete object[key])
-
-
-const limit = text => {
-  const output = [text[0]];
-
-  const length = () => output.reduce((sum, token) => sum + token.length, 0);
-
-  text.slice(1).some(token => {
-    if (length() > 15) return true;
-    output.push(token);
-    return false;
-  });
-  return output;
-};
-
-const getFormatData = data => {
-  try {
-    const info = filter(data, ['id', 'name', 'alias', 'duration']);
-    info.name = (info.name || '').replace(/（\s*cover[:：\s][^）]+）/i, '').replace(/\(\s*cover[:：\s][^)]+\)/i, '').replace(/（\s*翻自[:：\s][^）]+）/, '').replace(/\(\s*翻自[:：\s][^)]+\)/, '');
-    info.album = filter(data.album, ['id', 'name']);
-    info.artists = data.artists.map(artist => filter(artist, ['id', 'name']));
-    info.keyword = info.name + ' - ' + limit(info.artists.map(artist => artist.name)).join(' / ');
-    return info;
-  } catch (err) {
-    console.log('getFormatData err: ', err);
-    return {};
-  }
-};
-
-const find$1 = (id, data) => {
-  if (data) {
-    const info = getFormatData(data);
-    return info.name ? Promise.resolve(info) : Promise.reject();
-  } else {
-    const url = 'https://music.163.com/api/song/detail?ids=[' + id + ']';
-    return request$3('GET', url).then(response => response.json()).then(jsonBody => {
-      if (jsonBody && jsonBody.songs && jsonBody.songs.length) {
-        const info = getFormatData(jsonBody.songs[0]);
-        return info.name ? info : Promise.reject();
-      }
-
-      return Promise.reject();
-    });
-  }
-};
-
-const cs$1 = getManagedCacheStorage$1('provider/find');
-
-var find_1 = (id, data) => {
-  if (data) {
-    return find$1(id, data);
-  } else {
-    return cs$1.cache(id, () => find$1(id));
-  }
-};
-
-/**
- * Does the hostname of `URL` equal `host`?
- *
- * @param url {string}
- * @param host {string}
- * @return {boolean}
- */
-
-const isHost$2 = (url, host) => {
-  // FIXME: Due to #118, we can only check the url
-  // 		  by .includes(). You are welcome to fix
-  //        it (CWE-20).
-  return url.includes(host);
-};
-/**
- * The wrapper of `isHost()` to simplify the code.
- *
- * @param url {string}
- * @return {(host: string) => boolean}
- * @see isHost
- */
-
-
-const isHostWrapper$1 = url => host => isHost$2(url, host);
-
-var utilities = {
-  isHost: isHost$2,
-  isHostWrapper: isHostWrapper$1
-};
-
-const find = find_1;
-const request$2 = request_1;
-const consts = consts$1;
-const {
-  isHostWrapper
-} = utilities;
-const {
-  CancelRequest
-} = cancel;
-const RequestCancelled = RequestCancelled_1;
-const providers = consts.PROVIDERS;
-const defaultSrc = consts.DEFAULT_SOURCE;
-
-const match$1 = (id, source, data) => {
-  let meta = {};
-  const cancelRequest = new CancelRequest();
-  const candidate = (source || commonjsGlobal.source || defaultSrc).filter(name => name in providers);
-  return find(id, data).then(info => {
-    meta = info;
-    return Promise.any(candidate.map(async name => {
-      try {
-        // Get the song data.
-        const audioData = await providers[name].check(info);
-        if (!audioData) return Promise.reject(); // Get the url of the song data.
-
-        const song = await check(audioData);
-        if (!song || typeof song.url !== 'string') return Promise.reject(); // We check if the song.url is reachable.
-        // It will throw on failed.
-
-        await request$2('GET', song.url, undefined, undefined, undefined, cancelRequest);
-        return song;
-      } catch (e) {
-        if (e && !(e instanceof RequestCancelled)) console.warn(e);
-        return Promise.reject(); // .any will return the fulfilled one.
-      }
-    }));
-  }).then(song => {
-    // We cancel the remaining request which is still running.
-    cancelRequest.cancel();
-    console.log(`[${meta.id}] ${meta.name}\n${song.url}`);
-    return song;
-  });
-};
-
-const check = url => {
-  const song = {
-    size: 0,
-    br: null,
-    url: null,
-    md5: null
-  };
-  let header = {
-    range: 'bytes=0-8191',
-    'accept-encoding': 'identity'
-  };
-  const isHost = isHostWrapper(url);
-
-  if (isHost('bilivideo.com')) {
-    header.referer = 'https://www.bilibili.com/';
-  }
-
-  if (isHost('yt-download.org')) {
-    header.referer = 'https://www.yt-download.org/';
-  }
-
-  return Promise.race([request$2('GET', url, header), new Promise((_, reject) => setTimeout(() => reject(504), 5 * 1000))]).then(response => {
-    if (!response.statusCode.toString().startsWith('2')) return Promise.reject();
-    if (isHost('126.net')) // song.md5 = response.headers['x-nos-meta-origin-md5'] || response.headers['etag'].replace(/"/g, '')
-      song.md5 = url.split('/').slice(-1)[0].replace(/\..*/g, '');else if (isHost('qq.com')) song.md5 = response.headers['server-md5'];else if (isHost('qianqian.com')) song.md5 = response.headers['etag'].replace(/"/g, '').toLowerCase();
-    song.size = parseInt((response.headers['content-range'] || '').split('/').pop() || response.headers['content-length']) || 0;
-    song.url = response.url.href;
-    return response.headers['content-length'] === '8192' ? response.body(true) : Promise.reject();
-  }).then(data => {
-    const bitrate = decode(data);
-    song.br = bitrate && !isNaN(bitrate) ? bitrate * 1000 : null;
-  }).catch(() => {}).then(() => song);
-};
-
-const decode = buffer => {
-  const map = {
-    3: {
-      3: ['free', 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 'bad'],
-      2: ['free', 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 'bad'],
-      1: ['free', 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 'bad']
-    },
-    2: {
-      3: ['free', 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256, 'bad'],
-      2: ['free', 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160, 'bad']
-    }
-  };
-  map[2][1] = map[2][2];
-  map[0] = map[2];
-  let pointer = 0;
-  if (buffer.slice(0, 4).toString() === 'fLaC') return 999;
-
-  if (buffer.slice(0, 3).toString() === 'ID3') {
-    pointer = 6;
-    const size = buffer.slice(pointer, pointer + 4).reduce((summation, value, index) => summation + (value & 0x7f) << 7 * (3 - index), 0);
-    pointer = 10 + size;
-  }
-
-  const header = buffer.slice(pointer, pointer + 4); // https://www.allegro.cc/forums/thread/591512/674023
-
-  if (header.length === 4 && header[0] === 0xff && (header[1] >> 5 & 0x7) === 0x7 && (header[1] >> 1 & 0x3) !== 0 && (header[2] >> 4 & 0xf) !== 0xf && (header[2] >> 2 & 0x3) !== 0x3) {
-    const version = header[1] >> 3 & 0x3;
-    const layer = header[1] >> 1 & 0x3;
-    const bitrate = header[2] >> 4;
-    return map[version][layer][bitrate];
-  }
-};
-
-var match_1 = match$1;
-
-const parse$2 = require$$5__default['default'].parse;
-const crypto = crypto$4.exports;
-const request$1 = request_1;
-const match = match_1;
-const querystring = require$$2__default$1['default'];
-const {
-  isHost: isHost$1
-} = utilities;
-const {
-  getManagedCacheStorage
-} = cache;
-const cs = getManagedCacheStorage('hook');
-cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
-const hook$2 = {
-  request: {
-    before: () => {},
-    after: () => {}
-  },
-  connect: {
-    before: () => {}
-  },
-  negotiate: {
-    before: () => {}
-  },
-  target: {
-    host: new Set(),
-    path: new Set()
-  }
-};
-hook$2.target.host = new Set(['music.163.com', 'interface.music.163.com', 'interface3.music.163.com', 'apm.music.163.com', 'apm3.music.163.com' // 'mam.netease.com',
-// 'api.iplay.163.com', // look living
-// 'ac.dun.163yun.com',
-// 'crash.163.com',
-// 'clientlog.music.163.com',
-// 'clientlog3.music.163.com'
-]);
-hook$2.target.path = new Set(['/api/v3/playlist/detail', '/api/v3/song/detail', '/api/v6/playlist/detail', '/api/album/play', '/api/artist/privilege', '/api/album/privilege', '/api/v1/artist', '/api/v1/artist/songs', '/api/artist/top/song', '/api/v1/album', '/api/album/v3/detail', '/api/playlist/privilege', '/api/song/enhance/player/url', '/api/song/enhance/player/url/v1', '/api/song/enhance/download/url', '/api/song/enhance/privilege', '/batch', '/api/batch', '/api/v1/search/get', '/api/v1/search/song/get', '/api/search/complex/get', '/api/cloudsearch/pc', '/api/v1/playlist/manipulate/tracks', '/api/song/like', '/api/v1/play/record', '/api/playlist/v4/detail', '/api/v1/radio/get', '/api/v1/discovery/recommend/songs', '/api/v1/discovery/recommend/songs', '/api/usertool/sound/mobile/promote', '/api/usertool/sound/mobile/theme', '/api/usertool/sound/mobile/animationList', '/api/usertool/sound/mobile/all', '/api/usertool/sound/mobile/detail']);
-const domainList = ['music.163.com', 'music.126.net', 'iplay.163.com', 'look.163.com', 'y.163.com'];
-
-hook$2.request.before = ctx => {
-  const {
-    req
-  } = ctx;
-  req.url = (req.url.startsWith('http://') ? '' : (req.socket.encrypted ? 'https:' : 'http:') + '//' + (domainList.some(domain => (req.headers.host || '').endsWith(domain)) ? req.headers.host : null)) + req.url;
-  const url = parse$2(req.url);
-  if ([url.hostname, req.headers.host].some(host => isHost$1(host, 'music.163.com'))) ctx.decision = 'proxy';
-
-  if ([url.hostname, req.headers.host].some(host => hook$2.target.host.has(host)) && req.method === 'POST' && (url.path === '/api/linux/forward' || url.path.startsWith('/eapi/'))) {
-    return request$1.read(req).then(body => req.body = body).then(body => {
-      if ('x-napm-retry' in req.headers) delete req.headers['x-napm-retry'];
-      req.headers['X-Real-IP'] = '118.88.88.88';
-      if (req.url.includes('stream')) return; // look living eapi can not be decrypted
-
-      if (body) {
-        let data;
-        const netease = {};
-        netease.pad = (body.match(/%0+$/) || [''])[0];
-        netease.forward = url.path === '/api/linux/forward';
-
-        if (netease.forward) {
-          data = JSON.parse(crypto.linuxapi.decrypt(Buffer.from(body.slice(8, body.length - netease.pad.length), 'hex')).toString());
-          netease.path = parse$2(data.url).path;
-          netease.param = data.params;
-        } else {
-          data = crypto.eapi.decrypt(Buffer.from(body.slice(7, body.length - netease.pad.length), 'hex')).toString().split('-36cd479b6b5-');
-          netease.path = data[0];
-          netease.param = JSON.parse(data[1]);
-        }
-
-        netease.path = netease.path.replace(/\/\d*$/, '');
-        ctx.netease = netease; // console.log(netease.path, netease.param)
-
-        if (netease.path === '/api/song/enhance/download/url') return pretendPlay(ctx);
-      }
-    }).catch(error => console.log(error, req.url));
-  } else if (hook$2.target.host.has(url.hostname) && (url.path.startsWith('/weapi/') || url.path.startsWith('/api/'))) {
-    req.headers['X-Real-IP'] = '118.88.88.88';
-    ctx.netease = {
-      web: true,
-      path: url.path.replace(/^\/weapi\//, '/api/').split('?').shift() // remove the query parameters
-      .replace(/\/\d*$/, '')
-    };
-  } else if (req.url.includes('package')) {
-    try {
-      const data = req.url.split('package/').pop().split('/');
-      const url = parse$2(crypto.base64.decode(data[0]));
-      const id = data[1].replace(/\.\w+/, '');
-      req.url = url.href;
-      req.headers['host'] = url.hostname;
-      req.headers['cookie'] = null;
-      ctx.package = {
-        id
-      };
-      ctx.decision = 'proxy'; // if (url.href.includes('google'))
-      // 	return request('GET', req.url, req.headers, null, parse('http://127.0.0.1:1080'))
-      // 	.then(response => (ctx.res.writeHead(response.statusCode, response.headers), response.pipe(ctx.res)))
-    } catch (error) {
-      ctx.error = error;
-      ctx.decision = 'close';
-    }
-  }
-};
-
-hook$2.request.after = ctx => {
-  const {
-    req,
-    proxyRes,
-    netease,
-    package: pkg
-  } = ctx;
-  if (req.headers.host === 'tyst.migu.cn' && proxyRes.headers['content-range'] && proxyRes.statusCode === 200) proxyRes.statusCode = 206;
-
-  if (netease && hook$2.target.path.has(netease.path) && proxyRes.statusCode === 200) {
-    return request$1.read(proxyRes, true).then(buffer => buffer.length ? proxyRes.body = buffer : Promise.reject()).then(buffer => {
-      const patch = string => string.replace(/([^\\]"\s*:\s*)(\d{16,})(\s*[}|,])/g, '$1"$2L"$3'); // for js precision
-
-
-      try {
-        netease.encrypted = false;
-        netease.jsonBody = JSON.parse(patch(buffer.toString()));
-      } catch (error) {
-        netease.encrypted = true;
-        netease.jsonBody = JSON.parse(patch(crypto.eapi.decrypt(buffer).toString()));
-      }
-
-      if (new Set([401, 512]).has(netease.jsonBody.code) && !netease.web) {
-        if (netease.path.includes('manipulate')) return tryCollect(ctx);else if (netease.path === '/api/song/like') return tryLike(ctx);
-      } else if (netease.path.includes('url')) return tryMatch(ctx);else if (netease.path.includes('/usertool/sound/')) return unblockSoundEffects(netease.jsonBody);else if (netease.path.includes('batch')) {
-        for (const key in netease.jsonBody) {
-          if (key.includes('/usertool/sound/')) unblockSoundEffects(netease.jsonBody[key]);
-        }
-      }
-    }).then(() => {
-      ['transfer-encoding', 'content-encoding', 'content-length'].filter(key => key in proxyRes.headers).forEach(key => delete proxyRes.headers[key]);
-
-      const inject = (key, value) => {
-        if (typeof value === 'object' && value != null) {
-          if ('fee' in value) value['fee'] = 0;
-
-          if ('st' in value && 'pl' in value && 'dl' in value && 'subp' in value) {
-            // batch modify
-            value['st'] = 0;
-            value['subp'] = 1;
-            value['pl'] = value['pl'] === 0 ? 320000 : value['pl'];
-            value['dl'] = value['dl'] === 0 ? 320000 : value['dl'];
-          }
-        }
-
-        return value;
-      };
-
-      let body = JSON.stringify(netease.jsonBody, inject);
-      body = body.replace(/([^\\]"\s*:\s*)"(\d{16,})L"(\s*[}|,])/g, '$1$2$3'); // for js precision
-
-      proxyRes.body = netease.encrypted ? crypto.eapi.encrypt(Buffer.from(body)) : body;
-    }).catch(error => error ? console.log(error, req.url) : null);
-  } else if (pkg) {
-    if (new Set([201, 301, 302, 303, 307, 308]).has(proxyRes.statusCode)) {
-      return request$1(req.method, parse$2(req.url).resolve(proxyRes.headers.location), req.headers).then(response => ctx.proxyRes = response);
-    } else if (/p\d+c*\.music\.126\.net/.test(req.url)) {
-      proxyRes.headers['content-type'] = 'audio/*';
-    }
-  }
-};
-
-hook$2.connect.before = ctx => {
-  const {
-    req
-  } = ctx;
-  const url = parse$2('https://' + req.url);
-
-  if ([url.hostname, req.headers.host].some(host => hook$2.target.host.has(host))) {
-    if (url.port === 80) {
-      req.url = `${commonjsGlobal.address || 'localhost'}:${commonjsGlobal.port[0]}`;
-      req.local = true;
-    } else if (commonjsGlobal.port[1]) {
-      req.url = `${commonjsGlobal.address || 'localhost'}:${commonjsGlobal.port[1]}`;
-      req.local = true;
-    } else {
-      ctx.decision = 'blank';
-    }
-  } else if (url.href.includes(commonjsGlobal.endpoint)) ctx.decision = 'proxy';
-};
-
-hook$2.negotiate.before = ctx => {
-  const {
-    req,
-    socket,
-    decision
-  } = ctx;
-  const url = parse$2('https://' + req.url);
-  const target = hook$2.target.host;
-  if (req.local || decision) return;
-
-  if (target.has(socket.sni) && !target.has(url.hostname)) {
-    target.add(url.hostname);
-    ctx.decision = 'blank';
-  }
-};
-
-const pretendPlay = ctx => {
-  const {
-    req,
-    netease
-  } = ctx;
-  const turn = 'http://music.163.com/api/song/enhance/player/url';
-  let query;
-
-  if (netease.forward) {
-    const {
-      id,
-      br
-    } = netease.param;
-    netease.param = {
-      ids: `["${id}"]`,
-      br
-    };
-    query = crypto.linuxapi.encryptRequest(turn, netease.param);
-  } else {
-    const {
-      id,
-      br,
-      e_r,
-      header
-    } = netease.param;
-    netease.param = {
-      ids: `["${id}"]`,
-      br,
-      e_r,
-      header
-    };
-    query = crypto.eapi.encryptRequest(turn, netease.param);
-  }
-
-  req.url = query.url;
-  req.body = query.body + netease.pad;
-};
-
-const tryCollect = ctx => {
-  const {
-    req,
-    netease
-  } = ctx;
-  const {
-    trackIds,
-    pid,
-    op
-  } = netease.param;
-  const trackId = (Array.isArray(trackIds) ? trackIds : JSON.parse(trackIds))[0];
-  return request$1('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=${op}`).then(response => response.json()).then(jsonBody => {
-    netease.jsonBody = jsonBody;
-  }).catch(() => {});
-};
-
-const tryLike = ctx => {
-  const {
-    req,
-    netease
-  } = ctx;
-  const {
-    trackId
-  } = netease.param;
-  let pid = 0,
-      userId = 0;
-  return request$1('GET', 'http://music.163.com/api/v1/user/info', req.headers).then(response => response.json()).then(jsonBody => {
-    userId = jsonBody.userPoint.userId;
-    return request$1('GET', `http://music.163.com/api/user/playlist?uid=${userId}&limit=1`, req.headers).then(response => response.json());
-  }).then(jsonBody => {
-    pid = jsonBody.playlist[0].id;
-    return request$1('POST', 'http://music.163.com/api/playlist/manipulate/tracks', req.headers, `trackIds=[${trackId},${trackId}]&pid=${pid}&op=add`).then(response => response.json());
-  }).then(jsonBody => {
-    if (new Set([200, 502]).has(jsonBody.code)) {
-      netease.jsonBody = {
-        code: 200,
-        playlistId: pid
-      };
-    }
-  }).catch(() => {});
-};
-
-const computeHash = task => request$1('GET', task.url).then(response => crypto.md5.pipe(response));
-
-const tryMatch = ctx => {
-  const {
-    req,
-    netease
-  } = ctx;
-  const {
-    jsonBody
-  } = netease;
-  /** @type {number} */
-
-  const min_br = Number(process.env.MIN_BR) || 0;
-  /** @type {Promise<any>[]} */
-
-  let tasks;
-  let target = 0;
-
-  const inject = item => {
-    item.flag = 0;
-
-    if ((item.code !== 200 || item.freeTrialInfo || item.br < min_br) && (target === 0 || item.id === target)) {
-      return match(item.id).then(song => {
-        let os = '';
-
-        try {
-          let {
-            header
-          } = netease.param;
-          header = typeof header === 'string' ? JSON.parse(header) : header;
-          const cookie = querystring.parse(req.headers.cookie.replace(/\s/g, ''), ';');
-          os = header.os || cookie.os;
-        } catch (e) {}
-
-        item.type = song.br === 999000 ? 'flac' : 'mp3';
-
-        if (os === 'pc' || os === 'uwp') {
-          item.url = commonjsGlobal.endpoint ? `${commonjsGlobal.endpoint.replace('https://', 'http://')}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url;
-        } else {
-          item.url = commonjsGlobal.endpoint ? `${commonjsGlobal.endpoint}/package/${crypto.base64.encode(song.url)}/${item.id}.${item.type}` : song.url;
-        }
-
-        item.md5 = song.md5 || crypto.md5.digest(song.url);
-        item.br = song.br || 128000;
-        item.size = song.size;
-        item.code = 200;
-        item.freeTrialInfo = null;
-        return song;
-      }).then(song => {
-        if (!netease.path.includes('download') || song.md5) return;
-
-        const newer = (base, target) => {
-          const difference = Array.from([base, target]).map(version => version.split('.').slice(0, 3).map(number => parseInt(number) || 0)).reduce((aggregation, current) => !aggregation.length ? current.map(element => [element]) : aggregation.map((element, index) => element.concat(current[index])), []).filter(pair => pair[0] !== pair[1])[0];
-          return !difference || difference[0] <= difference[1];
-        };
-
-        const limit = {
-          android: '0.0.0',
-          osx: '0.0.0'
-        };
-        const task = {
-          key: song.url.replace(/\?.*$/, '').replace(/(?<=kugou\.com\/)\w+\/\w+\//, '').replace(/(?<=kuwo\.cn\/)\w+\/\w+\/resource\//, ''),
-          url: song.url
-        };
-
-        try {
-          let {
-            header
-          } = netease.param;
-          header = typeof header === 'string' ? JSON.parse(header) : header;
-          const cookie = querystring.parse(req.headers.cookie.replace(/\s/g, ''), ';');
-          const os = header.os || cookie.os,
-                version = header.appver || cookie.appver;
-
-          if (os in limit && newer(limit[os], version)) {
-            return cs.cache(task, () => computeHash(task)).then(value => item.md5 = value);
-          }
-        } catch (e) {}
-      }).catch(() => {});
-    } else if (item.code === 200 && netease.web) {
-      item.url = item.url.replace(/(m\d+?)(?!c)\.music\.126\.net/, '$1c.music.126.net');
-    }
-  };
-
-  if (!Array.isArray(jsonBody.data)) {
-    tasks = [inject(jsonBody.data)];
-  } else if (netease.path.includes('download')) {
-    jsonBody.data = jsonBody.data[0];
-    tasks = [inject(jsonBody.data)];
-  } else {
-    target = netease.web ? 0 : parseInt(((Array.isArray(netease.param.ids) ? netease.param.ids : JSON.parse(netease.param.ids))[0] || 0).toString().replace('_0', '')); // reduce time cost
-
-    tasks = jsonBody.data.map(item => inject(item));
-  }
-
-  return Promise.all(tasks).catch(() => {});
-};
-
-const unblockSoundEffects = obj => {
-  console.log('UNSE > triggered');
-  const {
-    data,
-    code
-  } = obj;
-
-  if (code === 200) {
-    if (Array.isArray(data)) data.map(item => {
-      if (item.type) item.type = 1;
-    });else if (data.type) data.type = 1;
-  }
-};
-
-var hook_1 = hook$2;
-
-var sni$1 = data => {
-  let end = data.length;
-  let pointer = 5 + 1 + 3 + 2 + 32;
-
-  const nan = (number = pointer) => isNaN(number);
-
-  if (pointer + 1 > end || nan()) return null;
-  pointer += 1 + data[pointer];
-  if (pointer + 2 > end || nan()) return null;
-  pointer += 2 + data.readInt16BE(pointer);
-  if (pointer + 1 > end || nan()) return null;
-  pointer += 1 + data[pointer];
-  if (pointer + 2 > end || nan()) return null;
-  const extensionsLength = data.readInt16BE(pointer);
-  pointer += 2;
-  const extensionsEnd = pointer + extensionsLength;
-  if (extensionsEnd > end || nan(extensionsEnd)) return null;
-  end = extensionsEnd;
-
-  while (pointer + 4 <= end || nan()) {
-    const extensionType = data.readInt16BE(pointer);
-    const extensionSize = data.readInt16BE(pointer + 2);
-    pointer += 4;
-
-    if (extensionType !== 0) {
-      pointer += extensionSize;
-      continue;
-    }
-
-    if (pointer + 2 > end || nan()) return null;
-    const nameListLength = data.readInt16BE(pointer);
-    pointer += 2;
-    if (pointer + nameListLength > end) return null;
-
-    while (pointer + 3 <= end || nan()) {
-      const nameType = data[pointer];
-      const nameLength = data.readInt16BE(pointer + 1);
-      pointer += 3;
-
-      if (nameType !== 0) {
-        pointer += nameLength;
-        continue;
-      }
-
-      if (pointer + nameLength > end || nan()) return null;
-      return data.toString('ascii', pointer, pointer + nameLength);
-    }
-  }
-
-  return null;
-};
-
-const fs = require$$0__default$4['default'];
-const net = require$$1__default$1['default'];
-const path = require$$0__default['default'];
-const parse$1 = require$$5__default['default'].parse;
-const sni = sni$1;
-const hook$1 = hook_1;
-const request = request_1;
-const {
-  isHost
-} = utilities;
-const proxy = {
-  core: {
-    mitm: (req, res) => {
-      if (req.url === '/proxy.pac') {
-        const url = parse$1('http://' + req.headers.host);
-        res.writeHead(200, {
-          'Content-Type': 'application/x-ns-proxy-autoconfig'
-        });
-        res.end(`
-					function FindProxyForURL(url, host) {
-						if (${Array.from(hook$1.target.host).map(host => `host == '${host}'`).join(' || ')}) {
-							return 'PROXY ${url.hostname}:${url.port || 80}'
-						}
-						return 'DIRECT'
-					}
-				`);
-      } else {
-        const ctx = {
-          res,
-          req
-        };
-        Promise.resolve().then(() => proxy.protect(ctx)).then(() => proxy.authenticate(ctx)).then(() => hook$1.request.before(ctx)).then(() => proxy.filter(ctx)).then(() => proxy.log(ctx)).then(() => proxy.mitm.request(ctx)).then(() => hook$1.request.after(ctx)).then(() => proxy.mitm.response(ctx)).catch(() => proxy.mitm.close(ctx));
-      }
-    },
-    tunnel: (req, socket, head) => {
-      const ctx = {
-        req,
-        socket,
-        head
-      };
-      Promise.resolve().then(() => proxy.protect(ctx)).then(() => proxy.authenticate(ctx)).then(() => hook$1.connect.before(ctx)).then(() => proxy.filter(ctx)).then(() => proxy.log(ctx)).then(() => proxy.tunnel.connect(ctx)).then(() => proxy.tunnel.dock(ctx)).then(() => hook$1.negotiate.before(ctx)).then(() => proxy.tunnel.pipe(ctx)).catch(() => proxy.tunnel.close(ctx));
-    }
-  },
-  abort: socket => {
-    if (socket) socket.end();
-    if (socket && !socket.destroyed) socket.destroy();
-  },
-  protect: ctx => {
-    const {
-      req,
-      res,
-      socket
-    } = ctx;
-    if (req) req.on('error', () => proxy.abort(req.socket, 'req'));
-    if (res) res.on('error', () => proxy.abort(res.socket, 'res'));
-    if (socket) socket.on('error', () => proxy.abort(socket, 'socket'));
-  },
-  log: ctx => {
-    const {
-      req,
-      socket,
-      decision
-    } = ctx;
-    const mark = {
-      close: '|',
-      blank: '-',
-      proxy: '>'
-    }[decision] || '>';
-    if (socket) console.log('TUNNEL', mark, req.url);else console.log('MITM', mark, parse$1(req.url).host, req.socket.encrypted ? '(ssl)' : '');
-  },
-  authenticate: ctx => {
-    const {
-      req,
-      res,
-      socket
-    } = ctx;
-    const credential = Buffer.from((req.headers['proxy-authorization'] || '').split(/\s+/).pop() || '', 'base64').toString();
-    if ('proxy-authorization' in req.headers) delete req.headers['proxy-authorization'];
-
-    if (server$1.authentication && credential !== server$1.authentication && (socket || req.url.startsWith('http://'))) {
-      if (socket) socket.write('HTTP/1.1 407 Proxy Auth Required\r\nProxy-Authenticate: Basic realm="realm"\r\n\r\n');else res.writeHead(407, {
-        'proxy-authenticate': 'Basic realm="realm"'
-      });
-      return Promise.reject(ctx.error = 'authenticate');
-    }
-  },
-  filter: ctx => {
-    if (ctx.decision || ctx.req.local) return;
-    const url = parse$1((ctx.socket ? 'https://' : '') + ctx.req.url);
-
-    const match = pattern => url.href.search(new RegExp(pattern, 'g')) !== -1;
-
-    try {
-      const allow = server$1.whitelist.some(match);
-      const deny = server$1.blacklist.some(match); // console.log('allow', allow, 'deny', deny)
-
-      if (!allow && deny) {
-        return Promise.reject(ctx.error = 'filter');
-      }
-    } catch (error) {
-      ctx.error = error;
-    }
-  },
-  mitm: {
-    request: ctx => new Promise((resolve, reject) => {
-      if (ctx.decision === 'close') return reject(ctx.error = ctx.decision);
-      const {
-        req
-      } = ctx;
-
-      if (isHost(req.url, 'bilivideo.com')) {
-        req.headers['referer'] = 'https://www.bilibili.com/';
-        req.headers['user-agent'] = 'okhttp/3.4.1';
-      }
-
-      if (isHost(req.url, 'yt-download.org')) {
-        req.headers['referer'] = 'https://www.yt-download.org/';
-      }
-
-      const url = parse$1(req.url);
-      const options = request.configure(req.method, url, req.headers);
-      ctx.proxyReq = request.create(url)(options).on('response', proxyRes => resolve(ctx.proxyRes = proxyRes)).on('error', error => reject(ctx.error = error));
-      req.readable ? req.pipe(ctx.proxyReq) : ctx.proxyReq.end(req.body);
-    }),
-    response: ctx => {
-      const {
-        res,
-        proxyRes
-      } = ctx;
-      proxyRes.on('error', () => proxy.abort(proxyRes.socket, 'proxyRes'));
-      res.writeHead(proxyRes.statusCode, proxyRes.headers);
-      proxyRes.readable ? proxyRes.pipe(res) : res.end(proxyRes.body);
-    },
-    close: ctx => {
-      proxy.abort(ctx.res.socket, 'mitm');
-    }
-  },
-  tunnel: {
-    connect: ctx => new Promise((resolve, reject) => {
-      if (ctx.decision === 'close') return reject(ctx.error = ctx.decision);
-      const {
-        req
-      } = ctx;
-      const url = parse$1('https://' + req.url);
-
-      if (commonjsGlobal.proxy && !req.local) {
-        const options = request.configure(req.method, url, req.headers);
-        request.create(proxy)(options).on('connect', (_, proxySocket) => resolve(ctx.proxySocket = proxySocket)).on('error', error => reject(ctx.error = error)).end();
-      } else {
-        const proxySocket = net.connect(url.port || 443, request.translate(url.hostname)).on('connect', () => resolve(ctx.proxySocket = proxySocket)).on('error', error => reject(ctx.error = error));
-      }
-    }),
-    dock: ctx => new Promise(resolve => {
-      const {
-        req,
-        head,
-        socket
-      } = ctx;
-      socket.once('data', data => resolve(ctx.head = Buffer.concat([head, data]))).write(`HTTP/${req.httpVersion} 200 Connection established\r\n\r\n`);
-    }).then(data => ctx.socket.sni = sni(data)).catch(() => {}),
-    pipe: ctx => {
-      if (ctx.decision === 'blank') return Promise.reject(ctx.error = ctx.decision);
-      const {
-        head,
-        socket,
-        proxySocket
-      } = ctx;
-      proxySocket.on('error', () => proxy.abort(ctx.proxySocket, 'proxySocket'));
-      proxySocket.write(head);
-      socket.pipe(proxySocket);
-      proxySocket.pipe(socket);
-    },
-    close: ctx => {
-      proxy.abort(ctx.socket, 'tunnel');
-    }
-  }
-};
-const cert = process.env.SIGN_CERT || path.join(__dirname, '..', 'server.crt');
-const key = process.env.SIGN_KEY || path.join(__dirname, '..', 'server.key');
-const options = {
-  key: fs.readFileSync(key),
-  cert: fs.readFileSync(cert)
-};
-const server$1 = {
-  http: require$$1__default['default'].createServer().on('request', proxy.core.mitm).on('connect', proxy.core.tunnel),
-  https: require$$2__default['default'].createServer(options).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
-};
-server$1.whitelist = [];
-server$1.blacklist = ['://127\\.\\d+\\.\\d+\\.\\d+', '://localhost'];
-server$1.authentication = null;
-var server_1 = server$1;
-
-const packageJson = require$$0;
-const config = cli_1.program({
-  name: packageJson.name.replace(/@.+\//, ''),
-  version: packageJson.version
-}).option(['-v', '--version'], {
-  action: 'version'
-}).option(['-p', '--port'], {
-  metavar: 'port',
-  help: 'specify server port'
-}).option(['-a', '--address'], {
-  metavar: 'address',
-  help: 'specify server host'
-}).option(['-u', '--proxy-url'], {
-  metavar: 'url',
-  help: 'request through upstream proxy'
-}).option(['-f', '--force-host'], {
-  metavar: 'host',
-  help: 'force the netease server ip'
-}).option(['-o', '--match-order'], {
-  metavar: 'source',
-  nargs: '+',
-  help: 'set priority of sources'
-}).option(['-t', '--token'], {
-  metavar: 'token',
-  help: 'set up proxy authentication'
-}).option(['-e', '--endpoint'], {
-  metavar: 'url',
-  help: 'replace virtual endpoint with public host'
-}).option(['-s', '--strict'], {
-  action: 'store_true',
-  help: 'enable proxy limitation'
-}).option(['-h', '--help'], {
-  action: 'help'
-}).parse(process.argv);
-commonjsGlobal.address = config.address;
-config.port = (config.port || '8080:8081').split(':').map(string => parseInt(string));
-
-const invalid = value => isNaN(value) || value < 1 || value > 65535;
-
-if (config.port.some(invalid)) {
-  console.log('Port must be a number higher than 0 and lower than 65535.');
-  process.exit(1);
-}
-
-if (config.proxyUrl && !/http(s?):\/\/.+:\d+/.test(config.proxyUrl)) {
-  console.log('Please check the proxy url.');
-  process.exit(1);
-}
-
-if (config.endpoint && !/http(s?):\/\/.+/.test(config.endpoint)) {
-  console.log('Please check the endpoint host.');
-  process.exit(1);
-}
-
-if (config.forceHost && require$$1__default$1['default'].isIP(config.forceHost) === 0) {
-  console.log('Please check the server host.');
-  process.exit(1);
-}
-
-if (config.matchOrder) {
-  const provider = Object.keys(consts$1.PROVIDERS);
-  const candidate = config.matchOrder;
-
-  if (candidate.some((key, index) => index != candidate.indexOf(key))) {
-    console.log('Please check the duplication in match order.');
-    process.exit(1);
-  } else if (candidate.some(key => !provider.includes(key))) {
-    console.log('Please check the availability of match sources.');
-    process.exit(1);
-  }
-
-  commonjsGlobal.source = candidate;
-}
-
-if (config.token && !/\S+:\S+/.test(config.token)) {
-  console.log('Please check the authentication token.');
-  process.exit(1);
-}
-
-const parse = require$$5__default['default'].parse;
-const hook = hook_1;
-const server = server_1;
-const {
+  getManagedCacheStorage,
   CacheStorageGroup
 } = cache;
+const parse = require$$5__default['default'].parse;
+insure$6.exports.disable = true;
+const router = consts.PROVIDERS;
+const cs = getManagedCacheStorage('bridge');
+cs.aliveDuration = 15 * 60 * 1000;
 
-const target = Array.from(hook.target.host);
-commonjsGlobal.port = config.port;
-commonjsGlobal.proxy = config.proxyUrl ? parse(config.proxyUrl) : null;
-commonjsGlobal.hosts = target.reduce((result, host) => Object.assign(result, {
-  [host]: config.forceHost
-}), {});
-server.whitelist = ['://[\\w.]*music\\.126\\.net', '://[\\w.]*vod\\.126\\.net'];
-if (config.strict) server.blacklist.push('.*');
-server.authentication = config.token || null;
-commonjsGlobal.endpoint = config.endpoint;
-if (config.endpoint) server.whitelist.push(escape(config.endpoint)); // hosts['music.httpdns.c.163.com'] = random(['59.111.181.35', '59.111.181.38'])
-// hosts['httpdns.n.netease.com'] = random(['59.111.179.213', '59.111.179.214'])
+const distribute = (url, router) => Promise.resolve().then(() => {
+  const route = url.pathname.slice(1).split('/').map(path => decodeURIComponent(path));
+  let pointer = router,
+      argument = decodeURIComponent(url.query);
 
-const dns = host => new Promise((resolve, reject) => require$$8__default['default'].lookup(host, {
-  all: true
-}, (error, records) => error ? reject(error) : resolve(records.map(record => record.address))));
+  try {
+    argument = JSON.parse(argument);
+  } catch (e) {}
 
-const httpdns = host => request_1('POST', 'http://music.httpdns.c.163.com/d', {}, host).then(response => response.json()).then(jsonBody => jsonBody.dns.reduce((result, domain) => result.concat(domain.ips), []));
+  const miss = route.some(path => {
+    if (path in pointer) pointer = pointer[path];else return true;
+  });
+  if (miss || typeof pointer != 'function') return Promise.reject();
+  return cs.cache(argument, () => pointer(argument));
+}); // Start the "Clean Cache" background task.
 
-const httpdns2 = host => request_1('GET', 'http://httpdns.n.netease.com/httpdns/v2/d?domain=' + host).then(response => response.json()).then(jsonBody => Object.keys(jsonBody.data).map(key => jsonBody.data[key]).reduce((result, value) => result.concat(value.ip || []), [])); // Allow enabling HTTPDNS queries with `ENABLE_HTTPDNS=true`
-// It seems broken - BETTER TO NOT ENABLE IT!
-
-
-const dnsSource = process.env.ENABLE_HTTPDNS === 'true' ? [httpdns, httpdns2] : []; // Start the "Clean Cache" background task.
 
 const csgInstance = CacheStorageGroup.getInstance();
 setInterval(() => {
   csgInstance.cleanup();
 }, 15 * 60 * 1000);
-Promise.all(dnsSource.map(query => query(target.join(','))).concat(target.map(dns))).then(result => {
-  const {
-    host
-  } = hook.target;
-  result.forEach(array => array.forEach(host.add, host));
-  server.whitelist = server.whitelist.concat(Array.from(host).map(escape));
+require$$1__default['default'].createServer().listen(parseInt(process.argv[2]) || 9000).on('request', (req, res) => distribute(parse(req.url), router).then(data => res.write(data)).catch(() => res.writeHead(404)).then(() => res.end()));
 
-  const log = type => console.log(`${['HTTP', 'HTTPS'][type]} Server running @ http://${address || '0.0.0.0'}:${port[type]}`);
-
-  if (port[0]) server.http.listen(port[0], address).once('listening', () => log(0));
-  if (port[1]) server.https.listen(port[1], address).once('listening', () => log(1));
-}).catch(error => {
-  console.log(error);
-  process.exit(1);
-});
-
-module.exports = app;
+module.exports = bridge;
