@@ -56,6 +56,7 @@ class CacheStorage extends EventEmitter {
 	 * Remove the expired job.
 	 */
 	removeExpiredJob() {
+		console.log(`CACHE > Cleaning up the expired caches in ${this.id}...`);
 		this.cacheMap.forEach((cachedData, key) => {
 			if (cachedData.expireAt <= Date.now()) this.cacheMap.delete(key);
 		});
@@ -83,10 +84,21 @@ class CacheStorage extends EventEmitter {
 		// Check if we have cached it before.
 		// If true, we return the cached value.
 		const cachedData = this.cacheMap.get(key);
-		if (cachedData) return cachedData.data;
+
+		// Object.toString() can't bring any useful information,
+		// we show "Something" instead.
+		const logKey = typeof key === 'object' ? 'Something' : key;
+
+		if (cachedData) {
+			console.log(`CACHE > (${this.id}) ${logKey} hit!`);
+			return cachedData.data;
+		}
 
 		// Cache the response of action() and
 		// register into our cache map.
+		console.log(
+			`CACHE > (${this.id}) ${logKey} didn't hit. Creating cache...`
+		);
 		const sourceResponse = await action();
 		this.cacheMap.set(key, {
 			data: sourceResponse,
