@@ -10,7 +10,7 @@ describe('request()', () => {
 		try {
 			await request(
 				'GET',
-				'https://baidu.com',
+				'https://www.example.com',
 				undefined,
 				undefined,
 				undefined,
@@ -30,7 +30,7 @@ describe('request()', () => {
 
 		return request(
 			'GET',
-			'https://baidu.com',
+			'https://www.example.com',
 			undefined,
 			undefined,
 			undefined,
