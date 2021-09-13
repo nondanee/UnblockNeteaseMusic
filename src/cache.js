@@ -37,9 +37,9 @@ class CacheStorage extends EventEmitter {
 		if (id) this.id = id;
 
 		// Register the CLEANUP event. It will clean up
-		// the expired job when emitting "CLEANUP" event.
+		// the expired cache when emitting "CLEANUP" event.
 		this.on(CacheStorageEvents.CLEANUP, async () =>
-			this.removeExpiredJob()
+			this.removeExpiredCache()
 		);
 	}
 
@@ -53,9 +53,9 @@ class CacheStorage extends EventEmitter {
 	}
 
 	/**
-	 * Remove the expired job.
+	 * Remove the expired cache.
 	 */
-	removeExpiredJob() {
+	removeExpiredCache() {
 		console.log(`CACHE > Cleaning up the expired caches in ${this.id}...`);
 		this.cacheMap.forEach((cachedData, key) => {
 			if (cachedData.expireAt <= Date.now()) this.cacheMap.delete(key);
@@ -110,7 +110,7 @@ class CacheStorage extends EventEmitter {
 
 /**
  * The group which aimed to manage all CacheStorage and
- * call the common method such as `removeExpiredJob()`.
+ * call the common method such as `removeExpiredCache()`.
  */
 class CacheStorageGroup {
 	/**
@@ -135,7 +135,7 @@ class CacheStorageGroup {
 	}
 
 	cleanup() {
-		this.cacheStorages.forEach((storage) => storage.removeExpiredJob());
+		this.cacheStorages.forEach((storage) => storage.removeExpiredCache());
 	}
 }
 
