@@ -1,10 +1,13 @@
-const cache = require('./cache');
 const parse = require('url').parse;
 const crypto = require('./crypto');
 const request = require('./request');
 const match = require('./provider/match');
 const querystring = require('querystring');
 const { isHost } = require('./utilities');
+const { getManagedCacheStorage } = require('./cache');
+
+const cs = getManagedCacheStorage('hook');
+cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
 const hook = {
 	request: {
@@ -496,12 +499,11 @@ const tryMatch = (ctx) => {
 						);
 						const os = header.os || cookie.os,
 							version = header.appver || cookie.appver;
-						if (os in limit && newer(limit[os], version))
-							return cache(
-								computeHash,
-								task,
-								7 * 24 * 60 * 60 * 1000
-							).then((value) => (item.md5 = value));
+						if (os in limit && newer(limit[os], version)) {
+							return cs
+								.cache(task, () => computeHash(task))
+								.then((value) => (item.md5 = value));
+						}
 					} catch (e) {}
 				})
 				.catch(() => {});

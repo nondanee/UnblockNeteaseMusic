@@ -1,5 +1,5 @@
-const cache = require('../cache');
 const request = require('../request');
+const { getManagedCacheStorage } = require('../cache');
 
 const filter = (object, keys) =>
 	Object.keys(object).reduce(
@@ -62,10 +62,12 @@ const find = (id, data) => {
 	}
 };
 
+const cs = getManagedCacheStorage('provider/find');
+
 module.exports = (id, data) => {
 	if (data) {
 		return find(id, data);
 	} else {
-		return cache(find, id);
+		return cs.cache(id, () => find(id));
 	}
 };

@@ -1,10 +1,12 @@
-const cache = require('../cache');
 const request = require('../request');
+const { getManagedCacheStorage } = require('../cache');
 const parse = (query) =>
 	(query || '').split('&').reduce((result, item) => {
 		const splitItem = item.split('=').map(decodeURIComponent);
 		return Object.assign({}, result, { [splitItem[0]]: splitItem[1] });
 	}, {});
+
+const cs = getManagedCacheStorage('provider/youtube');
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined;
@@ -106,14 +108,26 @@ const track = (id) => {
 			return (
 				stream.url ||
 				(target.sp.includes('sig')
-					? cache(signature, undefined, 24 * 60 * 60 * 1000).then(
-							(sign) => target.url + '&sig=' + sign(target.s)
-					  )
+					? cs
+							.cache(
+								'YOUTUBE_SIGNATURE',
+								() => signature(),
+								Date.now() + 24 * 60 * 60 * 1000
+							)
+							.then(
+								(sign) => target.url + '&sig=' + sign(target.s)
+							)
 					: target.url)
 			);
 		});
 };
 
-const check = (info) => cache(key ? apiSearch : search, info).then(track);
+const check = (info) =>
+	cs
+		.cache(info, () => {
+			if (key) return apiSearch(info);
+			return search(info);
+		})
+		.then(track);
 
 module.exports = { check, track };

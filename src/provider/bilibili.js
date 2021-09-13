@@ -1,4 +1,8 @@
-const cache = require('../cache');
+const {
+	cacheStorage,
+	CacheStorageGroup,
+	getManagedCacheStorage,
+} = require('../cache');
 const insure = require('./insure');
 const select = require('./select');
 const request = require('../request');
@@ -45,6 +49,7 @@ const track = (id) => {
 		.catch(() => insure().bilibili.track(id));
 };
 
-const check = (info) => cache(search, info).then(track);
+const cs = getManagedCacheStorage('provider/bilibili');
+const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, track };

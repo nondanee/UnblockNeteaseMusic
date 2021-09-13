@@ -9,11 +9,6 @@ const songList = [
 	33190502, // ACG; http://music.163.com/song/33190502
 ];
 
-beforeAll(() => {
-	// Disable the cache feature.
-	process.env.NO_CACHE = 'true';
-});
-
 describe('Test if the default sources can get any song', () => {
 	songList.map(
 		(song) =>

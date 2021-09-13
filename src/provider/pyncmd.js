@@ -1,6 +1,6 @@
-const cache = require('../cache');
 const select = require('./select');
 const request = require('../request');
+const { getManagedCacheStorage } = require('../cache');
 
 const track = (info) => {
 	const url =
@@ -29,6 +29,7 @@ const track = (info) => {
 		});
 };
 
-const check = (info) => cache(track, info);
+const cs = getManagedCacheStorage('provider/pyncmd');
+const check = (info) => cs.cache(info, () => track(info));
 
 module.exports = { check };

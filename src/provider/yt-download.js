@@ -1,5 +1,5 @@
-const cache = require('../cache');
 const request = require('../request');
+const { getManagedCacheStorage } = require('../cache');
 
 // const proxy = require('url').parse('http://127.0.0.1:1080')
 const proxy = undefined;
@@ -51,6 +51,13 @@ const track = (id) => {
 		});
 };
 
-const check = (info) => cache(key ? apiSearch : search, info).then(track);
+const cs = getManagedCacheStorage('provider/yt-download');
+const check = (info) =>
+	cs
+		.cache(info, () => {
+			if (key) return apiSearch(info);
+			return search(info);
+		})
+		.then(track);
 
 module.exports = { check, track };

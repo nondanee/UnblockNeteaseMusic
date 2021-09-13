@@ -1,7 +1,7 @@
-const cache = require('../cache');
 const insure = require('./insure');
 const select = require('./select');
 const request = require('../request');
+const { getManagedCacheStorage } = require('../cache');
 
 const headers = {
 	origin: 'http://music.migu.cn/',
@@ -74,6 +74,7 @@ const track = (id) =>
 		.then((result) => result.find((url) => url) || Promise.reject())
 		.catch(() => insure().migu.track(id));
 
-const check = (info) => cache(search, info).then(track);
+const cs = getManagedCacheStorage('provider/migu');
+const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, track };

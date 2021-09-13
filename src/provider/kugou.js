@@ -1,8 +1,8 @@
-const cache = require('../cache');
 const insure = require('./insure');
 const select = require('./select');
 const crypto = require('../crypto');
 const request = require('../request');
+const { getManagedCacheStorage } = require('../cache');
 
 const format = (song) => {
 	return {
@@ -77,6 +77,7 @@ const track = (song) =>
 		.then((result) => result.find((url) => url) || Promise.reject())
 		.catch(() => insure().kugou.track(song));
 
-const check = (info) => cache(search, info).then(track);
+const cs = getManagedCacheStorage('provider/kugou');
+const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, search };

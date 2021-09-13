@@ -1,8 +1,10 @@
-const cache = require('./cache');
+const { getManagedCacheStorage } = require('./cache');
 const parse = require('url').parse;
 require('./provider/insure').disable = true;
 
 const router = require('./consts').PROVIDERS;
+const cs = getManagedCacheStorage('bridge');
+cs.aliveDuration = 15 * 60 * 1000;
 
 const distribute = (url, router) =>
 	Promise.resolve().then(() => {
@@ -20,8 +22,8 @@ const distribute = (url, router) =>
 			else return true;
 		});
 		if (miss || typeof pointer != 'function') return Promise.reject();
-		// return pointer.call(null, argument)
-		return cache(pointer, argument, 15 * 60 * 1000);
+
+		return cs.cache(argument, () => pointer(argument));
 	});
 
 require('http')

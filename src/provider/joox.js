@@ -1,8 +1,8 @@
-const cache = require('../cache');
 const insure = require('./insure');
 const select = require('./select');
 const crypto = require('../crypto');
 const request = require('../request');
+const { getManagedCacheStorage } = require('../cache');
 
 const headers = {
 	origin: 'http://www.joox.com',
@@ -77,6 +77,7 @@ const track = (id) => {
 		.catch(() => insure().joox.track(id));
 };
 
-const check = (info) => cache(search, info).then(track);
+const cs = getManagedCacheStorage('provider/joox');
+const check = (info) => cs.cache(info, () => search(info)).then(track);
 
 module.exports = { check, track };

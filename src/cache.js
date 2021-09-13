@@ -67,9 +67,10 @@ class CacheStorage extends EventEmitter {
 	 * @template T
 	 * @param {any} key the unique key of action to be cached.
 	 * @param {() => Promise<T>} action the action to do and be cached.
+	 * @param {number?} expireAt customize the expireAt of this key.
 	 * @return {Promise<T>}
 	 */
-	async cache(key, action) {
+	async cache(key, action, expireAt) {
 		// Disable the cache when the NO_CACHE = true.
 		if (process.env.NO_CACHE === 'true') {
 			return action();
@@ -89,7 +90,7 @@ class CacheStorage extends EventEmitter {
 		const sourceResponse = await action();
 		this.cacheMap.set(key, {
 			data: sourceResponse,
-			expireAt: new Date(this.WillExpireAt),
+			expireAt: new Date(expireAt || this.WillExpireAt),
 		});
 		return sourceResponse;
 	}
