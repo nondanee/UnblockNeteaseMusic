@@ -98,6 +98,22 @@ describe('CacheStorage', () => {
 			expect(cs.cacheMap.get('owo').data).toBe('12345');
 		});
 
+		it('cache() (once) should return the execution result', async () => {
+			const cs = new CacheStorage();
+			const mockFunc = () => Promise.resolve().then(() => '12345');
+
+			expect(await cs.cache('owo', mockFunc)).toBe('12345');
+		});
+
+		it('cache() (twice) should return the execution result', async () => {
+			const cs = new CacheStorage();
+			const mockFunc = () => Promise.resolve().then(() => '12345');
+
+			await cs.cache('owo', mockFunc);
+
+			expect(await cs.cache('owo', mockFunc)).toBe('12345');
+		});
+
 		it('cache() can trigger removeExpiredJob()', (done) => {
 			const cs = new CacheStorage();
 			const mockFunc = jest

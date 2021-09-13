@@ -83,7 +83,7 @@ class CacheStorage extends EventEmitter {
 		// Check if we have cached it before.
 		// If true, we return the cached value.
 		const cachedData = this.cacheMap.get(key);
-		if (cachedData) return cachedData;
+		if (cachedData) return cachedData.data;
 
 		// Cache the response of action() and
 		// register into our cache map.
