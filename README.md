@@ -106,19 +106,19 @@ optional arguments:
 
 ### 环境变量
 
-| 变量名称        | 类型 | 描述                                   | 示例                                                             |
-| --------------- | ---- | -------------------------------------- | ---------------------------------------------------------------- |
-| ENABLE_FLAC     | bool | 启用/禁用无损音质获取                  | `ENABLE_FLAC=true`                                               |
-| MIN_BR          | int  | 允许的最低源音质，小于该值将被替换     | `MIN_BR=320000`                                                  |
-| MIGU_COOKIE     | str  | 咪咕音源的 aversionid cookie           | `MIGU_COOKIE="<your_aversionid>"`                                |
-| QQ_COOKIE       | str  | QQ 音源的 uin 和 qm_keyst cookie       | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
-| JOOX_COOKIE     | str  | JOOX 音源的 wmid 和 session_key cookie | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
-| YOUTUBE_KEY     | str  | Youtube 音源的 Data API v3 Key         | `YOUTUBE_KEY="<your_data_api_key>"`                              |
-| SIGN_CERT       | path | 自定义证书文件                         | `SIGN_CERT="./ca.crt"`                                           |
-| SIGN_KEY        | path | 自定义密钥文件                         | `SIGN_KEY="./server.key"`                                        |
-| NO_CACHE        | bool | 停用 cache                             | `NO_CACHE=true`                                                  |
-| ENABLE_HTTPDNS | bool | 启用故障的 Netease HTTPDNS 查询。不建议启用              | `ENABLE_HTTPDNS=true`                                           |
-| DEVELOPMENT | bool | 启用开发模式。需要自己用 `yarn` 安装依赖 (dependencies)           | `DEVELOPMENT=true`                                           |
+| 变量名称       | 类型 | 描述                                                    | 示例                                                             |
+| -------------- | ---- | ------------------------------------------------------- | ---------------------------------------------------------------- |
+| ENABLE_FLAC    | bool | 启用/禁用无损音质获取                                   | `ENABLE_FLAC=true`                                               |
+| MIN_BR         | int  | 允许的最低源音质，小于该值将被替换                      | `MIN_BR=320000`                                                  |
+| MIGU_COOKIE    | str  | 咪咕音源的 aversionid cookie                            | `MIGU_COOKIE="<your_aversionid>"`                                |
+| QQ_COOKIE      | str  | QQ 音源的 uin 和 qm_keyst cookie                        | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
+| JOOX_COOKIE    | str  | JOOX 音源的 wmid 和 session_key cookie                  | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
+| YOUTUBE_KEY    | str  | Youtube 音源的 Data API v3 Key                          | `YOUTUBE_KEY="<your_data_api_key>"`                              |
+| SIGN_CERT      | path | 自定义证书文件                                          | `SIGN_CERT="./ca.crt"`                                           |
+| SIGN_KEY       | path | 自定义密钥文件                                          | `SIGN_KEY="./server.key"`                                        |
+| NO_CACHE       | bool | 停用 cache                                              | `NO_CACHE=true`                                                  |
+| ENABLE_HTTPDNS | bool | 启用故障的 Netease HTTPDNS 查询。不建议启用             | `ENABLE_HTTPDNS=true`                                            |
+| DEVELOPMENT    | bool | 启用开发模式。需要自己用 `yarn` 安装依赖 (dependencies) | `DEVELOPMENT=true`                                               |
 
 ## 使用
 
