@@ -79,6 +79,7 @@ if (config.token && !/\S+:\S+/.test(config.token)) {
 const parse = require('url').parse;
 const hook = require('./hook');
 const server = require('./server');
+const {CacheStorageGroup} = require("./cache");
 const random = (array) => array[Math.floor(Math.random() * array.length)];
 const target = Array.from(hook.target.host);
 
@@ -129,6 +130,12 @@ const httpdns2 = (host) =>
 // Allow enabling HTTPDNS queries with `ENABLE_HTTPDNS=true`
 // It seems broken - BETTER TO NOT ENABLE IT!
 const dnsSource = process.env.ENABLE_HTTPDNS === 'true' ? [httpdns, httpdns2] : [];
+
+// Start the "Clean Cache" background task.
+const csgInstance = CacheStorageGroup.getInstance();
+setInterval(() => {
+	csgInstance.cleanup();
+}, 15 * 60 * 1000);
 
 Promise.all(
 	dnsSource.map((query) => query(target.join(','))).concat(target.map(dns))

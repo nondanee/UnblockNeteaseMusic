@@ -1,4 +1,4 @@
-const { getManagedCacheStorage } = require('./cache');
+const { getManagedCacheStorage, CacheStorageGroup } = require('./cache');
 const parse = require('url').parse;
 require('./provider/insure').disable = true;
 
@@ -25,6 +25,12 @@ const distribute = (url, router) =>
 
 		return cs.cache(argument, () => pointer(argument));
 	});
+
+// Start the "Clean Cache" background task.
+const csgInstance = CacheStorageGroup.getInstance();
+setInterval(() => {
+	csgInstance.cleanup();
+}, 15 * 60 * 1000);
 
 require('http')
 	.createServer()
