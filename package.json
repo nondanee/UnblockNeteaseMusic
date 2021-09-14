@@ -42,10 +42,13 @@
 		"@rollup/plugin-commonjs": "^20.0.0",
 		"@rollup/plugin-json": "^4.1.0",
 		"@rollup/plugin-node-resolve": "^13.0.4",
+		"@types/pino": "^6.3.11",
+		"core-js": "3",
 		"jest": "^27.1.0",
+		"pino": "^6.13.2",
+		"pino-pretty": "^7.0.0",
 		"pkg": "^5.3.2",
 		"prettier": "^2.3.2",
-		"rollup": "^2.56.3",
-		"core-js": "3"
+		"rollup": "^2.56.3"
 	}
 }
