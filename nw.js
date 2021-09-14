@@ -13,9 +13,9 @@ const svc = new Service({
 // 监听
 svc.on('install', () => {
 	svc.start();
-	console.log('install complate');
+	console.log('Installation completed.');
 });
-svc.on('uninstall', () => console.log('uninstall complate'));
+svc.on('uninstall', () => console.log('Uninstallation completed.'));
 
 // 卸载
 if (svc.exists) return svc.uninstall();
