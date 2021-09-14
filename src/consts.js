@@ -7,6 +7,7 @@ const PROVIDERS = {
 	joox: require('./provider/joox'),
 	youtube: require('./provider/youtube'),
 	ytdownload: require('./provider/yt-download'),
+	youtubedl: require('./provider/youtube-dl'),
 	bilibili: require('./provider/bilibili'),
 	pyncmd: require('./provider/pyncmd'),
 };
