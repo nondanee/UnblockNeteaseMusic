@@ -76,12 +76,12 @@ if (config.token && !/\S+:\S+/.test(config.token)) {
 	process.exit(1);
 }
 
-const { logScope } = require("./logger");
+const { logScope } = require('./logger');
 const parse = require('url').parse;
 const hook = require('./hook');
 const server = require('./server');
 const { CacheStorageGroup } = require('./cache');
-const logger = logScope("app");
+const logger = logScope('app');
 const random = (array) => array[Math.floor(Math.random() * array.length)];
 const target = Array.from(hook.target.host);
 
