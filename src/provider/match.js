@@ -74,6 +74,7 @@ async function match(id, source, data) {
 
 	const { id: audioId, name } = audioInfo;
 	const { url } = audioData;
+	logger.debug({ audioInfo, audioData }, 'The data to replace:');
 	logger.info(
 		{
 			audioId,
