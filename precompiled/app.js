@@ -1826,7 +1826,7 @@ $$v({
 var app = {};
 
 var name$1 = "@1715173329/unblockneteasemusic";
-var version$5 = "v0.27.0-beta.1";
+var version$5 = "v0.27.0-beta.2";
 var description$1 = "Revive unavailable songs for Netease Cloud Music";
 var main$1 = "src/provider/match.js";
 var bin$1 = {
@@ -12627,7 +12627,7 @@ const server = server_1;
 const {
   CacheStorageGroup
 } = cache;
-const logger = logScope("app");
+const logger = logScope('app');
 
 const target = Array.from(hook.target.host);
 commonjsGlobal.port = config.port;
