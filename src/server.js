@@ -3,6 +3,8 @@ const net = require('net');
 const path = require('path');
 const parse = require('url').parse;
 
+const { logScope } = require('./logger');
+const logger = logScope('server');
 const sni = require('./sni');
 const hook = require('./hook');
 const request = require('./request');
@@ -67,15 +69,17 @@ const proxy = {
 	},
 	log: (ctx) => {
 		const { req, socket, decision } = ctx;
-		const mark = { close: '|', blank: '-', proxy: '>' }[decision] || '>';
-		if (socket) console.log('TUNNEL', mark, req.url);
-		else
-			console.log(
-				'MITM',
-				mark,
-				parse(req.url).host,
-				req.socket.encrypted ? '(ssl)' : ''
-			);
+		if (socket)
+			if (socket) logger.debug({ decision, url: req.url }, `TUNNEL`);
+			else
+				logger.debug(
+					{
+						decision,
+						host: parse(req.url).host,
+						encrypted: req.socket.encrypted,
+					},
+					`MITM${req.socket.encrypted ? ' (ssl)' : ''}`
+				);
 	},
 	authenticate: (ctx) => {
 		const { req, res, socket } = ctx;
@@ -198,7 +202,7 @@ const proxy = {
 					);
 			})
 				.then((data) => (ctx.socket.sni = sni(data)))
-				.catch(() => {}),
+				.catch((e) => e && logger.error(e)),
 		pipe: (ctx) => {
 			if (ctx.decision === 'blank')
 				return Promise.reject((ctx.error = ctx.decision));

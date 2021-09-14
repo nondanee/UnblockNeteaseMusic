@@ -1,4 +1,7 @@
 const { EventEmitter } = require('events');
+const { logScope } = require('./logger');
+
+const logger = logScope('cache');
 
 const CacheStorageEvents = {
 	CLEANUP: 'cs@cleanup',
@@ -53,10 +56,26 @@ class CacheStorage extends EventEmitter {
 	}
 
 	/**
+	 * Get the context for logger().
+	 *
+	 * @param {Record<string, string>?} customContext The additional context.
+	 * @return {Record<string, string>}
+	 */
+	getLoggerContext(customContext = {}) {
+		return {
+			...customContext,
+			cacheStorageId: this.id,
+		};
+	}
+
+	/**
 	 * Remove the expired cache.
 	 */
 	removeExpiredCache() {
-		console.log(`CACHE > Cleaning up the expired caches in ${this.id}...`);
+		logger.debug(
+			this.getLoggerContext(),
+			'Cleaning up the expired caches...'
+		);
 		this.cacheMap.forEach((cachedData, key) => {
 			if (cachedData.expireAt <= Date.now()) this.cacheMap.delete(key);
 		});
@@ -90,14 +109,22 @@ class CacheStorage extends EventEmitter {
 		const logKey = typeof key === 'object' ? 'Something' : key;
 
 		if (cachedData) {
-			console.log(`CACHE > (${this.id}) ${logKey} hit!`);
+			logger.debug(
+				this.getLoggerContext({
+					logKey,
+				}),
+				`${logKey} hit!`
+			);
 			return cachedData.data;
 		}
 
 		// Cache the response of action() and
 		// register into our cache map.
-		console.log(
-			`CACHE > (${this.id}) ${logKey} didn't hit. Creating cache...`
+		logger.debug(
+			this.getLoggerContext({
+				logKey: key,
+			}),
+			`${logKey} did not hit. Storing the execution result...`
 		);
 		const sourceResponse = await action();
 		this.cacheMap.set(key, {

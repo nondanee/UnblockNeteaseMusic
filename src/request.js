@@ -3,9 +3,11 @@ const http = require('http');
 const https = require('https');
 const ON_CANCEL = require('./cancel');
 const RequestCancelled = require('./exceptions/RequestCancelled');
+const { logScope } = require('./logger');
 const parse = require('url').parse;
 const format = require('url').format;
 
+const logger = logScope('request');
 const timeoutThreshold = 10 * 1000;
 const translate = (host) => (global.hosts || {})[host] || host;
 const create = (url, proxy) =>
@@ -95,7 +97,12 @@ const request = (method, url, headers, body, proxy, cancelRequest) => {
 
 		clientRequest
 			.setTimeout(timeoutThreshold, () => {
-				console.warn(`TIMEOUT > ${format(url)}`);
+				logger.warn(
+					{
+						url: format(url),
+					},
+					`The request timed out.`
+				);
 				destroyClientRequest();
 			})
 			.on('response', (response) => resolve(response))

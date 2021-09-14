@@ -5,7 +5,9 @@ const match = require('./provider/match');
 const querystring = require('querystring');
 const { isHost } = require('./utilities');
 const { getManagedCacheStorage } = require('./cache');
+const { logScope } = require('./logger');
 
+const logger = logScope('hook');
 const cs = getManagedCacheStorage('hook');
 cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
@@ -164,7 +166,14 @@ hook.request.before = (ctx) => {
 						return pretendPlay(ctx);
 				}
 			})
-			.catch((error) => console.log(error, req.url));
+			.catch(
+				(error) =>
+					error &&
+					logger.error(
+						error,
+						`A error occurred in hook.request.before when hooking ${req.url}.`
+					)
+			);
 	} else if (
 		hook.target.host.has(url.hostname) &&
 		(url.path.startsWith('/weapi/') || url.path.startsWith('/api/'))
@@ -285,7 +294,14 @@ hook.request.after = (ctx) => {
 					? crypto.eapi.encrypt(Buffer.from(body))
 					: body;
 			})
-			.catch((error) => (error ? console.log(error, req.url) : null));
+			.catch(
+				(error) =>
+					error &&
+					logger.error(
+						error,
+						`A error occurred in hook.request.after when hooking ${req.url}.`
+					)
+			);
 	} else if (pkg) {
 		if (new Set([201, 301, 302, 303, 307, 308]).has(proxyRes.statusCode)) {
 			return request(
@@ -363,7 +379,7 @@ const tryCollect = (ctx) => {
 		.then((jsonBody) => {
 			netease.jsonBody = jsonBody;
 		})
-		.catch(() => {});
+		.catch((e) => e && logger.error(e));
 };
 
 const tryLike = (ctx) => {
@@ -395,7 +411,7 @@ const tryLike = (ctx) => {
 				netease.jsonBody = { code: 200, playlistId: pid };
 			}
 		})
-		.catch(() => {});
+		.catch((e) => e && logger.error(e));
 };
 
 const computeHash = (task) =>
@@ -506,7 +522,7 @@ const tryMatch = (ctx) => {
 						}
 					} catch (e) {}
 				})
-				.catch(() => {});
+				.catch((e) => e && logger.error(e));
 		} else if (item.code === 200 && netease.web) {
 			item.url = item.url.replace(
 				/(m\d+?)(?!c)\.music\.126\.net/,
@@ -534,11 +550,11 @@ const tryMatch = (ctx) => {
 			  ); // reduce time cost
 		tasks = jsonBody.data.map((item) => inject(item));
 	}
-	return Promise.all(tasks).catch(() => {});
+	return Promise.all(tasks).catch((e) => e && logger.error(e));
 };
 
 const unblockSoundEffects = (obj) => {
-	console.log('UNSE > triggered');
+	logger.debug('unblockSoundEffects() has been triggered.');
 	const { data, code } = obj;
 	if (code === 200) {
 		if (Array.isArray(data))
