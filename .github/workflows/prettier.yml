@@ -33,6 +33,7 @@ jobs:
               with:
                   token: ${{ secrets.PR_PAT }}
                   commit-message: 'style: with prettier [skip ci]'
+                  branch: ci/prettier
                   delete-branch: true
                   title: 'style: with prettier'
                   body: |

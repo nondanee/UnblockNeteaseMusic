@@ -31,6 +31,7 @@ jobs:
               with:
                   token: ${{ secrets.PR_PAT }}
                   commit-message: 'build(precompiled): make a bundle with the dependencies'
+                  branch: ci/build-precompiled
                   delete-branch: true
                   title: 'build(precompiled): make a bundle with the dependencies'
                   body: |
