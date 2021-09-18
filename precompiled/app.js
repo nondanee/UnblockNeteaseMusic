@@ -12023,7 +12023,7 @@ async function check(url) {
 
   if (headers) {
     // Set the MD5 info of this song.
-    if (isHost('qq.com')) song.md5 = headers['Server-md5']; // Set the size info of this song.
+    if (isHost('qq.com')) song.md5 = headers['server-md5']; // Set the size info of this song.
 
     song.size = parseInt((headers['content-range'] || '').split('/').pop() || headers['content-length']) || 0; // Check if the Content-Length equals 8192.
 
