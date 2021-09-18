@@ -1,9 +1,8 @@
-const execa = require('execa');
 const { getManagedCacheStorage } = require('../cache');
-const { CheckIfExist } = require('cmdexist');
 const { logScope } = require('../logger');
 const YoutubeDlInvalidResponse = require('../exceptions/YoutubeDlInvalidResponse');
 const YoutubeDlNotInstalled = require('../exceptions/YoutubeDlNotInstalled');
+const { spawnStdout } = require('../spawn');
 
 /**
  * The arguments to pass to youtube-dl
@@ -24,21 +23,6 @@ const byKeyword = (keyword) => `ytsearch1:${keyword}`;
 const logger = logScope('provider/youtube-dl');
 
 /**
- * Is `youtube-dl` installed?
- * @return {Promise<boolean>}
- */
-async function youtubeDlInstalled() {
-	const existence = await CheckIfExist('youtube-dl');
-
-	if (!existence)
-		logger.error(
-			"youtube-dl was not installed! The source `youtube-dl` won't be used."
-		);
-
-	return existence;
-}
-
-/**
  * Checking if youtube-dl is available,
  * then execute the command and extract the ID and URL.
  *
@@ -46,20 +30,21 @@ async function youtubeDlInstalled() {
  * @returns {Promise<{id: string, url: string}>}
  */
 async function getUrl(args) {
-	if (!(await youtubeDlInstalled())) {
-		throw new YoutubeDlNotInstalled();
+	try {
+		const { stdout } = await spawnStdout('youtube-dl', args);
+		const response = JSON.parse(stdout.toString());
+		if (
+			typeof response === 'object' &&
+			typeof response.id === 'string' &&
+			typeof response.url === 'string'
+		)
+			return response;
+
+		throw new YoutubeDlInvalidResponse(response);
+	} catch (e) {
+		if (e && e.code === 'ENOENT') throw new YoutubeDlNotInstalled();
+		throw e;
 	}
-
-	const { stdout } = await execa('youtube-dl', args);
-	const response = JSON.parse(stdout);
-	if (
-		typeof response === 'object' &&
-		typeof response.id === 'string' &&
-		typeof response.url === 'string'
-	)
-		return response;
-
-	throw new YoutubeDlInvalidResponse(response);
 }
 
 const search = async (info) => {

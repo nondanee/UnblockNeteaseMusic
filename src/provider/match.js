@@ -120,18 +120,23 @@ async function check(url) {
 	// Set the MD5 info of this song.
 	if (isHost('qq.com')) song.md5 = headers['server-md5'];
 
-	// Set the size info of this song.
-	song.size =
-		parseInt(
-			(headers['content-range'] || '').split('/').pop() ||
-				headers['content-length']
-		) || 0;
+	// Check if "headers" existed. There are some edge cases
+	// that the response has no headers, for example, the song
+	// from YouTube.
+	if (headers) {
+		// Set the size info of this song.
+		song.size =
+			parseInt(
+				(headers['content-range'] || '').split('/').pop() ||
+					headers['content-length']
+			) || 0;
 
-	// Check if the Content-Length equals 8192.
-	if (headers['content-length'] !== '8192') {
-		// I'm not sure how to describe this.
-		// Seems like not important.
-		return Promise.reject();
+		// Check if the Content-Length equals 8192.
+		if (headers['content-length'] !== '8192') {
+			// I'm not sure how to describe this.
+			// Seems like not important.
+			return Promise.reject();
+		}
 	}
 
 	// Get the bitrate of this song.
