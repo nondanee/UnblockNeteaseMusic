@@ -16,6 +16,7 @@ var require$$1$1 = require('http');
 var require$$2 = require('https');
 var require$$0$7 = require('crypto');
 var require$$2$1 = require('querystring');
+var require$$0$8 = require('child_process');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -33,17 +34,18 @@ var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
 var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
 var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
+var require$$0__default$7 = /*#__PURE__*/_interopDefaultLegacy(require$$0$8);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var check$9 = function (it) {
+var check$a = function (it) {
   return it && it.Math == Math && it;
 }; // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 
 
 var global$i = // eslint-disable-next-line es/no-global-this -- safe
-check$9(typeof globalThis == 'object' && globalThis) || check$9(typeof window == 'object' && window) || // eslint-disable-next-line no-restricted-globals -- safe
-check$9(typeof self == 'object' && self) || check$9(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
+check$a(typeof globalThis == 'object' && globalThis) || check$a(typeof window == 'object' && window) || // eslint-disable-next-line no-restricted-globals -- safe
+check$a(typeof self == 'object' && self) || check$a(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
 function () {
   return this;
 }() || Function('return this')();
@@ -8553,7 +8555,7 @@ var _process$env$LOG_LEVE;
 const pino = pino$2.exports; // The destination of the log file. Can be `undefined`.
 
 const destFile = process.env.LOG_FILE;
-const logger$2 = pino({
+const logger$4 = pino({
   level: (_process$env$LOG_LEVE = process.env.LOG_LEVEL) !== null && _process$env$LOG_LEVE !== void 0 ? _process$env$LOG_LEVE : 'info',
   prettyPrint: process.env.JSON_LOG === 'true' ? false : {
     colorize: true,
@@ -8570,24 +8572,24 @@ destFile && pino.destination(destFile));
  * @return {pino.Logger}
  */
 
-function logScope$2(scope) {
-  return logger$2.child({
+function logScope$4(scope) {
+  return logger$4.child({
     scope
   });
 }
 
 var logger_1 = {
-  logger: logger$2,
-  logScope: logScope$2
+  logger: logger$4,
+  logScope: logScope$4
 };
 
 const {
   EventEmitter: EventEmitter$1
 } = require$$0__default$2['default'];
 const {
-  logScope: logScope$1
+  logScope: logScope$3
 } = logger_1;
-const logger$1 = logScope$1('cache');
+const logger$3 = logScope$3('cache');
 const CacheStorageEvents = {
   CLEANUP: 'cs@cleanup'
 };
@@ -8658,7 +8660,7 @@ class CacheStorage extends EventEmitter$1 {
 
 
   removeExpiredCache() {
-    logger$1.debug(this.getLoggerContext(), 'Cleaning up the expired caches...');
+    logger$3.debug(this.getLoggerContext(), 'Cleaning up the expired caches...');
     this.cacheMap.forEach((cachedData, key) => {
       if (cachedData.expireAt <= Date.now()) this.cacheMap.delete(key);
     });
@@ -8691,7 +8693,7 @@ class CacheStorage extends EventEmitter$1 {
     const logKey = typeof key === 'object' ? 'Something' : key;
 
     if (cachedData) {
-      logger$1.debug(this.getLoggerContext({
+      logger$3.debug(this.getLoggerContext({
         logKey
       }), `${logKey} hit!`);
       return cachedData.data;
@@ -8699,7 +8701,7 @@ class CacheStorage extends EventEmitter$1 {
     // register into our cache map.
 
 
-    logger$1.debug(this.getLoggerContext({
+    logger$3.debug(this.getLoggerContext({
       logKey: key
     }), `${logKey} did not hit. Storing the execution result...`);
     const sourceResponse = await action();
@@ -8765,7 +8767,7 @@ const csgInstance$1 = CacheStorageGroup$2.getInstance();
  * @return {CacheStorage}
  */
 
-function getManagedCacheStorage$a(id) {
+function getManagedCacheStorage$b(id) {
   const cs = new CacheStorage(id);
   csgInstance$1.cacheStorages.add(cs);
   return cs;
@@ -8775,7 +8777,7 @@ var cache = {
   CacheStorage,
   CacheStorageEvents,
   CacheStorageGroup: CacheStorageGroup$2,
-  getManagedCacheStorage: getManagedCacheStorage$a
+  getManagedCacheStorage: getManagedCacheStorage$b
 };
 
 var insure$6 = {exports: {}};
@@ -8821,11 +8823,11 @@ const https = require$$2__default['default'];
 const ON_CANCEL = cancel;
 const RequestCancelled = RequestCancelled_1;
 const {
-  logScope
+  logScope: logScope$2
 } = logger_1;
 const parse$2 = require$$6__default['default'].parse;
 const format$6 = require$$6__default['default'].format;
-const logger = logScope('request');
+const logger$2 = logScope$2('request');
 const timeoutThreshold = 10 * 1000;
 
 const translate = host => (commonjsGlobal.hosts || {})[host] || host;
@@ -8863,29 +8865,30 @@ const configure = (method, url, headers, proxy) => {
 };
 /**
  * @param {string} method
- * @param {string} url
- * @param {Object?} headers
+ * @param {string} receivedUrl
+ * @param {Object?} receivedHeaders
  * @param {unknown?} body
  * @param {unknown?} proxy
  * @param {CancelRequest?} cancelRequest
  */
 
 
-const request$9 = (method, url, headers, body, proxy, cancelRequest) => {
-  url = parse$2(url);
-  headers = headers ||
+const request$9 = (method, receivedUrl, receivedHeaders, body, proxy, cancelRequest) => {
+  const url = parse$2(receivedUrl);
   /* @type {Partial<Record<string,string>>} */
-  {};
-  const options = configure(method, url, Object.assign({
+
+  const headers = receivedHeaders || {};
+  const options = configure(method, url, { ...headers,
     host: url.hostname,
     accept: 'application/json, text/plain, */*',
     'accept-encoding': 'gzip, deflate',
     'accept-language': 'zh-CN,zh;q=0.9',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
-  }, headers), proxy);
+  }, proxy);
   return new Promise((resolve, reject) => {
     var _cancelRequest$cancel;
 
+    logger$2.debug(`Start requesting ${receivedUrl}`);
     const clientRequest = create(url, proxy)(options);
 
     const destroyClientRequest = function () {
@@ -8897,33 +8900,38 @@ const request$9 = (method, url, headers, body, proxy, cancelRequest) => {
     cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.on(ON_CANCEL, destroyClientRequest);
     if ((_cancelRequest$cancel = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && _cancelRequest$cancel !== void 0 ? _cancelRequest$cancel : false) destroyClientRequest();
     clientRequest.setTimeout(timeoutThreshold, () => {
-      logger.warn({
+      logger$2.warn({
         url: format$6(url)
-      }, `The request timed out.`);
+      }, `The request timed out, or the requester didn't handle the response.`);
       destroyClientRequest();
-    }).on('response', response => resolve(response)).on('connect', (_, socket) => https.request({
-      method: method,
-      path: url.path,
-      headers: options._headers,
-      socket: socket,
-      agent: false
-    }).on('response', response => resolve(response)).on('error', error => reject(error)).end(body)).on('error', error => reject(error)).end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
+    }).on('response', response => resolve(response)).on('connect', (_, socket) => {
+      logger$2.debug('received CONNECT, continuing with https.request()...');
+      https.request({
+        method: method,
+        path: url.path,
+        headers: options._headers,
+        socket: socket,
+        agent: false
+      }).on('response', response => resolve(response)).on('error', error => reject(error)).end(body);
+    }).on('error', error => reject(error)).end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
   }).then(response => {
     var _cancelRequest$cancel2;
 
     if ((_cancelRequest$cancel2 = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && _cancelRequest$cancel2 !== void 0 ? _cancelRequest$cancel2 : false) return Promise.reject(new RequestCancelled(format$6(url)));
 
-    if (new Set([201, 301, 302, 303, 307, 308]).has(response.statusCode)) {
+    if ([201, 301, 302, 303, 307, 308].includes(response.statusCode)) {
+      const redirectTo = url.resolve(response.headers.location || url.href);
+      logger$2.debug(`Redirect to ${redirectTo}`);
       delete headers.host;
-      return request$9(method, url.resolve(response.headers.location || url.href), headers, body, proxy);
+      return request$9(method, redirectTo, headers, body, proxy);
     }
 
-    return Object.assign(response, {
+    return { ...response,
       url: url,
       body: raw => read(response, raw),
       json: () => json(response),
       jsonp: () => jsonp(response)
-    });
+    };
   });
 };
 
@@ -8985,7 +8993,7 @@ const insure$5 = insure$6.exports;
 const select$6 = select$7.exports;
 const request$8 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$9
+  getManagedCacheStorage: getManagedCacheStorage$a
 } = cache;
 const headers$2 = {
   origin: 'http://y.qq.com/',
@@ -9014,7 +9022,7 @@ const format$5 = song => ({
   }))
 });
 
-const search$7 = info => {
+const search$8 = info => {
   const url = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?' + 'ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.center&' + 't=0&aggr=1&cr=1&catZhida=1&lossless=0&flag_qc=0&p=1&n=20&w=' + encodeURIComponent(info.keyword) + '&' + 'g_tk=5381&jsonpCallback=MusicJsonCallback10005317669353331&loginUin=0&hostUin=0&' + 'format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0';
   return request$8('GET', url).then(response => response.jsonp()).then(jsonBody => {
     const list = jsonBody.data.song.list.map(format$5);
@@ -9049,18 +9057,18 @@ const single$2 = (id, format) => {
   });
 };
 
-const track$8 = id => {
+const track$9 = id => {
   id.key = id.file;
   return Promise.all([['F000', '.flac'], ['M800', '.mp3'], ['M500', '.mp3']].slice(headers$2.cookie || typeof window !== 'undefined' ? select$6.ENABLE_FLAC ? 0 : 1 : 2).map(format => single$2(id, format).catch(() => null))).then(result => result.find(url => url) || Promise.reject()).catch(() => insure$5().qq.track(id));
 };
 
-const cs$9 = getManagedCacheStorage$9('provider/qq');
+const cs$a = getManagedCacheStorage$a('provider/qq');
 
-const check$8 = info => cs$9.cache(info, () => search$7(info)).then(track$8);
+const check$9 = info => cs$a.cache(info, () => search$8(info)).then(track$9);
 
 var qq = {
-  check: check$8,
-  track: track$8
+  check: check$9,
+  track: track$9
 };
 
 var crypto$3 = {exports: {}};
@@ -10494,12 +10502,12 @@ var kwDES = {
   const linuxapiKey = 'rFgB&h#%2?^eDg:Q';
 
   const decrypt = (buffer, key) => {
-    const decipher = crypto.createDecipheriv('aes-128-ecb', key, '');
+    const decipher = crypto.createDecipheriv('aes-128-ecb', key, null);
     return Buffer.concat([decipher.update(buffer), decipher.final()]);
   };
 
   const encrypt = (buffer, key) => {
-    const cipher = crypto.createCipheriv('aes-128-ecb', key, '');
+    const cipher = crypto.createCipheriv('aes-128-ecb', key, null);
     return Buffer.concat([cipher.update(buffer), cipher.final()]);
   };
 
@@ -10601,7 +10609,7 @@ const select$5 = select$7.exports;
 const crypto$2 = crypto$3.exports;
 const request$7 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$8
+  getManagedCacheStorage: getManagedCacheStorage$9
 } = cache;
 
 const format$4 = song => {
@@ -10623,7 +10631,7 @@ const format$4 = song => {
   };
 };
 
-const search$6 = info => {
+const search$7 = info => {
   const url = // 'http://songsearch.kugou.com/song_search_v2?' +
   'http://mobilecdn.kugou.com/api/v3/search/song?' + 'keyword=' + encodeURIComponent(info.keyword) + '&page=1&pagesize=10';
   return request$7('GET', url).then(response => response.json()).then(jsonBody => {
@@ -10654,15 +10662,15 @@ const single$1 = (song, format) => {
   return request$7('GET', url).then(response => response.json()).then(jsonBody => jsonBody.url[0] || Promise.reject());
 };
 
-const track$7 = song => Promise.all(['sqhash', 'hqhash', 'hash'].slice(select$5.ENABLE_FLAC ? 0 : 1).map(format => single$1(song, format).catch(() => null))).then(result => result.find(url => url) || Promise.reject()).catch(() => insure$4().kugou.track(song));
+const track$8 = song => Promise.all(['sqhash', 'hqhash', 'hash'].slice(select$5.ENABLE_FLAC ? 0 : 1).map(format => single$1(song, format).catch(() => null))).then(result => result.find(url => url) || Promise.reject()).catch(() => insure$4().kugou.track(song));
 
-const cs$8 = getManagedCacheStorage$8('provider/kugou');
+const cs$9 = getManagedCacheStorage$9('provider/kugou');
 
-const check$7 = info => cs$8.cache(info, () => search$6(info)).then(track$7);
+const check$8 = info => cs$9.cache(info, () => search$7(info)).then(track$8);
 
 var kugou = {
-  check: check$7,
-  search: search$6
+  check: check$8,
+  search: search$7
 };
 
 const insure$3 = insure$6.exports;
@@ -10670,7 +10678,7 @@ const select$4 = select$7.exports;
 const crypto$1 = crypto$3.exports;
 const request$6 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$7
+  getManagedCacheStorage: getManagedCacheStorage$8
 } = cache;
 
 const format$3 = song => ({
@@ -10688,7 +10696,7 @@ const format$3 = song => ({
   }))
 });
 
-const search$5 = info => {
+const search$6 = info => {
   // const url =
   // 	// 'http://search.kuwo.cn/r.s?' +
   // 	// 'ft=music&itemset=web_2013&client=kt&' +
@@ -10728,7 +10736,7 @@ const search$5 = info => {
   });
 };
 
-const track$6 = id => {
+const track$7 = id => {
   const url = crypto$1.kuwoapi ? 'http://mobi.kuwo.cn/mobi.s?f=kuwo&q=' + crypto$1.kuwoapi.encryptQuery('corp=kuwo&p2p=1&type=convert_url2&sig=0&format=' + ['flac', 'mp3'].slice(select$4.ENABLE_FLAC ? 0 : 1).join('|') + '&rid=' + id) : 'http://antiserver.kuwo.cn/anti.s?type=convert_url&format=mp3&response=url&rid=MUSIC_' + id; // flac refuse
   // : 'http://www.kuwo.cn/url?format=mp3&response=url&type=convert_url3&br=320kmp3&rid=' + id // flac refuse
 
@@ -10740,20 +10748,20 @@ const track$6 = id => {
   }).catch(() => insure$3().kuwo.track(id));
 };
 
-const cs$7 = getManagedCacheStorage$7('provider/kuwo');
+const cs$8 = getManagedCacheStorage$8('provider/kuwo');
 
-const check$6 = info => cs$7.cache(info, () => search$5(info)).then(track$6);
+const check$7 = info => cs$8.cache(info, () => search$6(info)).then(track$7);
 
 var kuwo = {
-  check: check$6,
-  track: track$6
+  check: check$7,
+  track: track$7
 };
 
 const insure$2 = insure$6.exports;
 const select$3 = select$7.exports;
 const request$5 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$6
+  getManagedCacheStorage: getManagedCacheStorage$7
 } = cache;
 const headers$1 = {
   origin: 'http://music.migu.cn/',
@@ -10781,7 +10789,7 @@ const format$2 = song => {
   };
 };
 
-const search$4 = info => {
+const search$5 = info => {
   const url = 'https://m.music.migu.cn/migu/remoting/scr_search_tag?' + 'keyword=' + encodeURIComponent(info.keyword) + '&type=2&rows=20&pgc=1';
   return request$5('GET', url, headers$1).then(response => response.json()).then(jsonBody => {
     const list = ((jsonBody || {}).musics || []).map(format$2);
@@ -10806,16 +10814,16 @@ const single = (id, format) => {
   });
 };
 
-const track$5 = id => Promise.all( // [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
+const track$6 = id => Promise.all( // [3, 2, 1].slice(select.ENABLE_FLAC ? 0 : 1)
 ['ZQ', 'SQ', 'HQ', 'PQ'].slice(select$3.ENABLE_FLAC ? 0 : 2).map(format => single(id, format).catch(() => null))).then(result => result.find(url => url) || Promise.reject()).catch(() => insure$2().migu.track(id));
 
-const cs$6 = getManagedCacheStorage$6('provider/migu');
+const cs$7 = getManagedCacheStorage$7('provider/migu');
 
-const check$5 = info => cs$6.cache(info, () => search$4(info)).then(track$5);
+const check$6 = info => cs$7.cache(info, () => search$5(info)).then(track$6);
 
 var migu = {
-  check: check$5,
-  track: track$5
+  check: check$6,
+  track: track$6
 };
 
 const insure$1 = insure$6.exports;
@@ -10823,7 +10831,7 @@ const select$2 = select$7.exports;
 const crypto = crypto$3.exports;
 const request$4 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$5
+  getManagedCacheStorage: getManagedCacheStorage$6
 } = cache;
 const headers = {
   origin: 'http://www.joox.com',
@@ -10862,7 +10870,7 @@ const format$1 = song => {
   };
 };
 
-const search$3 = info => {
+const search$4 = info => {
   const keyword = fit(info);
   const url = 'http://api-jooxtt.sanook.com/web-fcgi-bin/web_search?' + 'country=hk&lang=zh_TW&' + 'search_input=' + encodeURIComponent(keyword) + '&sin=0&ein=30';
   return request$4('GET', url, headers).then(response => response.body()).then(body => {
@@ -10873,7 +10881,7 @@ const search$3 = info => {
   });
 };
 
-const track$4 = id => {
+const track$5 = id => {
   const url = 'http://api.joox.com/web-fcgi-bin/web_get_songinfo?' + 'songid=' + id + '&country=hk&lang=zh_cn&from_type=-1&' + 'channel_id=-1&_=' + new Date().getTime();
   return request$4('GET', url, headers).then(response => response.jsonp()).then(jsonBody => {
     const songUrl = (jsonBody.r320Url || jsonBody.r192Url || jsonBody.mp3Url || jsonBody.m4aUrl).replace(/M\d00([\w]+).mp3/, 'M800$1.mp3');
@@ -10881,18 +10889,18 @@ const track$4 = id => {
   }).catch(() => insure$1().joox.track(id));
 };
 
-const cs$5 = getManagedCacheStorage$5('provider/joox');
+const cs$6 = getManagedCacheStorage$6('provider/joox');
 
-const check$4 = info => cs$5.cache(info, () => search$3(info)).then(track$4);
+const check$5 = info => cs$6.cache(info, () => search$4(info)).then(track$5);
 
 var joox = {
-  check: check$4,
-  track: track$4
+  check: check$5,
+  track: track$5
 };
 
 const request$3 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$4
+  getManagedCacheStorage: getManagedCacheStorage$5
 } = cache;
 
 const parse$1 = query => (query || '').split('&').reduce((result, item) => {
@@ -10902,7 +10910,7 @@ const parse$1 = query => (query || '').split('&').reduce((result, item) => {
   });
 }, {});
 
-const cs$4 = getManagedCacheStorage$4('provider/youtube'); // const proxy = require('url').parse('http://127.0.0.1:1080')
+const cs$5 = getManagedCacheStorage$5('provider/youtube'); // const proxy = require('url').parse('http://127.0.0.1:1080')
 
 const proxy$1 = undefined;
 const key$1 = process.env.YOUTUBE_KEY || null; // YouTube Data API v3
@@ -10931,7 +10939,7 @@ const apiSearch$1 = info => {
   });
 };
 
-const search$2 = info => {
+const search$3 = info => {
   const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
   return request$3('GET', url, {}, null, proxy$1).then(response => response.body()).then(body => {
     const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
@@ -10940,7 +10948,7 @@ const search$2 = info => {
   });
 };
 
-const track$3 = id => {
+const track$4 = id => {
   const url = 'https://youtubei.googleapis.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
   const json_header = {
     'Content-Type': 'application/json; charset=utf-8'
@@ -10960,23 +10968,23 @@ const track$3 = id => {
     // .sort((a, b) => b.bitrate - a.bitrate)[0]
 
     const target = parse$1(stream.signatureCipher);
-    return stream.url || (target.sp.includes('sig') ? cs$4.cache('YOUTUBE_SIGNATURE', () => signature(), Date.now() + 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url);
+    return stream.url || (target.sp.includes('sig') ? cs$5.cache('YOUTUBE_SIGNATURE', () => signature(), Date.now() + 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url);
   });
 };
 
-const check$3 = info => cs$4.cache(info, () => {
+const check$4 = info => cs$5.cache(info, () => {
   if (key$1) return apiSearch$1(info);
-  return search$2(info);
-}).then(track$3);
+  return search$3(info);
+}).then(track$4);
 
 var youtube = {
-  check: check$3,
-  track: track$3
+  check: check$4,
+  track: track$4
 };
 
 const request$2 = request_1;
 const {
-  getManagedCacheStorage: getManagedCacheStorage$3
+  getManagedCacheStorage: getManagedCacheStorage$4
 } = cache; // const proxy = require('url').parse('http://127.0.0.1:1080')
 
 const proxy = undefined;
@@ -10992,7 +11000,7 @@ const apiSearch = info => {
   });
 };
 
-const search$1 = info => {
+const search$2 = info => {
   const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(info.keyword)}`;
   return request$2('GET', url, {}, null, proxy).then(response => response.body()).then(body => {
     const initialData = JSON.parse(body.match(/ytInitialData\s*=\s*([^;]+);/)[1]);
@@ -11001,7 +11009,7 @@ const search$1 = info => {
   });
 };
 
-const track$2 = id => {
+const track$3 = id => {
   const url = `https://www.yt-download.org/api/button/mp3/${id}`;
   const regex = /<a[^>]*href=["']([^"']*)["']/;
   return request$2('GET', url, {}, null, proxy).then(response => response.body()).then(body => {
@@ -11010,14 +11018,186 @@ const track$2 = id => {
   });
 };
 
-const cs$3 = getManagedCacheStorage$3('provider/yt-download');
+const cs$4 = getManagedCacheStorage$4('provider/yt-download');
 
-const check$2 = info => cs$3.cache(info, () => {
+const check$3 = info => cs$4.cache(info, () => {
   if (key) return apiSearch(info);
-  return search$1(info);
-}).then(track$2);
+  return search$2(info);
+}).then(track$3);
 
 var ytDownload = {
+  check: check$3,
+  track: track$3
+};
+
+class YoutubeDlInvalidResponse$1 extends Error {
+  constructor(response) {
+    super(`The response of youtube-dl is malformed.`);
+    this.name = 'YoutubeDlInvalidResponse';
+    this.response = response;
+  }
+
+}
+
+var YoutubeDlInvalidResponse_1 = YoutubeDlInvalidResponse$1;
+
+class YoutubeDlNotInstalled$1 extends Error {
+  constructor() {
+    super(`You must install "youtube-dl" before using the "youtubedl" source.`);
+    this.name = 'YoutubeDlNotInstalled';
+  }
+
+}
+
+var YoutubeDlNotInstalled_1 = YoutubeDlNotInstalled$1;
+
+class ProcessExitNotSuccessfully$1 extends Error {
+  constructor(process, exitCode) {
+    super(`${process} exited with ${exitCode}, which is not zero.`);
+    this.process = process;
+    this.exitCode = exitCode;
+    this.name = 'ProcessExitNotSuccessfully';
+  }
+
+}
+
+var ProcessExitNotSuccessfully_1 = ProcessExitNotSuccessfully$1;
+
+const child_process = require$$0__default$7['default'];
+const {
+  logScope: logScope$1
+} = logger_1;
+const ProcessExitNotSuccessfully = ProcessExitNotSuccessfully_1;
+const logger$1 = logScope$1('spawn');
+/**
+ * @typedef {{stdout: Buffer, stderr: Buffer}} ExecutionResult
+ */
+
+/**
+ * Spawn a command and get the execution result of that.
+ *
+ * @param {string} cmd The command. Example: `ls`
+ * @param {string[]?} args The arguments list
+ * @return {Promise<ExecutionResult>} The execution result (stdout and stderr) of this execution.
+ * @example ```js
+ * const { stdout, stderr } = await spawnStdout("ls");
+ * console.log(stdout.toString());
+ * ```
+ */
+
+async function spawnStdout$1(cmd, args = []) {
+  return new Promise((resolve, reject) => {
+    let stdoutOffset = 0;
+    let stderrOffset = 0;
+    const stdout = Buffer.alloc(5 * 1e3 * 1e3);
+    const stderr = Buffer.alloc(5 * 1e3 * 1e3);
+    const spawn = child_process.spawn(cmd, args);
+    spawn.on('spawn', () => {
+      // Users should acknowledge what command is executing.
+      logger$1.info(`running ${cmd} ${args.join(' ')}`);
+    });
+    spawn.on('error', error => reject(error));
+    spawn.on('close', code => {
+      if (code !== 0) reject(new ProcessExitNotSuccessfully(cmd, code));else {
+        logger$1.debug(`process ${cmd} exited successfully`);
+        resolve({
+          stdout: stdout.slice(0, stdoutOffset),
+          stderr: stderr.slice(0, stderrOffset)
+        });
+      }
+    });
+    spawn.stdout.on('data', stdoutPart => {
+      stdoutOffset += stdoutPart.copy(stdout, stdoutOffset);
+    });
+    spawn.stderr.on('data', stderrPart => {
+      logger$1.warn(`[${cmd}][stderr] ${stderrPart}`);
+      stderrOffset += stderrPart.copy(stderr, stderrOffset);
+    });
+  });
+}
+
+var spawn = {
+  spawnStdout: spawnStdout$1
+};
+
+const {
+  getManagedCacheStorage: getManagedCacheStorage$3
+} = cache;
+const {
+  logScope
+} = logger_1;
+const YoutubeDlInvalidResponse = YoutubeDlInvalidResponse_1;
+const YoutubeDlNotInstalled = YoutubeDlNotInstalled_1;
+const {
+  spawnStdout
+} = spawn;
+/**
+ * The arguments to pass to youtube-dl
+ *
+ * ```plain
+ * youtube-dl -f bestaudio --dump-json <query>
+ *		-f bestaudio 	choose the best quality of the audio
+ *		--dump-json		dump the information as JSON without downloading it
+ * ```
+ *
+ * @param {string} query
+ */
+
+const dlArguments = query => ['-f', '140', '--dump-json', query];
+/** @param {string} id */
+
+
+const byId = id => `https://www.youtube.com/watch?v=${id}`;
+/** @param {string} keyword */
+
+
+const byKeyword = keyword => `ytsearch1:${keyword}`;
+
+const logger = logScope('provider/youtube-dl');
+/**
+ * Checking if youtube-dl is available,
+ * then execute the command and extract the ID and URL.
+ *
+ * @param {string[]} args
+ * @returns {Promise<{id: string, url: string}>}
+ */
+
+async function getUrl(args) {
+  try {
+    const {
+      stdout
+    } = await spawnStdout('youtube-dl', args);
+    const response = JSON.parse(stdout.toString());
+    if (typeof response === 'object' && typeof response.id === 'string' && typeof response.url === 'string') return response;
+    throw new YoutubeDlInvalidResponse(response);
+  } catch (e) {
+    if (e && e.code === 'ENOENT') throw new YoutubeDlNotInstalled();
+    throw e;
+  }
+}
+
+const search$1 = async info => {
+  const {
+    id
+  } = await getUrl(dlArguments(byKeyword(info.keyword)));
+  return id;
+};
+
+const track$2 = async id => {
+  const {
+    url
+  } = await getUrl(dlArguments(byId(id)));
+  return url;
+};
+
+const cs$3 = getManagedCacheStorage$3('youtube-dl');
+
+const check$2 = info => cs$3.cache(info, () => search$1(info)).then(track$2).catch(e => {
+  if (e) logger.error(e);
+  throw e;
+});
+
+var youtubeDl = {
   check: check$2,
   track: track$2
 };
@@ -11109,6 +11289,7 @@ const PROVIDERS = {
   joox: joox,
   youtube: youtube,
   ytdownload: ytDownload,
+  youtubedl: youtubeDl,
   bilibili: bilibili,
   pyncmd: pyncmd
 };
