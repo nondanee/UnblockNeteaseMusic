@@ -122,7 +122,7 @@ async function check(url) {
 	// from YouTube.
 	if (headers) {
 		// Set the MD5 info of this song.
-		if (isHost('qq.com')) song.md5 = headers['Server-md5'];
+		if (isHost('qq.com')) song.md5 = headers['server-md5'];
 
 		// Set the size info of this song.
 		song.size =
