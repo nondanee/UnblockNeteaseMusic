@@ -117,13 +117,13 @@ async function check(url) {
 	// Set the URL of this song.
 	song.url = response.url.href;
 
-	// Set the MD5 info of this song.
-	if (isHost('qq.com')) song.md5 = headers['server-md5'];
-
 	// Check if "headers" existed. There are some edge cases
 	// that the response has no headers, for example, the song
 	// from YouTube.
 	if (headers) {
+		// Set the MD5 info of this song.
+		if (isHost('qq.com')) song.md5 = headers['Server-md5']
+
 		// Set the size info of this song.
 		song.size =
 			parseInt(

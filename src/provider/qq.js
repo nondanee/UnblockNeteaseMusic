@@ -47,7 +47,7 @@ const single = (id, format) => {
 					module: 'vkey.GetVkeyServer',
 					method: 'CgiGetVkey',
 					param: {
-						guid: '7332953645',
+						guid: (Math.random() * 10000000).toFixed(0),
 						loginflag: 1,
 						filename: [format.join(id.file)],
 						songmid: [id.song],
