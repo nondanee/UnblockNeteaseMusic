@@ -58,33 +58,41 @@ const configure = (method, url, headers, proxy) => {
 
 /**
  * @param {string} method
- * @param {string} url
- * @param {Object?} headers
+ * @param {string} receivedUrl
+ * @param {Object?} receivedHeaders
  * @param {unknown?} body
  * @param {unknown?} proxy
  * @param {CancelRequest?} cancelRequest
  */
-const request = (method, url, headers, body, proxy, cancelRequest) => {
-	url = parse(url);
-	headers = headers || /* @type {Partial<Record<string,string>>} */ {};
+const request = (
+	method,
+	receivedUrl,
+	receivedHeaders,
+	body,
+	proxy,
+	cancelRequest
+) => {
+	const url = parse(receivedUrl);
+	/* @type {Partial<Record<string,string>>} */
+	const headers = receivedHeaders || {};
 	const options = configure(
 		method,
 		url,
-		Object.assign(
-			{
-				host: url.hostname,
-				accept: 'application/json, text/plain, */*',
-				'accept-encoding': 'gzip, deflate',
-				'accept-language': 'zh-CN,zh;q=0.9',
-				'user-agent':
-					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-			},
-			headers
-		),
+		{
+			...headers,
+			host: url.hostname,
+			accept: 'application/json, text/plain, */*',
+			'accept-encoding': 'gzip, deflate',
+			'accept-language': 'zh-CN,zh;q=0.9',
+			'user-agent':
+				'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+		},
 		proxy
 	);
 
 	return new Promise((resolve, reject) => {
+		logger.debug(`Start requesting ${receivedUrl}`);
+
 		const clientRequest = create(url, proxy)(options);
 		const destroyClientRequest = function () {
 			// We destroy the request and throw RequestCancelled
@@ -101,12 +109,15 @@ const request = (method, url, headers, body, proxy, cancelRequest) => {
 					{
 						url: format(url),
 					},
-					`The request timed out.`
+					`The request timed out, or the requester didn't handle the response.`
 				);
 				destroyClientRequest();
 			})
 			.on('response', (response) => resolve(response))
-			.on('connect', (_, socket) =>
+			.on('connect', (_, socket) => {
+				logger.debug(
+					'received CONNECT, continuing with https.request()...'
+				);
 				https
 					.request({
 						method: method,
@@ -117,31 +128,31 @@ const request = (method, url, headers, body, proxy, cancelRequest) => {
 					})
 					.on('response', (response) => resolve(response))
 					.on('error', (error) => reject(error))
-					.end(body)
-			)
+					.end(body);
+			})
 			.on('error', (error) => reject(error))
 			.end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
 	}).then((response) => {
 		if (cancelRequest?.cancelled ?? false)
 			return Promise.reject(new RequestCancelled(format(url)));
 
-		if (new Set([201, 301, 302, 303, 307, 308]).has(response.statusCode)) {
-			delete headers.host;
-			return request(
-				method,
-				url.resolve(response.headers.location || url.href),
-				headers,
-				body,
-				proxy
+		if ([201, 301, 302, 303, 307, 308].includes(response.statusCode)) {
+			const redirectTo = url.resolve(
+				response.headers.location || url.href
 			);
+
+			logger.debug(`Redirect to ${redirectTo}`);
+			delete headers.host;
+			return request(method, redirectTo, headers, body, proxy);
 		}
 
-		return Object.assign(response, {
+		return {
+			...response,
 			url: url,
 			body: (raw) => read(response, raw),
 			json: () => json(response),
 			jsonp: () => jsonp(response),
-		});
+		};
 	});
 };
 
