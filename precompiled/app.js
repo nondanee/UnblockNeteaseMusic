@@ -9456,7 +9456,7 @@ const single$2 = (id, format) => {
       module: 'vkey.GetVkeyServer',
       method: 'CgiGetVkey',
       param: {
-        guid: '7332953645',
+        guid: (Math.random() * 10000000).toFixed(0),
         loginflag: 1,
         filename: [format.join(id.file)],
         songmid: [id.song],
@@ -12017,14 +12017,14 @@ async function check(url) {
 
   if (!isHttpResponseOk(response.statusCode)) throw new RequestFailed(url, response.statusCode); // Set the URL of this song.
 
-  song.url = response.url.href; // Set the MD5 info of this song.
-
-  if (isHost('qq.com')) song.md5 = headers['server-md5']; // Check if "headers" existed. There are some edge cases
+  song.url = response.url.href; // Check if "headers" existed. There are some edge cases
   // that the response has no headers, for example, the song
   // from YouTube.
 
   if (headers) {
-    // Set the size info of this song.
+    // Set the MD5 info of this song.
+    if (isHost('qq.com')) song.md5 = headers['Server-md5']; // Set the size info of this song.
+
     song.size = parseInt((headers['content-range'] || '').split('/').pop() || headers['content-length']) || 0; // Check if the Content-Length equals 8192.
 
     if (headers['content-length'] !== '8192') {
