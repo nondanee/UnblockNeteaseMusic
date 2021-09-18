@@ -8,12 +8,12 @@ const eapiKey = 'e82ckenh8dichen8';
 const linuxapiKey = 'rFgB&h#%2?^eDg:Q';
 
 const decrypt = (buffer, key) => {
-	const decipher = crypto.createDecipheriv('aes-128-ecb', key, '');
+	const decipher = crypto.createDecipheriv('aes-128-ecb', key, null);
 	return Buffer.concat([decipher.update(buffer), decipher.final()]);
 };
 
 const encrypt = (buffer, key) => {
-	const cipher = crypto.createCipheriv('aes-128-ecb', key, '');
+	const cipher = crypto.createCipheriv('aes-128-ecb', key, null);
 	return Buffer.concat([cipher.update(buffer), cipher.final()]);
 };
 
