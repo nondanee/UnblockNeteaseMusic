@@ -80,7 +80,7 @@ DEVELOPMENT=true node app.js
 
 ### OpenWrt LuCI 插件
 
-请移步至 [luci-app-unblockneteasemusic](https://github.com/immortalwrt/luci-app-unblockneteasemusic)。
+请移步至 [luci-app-unblockneteasemusic](https://github.com/UnblockNeteaseMusic/luci-app-unblockneteasemusic)。
 
 ### 配置参数
 
@@ -187,7 +187,7 @@ PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 作为依赖库使用
 
 ```javascript
-const match = require('@1715173329/unblockneteasemusic');
+const match = require('@UnblockNeteaseMusic/server');
 
 /**
  * Set proxy or hosts if needed
