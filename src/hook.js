@@ -11,7 +11,8 @@ const logger = logScope('hook');
 const cs = getManagedCacheStorage('hook');
 cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
 
-const ENABLE_LOCAL_VIP = (process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true'
+const ENABLE_LOCAL_VIP =
+	(process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
 
 const hook = {
 	request: {
@@ -242,19 +243,27 @@ hook.request.after = (ctx) => {
 						patch(crypto.eapi.decrypt(buffer).toString())
 					);
 					if (ENABLE_LOCAL_VIP) {
-						if (netease.path === '/batch' || netease.path === '/api/batch') {
-							var info = netease.jsonBody['/api/music-vip-membership/client/vip/info']
+						if (
+							netease.path === '/batch' ||
+							netease.path === '/api/batch'
+						) {
+							var info =
+								netease.jsonBody[
+									'/api/music-vip-membership/client/vip/info'
+								];
 							if (info) {
-								const expireTime = info.data.now + 31622400000
-								info.data.redVipLevel = 7
-								info.data.redVipAnnualCount = 1
+								const expireTime = info.data.now + 31622400000;
+								info.data.redVipLevel = 7;
+								info.data.redVipAnnualCount = 1;
 
-								info.data.musicPackage.expireTime = expireTime
-								info.data.musicPackage.vipCode = 230
+								info.data.musicPackage.expireTime = expireTime;
+								info.data.musicPackage.vipCode = 230;
 
-								info.data.associator.expireTime = expireTime
+								info.data.associator.expireTime = expireTime;
 
-								netease.jsonBody['/api/music-vip-membership/client/vip/info'] = info
+								netease.jsonBody[
+									'/api/music-vip-membership/client/vip/info'
+								] = info;
 							}
 						}
 					}
