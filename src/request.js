@@ -159,12 +159,12 @@ const request = (
 				return request(method, redirectTo, headers, body, proxy);
 			}
 
-			response.url = receivedUrl;
-			response.body = (raw) => read(response, raw);
-			response.json = () => json(response);
-			response.jsonp = () => jsonp(response);
-
-			return response;
+			return Object.assign(response, {
+				url: url,
+				body: (raw) => read(response, raw),
+				json: () => json(response),
+				jsonp: () => jsonp(response),
+			});
 		}
 	);
 };
