@@ -1,6 +1,7 @@
 const { CancelRequest } = require('./cancel');
 const request = require('./request');
 const RequestCancelled = require('./exceptions/RequestCancelled');
+const url = require('url');
 
 describe('request()', () => {
 	test('will throw RequestCancelled when the CancelRequest has been cancelled', async () => {
@@ -74,6 +75,8 @@ describe('request()', () => {
 			'https://api.opensource.org/licenses/'
 		);
 
-		expect(response.url).toBe('https://api.opensource.org/licenses/');
+		expect(response.url).toStrictEqual(
+			url.parse('https://api.opensource.org/licenses/')
+		);
 	}, 15000);
 });

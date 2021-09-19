@@ -160,7 +160,7 @@ const request = (
 			}
 
 			return Object.assign(response, {
-				url: url,
+				url,
 				body: (raw) => read(response, raw),
 				json: () => json(response),
 				jsonp: () => jsonp(response),
