@@ -43,14 +43,14 @@
 		"@rollup/plugin-json": "^4.1.0",
 		"@rollup/plugin-node-resolve": "^13.0.4",
 		"@rollup/plugin-replace": "^3.0.0",
-		"@types/node": "^16.9.1",
+		"@types/node": "^16.9.2",
 		"@types/pino": "^6.3.11",
 		"core-js": "3",
-		"jest": "^27.1.0",
+		"jest": "^27.2.0",
 		"pino": "^6.13.2",
-		"pino-pretty": "^7.0.0",
+		"pino-pretty": "^7.0.1",
 		"pkg": "^5.3.2",
-		"prettier": "^2.3.2",
+		"prettier": "^2.4.1",
 		"rollup": "^2.56.3"
 	}
 }
