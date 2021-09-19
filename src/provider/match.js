@@ -118,11 +118,25 @@ async function check(url) {
 	// Set the URL of this song.
 	song.url = response.url.href;
 
+	// Get the bitrate of this song.
+	const data = await response.body(true);
+
+	try {
+		const bitrate = decode(data);
+		song.br = bitrate && !isNaN(bitrate) ? bitrate * 1000 : null;
+	} catch (e) {
+		logger.debug(e, 'Failed to decode and extract the bitrate');
+	}
+
 	// Check if "headers" existed. There are some edge cases
 	// that the response has no headers, for example, the song
 	// from YouTube.
 	if (headers) {
 		// Set the MD5 info of this song.
+		if (isHost('126.net'))
+			song.md5 = song.url.split('/').slice(-1)[0].replace(/\..*/g, '');
+		if (isHost('kuwo.cn') && song.br <= 320000)
+			song.md5 = headers['etag'].replace(/"/g, '');
 		if (isHost('qq.com')) song.md5 = headers['server-md5'];
 
 		// Set the size info of this song.
@@ -138,16 +152,6 @@ async function check(url) {
 			// Seems like not important.
 			return Promise.reject();
 		}
-	}
-
-	// Get the bitrate of this song.
-	const data = await response.body(true);
-
-	try {
-		const bitrate = decode(data);
-		song.br = bitrate && !isNaN(bitrate) ? bitrate * 1000 : null;
-	} catch (e) {
-		logger.debug(e, 'Failed to decode and extract the bitrate');
 	}
 
 	return song;
