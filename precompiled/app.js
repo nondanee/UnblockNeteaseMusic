@@ -8341,12 +8341,13 @@ const request$d = (method, receivedUrl, receivedHeaders, body, proxy, cancelRequ
   /* @type {Partial<Record<string,string>>} */
 
   const headers = receivedHeaders || {};
-  const options = configure(method, url, { ...headers,
+  const options = configure(method, url, {
     host: url.hostname,
     accept: 'application/json, text/plain, */*',
     'accept-encoding': 'gzip, deflate',
     'accept-language': 'zh-CN,zh;q=0.9',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+    ...headers
   }, proxy);
   return new Promise((resolve, reject) => {
     var _cancelRequest$cancel;
