@@ -45,6 +45,7 @@ async function getAudioFromSource(source, info) {
 
 	// Get the url from the song data.
 	const song = await check(audioData);
+	logger.debug(song, 'The matched song is:');
 	if (!song || typeof song.url !== 'string')
 		throw new IncompleteAudioData(
 			'song is undefined, or song.url is not a string.'
