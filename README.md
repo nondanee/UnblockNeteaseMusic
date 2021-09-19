@@ -8,7 +8,7 @@ fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)�
 
 ## 特性
 
--   使用 Bilibili / QQ / ~~百度~~ / 酷狗 / 酷我 / 咪咕 / JOOX / Youtube 等音源替换变灰歌曲链接 (默认仅激活四、五、六、八)
+-   使用 Bilibili / QQ / 酷狗 / 酷我 / 咪咕 / JOOX / Youtube 等音源替换变灰歌曲链接 (默认仅激活一、三、四、五)
 -   为请求增加 `X-Real-IP` 参数解锁海外限制，支持指定网易云服务器 IP，支持设置上游 HTTP / HTTPS 代理
 -   完整的流量代理功能 (HTTP / HTTPS)，可直接作为系统代理 (同时支持 PAC)
 
@@ -109,20 +109,20 @@ optional arguments:
 | 变量名称         | 类型 | 描述                                                                                              | 示例                                                             |
 | ---------------- | ---- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | ENABLE_FLAC      | bool | 激活无损音质获取                                                                                  | `ENABLE_FLAC=true`                                               |
-| MIN_BR           | int  | 允许的最低源音质，小于该值将被替换                                                                | `MIN_BR=320000`                                                  |
-| MIGU_COOKIE      | str  | 咪咕音源的 aversionid cookie                                                                      | `MIGU_COOKIE="<your_aversionid>"`                                |
-| QQ_COOKIE        | str  | QQ 音源的 uin 和 qm_keyst cookie                                                                  | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
-| JOOX_COOKIE      | str  | JOOX 音源的 wmid 和 session_key cookie                                                            | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
-| YOUTUBE_KEY      | str  | Youtube 音源的 Data API v3 Key                                                                    | `YOUTUBE_KEY="<your_data_api_key>"`                              |
-| SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./ca.crt"`                                           |
-| SIGN_KEY         | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
-| NO_CACHE         | bool | 停用 cache                                                                                        | `NO_CACHE=true`                                                  |
+| ENABLE_LOCAL_VIP | bool | 启用本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
 | ENABLE_HTTPDNS   | bool | 激活故障的 Netease HTTPDNS 查询。不建议激活                                                       | `ENABLE_HTTPDNS=true`                                            |
 | DEVELOPMENT      | bool | 激活开发模式。需要自己用 `yarn` 安装依赖 (dependencies)                                           | `DEVELOPMENT=true`                                               |
 | JSON_LOG         | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
+| NO_CACHE         | bool | 停用 cache                                                                                        | `NO_CACHE=true`                                                  |
+| MIN_BR           | int  | 允许的最低源音质，小于该值将被替换                                                                | `MIN_BR=320000`                                                  |
 | LOG_LEVEL        | str  | 日志输出等级。请见〈日志等级〉部分。                                                              | `LOG_LEVEL=debug`                                                |
 | LOG_FILE         | str  | 从 Pino 端设置日志输出的文件位置。也可以用 `*sh` 的输出重导向功能 (`node app.js >> app.log`) 代替 | `LOG_FILE=app.log`                                               |
-| ENABLE_LOCAL_VIP | bool | 启用本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
+| JOOX_COOKIE      | str  | JOOX 音源的 wmid 和 session_key cookie                                                            | `JOOX_COOKIE="wmid=<your_wmid>; session_key=<your_session_key>"` |
+| MIGU_COOKIE      | str  | 咪咕音源的 aversionid cookie                                                                      | `MIGU_COOKIE="<your_aversionid>"`                                |
+| QQ_COOKIE        | str  | QQ 音源的 uin 和 qm_keyst cookie                                                                  | `QQ_COOKIE="uin=<your_uin>; qm_keyst=<your_qm_keyst>"`           |
+| YOUTUBE_KEY      | str  | Youtube 音源的 Data API v3 Key                                                                    | `YOUTUBE_KEY="<your_data_api_key>"`                              |
+| SIGN_CERT        | path | 自定义证书文件                                                                                    | `SIGN_CERT="./ca.crt"`                                           |
+| SIGN_KEY         | path | 自定义密钥文件                                                                                    | `SIGN_KEY="./server.key"`                                        |
 
 #### 日志等级 (`LOG_LEVEL`)
 
@@ -132,7 +132,7 @@ optional arguments:
 -   `info`: 只输出一般资讯（默认值）
 -   `error`: 只在出严重问题时输出
 
-详细请参见 [Pino 对此的说明。](https://github.com/pinojs/pino/blob/master/docs/api.md#level-string)
+详细请参见 [Pino 对此的说明](https://github.com/pinojs/pino/blob/master/docs/api.md#level-string)。
 
 ## 使用
 
