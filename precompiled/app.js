@@ -1829,8 +1829,8 @@ $$v({
 
 var app = {};
 
-var name$1 = "@1715173329/unblockneteasemusic";
-var version$5 = "v0.27.0-beta.2";
+var name$1 = "@unblockneteasemusic/server";
+var version$5 = "v0.27.0-beta.3";
 var description$1 = "Revive unavailable songs for Netease Cloud Music";
 var main$1 = "src/provider/match.js";
 var bin$1 = {
@@ -8391,15 +8391,12 @@ const request$d = (method, receivedUrl, receivedHeaders, body, proxy, cancelRequ
       return request$d(method, redirectTo, headers, body, proxy);
     }
 
-    response.url = receivedUrl;
-
-    response.body = raw => read(response, raw);
-
-    response.json = () => json(response);
-
-    response.jsonp = () => jsonp(response);
-
-    return response;
+    return Object.assign(response, {
+      url,
+      body: raw => read(response, raw),
+      json: () => json(response),
+      jsonp: () => jsonp(response)
+    });
   });
 };
 
@@ -11821,7 +11818,7 @@ var pyncmd = {
   check: check$1
 };
 
-const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'youtube'];
+const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'bilibili'];
 const PROVIDERS = {
   qq: qq,
   kugou: kugou,
@@ -12073,6 +12070,7 @@ async function getAudioFromSource(source, info) {
   if (!audioData) throw new SongNotAvailable(source); // Get the url from the song data.
 
   const song = await check(audioData);
+  logger$3.debug(song, 'The matched song is:');
   if (!song || typeof song.url !== 'string') throw new IncompleteAudioData('song is undefined, or song.url is not a string.');
   logger$3.debug({
     source,
@@ -12222,6 +12220,7 @@ const {
 const logger$2 = logScope$2('hook');
 const cs = getManagedCacheStorage('hook');
 cs.aliveDuration = 7 * 24 * 60 * 60 * 1000;
+const ENABLE_LOCAL_VIP = (process.env.ENABLE_LOCAL_VIP || '').toLowerCase() === 'true';
 const hook$2 = {
   request: {
     before: () => {},
@@ -12332,6 +12331,22 @@ hook$2.request.after = ctx => {
       } catch (error) {
         netease.encrypted = true;
         netease.jsonBody = JSON.parse(patch(crypto.eapi.decrypt(buffer).toString()));
+
+        if (ENABLE_LOCAL_VIP) {
+          if (netease.path === '/batch' || netease.path === '/api/batch') {
+            var info = netease.jsonBody['/api/music-vip-membership/client/vip/info'];
+
+            if (info) {
+              const expireTime = info.data.now + 31622400000;
+              info.data.redVipLevel = 7;
+              info.data.redVipAnnualCount = 1;
+              info.data.musicPackage.expireTime = expireTime;
+              info.data.musicPackage.vipCode = 230;
+              info.data.associator.expireTime = expireTime;
+              netease.jsonBody['/api/music-vip-membership/client/vip/info'] = info;
+            }
+          }
+        }
       }
 
       if (new Set([401, 512]).has(netease.jsonBody.code) && !netease.web) {

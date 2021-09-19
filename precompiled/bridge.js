@@ -9046,15 +9046,12 @@ const request$9 = (method, receivedUrl, receivedHeaders, body, proxy, cancelRequ
       return request$9(method, redirectTo, headers, body, proxy);
     }
 
-    response.url = receivedUrl;
-
-    response.body = raw => read(response, raw);
-
-    response.json = () => json(response);
-
-    response.jsonp = () => jsonp(response);
-
-    return response;
+    return Object.assign(response, {
+      url,
+      body: raw => read(response, raw),
+      json: () => json(response),
+      jsonp: () => jsonp(response)
+    });
   });
 };
 
@@ -11403,7 +11400,7 @@ var pyncmd = {
   check
 };
 
-const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'youtube'];
+const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'bilibili'];
 const PROVIDERS = {
   qq: qq,
   kugou: kugou,
