@@ -6,7 +6,7 @@ ENV SOURCE bilibili kugou kuwo
 
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install --production
+RUN yarn --production
 COPY . .
 
 EXPOSE 8080 8081
