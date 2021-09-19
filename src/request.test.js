@@ -37,4 +37,43 @@ describe('request()', () => {
 			cancelRequest
 		);
 	}, 15000);
+
+	test('headers should be in the response', async () => {
+		const response = await request('GET', 'https://www.example.com');
+
+		expect(response.headers).toBeDefined();
+	}, 15000);
+
+	test('.body(raw: false) should returns the string', async () => {
+		const response = await request('GET', 'https://www.example.com');
+		const body = await response.body(false);
+
+		expect(typeof body === 'string').toBeTruthy();
+	}, 15000);
+
+	test('.body(raw: true) should returns the Buffer', async () => {
+		const response = await request('GET', 'https://www.example.com');
+		const body = await response.body(true);
+
+		expect(body).toBeInstanceOf(Buffer);
+	}, 15000);
+
+	test('.json() should returns the deserialized data', async () => {
+		const response = await request(
+			'GET',
+			'https://api.opensource.org/licenses/'
+		);
+		const body = await response.json();
+
+		expect(Array.isArray(body)).toBeTruthy();
+	}, 15000);
+
+	test('.url should be the request URL', async () => {
+		const response = await request(
+			'GET',
+			'https://api.opensource.org/licenses/'
+		);
+
+		expect(response.url).toBe('https://api.opensource.org/licenses/');
+	}, 15000);
 });

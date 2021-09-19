@@ -57,12 +57,23 @@ const configure = (method, url, headers, proxy) => {
 };
 
 /**
+ * @typedef {((raw: true) => Promise<Buffer>) | ((raw: false) => Promise<string>)} RequestExtensionBody
+ */
+
+/**
+ * @template T
+ * @typedef {{url: string, body: RequestExtensionBody, json: () => Promise<T>, jsonp: () => Promise<T>}} RequestExtension
+ */
+
+/**
+ * @template T
  * @param {string} method
  * @param {string} receivedUrl
  * @param {Object?} receivedHeaders
  * @param {unknown?} body
  * @param {unknown?} proxy
  * @param {CancelRequest?} cancelRequest
+ * @return {Promise<http.IncomingMessage & RequestExtension<T>>}
  */
 const request = (
 	method,
@@ -132,28 +143,30 @@ const request = (
 			})
 			.on('error', (error) => reject(error))
 			.end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
-	}).then((response) => {
-		if (cancelRequest?.cancelled ?? false)
-			return Promise.reject(new RequestCancelled(format(url)));
+	}).then(
+		/** @param {http.IncomingMessage} response */
+		(response) => {
+			if (cancelRequest?.cancelled ?? false)
+				return Promise.reject(new RequestCancelled(format(url)));
 
-		if ([201, 301, 302, 303, 307, 308].includes(response.statusCode)) {
-			const redirectTo = url.resolve(
-				response.headers.location || url.href
-			);
+			if ([201, 301, 302, 303, 307, 308].includes(response.statusCode)) {
+				const redirectTo = url.resolve(
+					response.headers.location || url.href
+				);
 
-			logger.debug(`Redirect to ${redirectTo}`);
-			delete headers.host;
-			return request(method, redirectTo, headers, body, proxy);
+				logger.debug(`Redirect to ${redirectTo}`);
+				delete headers.host;
+				return request(method, redirectTo, headers, body, proxy);
+			}
+
+			response.url = receivedUrl;
+			response.body = (raw) => read(response, raw);
+			response.json = () => json(response);
+			response.jsonp = () => jsonp(response);
+
+			return response;
 		}
-
-		return {
-			...response,
-			url: url,
-			body: (raw) => read(response, raw),
-			json: () => json(response),
-			jsonp: () => jsonp(response),
-		};
-	});
+	);
 };
 
 const read = (connect, raw) =>
