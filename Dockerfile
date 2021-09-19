@@ -1,5 +1,5 @@
 FROM alpine
-RUN apk add --update nodejs npm --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/main/
+RUN apk add --update nodejs yarn --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/main/
 
 ENV NODE_ENV production
 ENV SOURCE bilibili kugou kuwo
