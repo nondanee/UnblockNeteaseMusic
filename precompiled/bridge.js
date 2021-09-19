@@ -3,38 +3,40 @@
 'use strict';
 
 var require$$0$3 = require('events');
-var require$$0$5 = require('os');
+var require$$0$6 = require('os');
 var require$$0$1 = require('vm');
 var require$$0$2 = require('fs');
 var require$$3 = require('util');
-var require$$0$4 = require('stream');
+var require$$0$4 = require('tty');
+var require$$0$5 = require('stream');
 var require$$1 = require('string_decoder');
 var require$$3$1 = require('path');
 var require$$6 = require('url');
-var require$$0$6 = require('zlib');
+var require$$0$7 = require('zlib');
 var require$$1$1 = require('http');
 var require$$2 = require('https');
-var require$$0$7 = require('crypto');
+var require$$0$8 = require('crypto');
 var require$$2$1 = require('querystring');
-var require$$0$8 = require('child_process');
+var require$$0$9 = require('child_process');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$3);
-var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
+var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
 var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
 var require$$3__default = /*#__PURE__*/_interopDefaultLegacy(require$$3);
 var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
+var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
 var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1);
 var require$$3__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$3$1);
 var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
-var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
+var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
 var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
-var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
-var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
 var require$$0__default$7 = /*#__PURE__*/_interopDefaultLegacy(require$$0$8);
+var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
+var require$$0__default$8 = /*#__PURE__*/_interopDefaultLegacy(require$$0$9);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -4592,68 +4594,158 @@ function replaceGetterValues(replacer) {
 
 var pinoPretty = {exports: {}};
 
-var colorette$1 = {};
+var colorette = {};
 
+var tty = require$$0__default$3['default'];
 const env = process.env;
 const isDisabled = ("NO_COLOR" in env);
 const isForced = ("FORCE_COLOR" in env);
 const isWindows = process.platform === "win32";
-const isCompatibleTerminal = process.stdout != null && process.stdout.isTTY && env.TERM && env.TERM !== "dumb";
+const isCompatibleTerminal = tty && tty.isatty(1) && env.TERM && env.TERM !== "dumb";
 const isCI = "CI" in env && ("GITHUB_ACTIONS" in env || "GITLAB_CI" in env || "CIRCLECI" in env);
-let enabled = !isDisabled && (isForced || isWindows || isCompatibleTerminal || isCI);
+const isColorSupported$1 = !isDisabled && (isForced || isWindows || isCompatibleTerminal || isCI);
 
-const raw = (open, close, searchRegex, replaceValue) => s => enabled ? open + (~(s += "").indexOf(close, 4) // skip opening \x1b[
-? s.replace(searchRegex, replaceValue) : s) + close : s;
+const raw = (open, close, searchRegex, replaceValue) => (s = "") => s === "" ? s : open + (~(s += "").indexOf(close, 4) // skip opening \x1b[
+? s.replace(searchRegex, replaceValue) : s) + close;
 
-const init = (open, close) => {
-  return raw(`\x1b[${open}m`, `\x1b[${close}m`, new RegExp(`\\x1b\\[${close}m`, "g"), `\x1b[${open}m`);
-};
+const init = (open, close) => raw(`\x1b[${open}m`, `\x1b[${close}m`, new RegExp(`\\x1b\\[${close}m`, "g"), `\x1b[${open}m`);
 
-colorette$1.options = Object.defineProperty({}, "enabled", {
-  get: () => enabled,
-  set: value => enabled = value
+const reset = init(0, 0);
+const bold = raw("\x1b[1m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[1m");
+const dim = raw("\x1b[2m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[2m");
+const italic = init(3, 23);
+const underline = init(4, 24);
+const inverse = init(7, 27);
+const hidden = init(8, 28);
+const strikethrough = init(9, 29);
+const black = init(30, 39);
+const red$1 = init(31, 39);
+const green$1 = init(32, 39);
+const yellow$1 = init(33, 39);
+const blue$1 = init(34, 39);
+const magenta = init(35, 39);
+const cyan$1 = init(36, 39);
+const white$1 = init(37, 39);
+const gray$1 = init(90, 39);
+const bgBlack = init(40, 49);
+const bgRed$1 = init(41, 49);
+const bgGreen = init(42, 49);
+const bgYellow = init(43, 49);
+const bgBlue = init(44, 49);
+const bgMagenta = init(45, 49);
+const bgCyan = init(46, 49);
+const bgWhite = init(47, 49);
+const blackBright = init(90, 39);
+const redBright = init(91, 39);
+const greenBright = init(92, 39);
+const yellowBright = init(93, 39);
+const blueBright = init(94, 39);
+const magentaBright = init(95, 39);
+const cyanBright = init(96, 39);
+const whiteBright = init(97, 39);
+const bgBlackBright = init(100, 49);
+const bgRedBright = init(101, 49);
+const bgGreenBright = init(102, 49);
+const bgYellowBright = init(103, 49);
+const bgBlueBright = init(104, 49);
+const bgMagentaBright = init(105, 49);
+const bgCyanBright = init(106, 49);
+const bgWhiteBright = init(107, 49);
+
+const none = any => any;
+
+const createColors$1 = ({
+  useColor = isColorSupported$1
+} = {}) => ({ ...Object.entries({
+    reset,
+    bold,
+    dim,
+    italic,
+    underline,
+    inverse,
+    hidden,
+    strikethrough,
+    black,
+    red: red$1,
+    green: green$1,
+    yellow: yellow$1,
+    blue: blue$1,
+    magenta,
+    cyan: cyan$1,
+    white: white$1,
+    gray: gray$1,
+    bgBlack,
+    bgRed: bgRed$1,
+    bgGreen,
+    bgYellow,
+    bgBlue,
+    bgMagenta,
+    bgCyan,
+    bgWhite,
+    blackBright,
+    redBright,
+    greenBright,
+    yellowBright,
+    blueBright,
+    magentaBright,
+    cyanBright,
+    whiteBright,
+    bgBlackBright,
+    bgRedBright,
+    bgGreenBright,
+    bgYellowBright,
+    bgBlueBright,
+    bgMagentaBright,
+    bgCyanBright,
+    bgWhiteBright
+  }).reduce((colorMap, [key, color]) => ({ ...colorMap,
+    [key]: useColor ? color : none
+  }))
 });
-colorette$1.reset = init(0, 0);
-colorette$1.bold = raw("\x1b[1m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[1m");
-colorette$1.dim = raw("\x1b[2m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[2m");
-colorette$1.italic = init(3, 23);
-colorette$1.underline = init(4, 24);
-colorette$1.inverse = init(7, 27);
-colorette$1.hidden = init(8, 28);
-colorette$1.strikethrough = init(9, 29);
-colorette$1.black = init(30, 39);
-colorette$1.red = init(31, 39);
-colorette$1.green = init(32, 39);
-colorette$1.yellow = init(33, 39);
-colorette$1.blue = init(34, 39);
-colorette$1.magenta = init(35, 39);
-colorette$1.cyan = init(36, 39);
-colorette$1.white = init(37, 39);
-colorette$1.gray = init(90, 39);
-colorette$1.bgBlack = init(40, 49);
-colorette$1.bgRed = init(41, 49);
-colorette$1.bgGreen = init(42, 49);
-colorette$1.bgYellow = init(43, 49);
-colorette$1.bgBlue = init(44, 49);
-colorette$1.bgMagenta = init(45, 49);
-colorette$1.bgCyan = init(46, 49);
-colorette$1.bgWhite = init(47, 49);
-colorette$1.blackBright = init(90, 39);
-colorette$1.redBright = init(91, 39);
-colorette$1.greenBright = init(92, 39);
-colorette$1.yellowBright = init(93, 39);
-colorette$1.blueBright = init(94, 39);
-colorette$1.magentaBright = init(95, 39);
-colorette$1.cyanBright = init(96, 39);
-colorette$1.whiteBright = init(97, 39);
-colorette$1.bgBlackBright = init(100, 49);
-colorette$1.bgRedBright = init(101, 49);
-colorette$1.bgGreenBright = init(102, 49);
-colorette$1.bgYellowBright = init(103, 49);
-colorette$1.bgBlueBright = init(104, 49);
-colorette$1.bgMagentaBright = init(105, 49);
-colorette$1.bgCyanBright = init(106, 49);
-colorette$1.bgWhiteBright = init(107, 49);
+
+colorette.bgBlack = bgBlack;
+colorette.bgBlackBright = bgBlackBright;
+colorette.bgBlue = bgBlue;
+colorette.bgBlueBright = bgBlueBright;
+colorette.bgCyan = bgCyan;
+colorette.bgCyanBright = bgCyanBright;
+colorette.bgGreen = bgGreen;
+colorette.bgGreenBright = bgGreenBright;
+colorette.bgMagenta = bgMagenta;
+colorette.bgMagentaBright = bgMagentaBright;
+colorette.bgRed = bgRed$1;
+colorette.bgRedBright = bgRedBright;
+colorette.bgWhite = bgWhite;
+colorette.bgWhiteBright = bgWhiteBright;
+colorette.bgYellow = bgYellow;
+colorette.bgYellowBright = bgYellowBright;
+colorette.black = black;
+colorette.blackBright = blackBright;
+colorette.blue = blue$1;
+colorette.blueBright = blueBright;
+colorette.bold = bold;
+colorette.createColors = createColors$1;
+colorette.cyan = cyan$1;
+colorette.cyanBright = cyanBright;
+colorette.dim = dim;
+colorette.gray = gray$1;
+colorette.green = green$1;
+colorette.greenBright = greenBright;
+colorette.hidden = hidden;
+colorette.inverse = inverse;
+colorette.isColorSupported = isColorSupported$1;
+colorette.italic = italic;
+colorette.magenta = magenta;
+colorette.magentaBright = magentaBright;
+colorette.red = red$1;
+colorette.redBright = redBright;
+colorette.reset = reset;
+colorette.strikethrough = strikethrough;
+colorette.underline = underline;
+colorette.white = white$1;
+colorette.whiteBright = whiteBright;
+colorette.yellow = yellow$1;
+colorette.yellowBright = yellowBright;
 
 var once$3 = {exports: {}};
 
@@ -4925,7 +5017,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 const {
   Transform: Transform$1
-} = require$$0__default$3['default'];
+} = require$$0__default$4['default'];
 const {
   StringDecoder
 } = require$$1__default['default'];
@@ -5043,12 +5135,13 @@ const split = split2;
 
 var pinoAbstractTransport = function build(fn, opts = {}) {
   const parseLines = opts.parse === 'lines';
+  const parseLine = typeof opts.parseLine === 'function' ? opts.parseLine : JSON.parse;
   const close = opts.close || defaultClose;
   const stream = split(function (line) {
     let value;
 
     try {
-      value = JSON.parse(line);
+      value = parseLine(line);
     } catch (error) {
       this.emit('unknown', line, error);
       return;
@@ -5702,17 +5795,31 @@ const plain = {
   message: nocolor,
   greyMessage: nocolor
 };
-const colorette = colorette$1;
+const {
+  createColors
+} = colorette;
+const {
+  white,
+  bgRed,
+  red,
+  yellow,
+  green,
+  blue,
+  gray,
+  cyan
+} = createColors({
+  useColor: true
+});
 const colored = {
-  default: colorette.white,
-  60: colorette.bgRed,
-  50: colorette.red,
-  40: colorette.yellow,
-  30: colorette.green,
-  20: colorette.blue,
-  10: colorette.gray,
-  message: colorette.cyan,
-  greyMessage: colorette.gray
+  default: white,
+  60: bgRed,
+  50: red,
+  40: yellow,
+  30: green,
+  20: blue,
+  10: gray,
+  message: cyan,
+  greyMessage: gray
 };
 
 function colorizeLevel(level, colorizer) {
@@ -6983,12 +7090,12 @@ function filterLog$1(log, ignoreKeys) {
 }
 
 const {
-  options: coloretteOptions
-} = colorette$1;
+  isColorSupported
+} = colorette;
 const pump = pump_1;
 const {
   Transform
-} = require$$0__default$3['default'];
+} = require$$0__default$4['default'];
 const abstractTransport = pinoAbstractTransport;
 const sonic = sonicBoom;
 const sjs = secureJsonParse;
@@ -7024,7 +7131,7 @@ const jsonParser = input => {
 };
 
 const defaultOptions$1 = {
-  colorize: coloretteOptions.enabled,
+  colorize: isColorSupported,
   crlf: false,
   errorLikeObjectKeys: ERROR_LIKE_KEYS,
   errorProps: '',
@@ -8294,7 +8401,7 @@ function flush() {
 /* eslint no-prototype-builtins: 0 */
 
 
-const os = require$$0__default$4['default'];
+const os = require$$0__default$5['default'];
 const stdSerializers = pinoStdSerializers;
 const redaction = redaction_1;
 const time = time$1;
@@ -8817,7 +8924,7 @@ class RequestCancelled$1 extends Error {
 
 var RequestCancelled_1 = RequestCancelled$1;
 
-const zlib = require$$0__default$5['default'];
+const zlib = require$$0__default$6['default'];
 const http = require$$1__default$1['default'];
 const https = require$$2__default['default'];
 const ON_CANCEL = cancel;
@@ -8864,12 +8971,23 @@ const configure = (method, url, headers, proxy) => {
   return options;
 };
 /**
+ * @typedef {((raw: true) => Promise<Buffer>) | ((raw: false) => Promise<string>)} RequestExtensionBody
+ */
+
+/**
+ * @template T
+ * @typedef {{url: string, body: RequestExtensionBody, json: () => Promise<T>, jsonp: () => Promise<T>}} RequestExtension
+ */
+
+/**
+ * @template T
  * @param {string} method
  * @param {string} receivedUrl
  * @param {Object?} receivedHeaders
  * @param {unknown?} body
  * @param {unknown?} proxy
  * @param {CancelRequest?} cancelRequest
+ * @return {Promise<http.IncomingMessage & RequestExtension<T>>}
  */
 
 
@@ -8914,7 +9032,9 @@ const request$9 = (method, receivedUrl, receivedHeaders, body, proxy, cancelRequ
         agent: false
       }).on('response', response => resolve(response)).on('error', error => reject(error)).end(body);
     }).on('error', error => reject(error)).end(options.method.toUpperCase() === 'CONNECT' ? undefined : body);
-  }).then(response => {
+  }).then(
+  /** @param {http.IncomingMessage} response */
+  response => {
     var _cancelRequest$cancel2;
 
     if ((_cancelRequest$cancel2 = cancelRequest === null || cancelRequest === void 0 ? void 0 : cancelRequest.cancelled) !== null && _cancelRequest$cancel2 !== void 0 ? _cancelRequest$cancel2 : false) return Promise.reject(new RequestCancelled(format$6(url)));
@@ -8926,12 +9046,15 @@ const request$9 = (method, receivedUrl, receivedHeaders, body, proxy, cancelRequ
       return request$9(method, redirectTo, headers, body, proxy);
     }
 
-    return { ...response,
-      url: url,
-      body: raw => read(response, raw),
-      json: () => json(response),
-      jsonp: () => jsonp(response)
-    };
+    response.url = receivedUrl;
+
+    response.body = raw => read(response, raw);
+
+    response.json = () => json(response);
+
+    response.jsonp = () => jsonp(response);
+
+    return response;
   });
 };
 
@@ -10495,7 +10618,7 @@ var kwDES = {
 
 (function (module) {
 
-  const crypto = require$$0__default$6['default'];
+  const crypto = require$$0__default$7['default'];
   const parse = require$$6__default['default'].parse;
   const bodyify = require$$2__default$1['default'].stringify;
   const eapiKey = 'e82ckenh8dichen8';
@@ -11063,7 +11186,7 @@ class ProcessExitNotSuccessfully$1 extends Error {
 
 var ProcessExitNotSuccessfully_1 = ProcessExitNotSuccessfully$1;
 
-const child_process = require$$0__default$7['default'];
+const child_process = require$$0__default$8['default'];
 const {
   logScope: logScope$1
 } = logger_1;
