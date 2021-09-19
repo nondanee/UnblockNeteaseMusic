@@ -1,4 +1,4 @@
-const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'youtube'];
+const DEFAULT_SOURCE = ['kugou', 'kuwo', 'migu', 'bilibili'];
 const PROVIDERS = {
 	qq: require('./provider/qq'),
 	kugou: require('./provider/kugou'),
