@@ -46,7 +46,7 @@ http 代理使用 `127.0.0.1`，端口默认使用 `8080`。
 #### 自行编译
 
 ```bash
-git clone https://github.com/UnblockNeteaseMusic/server.git
+git clone https://github.com/UnblockNeteaseMusic/server.git UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 docker-compose up
 ```
@@ -54,7 +54,7 @@ docker-compose up
 ### 直接使用 Repo 最新版本
 
 ```bash
-git clone https://github.com/UnblockNeteaseMusic/server.git
+git clone https://github.com/UnblockNeteaseMusic/server.git UnblockNeteaseMusic
 cd UnblockNeteaseMusic
 node app.js # 建议使用 screen / tmux 把 app.js 挂后台
 ```
@@ -187,7 +187,7 @@ PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 作为依赖库使用
 
 ```javascript
-const match = require('@UnblockNeteaseMusic/server');
+const match = require('@unblockneteasemusic/server');
 
 /**
  * Set proxy or hosts if needed
