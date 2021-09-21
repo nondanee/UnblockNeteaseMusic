@@ -11594,27 +11594,32 @@ const search$3 = info => {
 };
 
 const track$4 = id => {
-  const url = 'https://youtubei.googleapis.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
-  const json_header = {
-    'Content-Type': 'application/json; charset=utf-8'
-  };
-  const json_body = `{
-		"context": {
-			"client": {
-				"hl": "en",
-				"clientName": "WEB",
-				"clientVersion": "2.20210721.00.00"
-			}
-		},
-		"videoId": "${id}"
-	}`;
-  return request$7('POST', url, json_header, json_body, proxy$2).then(response => response.body()).then(body => JSON.parse(body).streamingData).then(streamingData => {
-    const stream = streamingData.formats.concat(streamingData.adaptiveFormats).find(format => format.itag === 140); // .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
-    // .sort((a, b) => b.bitrate - a.bitrate)[0]
+  /*
+   * const url =
+   * 	'https://youtubei.googleapis.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
+   * const json_header = { 'Content-Type': 'application/json; charset=utf-8' };
+   * const json_body = `{
+   * 	"context": {
+   * 		"client": {
+   * 			"hl": "en",
+   * 			"clientName": "WEB",
+   * 			"clientVersion": "2.20210721.00.00"
+   * 		}
+   * 	},
+   * 	"videoId": "${id}"
+   * }`;
+   */
+  const url = `https://www.youtube.com/watch?v=${id}`;
+  return (// request('POST', url, json_header, json_body, proxy)
+    request$7('GET', url, {}, null, proxy$2).then(response => response.body()) // .then((body) => JSON.parse(body).streamingData)
+    .then(body => JSON.parse(body.match(/ytInitialPlayerResponse\s*=\s*{[^]+};\s*var\s*meta/)[0].replace(/;var meta/, '').replace(/ytInitialPlayerResponse = /, '')).streamingData).then(streamingData => {
+      const stream = streamingData.formats.concat(streamingData.adaptiveFormats).find(format => format.itag === 140); // .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
+      // .sort((a, b) => b.bitrate - a.bitrate)[0]
 
-    const target = parse$3(stream.signatureCipher);
-    return stream.url || (target.sp.includes('sig') ? cs$6.cache('YOUTUBE_SIGNATURE', () => signature(), Date.now() + 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url);
-  });
+      const target = parse$3(stream.signatureCipher);
+      return stream.url || (target.sp.includes('sig') ? cs$6.cache('YOUTUBE_SIGNATURE', () => signature(), Date.now() + 24 * 60 * 60 * 1000).then(sign => target.url + '&sig=' + sign(target.s)) : target.url);
+    })
+  );
 };
 
 const check$5 = info => cs$6.cache(info, () => {
