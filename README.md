@@ -110,7 +110,7 @@ optional arguments:
 | ---------------- | ---- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | ENABLE_FLAC      | bool | 激活无损音质获取                                                                                  | `ENABLE_FLAC=true`                                               |
 | ENABLE_LOCAL_VIP | bool | 启用本地黑胶 VIP                                                                                  | `ENABLE_LOCAL_VIP=true`                                          |
-| ENABLE_HTTPDNS   | bool | 激活故障的 Netease HTTPDNS 查询。不建议激活                                                       | `ENABLE_HTTPDNS=true`                                            |
+| ENABLE_HTTPDNS   | bool | 激活故障的 Netease HTTPDNS 查询（不建议）                                                         | `ENABLE_HTTPDNS=true`                                            |
 | DEVELOPMENT      | bool | 激活开发模式。需要自己用 `yarn` 安装依赖 (dependencies)                                           | `DEVELOPMENT=true`                                               |
 | JSON_LOG         | bool | 输出机器可读的 JSON 记录格式                                                                      | `JSON_LOG=true`                                                  |
 | NO_CACHE         | bool | 停用 cache                                                                                        | `NO_CACHE=true`                                                  |
