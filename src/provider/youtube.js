@@ -118,8 +118,8 @@ const track = (id) => {
 				const stream = streamingData.formats
 					.concat(streamingData.adaptiveFormats)
 					.find((format) => format.itag === 140);
-					// .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
-					// .sort((a, b) => b.bitrate - a.bitrate)[0]
+				// .filter(format => [249, 250, 140, 251].includes(format.itag)) // NetaseMusic PC client do not support webm format
+				// .sort((a, b) => b.bitrate - a.bitrate)[0]
 				const target = parse(stream.signatureCipher);
 				return (
 					stream.url ||
