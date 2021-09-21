@@ -147,7 +147,10 @@ async function check(url) {
 			) || 0;
 
 		// Check if the Content-Length equals 8192.
-		if (headers['content-length'] !== '8192') {
+		if (
+			!isHost('yt-download.org') &&
+			headers['content-length'] !== '8192'
+		) {
 			// I'm not sure how to describe this.
 			// Seems like not important.
 			return Promise.reject();
