@@ -8,12 +8,16 @@ on:
             - '**.md'
 
     pull_request:
-        types: [opened, synchronize, reopened]
+        types:
+            - opened
+            - synchronize
+            - reopened
         paths-ignore:
             - '**.md'
 
     release:
-        types: [published]
+        types:
+            - published
 
 jobs:
     build:
