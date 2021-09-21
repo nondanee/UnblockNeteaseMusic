@@ -5,7 +5,7 @@ on:
         branches:
             - enhanced
         paths-ignore:
-            - precompiled
+            - 'precompiled/**'
     workflow_dispatch:
 
 jobs:

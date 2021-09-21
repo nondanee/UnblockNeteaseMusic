@@ -6,6 +6,7 @@ on:
             - enhanced
         paths-ignore:
             - '**.md'
+            - 'precompiled/**'
     workflow_dispatch:
 
 jobs:
