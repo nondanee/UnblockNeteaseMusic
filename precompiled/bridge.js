@@ -3066,7 +3066,7 @@ var pinoStdSerializers = {
 const {
   createContext,
   runInContext
-} = require$$0__default['default'];
+} = require$$0__default["default"];
 var validator_1 = validator$2;
 
 function validator$2(opts = {}) {
@@ -3886,9 +3886,9 @@ if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') 
   atomicSleep.exports = sleep;
 }
 
-const fs$2 = require$$0__default$1['default'];
-const EventEmitter$4 = require$$0__default$2['default'];
-const inherits$1 = require$$3__default['default'].inherits;
+const fs$2 = require$$0__default$1["default"];
+const EventEmitter$4 = require$$0__default$2["default"];
+const inherits$1 = require$$3__default["default"].inherits;
 const BUSY_WRITE_TIMEOUT$1 = 100;
 const sleep$1 = atomicSleep.exports; // 16 MB - magic number
 // This constant ensures that SonicBoom only needs
@@ -4273,7 +4273,7 @@ var sonicBoom$1 = SonicBoom$3;
 
 const {
   format: format$9
-} = require$$3__default['default'];
+} = require$$3__default["default"];
 
 function build$1() {
   const codes = {};
@@ -4702,7 +4702,7 @@ var pinoPretty = {exports: {}};
 
 var colorette = {};
 
-var tty = require$$0__default$3['default'];
+var tty = require$$0__default$3["default"];
 const env = process.env;
 const isDisabled = ("NO_COLOR" in env);
 const isForced = ("FORCE_COLOR" in env);
@@ -5025,7 +5025,7 @@ var endOfStream = eos$1;
 
 var once = once$3.exports;
 var eos = endOfStream;
-var fs$1 = require$$0__default$1['default']; // we only need fs to get the ReadStream and WriteStream prototypes
+var fs$1 = require$$0__default$1["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
 
 var noop$4 = function () {};
 
@@ -5123,10 +5123,10 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 const {
   Transform: Transform$1
-} = require$$0__default$4['default'];
+} = require$$0__default$4["default"];
 const {
   StringDecoder
-} = require$$1__default['default'];
+} = require$$1__default["default"];
 const kLast = Symbol('last');
 const kDecoder = Symbol('decoder');
 
@@ -5312,10 +5312,10 @@ function defaultClose(err, cb) {
   process.nextTick(cb, err);
 }
 
-const fs = require$$0__default$1['default'];
-const EventEmitter$3 = require$$0__default$2['default'];
-const inherits = require$$3__default['default'].inherits;
-const path = require$$3__default$1['default'];
+const fs = require$$0__default$1["default"];
+const EventEmitter$3 = require$$0__default$2["default"];
+const inherits = require$$3__default["default"].inherits;
+const path = require$$3__default$1["default"];
 const sleep = atomicSleep.exports;
 const BUSY_WRITE_TIMEOUT = 100; // 16 MB - magic number
 // This constant ensures that SonicBoom only needs
@@ -7201,7 +7201,7 @@ const {
 const pump = pump_1;
 const {
   Transform
-} = require$$0__default$4['default'];
+} = require$$0__default$4["default"];
 const abstractTransport = pinoAbstractTransport;
 const sonic = sonicBoom;
 const sjs = secureJsonParse;
@@ -8133,7 +8133,7 @@ var levels_1 = {
 };
 
 var name = "pino";
-var version$3 = "6.13.2";
+var version$3 = "6.13.3";
 var description = "super fast, all natural json logger";
 var main = "pino.js";
 var browser = "./browser.js";
@@ -8264,7 +8264,7 @@ var meta = {
 
 const {
   EventEmitter: EventEmitter$2
-} = require$$0__default$2['default'];
+} = require$$0__default$2["default"];
 const SonicBoom = sonicBoom$1;
 const flatstr = flatstr_1;
 const warning = deprecations;
@@ -8507,7 +8507,7 @@ function flush() {
 /* eslint no-prototype-builtins: 0 */
 
 
-const os = require$$0__default$5['default'];
+const os = require$$0__default$5["default"];
 const stdSerializers = pinoStdSerializers;
 const redaction = redaction_1;
 const time = time$1;
@@ -8798,7 +8798,7 @@ var logger_1 = {
 
 const {
   EventEmitter: EventEmitter$1
-} = require$$0__default$2['default'];
+} = require$$0__default$2["default"];
 const {
   logScope: logScope$3
 } = logger_1;
@@ -8995,7 +8995,7 @@ var cache = {
 
 var insure$6 = {exports: {}};
 
-const EventEmitter = require$$0__default$2['default'];
+const EventEmitter = require$$0__default$2["default"];
 const ON_CANCEL$1 = 'cancel';
 
 class CancelRequest extends EventEmitter {
@@ -9030,16 +9030,16 @@ class RequestCancelled$1 extends Error {
 
 var RequestCancelled_1 = RequestCancelled$1;
 
-const zlib = require$$0__default$6['default'];
-const http = require$$1__default$1['default'];
-const https = require$$2__default['default'];
+const zlib = require$$0__default$6["default"];
+const http = require$$1__default$1["default"];
+const https = require$$2__default["default"];
 const ON_CANCEL = cancel;
 const RequestCancelled = RequestCancelled_1;
 const {
   logScope: logScope$2
 } = logger_1;
-const parse$2 = require$$6__default['default'].parse;
-const format$6 = require$$6__default['default'].format;
+const parse$2 = require$$6__default["default"].parse;
+const format$6 = require$$6__default["default"].format;
 const logger$2 = logScope$2('request');
 const timeoutThreshold = 10 * 1000;
 
@@ -10722,9 +10722,9 @@ var kwDES = {
 
 (function (module) {
 
-  const crypto = require$$0__default$7['default'];
-  const parse = require$$6__default['default'].parse;
-  const bodyify = require$$2__default$1['default'].stringify;
+  const crypto = require$$0__default$7["default"];
+  const parse = require$$6__default["default"].parse;
+  const bodyify = require$$2__default$1["default"].stringify;
   const eapiKey = 'e82ckenh8dichen8';
   const linuxapiKey = 'rFgB&h#%2?^eDg:Q';
 
@@ -11295,7 +11295,7 @@ class ProcessExitNotSuccessfully$1 extends Error {
 
 var ProcessExitNotSuccessfully_1 = ProcessExitNotSuccessfully$1;
 
-const child_process = require$$0__default$8['default'];
+const child_process = require$$0__default$8["default"];
 const {
   logScope: logScope$1
 } = logger_1;
@@ -11534,7 +11534,7 @@ const {
   getManagedCacheStorage,
   CacheStorageGroup
 } = cache;
-const parse = require$$6__default['default'].parse;
+const parse = require$$6__default["default"].parse;
 insure$6.exports.disable = true;
 const router = consts.PROVIDERS;
 const cs = getManagedCacheStorage('bridge');
@@ -11561,6 +11561,6 @@ const csgInstance = CacheStorageGroup.getInstance();
 setInterval(() => {
   csgInstance.cleanup();
 }, 15 * 60 * 1000);
-require$$1__default$1['default'].createServer().listen(parseInt(process.argv[2]) || 9000).on('request', (req, res) => distribute(parse(req.url), router).then(data => res.write(data)).catch(() => res.writeHead(404)).then(() => res.end()));
+require$$1__default$1["default"].createServer().listen(parseInt(process.argv[2]) || 9000).on('request', (req, res) => distribute(parse(req.url), router).then(data => res.write(data)).catch(() => res.writeHead(404)).then(() => res.end()));
 
 module.exports = bridge;

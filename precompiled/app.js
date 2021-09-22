@@ -1975,17 +1975,17 @@ var devDependencies$1 = {
 	"@rollup/plugin-babel": "^5.3.0",
 	"@rollup/plugin-commonjs": "^20.0.0",
 	"@rollup/plugin-json": "^4.1.0",
-	"@rollup/plugin-node-resolve": "^13.0.4",
+	"@rollup/plugin-node-resolve": "^13.0.5",
 	"@rollup/plugin-replace": "^3.0.0",
-	"@types/node": "^16.9.4",
+	"@types/node": "^16.9.6",
 	"@types/pino": "^6.3.11",
 	"core-js": "3",
 	jest: "^27.2.1",
-	pino: "^6.13.2",
+	pino: "^6.13.3",
 	"pino-pretty": "^7.0.1",
 	pkg: "^5.3.2",
 	prettier: "^2.4.1",
-	rollup: "^2.56.3"
+	rollup: "^2.57.0"
 };
 var require$$0$1 = {
 	name: name$1,
@@ -2234,7 +2234,7 @@ const cli = {
 
     cli._options.forEach((option, index) => option.positional ? null : option.flags.forEach(flag => optionals[flag] = index));
 
-    cli._program.name = cli._program.name || require$$0__default['default'].parse(argv[1]).base;
+    cli._program.name = cli._program.name || require$$0__default["default"].parse(argv[1]).base;
     const args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), []);
     let pointer = 0;
 
@@ -2365,7 +2365,7 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-const EventEmitter$4 = require$$0__default$1['default'];
+const EventEmitter$4 = require$$0__default$1["default"];
 const ON_CANCEL$1 = 'cancel';
 
 class CancelRequest extends EventEmitter$4 {
@@ -2644,7 +2644,7 @@ var pinoStdSerializers = {
 const {
   createContext,
   runInContext
-} = require$$0__default$2['default'];
+} = require$$0__default$2["default"];
 var validator_1 = validator$2;
 
 function validator$2(opts = {}) {
@@ -3464,9 +3464,9 @@ if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') 
   atomicSleep.exports = sleep;
 }
 
-const fs$3 = require$$0__default$3['default'];
-const EventEmitter$3 = require$$0__default$1['default'];
-const inherits$1 = require$$3__default['default'].inherits;
+const fs$3 = require$$0__default$3["default"];
+const EventEmitter$3 = require$$0__default$1["default"];
+const inherits$1 = require$$3__default["default"].inherits;
 const BUSY_WRITE_TIMEOUT$1 = 100;
 const sleep$1 = atomicSleep.exports; // 16 MB - magic number
 // This constant ensures that SonicBoom only needs
@@ -3851,7 +3851,7 @@ var sonicBoom$1 = SonicBoom$3;
 
 const {
   format: format$9
-} = require$$3__default['default'];
+} = require$$3__default["default"];
 
 function build$1() {
   const codes = {};
@@ -4280,7 +4280,7 @@ var pinoPretty = {exports: {}};
 
 var colorette = {};
 
-var tty = require$$0__default$4['default'];
+var tty = require$$0__default$4["default"];
 const env = process.env;
 const isDisabled = ("NO_COLOR" in env);
 const isForced = ("FORCE_COLOR" in env);
@@ -4603,7 +4603,7 @@ var endOfStream = eos$1;
 
 var once = once$3.exports;
 var eos = endOfStream;
-var fs$2 = require$$0__default$3['default']; // we only need fs to get the ReadStream and WriteStream prototypes
+var fs$2 = require$$0__default$3["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
 
 var noop$4 = function () {};
 
@@ -4701,10 +4701,10 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 const {
   Transform: Transform$1
-} = require$$0__default$5['default'];
+} = require$$0__default$5["default"];
 const {
   StringDecoder
-} = require$$1__default['default'];
+} = require$$1__default["default"];
 const kLast = Symbol('last');
 const kDecoder = Symbol('decoder');
 
@@ -4890,10 +4890,10 @@ function defaultClose(err, cb) {
   process.nextTick(cb, err);
 }
 
-const fs$1 = require$$0__default$3['default'];
-const EventEmitter$2 = require$$0__default$1['default'];
-const inherits = require$$3__default['default'].inherits;
-const path$1 = require$$0__default['default'];
+const fs$1 = require$$0__default$3["default"];
+const EventEmitter$2 = require$$0__default$1["default"];
+const inherits = require$$3__default["default"].inherits;
+const path$1 = require$$0__default["default"];
 const sleep = atomicSleep.exports;
 const BUSY_WRITE_TIMEOUT = 100; // 16 MB - magic number
 // This constant ensures that SonicBoom only needs
@@ -6779,7 +6779,7 @@ const {
 const pump = pump_1;
 const {
   Transform
-} = require$$0__default$5['default'];
+} = require$$0__default$5["default"];
 const abstractTransport = pinoAbstractTransport;
 const sonic = sonicBoom;
 const sjs = secureJsonParse;
@@ -7711,7 +7711,7 @@ var levels_1 = {
 };
 
 var name = "pino";
-var version$3 = "6.13.2";
+var version$3 = "6.13.3";
 var description = "super fast, all natural json logger";
 var main = "pino.js";
 var browser = "./browser.js";
@@ -7842,7 +7842,7 @@ var meta = {
 
 const {
   EventEmitter: EventEmitter$1
-} = require$$0__default$1['default'];
+} = require$$0__default$1["default"];
 const SonicBoom = sonicBoom$1;
 const flatstr = flatstr_1;
 const warning = deprecations;
@@ -8085,7 +8085,7 @@ function flush() {
 /* eslint no-prototype-builtins: 0 */
 
 
-const os = require$$0__default$6['default'];
+const os = require$$0__default$6["default"];
 const stdSerializers = pinoStdSerializers;
 const redaction = redaction_1;
 const time = time$1;
@@ -8374,16 +8374,16 @@ var logger_1 = {
   logScope: logScope$8
 };
 
-const zlib = require$$0__default$7['default'];
-const http = require$$1__default$1['default'];
-const https = require$$2__default['default'];
+const zlib = require$$0__default$7["default"];
+const http = require$$1__default$1["default"];
+const https = require$$2__default["default"];
 const ON_CANCEL = cancel;
 const RequestCancelled$1 = RequestCancelled_1;
 const {
   logScope: logScope$7
 } = logger_1;
-const parse$4 = require$$6__default['default'].parse;
-const format$6 = require$$6__default['default'].format;
+const parse$4 = require$$6__default["default"].parse;
+const format$6 = require$$6__default["default"].format;
 const logger$7 = logScope$7('request');
 const timeoutThreshold = 10 * 1000;
 
@@ -9439,7 +9439,7 @@ $$1({
 
 const {
   EventEmitter
-} = require$$0__default$1['default'];
+} = require$$0__default$1["default"];
 const {
   logScope: logScope$6
 } = logger_1;
@@ -11140,9 +11140,9 @@ var kwDES = {
 
 (function (module) {
 
-  const crypto = require$$0__default$8['default'];
-  const parse = require$$6__default['default'].parse;
-  const bodyify = require$$2__default$1['default'].stringify;
+  const crypto = require$$0__default$8["default"];
+  const parse = require$$6__default["default"].parse;
+  const bodyify = require$$2__default$1["default"].stringify;
   const eapiKey = 'e82ckenh8dichen8';
   const linuxapiKey = 'rFgB&h#%2?^eDg:Q';
 
@@ -11713,7 +11713,7 @@ class ProcessExitNotSuccessfully$1 extends Error {
 
 var ProcessExitNotSuccessfully_1 = ProcessExitNotSuccessfully$1;
 
-const child_process = require$$0__default$9['default'];
+const child_process = require$$0__default$9["default"];
 const {
   logScope: logScope$5
 } = logger_1;
@@ -12317,11 +12317,11 @@ function decode(buffer) {
 
 var match_1 = match$1;
 
-const parse$2 = require$$6__default['default'].parse;
+const parse$2 = require$$6__default["default"].parse;
 const crypto = crypto$4.exports;
 const request$1 = request_1;
 const match = match_1;
-const querystring = require$$2__default$1['default'];
+const querystring = require$$2__default$1["default"];
 const {
   isHost: isHost$1
 } = utilities;
@@ -12784,10 +12784,10 @@ var sni$1 = data => {
   return null;
 };
 
-const fs = require$$0__default$3['default'];
-const net = require$$1__default$2['default'];
-const path = require$$0__default['default'];
-const parse$1 = require$$6__default['default'].parse;
+const fs = require$$0__default$3["default"];
+const net = require$$1__default$2["default"];
+const path = require$$0__default["default"];
+const parse$1 = require$$6__default["default"].parse;
 const {
   logScope: logScope$1
 } = logger_1;
@@ -12974,8 +12974,8 @@ const options = {
   cert: fs.readFileSync(cert)
 };
 const server$1 = {
-  http: require$$1__default$1['default'].createServer().on('request', proxy.core.mitm).on('connect', proxy.core.tunnel),
-  https: require$$2__default['default'].createServer(options).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
+  http: require$$1__default$1["default"].createServer().on('request', proxy.core.mitm).on('connect', proxy.core.tunnel),
+  https: require$$2__default["default"].createServer(options).on('request', proxy.core.mitm).on('connect', proxy.core.tunnel)
 };
 server$1.whitelist = [];
 server$1.blacklist = ['://127\\.\\d+\\.\\d+\\.\\d+', '://localhost'];
@@ -13036,7 +13036,7 @@ if (config.endpoint && !/http(s?):\/\/.+/.test(config.endpoint)) {
   process.exit(1);
 }
 
-if (config.forceHost && require$$1__default$2['default'].isIP(config.forceHost) === 0) {
+if (config.forceHost && require$$1__default$2["default"].isIP(config.forceHost) === 0) {
   console.log('Please check the server host.');
   process.exit(1);
 }
@@ -13064,7 +13064,7 @@ if (config.token && !/\S+:\S+/.test(config.token)) {
 const {
   logScope
 } = logger_1;
-const parse = require$$6__default['default'].parse;
+const parse = require$$6__default["default"].parse;
 const hook = hook_1;
 const server = server_1;
 const {
@@ -13085,7 +13085,7 @@ commonjsGlobal.endpoint = config.endpoint;
 if (config.endpoint) server.whitelist.push(escape(config.endpoint)); // hosts['music.httpdns.c.163.com'] = random(['59.111.181.35', '59.111.181.38'])
 // hosts['httpdns.n.netease.com'] = random(['59.111.179.213', '59.111.179.214'])
 
-const dns = host => new Promise((resolve, reject) => require$$9__default['default'].lookup(host, {
+const dns = host => new Promise((resolve, reject) => require$$9__default["default"].lookup(host, {
   all: true
 }, (error, records) => error ? reject(error) : resolve(records.map(record => record.address))));
 
