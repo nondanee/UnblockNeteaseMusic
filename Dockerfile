@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 8080 8081
 
-ENTRYPOINT ["sh", "-c", "node app.js -o ${SOURCE}"]
+ENTRYPOINT ["sh", "-c", "node app.js -o ${SOURCE} \"$0\" \"$@\""]
