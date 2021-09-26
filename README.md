@@ -2,11 +2,9 @@
 
 # UnblockNeteaseMusic
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FUnblockNeteaseMusic%2Fserver.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FUnblockNeteaseMusic%2Fserver?ref=badge_shield)
-
 解锁网易云音乐客户端变灰歌曲
 
-fork 自 [nondanee 的原版](https://github.com/nondanee/UnblockNeteaseMusic)，仅作部分优化。十分感谢 nondanee 提供如此棒的工具！
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FUnblockNeteaseMusic%2Fserver.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FUnblockNeteaseMusic%2Fserver?ref=badge_shield)
 
 ## 特性
 
@@ -270,8 +268,8 @@ match(418602084, ['qq', 'kuwo', 'migu']).then(console.log);
 
 ## 许可
 
-The MIT License
+(Original project) [nondanee/UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic): [MIT](https://github.com/nondanee/UnblockNeteaseMusic/blob/master/LICENSE)
 
-## License
+(This project) [UnblockNeteaseMusic/server](https://github.com/UnblockNeteaseMusic/server): [LGPL-3.0-only](https://spdx.org/licenses/LGPL-3.0-only.html)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FUnblockNeteaseMusic%2Fserver.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FUnblockNeteaseMusic%2Fserver?ref=badge_large)
