@@ -4,8 +4,9 @@ on:
     push:
         branches:
             - enhanced
+        paths:
+            - '**.js'
         paths-ignore:
-            - '**.md'
             - 'precompiled/**'
     workflow_dispatch:
 

@@ -4,16 +4,20 @@ on:
     push:
         branches:
             - 'enhanced'
+        paths:
+            - '**.js'
         paths-ignore:
-            - '**.md'
+            - 'precompiled/**'
 
     pull_request:
         types:
             - opened
             - synchronize
             - reopened
+        paths:
+            - '**.js'
         paths-ignore:
-            - '**.md'
+            - 'precompiled/**'
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:

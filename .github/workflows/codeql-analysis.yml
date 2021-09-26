@@ -15,15 +15,17 @@ on:
     push:
         branches:
             - enhanced
+        paths:
+            - '**.js'
         paths-ignore:
-            - '**.md'
             - 'precompiled/**'
     pull_request:
         # The branches below must be a subset of the branches above
         branches:
             - enhanced
+        paths:
+            - '**.js'
         paths-ignore:
-            - '**.md'
             - 'precompiled/**'
     schedule:
         - cron: '45 22 * * 2'
