@@ -7,6 +7,7 @@ on:
         paths:
             - '*.js'
             - 'src/**.js'
+            - '.github/workflows/*.yml'
 
     pull_request:
         types:
@@ -16,6 +17,7 @@ on:
         paths:
             - '*.js'
             - 'src/**.js'
+            - '.github/workflows/*.yml'
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
