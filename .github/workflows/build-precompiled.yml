@@ -8,6 +8,8 @@ on:
             - '*.js'
             - 'src/**.js'
             - '.github/workflows/*.yml'
+            - 'package.json'
+            - 'yarn.lock'
     workflow_dispatch:
 
 jobs:
