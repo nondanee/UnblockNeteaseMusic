@@ -16,17 +16,15 @@ on:
         branches:
             - enhanced
         paths:
-            - '**.js'
-        paths-ignore:
-            - 'precompiled/**'
+            - '*.js'
+            - 'src/**.js'
     pull_request:
         # The branches below must be a subset of the branches above
         branches:
             - enhanced
         paths:
-            - '**.js'
-        paths-ignore:
-            - 'precompiled/**'
+            - '*.js'
+            - 'src/**.js'
     schedule:
         - cron: '45 22 * * 2'
 

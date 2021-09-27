@@ -5,9 +5,8 @@ on:
         branches:
             - enhanced
         paths:
-            - '**.js'
-        paths-ignore:
-            - 'precompiled/**'
+            - '*.js'
+            - 'src/**.js'
     workflow_dispatch:
 
 jobs:
