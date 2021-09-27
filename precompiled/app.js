@@ -275,7 +275,7 @@ var store$2 = sharedStore;
 (shared$3.exports = function (key, value) {
   return store$2[key] || (store$2[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.18.0',
+  version: '3.18.1',
   mode: 'global',
   copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -1977,10 +1977,10 @@ var devDependencies$1 = {
 	"@rollup/plugin-json": "^4.1.0",
 	"@rollup/plugin-node-resolve": "^13.0.5",
 	"@rollup/plugin-replace": "^3.0.0",
-	"@types/node": "^16.9.6",
+	"@types/node": "^16.10.1",
 	"@types/pino": "^6.3.11",
 	"core-js": "3",
-	jest: "^27.2.1",
+	jest: "^27.2.2",
 	pino: "^6.13.3",
 	"pino-pretty": "^7.0.1",
 	pkg: "^5.3.2",
