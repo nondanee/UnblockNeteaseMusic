@@ -3966,19 +3966,21 @@ function format$8(f, args, opts) {
         case 102:
           // 'f'
           if (a >= argLen) break;
-          if (lastPos < i) str += f.slice(lastPos, i);
           if (args[a] == null) break;
+          if (lastPos < i) str += f.slice(lastPos, i);
           str += Number(args[a]);
-          lastPos = i = i + 2;
+          lastPos = i + 2;
+          i++;
           break;
 
         case 105:
           // 'i'
           if (a >= argLen) break;
-          if (lastPos < i) str += f.slice(lastPos, i);
           if (args[a] == null) break;
+          if (lastPos < i) str += f.slice(lastPos, i);
           str += Math.floor(Number(args[a]));
-          lastPos = i = i + 2;
+          lastPos = i + 2;
+          i++;
           break;
 
         case 79: // 'O'
@@ -3988,8 +3990,8 @@ function format$8(f, args, opts) {
         case 106:
           // 'j'
           if (a >= argLen) break;
-          if (lastPos < i) str += f.slice(lastPos, i);
           if (args[a] === undefined) break;
+          if (lastPos < i) str += f.slice(lastPos, i);
           var type = typeof args[a];
 
           if (type === 'string') {
@@ -4280,113 +4282,143 @@ var pinoPretty = {exports: {}};
 
 var colorette = {};
 
+Object.defineProperty(colorette, '__esModule', {
+  value: true
+});
 var tty = require$$0__default$4["default"];
-const env = process.env;
+
+function _interopNamespace$1(e) {
+  if (e && e.__esModule) return e;
+  var n = Object.create(null);
+
+  if (e) {
+    Object.keys(e).forEach(function (k) {
+      if (k !== 'default') {
+        var d = Object.getOwnPropertyDescriptor(e, k);
+        Object.defineProperty(n, k, d.get ? d : {
+          enumerable: true,
+          get: function () {
+            return e[k];
+          }
+        });
+      }
+    });
+  }
+
+  n["default"] = e;
+  return Object.freeze(n);
+}
+
+var tty__namespace = /*#__PURE__*/_interopNamespace$1(tty);
+
+const env = process.env || {};
 const isDisabled = ("NO_COLOR" in env);
 const isForced = ("FORCE_COLOR" in env);
 const isWindows = process.platform === "win32";
-const isCompatibleTerminal = tty && tty.isatty(1) && env.TERM && env.TERM !== "dumb";
+const isCompatibleTerminal = tty__namespace && tty__namespace.isatty && tty__namespace.isatty(1) && env.TERM && env.TERM !== "dumb";
 const isCI = "CI" in env && ("GITHUB_ACTIONS" in env || "GITLAB_CI" in env || "CIRCLECI" in env);
 const isColorSupported$1 = !isDisabled && (isForced || isWindows || isCompatibleTerminal || isCI);
 
-const raw = (open, close, searchRegex, replaceValue) => (s = "") => s === "" ? s : open + (~(s += "").indexOf(close, 4) // skip opening \x1b[
-? s.replace(searchRegex, replaceValue) : s) + close;
+const raw = (open, close, searchRegex, replaceValue) => s => s || !(s === "" || s === undefined) ? open + (~(s + "").indexOf(close, 4) // skip opening \x1b[
+? s.replace(searchRegex, replaceValue) : s) + close : "";
 
 const init = (open, close) => raw(`\x1b[${open}m`, `\x1b[${close}m`, new RegExp(`\\x1b\\[${close}m`, "g"), `\x1b[${open}m`);
 
-const reset = init(0, 0);
-const bold = raw("\x1b[1m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[1m");
-const dim = raw("\x1b[2m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[2m");
-const italic = init(3, 23);
-const underline = init(4, 24);
-const inverse = init(7, 27);
-const hidden = init(8, 28);
-const strikethrough = init(9, 29);
-const black = init(30, 39);
-const red$1 = init(31, 39);
-const green$1 = init(32, 39);
-const yellow$1 = init(33, 39);
-const blue$1 = init(34, 39);
-const magenta = init(35, 39);
-const cyan$1 = init(36, 39);
-const white$1 = init(37, 39);
-const gray$1 = init(90, 39);
-const bgBlack = init(40, 49);
-const bgRed$1 = init(41, 49);
-const bgGreen = init(42, 49);
-const bgYellow = init(43, 49);
-const bgBlue = init(44, 49);
-const bgMagenta = init(45, 49);
-const bgCyan = init(46, 49);
-const bgWhite = init(47, 49);
-const blackBright = init(90, 39);
-const redBright = init(91, 39);
-const greenBright = init(92, 39);
-const yellowBright = init(93, 39);
-const blueBright = init(94, 39);
-const magentaBright = init(95, 39);
-const cyanBright = init(96, 39);
-const whiteBright = init(97, 39);
-const bgBlackBright = init(100, 49);
-const bgRedBright = init(101, 49);
-const bgGreenBright = init(102, 49);
-const bgYellowBright = init(103, 49);
-const bgBlueBright = init(104, 49);
-const bgMagentaBright = init(105, 49);
-const bgCyanBright = init(106, 49);
-const bgWhiteBright = init(107, 49);
+const colors$2 = {
+  reset: init(0, 0),
+  bold: raw("\x1b[1m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[1m"),
+  dim: raw("\x1b[2m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[2m"),
+  italic: init(3, 23),
+  underline: init(4, 24),
+  inverse: init(7, 27),
+  hidden: init(8, 28),
+  strikethrough: init(9, 29),
+  black: init(30, 39),
+  red: init(31, 39),
+  green: init(32, 39),
+  yellow: init(33, 39),
+  blue: init(34, 39),
+  magenta: init(35, 39),
+  cyan: init(36, 39),
+  white: init(37, 39),
+  gray: init(90, 39),
+  bgBlack: init(40, 49),
+  bgRed: init(41, 49),
+  bgGreen: init(42, 49),
+  bgYellow: init(43, 49),
+  bgBlue: init(44, 49),
+  bgMagenta: init(45, 49),
+  bgCyan: init(46, 49),
+  bgWhite: init(47, 49),
+  blackBright: init(90, 39),
+  redBright: init(91, 39),
+  greenBright: init(92, 39),
+  yellowBright: init(93, 39),
+  blueBright: init(94, 39),
+  magentaBright: init(95, 39),
+  cyanBright: init(96, 39),
+  whiteBright: init(97, 39),
+  bgBlackBright: init(100, 49),
+  bgRedBright: init(101, 49),
+  bgGreenBright: init(102, 49),
+  bgYellowBright: init(103, 49),
+  bgBlueBright: init(104, 49),
+  bgMagentaBright: init(105, 49),
+  bgCyanBright: init(106, 49),
+  bgWhiteBright: init(107, 49)
+};
 
 const none = any => any;
 
 const createColors$1 = ({
   useColor = isColorSupported$1
-} = {}) => ({ ...Object.entries({
-    reset,
-    bold,
-    dim,
-    italic,
-    underline,
-    inverse,
-    hidden,
-    strikethrough,
-    black,
-    red: red$1,
-    green: green$1,
-    yellow: yellow$1,
-    blue: blue$1,
-    magenta,
-    cyan: cyan$1,
-    white: white$1,
-    gray: gray$1,
-    bgBlack,
-    bgRed: bgRed$1,
-    bgGreen,
-    bgYellow,
-    bgBlue,
-    bgMagenta,
-    bgCyan,
-    bgWhite,
-    blackBright,
-    redBright,
-    greenBright,
-    yellowBright,
-    blueBright,
-    magentaBright,
-    cyanBright,
-    whiteBright,
-    bgBlackBright,
-    bgRedBright,
-    bgGreenBright,
-    bgYellowBright,
-    bgBlueBright,
-    bgMagentaBright,
-    bgCyanBright,
-    bgWhiteBright
-  }).reduce((colorMap, [key, color]) => ({ ...colorMap,
-    [key]: useColor ? color : none
-  }))
-});
+} = {}) => useColor ? colors$2 : Object.keys(colors$2).reduce((colorMap, key) => ({ ...colorMap,
+  [key]: none
+}), {});
 
+const {
+  reset,
+  bold,
+  dim,
+  italic,
+  underline,
+  inverse,
+  hidden,
+  strikethrough,
+  black,
+  red: red$1,
+  green: green$1,
+  yellow: yellow$1,
+  blue: blue$1,
+  magenta,
+  cyan: cyan$1,
+  white: white$1,
+  gray: gray$1,
+  bgBlack,
+  bgRed: bgRed$1,
+  bgGreen,
+  bgYellow,
+  bgBlue,
+  bgMagenta,
+  bgCyan,
+  bgWhite,
+  blackBright,
+  redBright,
+  greenBright,
+  yellowBright,
+  blueBright,
+  magentaBright,
+  cyanBright,
+  whiteBright,
+  bgBlackBright,
+  bgRedBright,
+  bgGreenBright,
+  bgYellowBright,
+  bgBlueBright,
+  bgMagentaBright,
+  bgCyanBright,
+  bgWhiteBright
+} = createColors$1();
 colorette.bgBlack = bgBlack;
 colorette.bgBlackBright = bgBlackBright;
 colorette.bgBlue = bgBlue;
@@ -4986,7 +5018,8 @@ function SonicBoom$2(opts) {
     minLength,
     sync,
     append = true,
-    mkdir
+    mkdir,
+    retryEAGAIN
   } = opts || {};
   fd = fd || dest;
   this._bufs = [];
@@ -5003,8 +5036,10 @@ function SonicBoom$2(opts) {
   this.minLength = minLength || 0;
   this.sync = sync || false;
   this.append = append || false;
+
+  this.retryEAGAIN = retryEAGAIN || (() => true);
+
   this.mkdir = mkdir || false;
-  this._againTimeout = null;
 
   if (typeof fd === 'number') {
     this.fd = fd;
@@ -5021,7 +5056,7 @@ function SonicBoom$2(opts) {
 
   this.release = (err, n) => {
     if (err) {
-      if (err.code === 'EAGAIN') {
+      if (err.code === 'EAGAIN' && this.retryEAGAIN(err, this._writingBuf.length, this._len - this._writingBuf.length)) {
         if (this.sync) {
           // This error code should not happen in sync mode, because it is
           // not using the underlining operating system asynchronous functions.
@@ -5035,8 +5070,7 @@ function SonicBoom$2(opts) {
           }
         } else {
           // Let's give the destination some time to process the chunk.
-          this._againTimeout = setTimeout(() => {
-            this._againTimeout = null;
+          setTimeout(() => {
             fs$1.write(this.fd, this._writingBuf, 'utf8', this.release);
           }, BUSY_WRITE_TIMEOUT);
         }
@@ -5232,21 +5266,21 @@ SonicBoom$2.prototype.flushSync = function () {
     throw new Error('sonic boom is not ready yet');
   }
 
-  if (this._againTimeout) {
-    this._againTimeout = null;
-
+  if (!this._writing && this._writingBuf.length > 0) {
     this._bufs.unshift(this._writingBuf);
 
     this._writingBuf = '';
   }
 
   while (this._bufs.length) {
+    const buf = this._bufs[0];
+
     try {
-      this._len -= fs$1.writeSync(this.fd, this._bufs[0], 'utf8');
+      this._len -= fs$1.writeSync(this.fd, buf, 'utf8');
 
       this._bufs.shift();
     } catch (err) {
-      if (err.code !== 'EAGAIN') {
+      if (err.code !== 'EAGAIN' || !this.retryEAGAIN(err, buf.length, this._len - buf.length)) {
         throw err;
       }
 
