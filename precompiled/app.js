@@ -1964,7 +1964,7 @@ var repository$1 = {
 	url: "https://github.com/1715173329/UnblockNeteaseMusic.git"
 };
 var author$1 = "nondanee, 1715173329, pan93412";
-var license$1 = "MIT";
+var license$1 = "LGPL-3.0-only";
 var dependencies$1 = {
 	long: "^4.0.0",
 	"node-windows": "^1.0.0-beta.6"
