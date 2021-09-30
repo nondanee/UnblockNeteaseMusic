@@ -1935,7 +1935,7 @@ $$v({
 var app = {};
 
 var name$1 = "@unblockneteasemusic/server";
-var version$5 = "v0.27.0-beta.3";
+var version$5 = "v0.27.0-beta.4";
 var description$1 = "Revive unavailable songs for Netease Cloud Music";
 var main$1 = "src/provider/match.js";
 var bin$1 = {
