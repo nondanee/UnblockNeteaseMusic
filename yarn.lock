@@ -3390,10 +3390,10 @@ pkg-fetch@3.2.3:
     semver "^7.3.5"
     yargs "^16.2.0"
 
-pkg@^5.3.2:
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/pkg/-/pkg-5.3.2.tgz#f86520a83579f38f54684f4f873433b09af65dcb"
-  integrity sha512-78X8Tt71TI11XjkZm/r9shTdFRooFiiRcT8nfYeeOou5VKCkCysQauwAAkJKb5yjfrUhk3CBNL4zv22/iLpdnw==
+pkg@^5.3.3:
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/pkg/-/pkg-5.3.3.tgz#5ad1dadfc4e55169f0e1046626e669e0428d4cd7"
+  integrity sha512-48qPxwyPvKfUuXxeK+kS3mBvfWWTX2khAdceDThbWCc8OUz3RFyO1Ft8SVkq2gQfPU2DtiPtWaf2SKH0Dlx59g==
   dependencies:
     "@babel/parser" "7.13.13"
     "@babel/types" "7.13.12"
