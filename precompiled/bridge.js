@@ -3,40 +3,32 @@
 'use strict';
 
 var require$$0$3 = require('events');
-var require$$0$6 = require('os');
+var require$$0$4 = require('os');
 var require$$0$1 = require('vm');
 var require$$0$2 = require('fs');
 var require$$3 = require('util');
-var require$$0$4 = require('tty');
-var require$$0$5 = require('stream');
-var require$$1 = require('string_decoder');
-var require$$3$1 = require('path');
 var require$$6 = require('url');
-var require$$0$7 = require('zlib');
-var require$$1$1 = require('http');
+var require$$0$5 = require('zlib');
+var require$$1 = require('http');
 var require$$2 = require('https');
-var require$$0$8 = require('crypto');
+var require$$0$6 = require('crypto');
 var require$$2$1 = require('querystring');
-var require$$0$9 = require('child_process');
+var require$$0$7 = require('child_process');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var require$$0__default$2 = /*#__PURE__*/_interopDefaultLegacy(require$$0$3);
-var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
+var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
 var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$2);
 var require$$3__default = /*#__PURE__*/_interopDefaultLegacy(require$$3);
-var require$$0__default$3 = /*#__PURE__*/_interopDefaultLegacy(require$$0$4);
+var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
 var require$$0__default$4 = /*#__PURE__*/_interopDefaultLegacy(require$$0$5);
 var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1);
-var require$$3__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$3$1);
-var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
-var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
-var require$$1__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$1$1);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
-var require$$0__default$7 = /*#__PURE__*/_interopDefaultLegacy(require$$0$8);
+var require$$0__default$5 = /*#__PURE__*/_interopDefaultLegacy(require$$0$6);
 var require$$2__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$2$1);
-var require$$0__default$8 = /*#__PURE__*/_interopDefaultLegacy(require$$0$9);
+var require$$0__default$6 = /*#__PURE__*/_interopDefaultLegacy(require$$0$7);
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -106,14 +98,14 @@ var classofRaw$1 = function (it) {
 
 var fails$5 = fails$7;
 var classof$4 = classofRaw$1;
-var split$2 = ''.split; // fallback for non-array-like ES3 and non-enumerable old V8 strings
+var split = ''.split; // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
 var indexedObject = fails$5(function () {
   // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
   // eslint-disable-next-line no-prototype-builtins -- safe
   return !Object('z').propertyIsEnumerable(0);
 }) ? function (it) {
-  return classof$4(it) == 'String' ? split$2.call(it, '') : Object(it);
+  return classof$4(it) == 'String' ? split.call(it, '') : Object(it);
 } : Object;
 
 // https://tc39.es/ecma262/#sec-requireobjectcoercible
@@ -138,7 +130,7 @@ var isCallable$f = function (argument) {
 
 var isCallable$e = isCallable$f;
 
-var isObject$9 = function (it) {
+var isObject$7 = function (it) {
   return typeof it === 'object' ? it !== null : isCallable$e(it);
 };
 
@@ -229,14 +221,14 @@ var getMethod$3 = function (V, P) {
 };
 
 var isCallable$a = isCallable$f;
-var isObject$8 = isObject$9; // `OrdinaryToPrimitive` abstract operation
+var isObject$6 = isObject$7; // `OrdinaryToPrimitive` abstract operation
 // https://tc39.es/ecma262/#sec-ordinarytoprimitive
 
 var ordinaryToPrimitive$1 = function (input, pref) {
   var fn, val;
-  if (pref === 'string' && isCallable$a(fn = input.toString) && !isObject$8(val = fn.call(input))) return val;
-  if (isCallable$a(fn = input.valueOf) && !isObject$8(val = fn.call(input))) return val;
-  if (pref !== 'string' && isCallable$a(fn = input.toString) && !isObject$8(val = fn.call(input))) return val;
+  if (pref === 'string' && isCallable$a(fn = input.toString) && !isObject$6(val = fn.call(input))) return val;
+  if (isCallable$a(fn = input.valueOf) && !isObject$6(val = fn.call(input))) return val;
+  if (pref !== 'string' && isCallable$a(fn = input.toString) && !isObject$6(val = fn.call(input))) return val;
   throw TypeError("Can't convert object to primitive value");
 };
 
@@ -319,7 +311,7 @@ var wellKnownSymbol$a = function (name) {
   return WellKnownSymbolsStore[name];
 };
 
-var isObject$7 = isObject$9;
+var isObject$5 = isObject$7;
 var isSymbol$1 = isSymbol$2;
 var getMethod$2 = getMethod$3;
 var ordinaryToPrimitive = ordinaryToPrimitive$1;
@@ -328,14 +320,14 @@ var TO_PRIMITIVE = wellKnownSymbol$9('toPrimitive'); // `ToPrimitive` abstract o
 // https://tc39.es/ecma262/#sec-toprimitive
 
 var toPrimitive$1 = function (input, pref) {
-  if (!isObject$7(input) || isSymbol$1(input)) return input;
+  if (!isObject$5(input) || isSymbol$1(input)) return input;
   var exoticToPrim = getMethod$2(input, TO_PRIMITIVE);
   var result;
 
   if (exoticToPrim) {
     if (pref === undefined) pref = 'default';
     result = exoticToPrim.call(input, pref);
-    if (!isObject$7(result) || isSymbol$1(result)) return result;
+    if (!isObject$5(result) || isSymbol$1(result)) return result;
     throw TypeError("Can't convert object to primitive value");
   }
 
@@ -353,10 +345,10 @@ var toPropertyKey$2 = function (argument) {
 };
 
 var global$c = global$i;
-var isObject$6 = isObject$9;
+var isObject$4 = isObject$7;
 var document$2 = global$c.document; // typeof document.createElement is 'object' in old IE
 
-var EXISTS$1 = isObject$6(document$2) && isObject$6(document$2.createElement);
+var EXISTS$1 = isObject$4(document$2) && isObject$4(document$2.createElement);
 
 var documentCreateElement = function (it) {
   return EXISTS$1 ? document$2.createElement(it) : {};
@@ -399,10 +391,10 @@ objectGetOwnPropertyDescriptor.f = DESCRIPTORS$4 ? $getOwnPropertyDescriptor : f
 
 var objectDefineProperty = {};
 
-var isObject$5 = isObject$9; // `Assert: Type(argument) is Object`
+var isObject$3 = isObject$7; // `Assert: Type(argument) is Object`
 
 var anObject$A = function (argument) {
-  if (isObject$5(argument)) return argument;
+  if (isObject$3(argument)) return argument;
   throw TypeError(String(argument) + ' is not an object');
 };
 
@@ -470,7 +462,7 @@ var hiddenKeys$3 = {};
 
 var NATIVE_WEAK_MAP = nativeWeakMap;
 var global$a = global$i;
-var isObject$4 = isObject$9;
+var isObject$2 = isObject$7;
 var createNonEnumerableProperty$2 = createNonEnumerableProperty$3;
 var objectHas = has$9;
 var shared = sharedStore;
@@ -488,7 +480,7 @@ var getterFor = function (TYPE) {
   return function (it) {
     var state;
 
-    if (!isObject$4(it) || (state = get$1(it)).type !== TYPE) {
+    if (!isObject$2(it) || (state = get$1(it)).type !== TYPE) {
       throw TypeError('Incompatible receiver, ' + TYPE + ' required');
     }
 
@@ -739,19 +731,19 @@ var fails$2 = fails$7;
 var isCallable$6 = isCallable$f;
 var replacement = /#|\.prototype\./;
 
-var isForced$3 = function (feature, detection) {
+var isForced$2 = function (feature, detection) {
   var value = data[normalize$1(feature)];
   return value == POLYFILL ? true : value == NATIVE ? false : isCallable$6(detection) ? fails$2(detection) : !!detection;
 };
 
-var normalize$1 = isForced$3.normalize = function (string) {
+var normalize$1 = isForced$2.normalize = function (string) {
   return String(string).replace(replacement, '.').toLowerCase();
 };
 
-var data = isForced$3.data = {};
-var NATIVE = isForced$3.NATIVE = 'N';
-var POLYFILL = isForced$3.POLYFILL = 'P';
-var isForced_1 = isForced$3;
+var data = isForced$2.data = {};
+var NATIVE = isForced$2.NATIVE = 'N';
+var POLYFILL = isForced$2.POLYFILL = 'P';
+var isForced_1 = isForced$2;
 
 var global$8 = global$i;
 var getOwnPropertyDescriptor$1 = objectGetOwnPropertyDescriptor.f;
@@ -759,7 +751,7 @@ var createNonEnumerableProperty = createNonEnumerableProperty$3;
 var redefine$2 = redefine$3.exports;
 var setGlobal = setGlobal$3;
 var copyConstructorProperties = copyConstructorProperties$1;
-var isForced$2 = isForced_1;
+var isForced$1 = isForced_1;
 /*
   options.target      - name of the target object
   options.global      - target is the global object
@@ -798,7 +790,7 @@ var _export = function (options, source) {
       targetProperty = descriptor && descriptor.value;
     } else targetProperty = target[key];
 
-    FORCED = isForced$2(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced); // contained in target
+    FORCED = isForced$1(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced); // contained in target
 
     if (!FORCED && targetProperty !== undefined) {
       if (typeof sourceProperty === typeof targetProperty) continue;
@@ -1357,10 +1349,10 @@ var Promise$1 = global$3.Promise; // Node.js 11 shows ExperimentalWarning on get
 
 var queueMicrotaskDescriptor = getOwnPropertyDescriptor(global$3, 'queueMicrotask');
 var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
-var flush$2, head, last, notify$1, toggle, node, promise, then; // modern engines have queueMicrotask method
+var flush$1, head, last, notify$1, toggle, node, promise, then; // modern engines have queueMicrotask method
 
 if (!queueMicrotask) {
-  flush$2 = function () {
+  flush$1 = function () {
     var parent, fn;
     if (IS_NODE$1 && (parent = process$2.domain)) parent.exit();
 
@@ -1385,7 +1377,7 @@ if (!queueMicrotask) {
   if (!IS_IOS && !IS_NODE$1 && !IS_WEBOS_WEBKIT && MutationObserver && document$1) {
     toggle = true;
     node = document$1.createTextNode('');
-    new MutationObserver(flush$2).observe(node, {
+    new MutationObserver(flush$1).observe(node, {
       characterData: true
     });
 
@@ -1401,12 +1393,12 @@ if (!queueMicrotask) {
     then = promise.then;
 
     notify$1 = function () {
-      then.call(promise, flush$2);
+      then.call(promise, flush$1);
     }; // Node.js without promises
 
   } else if (IS_NODE$1) {
     notify$1 = function () {
-      process$2.nextTick(flush$2);
+      process$2.nextTick(flush$1);
     }; // for other environments - macrotask based on:
     // - setImmediate
     // - MessageChannel
@@ -1417,7 +1409,7 @@ if (!queueMicrotask) {
   } else {
     notify$1 = function () {
       // strange IE + webpack dev server bug - use .call(global)
-      macrotask.call(global$3, flush$2);
+      macrotask.call(global$3, flush$1);
     };
   }
 }
@@ -1459,12 +1451,12 @@ newPromiseCapability$2.f = function (C) {
 };
 
 var anObject$s = anObject$A;
-var isObject$3 = isObject$9;
+var isObject$1 = isObject$7;
 var newPromiseCapability$1 = newPromiseCapability$2;
 
 var promiseResolve$1 = function (C, x) {
   anObject$s(C);
-  if (isObject$3(x) && x.constructor === C) return x;
+  if (isObject$1(x) && x.constructor === C) return x;
   var promiseCapability = newPromiseCapability$1.f(C);
   var resolve = promiseCapability.resolve;
   resolve(x);
@@ -1508,7 +1500,7 @@ var setToStringTag = setToStringTag$1;
 var setSpecies = setSpecies$1;
 var aCallable$i = aCallable$n;
 var isCallable$1 = isCallable$f;
-var isObject$2 = isObject$9;
+var isObject = isObject$7;
 var anInstance = anInstance$1;
 var inspectSource = inspectSource$4;
 var iterate$p = iterate$q;
@@ -1521,7 +1513,7 @@ var hostReportErrors = hostReportErrors$1;
 var newPromiseCapabilityModule = newPromiseCapability$2;
 var perform = perform$1;
 var InternalStateModule = internalState;
-var isForced$1 = isForced_1;
+var isForced = isForced_1;
 var wellKnownSymbol = wellKnownSymbol$a;
 var IS_BROWSER = engineIsBrowser;
 var IS_NODE = engineIsNode;
@@ -1550,7 +1542,7 @@ var HANDLED = 1;
 var UNHANDLED = 2;
 var SUBCLASSING = false;
 var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
-var FORCED = isForced$1(PROMISE, function () {
+var FORCED = isForced(PROMISE, function () {
   var PROMISE_CONSTRUCTOR_SOURCE = inspectSource(PromiseConstructor);
   var GLOBAL_CORE_JS_PROMISE = PROMISE_CONSTRUCTOR_SOURCE !== String(PromiseConstructor); // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
   // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
@@ -1591,7 +1583,7 @@ var INCORRECT_ITERATION = FORCED || !checkCorrectnessOfIteration(function (itera
 
 var isThenable = function (it) {
   var then;
-  return isObject$2(it) && isCallable$1(then = it.then) ? then : false;
+  return isObject(it) && isCallable$1(then = it.then) ? then : false;
 };
 
 var notify = function (state, isReject) {
@@ -3118,9 +3110,9 @@ function validator$2(opts = {}) {
 var rx$4 = /[^.[\]]+|\[((?:.)*?)\]/g;
 
 const rx$3 = rx$4;
-var parse_1 = parse$5;
+var parse_1 = parse$4;
 
-function parse$5({
+function parse$4({
   paths
 }) {
   const wildcards = [];
@@ -3550,7 +3542,7 @@ function state$1(o) {
 }
 
 const validator$1 = validator_1;
-const parse$4 = parse_1;
+const parse$3 = parse_1;
 const redactor = redactor_1;
 const restorer = restorer_1;
 const {
@@ -3561,9 +3553,9 @@ const state = state_1;
 const rx$1 = rx$4;
 const validate$1 = validator$1();
 
-const noop$6 = o => o;
+const noop$3 = o => o;
 
-noop$6.restore = noop$6;
+noop$3.restore = noop$3;
 const DEFAULT_CENSOR = '[REDACTED]';
 fastRedact$1.rx = rx$1;
 fastRedact$1.validator = validator$1;
@@ -3581,7 +3573,7 @@ function fastRedact$1(opts = {}) {
   const censor = remove === true ? undefined : 'censor' in opts ? opts.censor : DEFAULT_CENSOR;
   const isCensorFct = typeof censor === 'function';
   const censorFctTakesPath = isCensorFct && censor.length > 1;
-  if (paths.length === 0) return serialize || noop$6;
+  if (paths.length === 0) return serialize || noop$3;
   validate$1({
     paths,
     serialize,
@@ -3591,7 +3583,7 @@ function fastRedact$1(opts = {}) {
     wildcards,
     wcLen,
     secret
-  } = parse$4({
+  } = parse$3({
     paths,
     censor
   });
@@ -3886,19 +3878,19 @@ if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') 
   atomicSleep.exports = sleep;
 }
 
-const fs$2 = require$$0__default$1["default"];
-const EventEmitter$4 = require$$0__default$2["default"];
-const inherits$1 = require$$3__default["default"].inherits;
-const BUSY_WRITE_TIMEOUT$1 = 100;
-const sleep$1 = atomicSleep.exports; // 16 MB - magic number
+const fs = require$$0__default$1["default"];
+const EventEmitter$3 = require$$0__default$2["default"];
+const inherits = require$$3__default["default"].inherits;
+const BUSY_WRITE_TIMEOUT = 100;
+const sleep = atomicSleep.exports; // 16 MB - magic number
 // This constant ensures that SonicBoom only needs
 // 32 MB of free memory to run. In case of having 1GB+
 // of data to write, this prevents an out of memory
 // condition.
 
-const MAX_WRITE$1 = 16 * 1024 * 1024;
+const MAX_WRITE = 16 * 1024 * 1024;
 
-function openFile$1(file, sonic) {
+function openFile(file, sonic) {
   sonic._opening = true;
   sonic._writing = true;
   sonic._asyncDrainScheduled = false; // NOTE: 'error' and 'ready' events emitted below only relevant when sonic.sync===false
@@ -3943,26 +3935,26 @@ function openFile$1(file, sonic) {
     const len = sonic._buf.length;
 
     if (len > 0 && len > sonic.minLength && !sonic.destroyed) {
-      actualWrite$1(sonic);
+      actualWrite(sonic);
     }
   }
 
   if (sonic.sync) {
     try {
-      const fd = fs$2.openSync(file, 'a');
+      const fd = fs.openSync(file, 'a');
       fileOpened(null, fd);
     } catch (err) {
       fileOpened(err);
       throw err;
     }
   } else {
-    fs$2.open(file, 'a', fileOpened);
+    fs.open(file, 'a', fileOpened);
   }
 }
 
-function SonicBoom$3(opts) {
-  if (!(this instanceof SonicBoom$3)) {
-    return new SonicBoom$3(opts);
+function SonicBoom$2(opts) {
+  if (!(this instanceof SonicBoom$2)) {
+    return new SonicBoom$2(opts);
   }
 
   let {
@@ -3988,7 +3980,7 @@ function SonicBoom$3(opts) {
     this.fd = fd;
     process.nextTick(() => this.emit('ready'));
   } else if (typeof fd === 'string') {
-    openFile$1(fd, this);
+    openFile(fd, this);
   } else {
     throw new Error('SonicBoom supports only file descriptors and files');
   }
@@ -4002,7 +3994,7 @@ function SonicBoom$3(opts) {
           // However it happens, and so we handle it.
           // Ref: https://github.com/pinojs/pino/issues/783
           try {
-            sleep$1(BUSY_WRITE_TIMEOUT$1);
+            sleep(BUSY_WRITE_TIMEOUT);
             this.release(undefined, 0);
           } catch (err) {
             this.release(err);
@@ -4010,8 +4002,8 @@ function SonicBoom$3(opts) {
         } else {
           // Let's give the destination some time to process the chunk.
           setTimeout(() => {
-            fs$2.write(this.fd, this._writingBuf, 'utf8', this.release);
-          }, BUSY_WRITE_TIMEOUT$1);
+            fs.write(this.fd, this._writingBuf, 'utf8', this.release);
+          }, BUSY_WRITE_TIMEOUT);
         }
       } else {
         // The error maybe recoverable later, so just put data back to this._buf
@@ -4030,7 +4022,7 @@ function SonicBoom$3(opts) {
       if (this.sync) {
         try {
           do {
-            n = fs$2.writeSync(this.fd, this._writingBuf, 'utf8');
+            n = fs.writeSync(this.fd, this._writingBuf, 'utf8');
             this._writingBuf = this._writingBuf.slice(n);
           } while (this._writingBuf.length !== 0);
         } catch (err) {
@@ -4038,7 +4030,7 @@ function SonicBoom$3(opts) {
           return;
         }
       } else {
-        fs$2.write(this.fd, this._writingBuf, 'utf8', this.release);
+        fs.write(this.fd, this._writingBuf, 'utf8', this.release);
         return;
       }
     }
@@ -4056,13 +4048,13 @@ function SonicBoom$3(opts) {
       this._reopening = false;
       this.reopen();
     } else if (len > 0 && len > this.minLength) {
-      actualWrite$1(this);
+      actualWrite(this);
     } else if (this._ending) {
       if (len > 0) {
-        actualWrite$1(this);
+        actualWrite(this);
       } else {
         this._writing = false;
-        actualClose$1(this);
+        actualClose(this);
       }
     } else {
       this._writing = false;
@@ -4070,7 +4062,7 @@ function SonicBoom$3(opts) {
       if (this.sync) {
         if (!this._asyncDrainScheduled) {
           this._asyncDrainScheduled = true;
-          process.nextTick(emitDrain$1, this);
+          process.nextTick(emitDrain, this);
         }
       } else {
         this.emit('drain');
@@ -4085,16 +4077,16 @@ function SonicBoom$3(opts) {
   });
 }
 
-function emitDrain$1(sonic) {
+function emitDrain(sonic) {
   const hasListeners = sonic.listenerCount('drain') > 0;
   if (!hasListeners) return;
   sonic._asyncDrainScheduled = false;
   sonic.emit('drain');
 }
 
-inherits$1(SonicBoom$3, EventEmitter$4);
+inherits(SonicBoom$2, EventEmitter$3);
 
-SonicBoom$3.prototype.write = function (data) {
+SonicBoom$2.prototype.write = function (data) {
   if (this.destroyed) {
     throw new Error('SonicBoom destroyed');
   }
@@ -4103,13 +4095,13 @@ SonicBoom$3.prototype.write = function (data) {
   const len = this._buf.length;
 
   if (!this._writing && len > this.minLength) {
-    actualWrite$1(this);
+    actualWrite(this);
   }
 
   return len < 16384;
 };
 
-SonicBoom$3.prototype.flush = function () {
+SonicBoom$2.prototype.flush = function () {
   if (this.destroyed) {
     throw new Error('SonicBoom destroyed');
   }
@@ -4118,10 +4110,10 @@ SonicBoom$3.prototype.flush = function () {
     return;
   }
 
-  actualWrite$1(this);
+  actualWrite(this);
 };
 
-SonicBoom$3.prototype.reopen = function (file) {
+SonicBoom$2.prototype.reopen = function (file) {
   if (this.destroyed) {
     throw new Error('SonicBoom destroyed');
   }
@@ -4150,17 +4142,17 @@ SonicBoom$3.prototype.reopen = function (file) {
   const fd = this.fd;
   this.once('ready', () => {
     if (fd !== this.fd) {
-      fs$2.close(fd, err => {
+      fs.close(fd, err => {
         if (err) {
           return this.emit('error', err);
         }
       });
     }
   });
-  openFile$1(file || this.file, this);
+  openFile(file || this.file, this);
 };
 
-SonicBoom$3.prototype.end = function () {
+SonicBoom$2.prototype.end = function () {
   if (this.destroyed) {
     throw new Error('SonicBoom destroyed');
   }
@@ -4179,7 +4171,7 @@ SonicBoom$3.prototype.end = function () {
   this._ending = true;
 
   if (!this._writing && this._buf.length > 0 && this.fd >= 0) {
-    actualWrite$1(this);
+    actualWrite(this);
     return;
   }
 
@@ -4187,10 +4179,10 @@ SonicBoom$3.prototype.end = function () {
     return;
   }
 
-  actualClose$1(this);
+  actualClose(this);
 };
 
-SonicBoom$3.prototype.flushSync = function () {
+SonicBoom$2.prototype.flushSync = function () {
   if (this.destroyed) {
     throw new Error('SonicBoom destroyed');
   }
@@ -4201,34 +4193,34 @@ SonicBoom$3.prototype.flushSync = function () {
 
   while (this._buf.length > 0) {
     try {
-      fs$2.writeSync(this.fd, this._buf, 'utf8');
+      fs.writeSync(this.fd, this._buf, 'utf8');
       this._buf = '';
     } catch (err) {
       if (err.code !== 'EAGAIN') {
         throw err;
       }
 
-      sleep$1(BUSY_WRITE_TIMEOUT$1);
+      sleep(BUSY_WRITE_TIMEOUT);
     }
   }
 };
 
-SonicBoom$3.prototype.destroy = function () {
+SonicBoom$2.prototype.destroy = function () {
   if (this.destroyed) {
     return;
   }
 
-  actualClose$1(this);
+  actualClose(this);
 };
 
-function actualWrite$1(sonic) {
+function actualWrite(sonic) {
   sonic._writing = true;
   let buf = sonic._buf;
   const release = sonic.release;
 
-  if (buf.length > MAX_WRITE$1) {
-    buf = buf.slice(0, MAX_WRITE$1);
-    sonic._buf = sonic._buf.slice(MAX_WRITE$1);
+  if (buf.length > MAX_WRITE) {
+    buf = buf.slice(0, MAX_WRITE);
+    sonic._buf = sonic._buf.slice(MAX_WRITE);
   } else {
     sonic._buf = '';
   }
@@ -4236,24 +4228,24 @@ function actualWrite$1(sonic) {
 
   if (sonic.sync) {
     try {
-      const written = fs$2.writeSync(sonic.fd, buf, 'utf8');
+      const written = fs.writeSync(sonic.fd, buf, 'utf8');
       release(null, written);
     } catch (err) {
       release(err);
     }
   } else {
-    fs$2.write(sonic.fd, buf, 'utf8', release);
+    fs.write(sonic.fd, buf, 'utf8', release);
   }
 }
 
-function actualClose$1(sonic) {
+function actualClose(sonic) {
   if (sonic.fd === -1) {
-    sonic.once('ready', actualClose$1.bind(null, sonic));
+    sonic.once('ready', actualClose.bind(null, sonic));
     return;
   } // TODO write a test to check if we are not leaking fds
 
 
-  fs$2.close(sonic.fd, err => {
+  fs.close(sonic.fd, err => {
     if (err) {
       sonic.emit('error', err);
       return;
@@ -4269,13 +4261,13 @@ function actualClose$1(sonic) {
   sonic._buf = '';
 }
 
-var sonicBoom$1 = SonicBoom$3;
+var sonicBoom = SonicBoom$2;
 
 const {
   format: format$9
 } = require$$3__default["default"];
 
-function build$1() {
+function build() {
   const codes = {};
   const emitted = new Map();
 
@@ -4330,7 +4322,7 @@ function build$1() {
   };
 }
 
-var fastifyWarning = build$1;
+var fastifyWarning = build;
 
 const warning$1 = fastifyWarning();
 var deprecations = warning$1;
@@ -4475,7 +4467,7 @@ var CIRCULAR_REPLACE_NODE = '[Circular]';
 var arr = [];
 var replacerStack = [];
 
-function defaultOptions$2() {
+function defaultOptions$1() {
   return {
     depthLimit: Number.MAX_SAFE_INTEGER,
     edgesLimit: Number.MAX_SAFE_INTEGER
@@ -4485,7 +4477,7 @@ function defaultOptions$2() {
 
 function stringify$3(obj, replacer, spacer, options) {
   if (typeof options === 'undefined') {
-    options = defaultOptions$2();
+    options = defaultOptions$1();
   }
 
   decirc(obj, '', 0, [], undefined, 0, options);
@@ -4588,7 +4580,7 @@ function compareFunction(a, b) {
 
 function deterministicStringify(obj, replacer, spacer, options) {
   if (typeof options === 'undefined') {
-    options = defaultOptions$2();
+    options = defaultOptions$1();
   }
 
   var tmp = deterministicDecirc(obj, '', 0, [], undefined, 0, options) || obj;
@@ -4700,2770 +4692,6 @@ function replaceGetterValues(replacer) {
   };
 }
 
-var pinoPretty = {exports: {}};
-
-var colorette = {};
-
-Object.defineProperty(colorette, '__esModule', {
-  value: true
-});
-var tty = require$$0__default$3["default"];
-
-function _interopNamespace$1(e) {
-  if (e && e.__esModule) return e;
-  var n = Object.create(null);
-
-  if (e) {
-    Object.keys(e).forEach(function (k) {
-      if (k !== 'default') {
-        var d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: function () {
-            return e[k];
-          }
-        });
-      }
-    });
-  }
-
-  n["default"] = e;
-  return Object.freeze(n);
-}
-
-var tty__namespace = /*#__PURE__*/_interopNamespace$1(tty);
-
-const env = process.env || {};
-const isDisabled = ("NO_COLOR" in env);
-const isForced = ("FORCE_COLOR" in env);
-const isWindows = process.platform === "win32";
-const isCompatibleTerminal = tty__namespace && tty__namespace.isatty && tty__namespace.isatty(1) && env.TERM && env.TERM !== "dumb";
-const isCI = "CI" in env && ("GITHUB_ACTIONS" in env || "GITLAB_CI" in env || "CIRCLECI" in env);
-const isColorSupported$1 = !isDisabled && (isForced || isWindows || isCompatibleTerminal || isCI);
-
-const raw = (open, close, searchRegex, replaceValue) => s => s || !(s === "" || s === undefined) ? open + (~(s + "").indexOf(close, 4) // skip opening \x1b[
-? s.replace(searchRegex, replaceValue) : s) + close : "";
-
-const init = (open, close) => raw(`\x1b[${open}m`, `\x1b[${close}m`, new RegExp(`\\x1b\\[${close}m`, "g"), `\x1b[${open}m`);
-
-const colors$2 = {
-  reset: init(0, 0),
-  bold: raw("\x1b[1m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[1m"),
-  dim: raw("\x1b[2m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[2m"),
-  italic: init(3, 23),
-  underline: init(4, 24),
-  inverse: init(7, 27),
-  hidden: init(8, 28),
-  strikethrough: init(9, 29),
-  black: init(30, 39),
-  red: init(31, 39),
-  green: init(32, 39),
-  yellow: init(33, 39),
-  blue: init(34, 39),
-  magenta: init(35, 39),
-  cyan: init(36, 39),
-  white: init(37, 39),
-  gray: init(90, 39),
-  bgBlack: init(40, 49),
-  bgRed: init(41, 49),
-  bgGreen: init(42, 49),
-  bgYellow: init(43, 49),
-  bgBlue: init(44, 49),
-  bgMagenta: init(45, 49),
-  bgCyan: init(46, 49),
-  bgWhite: init(47, 49),
-  blackBright: init(90, 39),
-  redBright: init(91, 39),
-  greenBright: init(92, 39),
-  yellowBright: init(93, 39),
-  blueBright: init(94, 39),
-  magentaBright: init(95, 39),
-  cyanBright: init(96, 39),
-  whiteBright: init(97, 39),
-  bgBlackBright: init(100, 49),
-  bgRedBright: init(101, 49),
-  bgGreenBright: init(102, 49),
-  bgYellowBright: init(103, 49),
-  bgBlueBright: init(104, 49),
-  bgMagentaBright: init(105, 49),
-  bgCyanBright: init(106, 49),
-  bgWhiteBright: init(107, 49)
-};
-
-const none = any => any;
-
-const createColors$1 = ({
-  useColor = isColorSupported$1
-} = {}) => useColor ? colors$2 : Object.keys(colors$2).reduce((colorMap, key) => ({ ...colorMap,
-  [key]: none
-}), {});
-
-const {
-  reset,
-  bold,
-  dim,
-  italic,
-  underline,
-  inverse,
-  hidden,
-  strikethrough,
-  black,
-  red: red$1,
-  green: green$1,
-  yellow: yellow$1,
-  blue: blue$1,
-  magenta,
-  cyan: cyan$1,
-  white: white$1,
-  gray: gray$1,
-  bgBlack,
-  bgRed: bgRed$1,
-  bgGreen,
-  bgYellow,
-  bgBlue,
-  bgMagenta,
-  bgCyan,
-  bgWhite,
-  blackBright,
-  redBright,
-  greenBright,
-  yellowBright,
-  blueBright,
-  magentaBright,
-  cyanBright,
-  whiteBright,
-  bgBlackBright,
-  bgRedBright,
-  bgGreenBright,
-  bgYellowBright,
-  bgBlueBright,
-  bgMagentaBright,
-  bgCyanBright,
-  bgWhiteBright
-} = createColors$1();
-colorette.bgBlack = bgBlack;
-colorette.bgBlackBright = bgBlackBright;
-colorette.bgBlue = bgBlue;
-colorette.bgBlueBright = bgBlueBright;
-colorette.bgCyan = bgCyan;
-colorette.bgCyanBright = bgCyanBright;
-colorette.bgGreen = bgGreen;
-colorette.bgGreenBright = bgGreenBright;
-colorette.bgMagenta = bgMagenta;
-colorette.bgMagentaBright = bgMagentaBright;
-colorette.bgRed = bgRed$1;
-colorette.bgRedBright = bgRedBright;
-colorette.bgWhite = bgWhite;
-colorette.bgWhiteBright = bgWhiteBright;
-colorette.bgYellow = bgYellow;
-colorette.bgYellowBright = bgYellowBright;
-colorette.black = black;
-colorette.blackBright = blackBright;
-colorette.blue = blue$1;
-colorette.blueBright = blueBright;
-colorette.bold = bold;
-colorette.createColors = createColors$1;
-colorette.cyan = cyan$1;
-colorette.cyanBright = cyanBright;
-colorette.dim = dim;
-colorette.gray = gray$1;
-colorette.green = green$1;
-colorette.greenBright = greenBright;
-colorette.hidden = hidden;
-colorette.inverse = inverse;
-colorette.isColorSupported = isColorSupported$1;
-colorette.italic = italic;
-colorette.magenta = magenta;
-colorette.magentaBright = magentaBright;
-colorette.red = red$1;
-colorette.redBright = redBright;
-colorette.reset = reset;
-colorette.strikethrough = strikethrough;
-colorette.underline = underline;
-colorette.white = white$1;
-colorette.whiteBright = whiteBright;
-colorette.yellow = yellow$1;
-colorette.yellowBright = yellowBright;
-
-var once$3 = {exports: {}};
-
-// The wrapper function should do some stuff, and return a
-// presumably different callback function.
-// This makes sure that own properties are retained, so that
-// decorations and such are not lost along the way.
-
-var wrappy_1 = wrappy$1;
-
-function wrappy$1(fn, cb) {
-  if (fn && cb) return wrappy$1(fn)(cb);
-  if (typeof fn !== 'function') throw new TypeError('need wrapper function');
-  Object.keys(fn).forEach(function (k) {
-    wrapper[k] = fn[k];
-  });
-  return wrapper;
-
-  function wrapper() {
-    var args = new Array(arguments.length);
-
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-
-    var ret = fn.apply(this, args);
-    var cb = args[args.length - 1];
-
-    if (typeof ret === 'function' && ret !== cb) {
-      Object.keys(cb).forEach(function (k) {
-        ret[k] = cb[k];
-      });
-    }
-
-    return ret;
-  }
-}
-
-var wrappy = wrappy_1;
-once$3.exports = wrappy(once$2);
-once$3.exports.strict = wrappy(onceStrict);
-once$2.proto = once$2(function () {
-  Object.defineProperty(Function.prototype, 'once', {
-    value: function () {
-      return once$2(this);
-    },
-    configurable: true
-  });
-  Object.defineProperty(Function.prototype, 'onceStrict', {
-    value: function () {
-      return onceStrict(this);
-    },
-    configurable: true
-  });
-});
-
-function once$2(fn) {
-  var f = function () {
-    if (f.called) return f.value;
-    f.called = true;
-    return f.value = fn.apply(this, arguments);
-  };
-
-  f.called = false;
-  return f;
-}
-
-function onceStrict(fn) {
-  var f = function () {
-    if (f.called) throw new Error(f.onceError);
-    f.called = true;
-    return f.value = fn.apply(this, arguments);
-  };
-
-  var name = fn.name || 'Function wrapped with `once`';
-  f.onceError = name + " shouldn't be called more than once";
-  f.called = false;
-  return f;
-}
-
-var once$1 = once$3.exports;
-
-var noop$5 = function () {};
-
-var isRequest$1 = function (stream) {
-  return stream.setHeader && typeof stream.abort === 'function';
-};
-
-var isChildProcess = function (stream) {
-  return stream.stdio && Array.isArray(stream.stdio) && stream.stdio.length === 3;
-};
-
-var eos$1 = function (stream, opts, callback) {
-  if (typeof opts === 'function') return eos$1(stream, null, opts);
-  if (!opts) opts = {};
-  callback = once$1(callback || noop$5);
-  var ws = stream._writableState;
-  var rs = stream._readableState;
-  var readable = opts.readable || opts.readable !== false && stream.readable;
-  var writable = opts.writable || opts.writable !== false && stream.writable;
-  var cancelled = false;
-
-  var onlegacyfinish = function () {
-    if (!stream.writable) onfinish();
-  };
-
-  var onfinish = function () {
-    writable = false;
-    if (!readable) callback.call(stream);
-  };
-
-  var onend = function () {
-    readable = false;
-    if (!writable) callback.call(stream);
-  };
-
-  var onexit = function (exitCode) {
-    callback.call(stream, exitCode ? new Error('exited with error code: ' + exitCode) : null);
-  };
-
-  var onerror = function (err) {
-    callback.call(stream, err);
-  };
-
-  var onclose = function () {
-    process.nextTick(onclosenexttick);
-  };
-
-  var onclosenexttick = function () {
-    if (cancelled) return;
-    if (readable && !(rs && rs.ended && !rs.destroyed)) return callback.call(stream, new Error('premature close'));
-    if (writable && !(ws && ws.ended && !ws.destroyed)) return callback.call(stream, new Error('premature close'));
-  };
-
-  var onrequest = function () {
-    stream.req.on('finish', onfinish);
-  };
-
-  if (isRequest$1(stream)) {
-    stream.on('complete', onfinish);
-    stream.on('abort', onclose);
-    if (stream.req) onrequest();else stream.on('request', onrequest);
-  } else if (writable && !ws) {
-    // legacy streams
-    stream.on('end', onlegacyfinish);
-    stream.on('close', onlegacyfinish);
-  }
-
-  if (isChildProcess(stream)) stream.on('exit', onexit);
-  stream.on('end', onend);
-  stream.on('finish', onfinish);
-  if (opts.error !== false) stream.on('error', onerror);
-  stream.on('close', onclose);
-  return function () {
-    cancelled = true;
-    stream.removeListener('complete', onfinish);
-    stream.removeListener('abort', onclose);
-    stream.removeListener('request', onrequest);
-    if (stream.req) stream.req.removeListener('finish', onfinish);
-    stream.removeListener('end', onlegacyfinish);
-    stream.removeListener('close', onlegacyfinish);
-    stream.removeListener('finish', onfinish);
-    stream.removeListener('exit', onexit);
-    stream.removeListener('end', onend);
-    stream.removeListener('error', onerror);
-    stream.removeListener('close', onclose);
-  };
-};
-
-var endOfStream = eos$1;
-
-var once = once$3.exports;
-var eos = endOfStream;
-var fs$1 = require$$0__default$1["default"]; // we only need fs to get the ReadStream and WriteStream prototypes
-
-var noop$4 = function () {};
-
-var ancient = /^v?\.0/.test(process.version);
-
-var isFn = function (fn) {
-  return typeof fn === 'function';
-};
-
-var isFS = function (stream) {
-  if (!ancient) return false; // newer node version do not need to care about fs is a special way
-
-  if (!fs$1) return false; // browser
-
-  return (stream instanceof (fs$1.ReadStream || noop$4) || stream instanceof (fs$1.WriteStream || noop$4)) && isFn(stream.close);
-};
-
-var isRequest = function (stream) {
-  return stream.setHeader && isFn(stream.abort);
-};
-
-var destroyer = function (stream, reading, writing, callback) {
-  callback = once(callback);
-  var closed = false;
-  stream.on('close', function () {
-    closed = true;
-  });
-  eos(stream, {
-    readable: reading,
-    writable: writing
-  }, function (err) {
-    if (err) return callback(err);
-    closed = true;
-    callback();
-  });
-  var destroyed = false;
-  return function (err) {
-    if (closed) return;
-    if (destroyed) return;
-    destroyed = true;
-    if (isFS(stream)) return stream.close(noop$4); // use close for fs streams to avoid fd leaks
-
-    if (isRequest(stream)) return stream.abort(); // request.destroy just do .end - .abort is what we want
-
-    if (isFn(stream.destroy)) return stream.destroy();
-    callback(err || new Error('stream was destroyed'));
-  };
-};
-
-var call = function (fn) {
-  fn();
-};
-
-var pipe = function (from, to) {
-  return from.pipe(to);
-};
-
-var pump$1 = function () {
-  var streams = Array.prototype.slice.call(arguments);
-  var callback = isFn(streams[streams.length - 1] || noop$4) && streams.pop() || noop$4;
-  if (Array.isArray(streams[0])) streams = streams[0];
-  if (streams.length < 2) throw new Error('pump requires two streams per minimum');
-  var error;
-  var destroys = streams.map(function (stream, i) {
-    var reading = i < streams.length - 1;
-    var writing = i > 0;
-    return destroyer(stream, reading, writing, function (err) {
-      if (!error) error = err;
-      if (err) destroys.forEach(call);
-      if (reading) return;
-      destroys.forEach(call);
-      callback(error);
-    });
-  });
-  return streams.reduce(pipe);
-};
-
-var pump_1 = pump$1;
-
-/*
-Copyright (c) 2014-2018, Matteo Collina <hello@matteocollina.com>
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
-IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
-
-const {
-  Transform: Transform$1
-} = require$$0__default$4["default"];
-const {
-  StringDecoder
-} = require$$1__default["default"];
-const kLast = Symbol('last');
-const kDecoder = Symbol('decoder');
-
-function transform(chunk, enc, cb) {
-  var list;
-
-  if (this.overflow) {
-    // Line buffer is full. Skip to start of next line.
-    var buf = this[kDecoder].write(chunk);
-    list = buf.split(this.matcher);
-    if (list.length === 1) return cb(); // Line ending not found. Discard entire chunk.
-    // Line ending found. Discard trailing fragment of previous line and reset overflow state.
-
-    list.shift();
-    this.overflow = false;
-  } else {
-    this[kLast] += this[kDecoder].write(chunk);
-    list = this[kLast].split(this.matcher);
-  }
-
-  this[kLast] = list.pop();
-
-  for (var i = 0; i < list.length; i++) {
-    try {
-      push(this, this.mapper(list[i]));
-    } catch (error) {
-      return cb(error);
-    }
-  }
-
-  this.overflow = this[kLast].length > this.maxLength;
-  if (this.overflow && !this.skipOverflow) return cb(new Error('maximum buffer reached'));
-  cb();
-}
-
-function flush$1(cb) {
-  // forward any gibberish left in there
-  this[kLast] += this[kDecoder].end();
-
-  if (this[kLast]) {
-    try {
-      push(this, this.mapper(this[kLast]));
-    } catch (error) {
-      return cb(error);
-    }
-  }
-
-  cb();
-}
-
-function push(self, val) {
-  if (val !== undefined) {
-    self.push(val);
-  }
-}
-
-function noop$3(incoming) {
-  return incoming;
-}
-
-function split$1(matcher, mapper, options) {
-  // Set defaults for any arguments not supplied.
-  matcher = matcher || /\r?\n/;
-  mapper = mapper || noop$3;
-  options = options || {}; // Test arguments explicitly.
-
-  switch (arguments.length) {
-    case 1:
-      // If mapper is only argument.
-      if (typeof matcher === 'function') {
-        mapper = matcher;
-        matcher = /\r?\n/; // If options is only argument.
-      } else if (typeof matcher === 'object' && !(matcher instanceof RegExp)) {
-        options = matcher;
-        matcher = /\r?\n/;
-      }
-
-      break;
-
-    case 2:
-      // If mapper and options are arguments.
-      if (typeof matcher === 'function') {
-        options = mapper;
-        mapper = matcher;
-        matcher = /\r?\n/; // If matcher and options are arguments.
-      } else if (typeof mapper === 'object') {
-        options = mapper;
-        mapper = noop$3;
-      }
-
-  }
-
-  options = Object.assign({}, options);
-  options.transform = transform;
-  options.flush = flush$1;
-  options.readableObjectMode = true;
-  const stream = new Transform$1(options);
-  stream[kLast] = '';
-  stream[kDecoder] = new StringDecoder('utf8');
-  stream.matcher = matcher;
-  stream.mapper = mapper;
-  stream.maxLength = options.maxLength;
-  stream.skipOverflow = options.skipOverflow;
-  stream.overflow = false;
-  return stream;
-}
-
-var split2 = split$1;
-
-const metadata = Symbol.for('pino.metadata');
-const split = split2;
-
-var pinoAbstractTransport = function build(fn, opts = {}) {
-  const parseLines = opts.parse === 'lines';
-  const parseLine = typeof opts.parseLine === 'function' ? opts.parseLine : JSON.parse;
-  const close = opts.close || defaultClose;
-  const stream = split(function (line) {
-    let value;
-
-    try {
-      value = parseLine(line);
-    } catch (error) {
-      this.emit('unknown', line, error);
-      return;
-    }
-
-    if (value === null) {
-      this.emit('unknown', line, 'Null value ignored');
-      return;
-    }
-
-    if (typeof value !== 'object') {
-      value = {
-        data: value,
-        time: Date.now()
-      };
-    }
-
-    if (stream[metadata]) {
-      stream.lastTime = value.time;
-      stream.lastLevel = value.level;
-      stream.lastObj = value;
-    }
-
-    if (parseLines) {
-      return line;
-    }
-
-    return value;
-  }, {
-    autoDestroy: true
-  });
-
-  stream._destroy = function (err, cb) {
-    const promise = close(err, cb);
-
-    if (promise && typeof promise.then === 'function') {
-      promise.then(cb, cb);
-    }
-  };
-
-  if (opts.metadata !== false) {
-    stream[metadata] = true;
-    stream.lastTime = 0;
-    stream.lastLevel = 0;
-    stream.lastObj = null;
-  }
-
-  let res = fn(stream);
-
-  if (res && typeof res.catch === 'function') {
-    res.catch(err => {
-      stream.destroy(err);
-    }); // set it to null to not retain a reference to the promise
-
-    res = null;
-  }
-
-  return stream;
-};
-
-function defaultClose(err, cb) {
-  process.nextTick(cb, err);
-}
-
-const fs = require$$0__default$1["default"];
-const EventEmitter$3 = require$$0__default$2["default"];
-const inherits = require$$3__default["default"].inherits;
-const path = require$$3__default$1["default"];
-const sleep = atomicSleep.exports;
-const BUSY_WRITE_TIMEOUT = 100; // 16 MB - magic number
-// This constant ensures that SonicBoom only needs
-// 32 MB of free memory to run. In case of having 1GB+
-// of data to write, this prevents an out of memory
-// condition.
-
-const MAX_WRITE = 16 * 1024 * 1024;
-
-function openFile(file, sonic) {
-  sonic._opening = true;
-  sonic._writing = true;
-  sonic._asyncDrainScheduled = false; // NOTE: 'error' and 'ready' events emitted below only relevant when sonic.sync===false
-  // for sync mode, there is no way to add a listener that will receive these
-
-  function fileOpened(err, fd) {
-    if (err) {
-      sonic._reopening = false;
-      sonic._writing = false;
-      sonic._opening = false;
-
-      if (sonic.sync) {
-        process.nextTick(() => {
-          if (sonic.listenerCount('error') > 0) {
-            sonic.emit('error', err);
-          }
-        });
-      } else {
-        sonic.emit('error', err);
-      }
-
-      return;
-    }
-
-    sonic.fd = fd;
-    sonic.file = file;
-    sonic._reopening = false;
-    sonic._opening = false;
-    sonic._writing = false;
-
-    if (sonic.sync) {
-      process.nextTick(() => sonic.emit('ready'));
-    } else {
-      sonic.emit('ready');
-    }
-
-    if (sonic._reopening) {
-      return;
-    } // start
-
-
-    if (!sonic._writing && sonic._len > sonic.minLength && !sonic.destroyed) {
-      actualWrite(sonic);
-    }
-  }
-
-  const mode = sonic.append ? 'a' : 'w';
-
-  if (sonic.sync) {
-    try {
-      if (sonic.mkdir) fs.mkdirSync(path.dirname(file), {
-        recursive: true
-      });
-      const fd = fs.openSync(file, mode);
-      fileOpened(null, fd);
-    } catch (err) {
-      fileOpened(err);
-      throw err;
-    }
-  } else if (sonic.mkdir) {
-    fs.mkdir(path.dirname(file), {
-      recursive: true
-    }, err => {
-      if (err) return fileOpened(err);
-      fs.open(file, mode, fileOpened);
-    });
-  } else {
-    fs.open(file, mode, fileOpened);
-  }
-}
-
-function SonicBoom$2(opts) {
-  if (!(this instanceof SonicBoom$2)) {
-    return new SonicBoom$2(opts);
-  }
-
-  let {
-    fd,
-    dest,
-    minLength,
-    sync,
-    append = true,
-    mkdir,
-    retryEAGAIN
-  } = opts || {};
-  fd = fd || dest;
-  this._bufs = [];
-  this._len = 0;
-  this.fd = -1;
-  this._writing = false;
-  this._writingBuf = '';
-  this._ending = false;
-  this._reopening = false;
-  this._asyncDrainScheduled = false;
-  this._hwm = Math.max(minLength || 0, 16387);
-  this.file = null;
-  this.destroyed = false;
-  this.minLength = minLength || 0;
-  this.sync = sync || false;
-  this.append = append || false;
-
-  this.retryEAGAIN = retryEAGAIN || (() => true);
-
-  this.mkdir = mkdir || false;
-
-  if (typeof fd === 'number') {
-    this.fd = fd;
-    process.nextTick(() => this.emit('ready'));
-  } else if (typeof fd === 'string') {
-    openFile(fd, this);
-  } else {
-    throw new Error('SonicBoom supports only file descriptors and files');
-  }
-
-  if (this.minLength >= MAX_WRITE) {
-    throw new Error(`minLength should be smaller than MAX_WRITE (${MAX_WRITE})`);
-  }
-
-  this.release = (err, n) => {
-    if (err) {
-      if (err.code === 'EAGAIN' && this.retryEAGAIN(err, this._writingBuf.length, this._len - this._writingBuf.length)) {
-        if (this.sync) {
-          // This error code should not happen in sync mode, because it is
-          // not using the underlining operating system asynchronous functions.
-          // However it happens, and so we handle it.
-          // Ref: https://github.com/pinojs/pino/issues/783
-          try {
-            sleep(BUSY_WRITE_TIMEOUT);
-            this.release(undefined, 0);
-          } catch (err) {
-            this.release(err);
-          }
-        } else {
-          // Let's give the destination some time to process the chunk.
-          setTimeout(() => {
-            fs.write(this.fd, this._writingBuf, 'utf8', this.release);
-          }, BUSY_WRITE_TIMEOUT);
-        }
-      } else {
-        this._writing = false;
-        this.emit('error', err);
-      }
-
-      return;
-    }
-
-    this._len -= n;
-    this._writingBuf = this._writingBuf.slice(n);
-
-    if (this._writingBuf.length) {
-      if (!this.sync) {
-        fs.write(this.fd, this._writingBuf, 'utf8', this.release);
-        return;
-      }
-
-      try {
-        do {
-          const n = fs.writeSync(this.fd, this._writingBuf, 'utf8');
-          this._len -= n;
-          this._writingBuf = this._writingBuf.slice(n);
-        } while (this._writingBuf);
-      } catch (err) {
-        this.release(err);
-        return;
-      }
-    }
-
-    const len = this._len;
-
-    if (this._reopening) {
-      this._writing = false;
-      this._reopening = false;
-      this.reopen();
-    } else if (len > this.minLength) {
-      actualWrite(this);
-    } else if (this._ending) {
-      if (len > 0) {
-        actualWrite(this);
-      } else {
-        this._writing = false;
-        actualClose(this);
-      }
-    } else {
-      this._writing = false;
-
-      if (this.sync) {
-        if (!this._asyncDrainScheduled) {
-          this._asyncDrainScheduled = true;
-          process.nextTick(emitDrain, this);
-        }
-      } else {
-        this.emit('drain');
-      }
-    }
-  };
-
-  this.on('newListener', function (name) {
-    if (name === 'drain') {
-      this._asyncDrainScheduled = false;
-    }
-  });
-}
-
-function emitDrain(sonic) {
-  const hasListeners = sonic.listenerCount('drain') > 0;
-  if (!hasListeners) return;
-  sonic._asyncDrainScheduled = false;
-  sonic.emit('drain');
-}
-
-inherits(SonicBoom$2, EventEmitter$3);
-
-SonicBoom$2.prototype.write = function (data) {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  const len = this._len + data.length;
-  const bufs = this._bufs;
-
-  if (!this._writing && len > MAX_WRITE) {
-    bufs.push(data);
-  } else if (bufs.length === 0) {
-    bufs[0] = '' + data;
-  } else {
-    bufs[bufs.length - 1] += data;
-  }
-
-  this._len = len;
-
-  if (!this._writing && this._len >= this.minLength) {
-    actualWrite(this);
-  }
-
-  return this._len < this._hwm;
-};
-
-SonicBoom$2.prototype.flush = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._writing || this.minLength <= 0) {
-    return;
-  }
-
-  if (this._bufs.length === 0) {
-    this._bufs.push('');
-  }
-
-  actualWrite(this);
-};
-
-SonicBoom$2.prototype.reopen = function (file) {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._opening) {
-    this.once('ready', () => {
-      this.reopen(file);
-    });
-    return;
-  }
-
-  if (this._ending) {
-    return;
-  }
-
-  if (!this.file) {
-    throw new Error('Unable to reopen a file descriptor, you must pass a file to SonicBoom');
-  }
-
-  this._reopening = true;
-
-  if (this._writing) {
-    return;
-  }
-
-  const fd = this.fd;
-  this.once('ready', () => {
-    if (fd !== this.fd) {
-      fs.close(fd, err => {
-        if (err) {
-          return this.emit('error', err);
-        }
-      });
-    }
-  });
-  openFile(file || this.file, this);
-};
-
-SonicBoom$2.prototype.end = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this._opening) {
-    this.once('ready', () => {
-      this.end();
-    });
-    return;
-  }
-
-  if (this._ending) {
-    return;
-  }
-
-  this._ending = true;
-
-  if (this._writing) {
-    return;
-  }
-
-  if (this._len > 0 && this.fd >= 0) {
-    actualWrite(this);
-  } else {
-    actualClose(this);
-  }
-};
-
-SonicBoom$2.prototype.flushSync = function () {
-  if (this.destroyed) {
-    throw new Error('SonicBoom destroyed');
-  }
-
-  if (this.fd < 0) {
-    throw new Error('sonic boom is not ready yet');
-  }
-
-  if (!this._writing && this._writingBuf.length > 0) {
-    this._bufs.unshift(this._writingBuf);
-
-    this._writingBuf = '';
-  }
-
-  while (this._bufs.length) {
-    const buf = this._bufs[0];
-
-    try {
-      this._len -= fs.writeSync(this.fd, buf, 'utf8');
-
-      this._bufs.shift();
-    } catch (err) {
-      if (err.code !== 'EAGAIN' || !this.retryEAGAIN(err, buf.length, this._len - buf.length)) {
-        throw err;
-      }
-
-      sleep(BUSY_WRITE_TIMEOUT);
-    }
-  }
-};
-
-SonicBoom$2.prototype.destroy = function () {
-  if (this.destroyed) {
-    return;
-  }
-
-  actualClose(this);
-};
-
-function actualWrite(sonic) {
-  const release = sonic.release;
-  sonic._writing = true;
-  sonic._writingBuf = sonic._writingBuf || sonic._bufs.shift();
-
-  if (sonic.sync) {
-    try {
-      const written = fs.writeSync(sonic.fd, sonic._writingBuf, 'utf8');
-      release(null, written);
-    } catch (err) {
-      release(err);
-    }
-  } else {
-    fs.write(sonic.fd, sonic._writingBuf, 'utf8', release);
-  }
-}
-
-function actualClose(sonic) {
-  if (sonic.fd === -1) {
-    sonic.once('ready', actualClose.bind(null, sonic));
-    return;
-  } // TODO write a test to check if we are not leaking fds
-
-
-  fs.close(sonic.fd, err => {
-    if (err) {
-      sonic.emit('error', err);
-      return;
-    }
-
-    if (sonic._ending && !sonic._writing) {
-      sonic.emit('finish');
-    }
-
-    sonic.emit('close');
-  });
-  sonic.destroyed = true;
-  sonic._bufs = [];
-}
-/**
- * These export configurations enable JS and TS developers
- * to consumer SonicBoom in whatever way best suits their needs.
- * Some examples of supported import syntax includes:
- * - `const SonicBoom = require('SonicBoom')`
- * - `const { SonicBoom } = require('SonicBoom')`
- * - `import * as SonicBoom from 'SonicBoom'`
- * - `import { SonicBoom } from 'SonicBoom'`
- * - `import SonicBoom from 'SonicBoom'`
- */
-
-
-SonicBoom$2.SonicBoom = SonicBoom$2;
-SonicBoom$2.default = SonicBoom$2;
-var sonicBoom = SonicBoom$2;
-
-const hasBuffer = typeof Buffer !== 'undefined';
-const suspectProtoRx = /"(?:_|\\u005[Ff])(?:_|\\u005[Ff])(?:p|\\u0070)(?:r|\\u0072)(?:o|\\u006[Ff])(?:t|\\u0074)(?:o|\\u006[Ff])(?:_|\\u005[Ff])(?:_|\\u005[Ff])"\s*:/;
-const suspectConstructorRx = /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/;
-
-function parse$3(text, reviver, options) {
-  // Normalize arguments
-  if (options == null) {
-    if (reviver !== null && typeof reviver === 'object') {
-      options = reviver;
-      reviver = undefined;
-    } else {
-      options = {};
-    }
-  }
-
-  const protoAction = options.protoAction || 'error';
-  const constructorAction = options.constructorAction || 'error';
-
-  if (hasBuffer && Buffer.isBuffer(text)) {
-    text = text.toString();
-  } // BOM checker
-
-
-  if (text && text.charCodeAt(0) === 0xFEFF) {
-    text = text.slice(1);
-  } // Parse normally, allowing exceptions
-
-
-  const obj = JSON.parse(text, reviver); // options: 'error' (default) / 'remove' / 'ignore'
-
-  if (protoAction === 'ignore' && constructorAction === 'ignore') {
-    return obj;
-  } // Ignore null and non-objects
-
-
-  if (obj === null || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (protoAction !== 'ignore' && constructorAction !== 'ignore') {
-    if (suspectProtoRx.test(text) === false && suspectConstructorRx.test(text) === false) {
-      return obj;
-    }
-  } else if (protoAction !== 'ignore' && constructorAction === 'ignore') {
-    if (suspectProtoRx.test(text) === false) {
-      return obj;
-    }
-  } else {
-    if (suspectConstructorRx.test(text) === false) {
-      return obj;
-    }
-  } // Scan result for proto keys
-
-
-  scan(obj, {
-    protoAction,
-    constructorAction
-  });
-  return obj;
-}
-
-function scan(obj, {
-  protoAction = 'error',
-  constructorAction = 'error'
-} = {}) {
-  let next = [obj];
-
-  while (next.length) {
-    const nodes = next;
-    next = [];
-
-    for (const node of nodes) {
-      if (protoAction !== 'ignore' && Object.prototype.hasOwnProperty.call(node, '__proto__')) {
-        // Avoid calling node.hasOwnProperty directly
-        if (protoAction === 'error') {
-          throw new SyntaxError('Object contains forbidden prototype property');
-        }
-
-        delete node.__proto__; // eslint-disable-line no-proto
-      }
-
-      if (constructorAction !== 'ignore' && Object.prototype.hasOwnProperty.call(node, 'constructor') && Object.prototype.hasOwnProperty.call(node.constructor, 'prototype')) {
-        // Avoid calling node.hasOwnProperty directly
-        if (constructorAction === 'error') {
-          throw new SyntaxError('Object contains forbidden prototype property');
-        }
-
-        delete node.constructor;
-      }
-
-      for (const key in node) {
-        const value = node[key];
-
-        if (value && typeof value === 'object') {
-          next.push(node[key]);
-        }
-      }
-    }
-  }
-}
-
-function safeParse(text, reviver) {
-  try {
-    return parse$3(text, reviver);
-  } catch (ignoreError) {
-    return null;
-  }
-}
-
-var secureJsonParse = {
-  parse: parse$3,
-  scan,
-  safeParse
-};
-
-var constants = {
-  DATE_FORMAT: 'yyyy-mm-dd HH:MM:ss.l o',
-  ERROR_LIKE_KEYS: ['err', 'error'],
-  MESSAGE_KEY: 'msg',
-  LEVEL_KEY: 'level',
-  LEVEL_LABEL: 'levelLabel',
-  TIMESTAMP_KEY: 'time',
-  LEVELS: {
-    default: 'USERLVL',
-    60: 'FATAL',
-    50: 'ERROR',
-    40: 'WARN',
-    30: 'INFO',
-    20: 'DEBUG',
-    10: 'TRACE'
-  },
-  LEVEL_NAMES: {
-    fatal: 60,
-    error: 50,
-    warn: 40,
-    info: 30,
-    debug: 20,
-    trace: 10
-  },
-  // Object keys that probably came from a logger like Pino or Bunyan.
-  LOGGER_KEYS: ['pid', 'hostname', 'name', 'level', 'time', 'timestamp', 'caller']
-};
-
-const {
-  LEVELS: LEVELS$1,
-  LEVEL_NAMES
-} = constants;
-
-const nocolor = input => input;
-
-const plain = {
-  default: nocolor,
-  60: nocolor,
-  50: nocolor,
-  40: nocolor,
-  30: nocolor,
-  20: nocolor,
-  10: nocolor,
-  message: nocolor,
-  greyMessage: nocolor
-};
-const {
-  createColors
-} = colorette;
-const {
-  white,
-  bgRed,
-  red,
-  yellow,
-  green,
-  blue,
-  gray,
-  cyan
-} = createColors({
-  useColor: true
-});
-const colored = {
-  default: white,
-  60: bgRed,
-  50: red,
-  40: yellow,
-  30: green,
-  20: blue,
-  10: gray,
-  message: cyan,
-  greyMessage: gray
-};
-
-function colorizeLevel(level, colorizer) {
-  if (Number.isInteger(+level)) {
-    return Object.prototype.hasOwnProperty.call(LEVELS$1, level) ? colorizer[level](LEVELS$1[level]) : colorizer.default(LEVELS$1.default);
-  }
-
-  const levelNum = LEVEL_NAMES[level.toLowerCase()] || 'default';
-  return colorizer[levelNum](LEVELS$1[levelNum]);
-}
-
-function plainColorizer(level) {
-  return colorizeLevel(level, plain);
-}
-
-plainColorizer.message = plain.message;
-plainColorizer.greyMessage = plain.greyMessage;
-
-function coloredColorizer(level) {
-  return colorizeLevel(level, colored);
-}
-
-coloredColorizer.message = colored.message;
-coloredColorizer.greyMessage = colored.greyMessage;
-/**
- * Factory function get a function to colorized levels. The returned function
- * also includes a `.message(str)` method to colorize strings.
- *
- * @param {boolean} [useColors=false] When `true` a function that applies standard
- * terminal colors is returned.
- *
- * @returns {function} `function (level) {}` has a `.message(str)` method to
- * apply colorization to a string. The core function accepts either an integer
- * `level` or a `string` level. The integer level will map to a known level
- * string or to `USERLVL` if not known.  The string `level` will map to the same
- * colors as the integer `level` and will also default to `USERLVL` if the given
- * string is not a recognized level name.
- */
-
-var colors$1 = function getColorizer(useColors = false) {
-  return useColors ? coloredColorizer : plainColorizer;
-};
-
-var utils = {exports: {}};
-
-var rfdc_1 = rfdc;
-
-function copyBuffer(cur) {
-  if (cur instanceof Buffer) {
-    return Buffer.from(cur);
-  }
-
-  return new cur.constructor(cur.buffer.slice(), cur.byteOffset, cur.length);
-}
-
-function rfdc(opts) {
-  opts = opts || {};
-  if (opts.circles) return rfdcCircles(opts);
-  return opts.proto ? cloneProto : clone;
-
-  function cloneArray(a, fn) {
-    var keys = Object.keys(a);
-    var a2 = new Array(keys.length);
-
-    for (var i = 0; i < keys.length; i++) {
-      var k = keys[i];
-      var cur = a[k];
-
-      if (typeof cur !== 'object' || cur === null) {
-        a2[k] = cur;
-      } else if (cur instanceof Date) {
-        a2[k] = new Date(cur);
-      } else if (ArrayBuffer.isView(cur)) {
-        a2[k] = copyBuffer(cur);
-      } else {
-        a2[k] = fn(cur);
-      }
-    }
-
-    return a2;
-  }
-
-  function clone(o) {
-    if (typeof o !== 'object' || o === null) return o;
-    if (o instanceof Date) return new Date(o);
-    if (Array.isArray(o)) return cloneArray(o, clone);
-    if (o instanceof Map) return new Map(cloneArray(Array.from(o), clone));
-    if (o instanceof Set) return new Set(cloneArray(Array.from(o), clone));
-    var o2 = {};
-
-    for (var k in o) {
-      if (Object.hasOwnProperty.call(o, k) === false) continue;
-      var cur = o[k];
-
-      if (typeof cur !== 'object' || cur === null) {
-        o2[k] = cur;
-      } else if (cur instanceof Date) {
-        o2[k] = new Date(cur);
-      } else if (cur instanceof Map) {
-        o2[k] = new Map(cloneArray(Array.from(cur), clone));
-      } else if (cur instanceof Set) {
-        o2[k] = new Set(cloneArray(Array.from(cur), clone));
-      } else if (ArrayBuffer.isView(cur)) {
-        o2[k] = copyBuffer(cur);
-      } else {
-        o2[k] = clone(cur);
-      }
-    }
-
-    return o2;
-  }
-
-  function cloneProto(o) {
-    if (typeof o !== 'object' || o === null) return o;
-    if (o instanceof Date) return new Date(o);
-    if (Array.isArray(o)) return cloneArray(o, cloneProto);
-    if (o instanceof Map) return new Map(cloneArray(Array.from(o), cloneProto));
-    if (o instanceof Set) return new Set(cloneArray(Array.from(o), cloneProto));
-    var o2 = {};
-
-    for (var k in o) {
-      var cur = o[k];
-
-      if (typeof cur !== 'object' || cur === null) {
-        o2[k] = cur;
-      } else if (cur instanceof Date) {
-        o2[k] = new Date(cur);
-      } else if (cur instanceof Map) {
-        o2[k] = new Map(cloneArray(Array.from(cur), cloneProto));
-      } else if (cur instanceof Set) {
-        o2[k] = new Set(cloneArray(Array.from(cur), cloneProto));
-      } else if (ArrayBuffer.isView(cur)) {
-        o2[k] = copyBuffer(cur);
-      } else {
-        o2[k] = cloneProto(cur);
-      }
-    }
-
-    return o2;
-  }
-}
-
-function rfdcCircles(opts) {
-  var refs = [];
-  var refsNew = [];
-  return opts.proto ? cloneProto : clone;
-
-  function cloneArray(a, fn) {
-    var keys = Object.keys(a);
-    var a2 = new Array(keys.length);
-
-    for (var i = 0; i < keys.length; i++) {
-      var k = keys[i];
-      var cur = a[k];
-
-      if (typeof cur !== 'object' || cur === null) {
-        a2[k] = cur;
-      } else if (cur instanceof Date) {
-        a2[k] = new Date(cur);
-      } else if (ArrayBuffer.isView(cur)) {
-        a2[k] = copyBuffer(cur);
-      } else {
-        var index = refs.indexOf(cur);
-
-        if (index !== -1) {
-          a2[k] = refsNew[index];
-        } else {
-          a2[k] = fn(cur);
-        }
-      }
-    }
-
-    return a2;
-  }
-
-  function clone(o) {
-    if (typeof o !== 'object' || o === null) return o;
-    if (o instanceof Date) return new Date(o);
-    if (Array.isArray(o)) return cloneArray(o, clone);
-    if (o instanceof Map) return new Map(cloneArray(Array.from(o), clone));
-    if (o instanceof Set) return new Set(cloneArray(Array.from(o), clone));
-    var o2 = {};
-    refs.push(o);
-    refsNew.push(o2);
-
-    for (var k in o) {
-      if (Object.hasOwnProperty.call(o, k) === false) continue;
-      var cur = o[k];
-
-      if (typeof cur !== 'object' || cur === null) {
-        o2[k] = cur;
-      } else if (cur instanceof Date) {
-        o2[k] = new Date(cur);
-      } else if (cur instanceof Map) {
-        o2[k] = new Map(cloneArray(Array.from(cur), clone));
-      } else if (cur instanceof Set) {
-        o2[k] = new Set(cloneArray(Array.from(cur), clone));
-      } else if (ArrayBuffer.isView(cur)) {
-        o2[k] = copyBuffer(cur);
-      } else {
-        var i = refs.indexOf(cur);
-
-        if (i !== -1) {
-          o2[k] = refsNew[i];
-        } else {
-          o2[k] = clone(cur);
-        }
-      }
-    }
-
-    refs.pop();
-    refsNew.pop();
-    return o2;
-  }
-
-  function cloneProto(o) {
-    if (typeof o !== 'object' || o === null) return o;
-    if (o instanceof Date) return new Date(o);
-    if (Array.isArray(o)) return cloneArray(o, cloneProto);
-    if (o instanceof Map) return new Map(cloneArray(Array.from(o), cloneProto));
-    if (o instanceof Set) return new Set(cloneArray(Array.from(o), cloneProto));
-    var o2 = {};
-    refs.push(o);
-    refsNew.push(o2);
-
-    for (var k in o) {
-      var cur = o[k];
-
-      if (typeof cur !== 'object' || cur === null) {
-        o2[k] = cur;
-      } else if (cur instanceof Date) {
-        o2[k] = new Date(cur);
-      } else if (cur instanceof Map) {
-        o2[k] = new Map(cloneArray(Array.from(cur), cloneProto));
-      } else if (cur instanceof Set) {
-        o2[k] = new Set(cloneArray(Array.from(cur), cloneProto));
-      } else if (ArrayBuffer.isView(cur)) {
-        o2[k] = copyBuffer(cur);
-      } else {
-        var i = refs.indexOf(cur);
-
-        if (i !== -1) {
-          o2[k] = refsNew[i];
-        } else {
-          o2[k] = cloneProto(cur);
-        }
-      }
-    }
-
-    refs.pop();
-    refsNew.pop();
-    return o2;
-  }
-}
-
-var dateformat$1 = {exports: {}};
-
-(function (module, exports) {
-
-  function _typeof(obj) {
-    "@babel/helpers - typeof";
-
-    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-      _typeof = function _typeof(obj) {
-        return typeof obj;
-      };
-    } else {
-      _typeof = function _typeof(obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-      };
-    }
-
-    return _typeof(obj);
-  }
-
-  (function (global) {
-    var _arguments = arguments;
-
-    var dateFormat = function () {
-      var token = /d{1,4}|D{3,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|W{1,2}|[LlopSZN]|"[^"]*"|'[^']*'/g;
-      var timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g;
-      var timezoneClip = /[^-+\dA-Z]/g;
-      return function (date, mask, utc, gmt) {
-        if (_arguments.length === 1 && kindOf(date) === "string" && !/\d/.test(date)) {
-          mask = date;
-          date = undefined;
-        }
-
-        date = date || date === 0 ? date : new Date();
-
-        if (!(date instanceof Date)) {
-          date = new Date(date);
-        }
-
-        if (isNaN(date)) {
-          throw TypeError("Invalid date");
-        }
-
-        mask = String(dateFormat.masks[mask] || mask || dateFormat.masks["default"]);
-        var maskSlice = mask.slice(0, 4);
-
-        if (maskSlice === "UTC:" || maskSlice === "GMT:") {
-          mask = mask.slice(4);
-          utc = true;
-
-          if (maskSlice === "GMT:") {
-            gmt = true;
-          }
-        }
-
-        var _ = function _() {
-          return utc ? "getUTC" : "get";
-        };
-
-        var _d = function d() {
-          return date[_() + "Date"]();
-        };
-
-        var D = function D() {
-          return date[_() + "Day"]();
-        };
-
-        var _m = function m() {
-          return date[_() + "Month"]();
-        };
-
-        var y = function y() {
-          return date[_() + "FullYear"]();
-        };
-
-        var _H = function H() {
-          return date[_() + "Hours"]();
-        };
-
-        var _M = function M() {
-          return date[_() + "Minutes"]();
-        };
-
-        var _s = function s() {
-          return date[_() + "Seconds"]();
-        };
-
-        var _L = function L() {
-          return date[_() + "Milliseconds"]();
-        };
-
-        var _o = function o() {
-          return utc ? 0 : date.getTimezoneOffset();
-        };
-
-        var _W = function W() {
-          return getWeek(date);
-        };
-
-        var _N = function N() {
-          return getDayOfWeek(date);
-        };
-
-        var flags = {
-          d: function d() {
-            return _d();
-          },
-          dd: function dd() {
-            return pad(_d());
-          },
-          ddd: function ddd() {
-            return dateFormat.i18n.dayNames[D()];
-          },
-          DDD: function DDD() {
-            return getDayName({
-              y: y(),
-              m: _m(),
-              d: _d(),
-              _: _(),
-              dayName: dateFormat.i18n.dayNames[D()],
-              short: true
-            });
-          },
-          dddd: function dddd() {
-            return dateFormat.i18n.dayNames[D() + 7];
-          },
-          DDDD: function DDDD() {
-            return getDayName({
-              y: y(),
-              m: _m(),
-              d: _d(),
-              _: _(),
-              dayName: dateFormat.i18n.dayNames[D() + 7]
-            });
-          },
-          m: function m() {
-            return _m() + 1;
-          },
-          mm: function mm() {
-            return pad(_m() + 1);
-          },
-          mmm: function mmm() {
-            return dateFormat.i18n.monthNames[_m()];
-          },
-          mmmm: function mmmm() {
-            return dateFormat.i18n.monthNames[_m() + 12];
-          },
-          yy: function yy() {
-            return String(y()).slice(2);
-          },
-          yyyy: function yyyy() {
-            return pad(y(), 4);
-          },
-          h: function h() {
-            return _H() % 12 || 12;
-          },
-          hh: function hh() {
-            return pad(_H() % 12 || 12);
-          },
-          H: function H() {
-            return _H();
-          },
-          HH: function HH() {
-            return pad(_H());
-          },
-          M: function M() {
-            return _M();
-          },
-          MM: function MM() {
-            return pad(_M());
-          },
-          s: function s() {
-            return _s();
-          },
-          ss: function ss() {
-            return pad(_s());
-          },
-          l: function l() {
-            return pad(_L(), 3);
-          },
-          L: function L() {
-            return pad(Math.floor(_L() / 10));
-          },
-          t: function t() {
-            return _H() < 12 ? dateFormat.i18n.timeNames[0] : dateFormat.i18n.timeNames[1];
-          },
-          tt: function tt() {
-            return _H() < 12 ? dateFormat.i18n.timeNames[2] : dateFormat.i18n.timeNames[3];
-          },
-          T: function T() {
-            return _H() < 12 ? dateFormat.i18n.timeNames[4] : dateFormat.i18n.timeNames[5];
-          },
-          TT: function TT() {
-            return _H() < 12 ? dateFormat.i18n.timeNames[6] : dateFormat.i18n.timeNames[7];
-          },
-          Z: function Z() {
-            return gmt ? "GMT" : utc ? "UTC" : (String(date).match(timezone) || [""]).pop().replace(timezoneClip, "").replace(/GMT\+0000/g, "UTC");
-          },
-          o: function o() {
-            return (_o() > 0 ? "-" : "+") + pad(Math.floor(Math.abs(_o()) / 60) * 100 + Math.abs(_o()) % 60, 4);
-          },
-          p: function p() {
-            return (_o() > 0 ? "-" : "+") + pad(Math.floor(Math.abs(_o()) / 60), 2) + ":" + pad(Math.floor(Math.abs(_o()) % 60), 2);
-          },
-          S: function S() {
-            return ["th", "st", "nd", "rd"][_d() % 10 > 3 ? 0 : (_d() % 100 - _d() % 10 != 10) * _d() % 10];
-          },
-          W: function W() {
-            return _W();
-          },
-          WW: function WW() {
-            return pad(_W());
-          },
-          N: function N() {
-            return _N();
-          }
-        };
-        return mask.replace(token, function (match) {
-          if (match in flags) {
-            return flags[match]();
-          }
-
-          return match.slice(1, match.length - 1);
-        });
-      };
-    }();
-
-    dateFormat.masks = {
-      default: "ddd mmm dd yyyy HH:MM:ss",
-      shortDate: "m/d/yy",
-      paddedShortDate: "mm/dd/yyyy",
-      mediumDate: "mmm d, yyyy",
-      longDate: "mmmm d, yyyy",
-      fullDate: "dddd, mmmm d, yyyy",
-      shortTime: "h:MM TT",
-      mediumTime: "h:MM:ss TT",
-      longTime: "h:MM:ss TT Z",
-      isoDate: "yyyy-mm-dd",
-      isoTime: "HH:MM:ss",
-      isoDateTime: "yyyy-mm-dd'T'HH:MM:sso",
-      isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'",
-      expiresHeaderFormat: "ddd, dd mmm yyyy HH:MM:ss Z"
-    };
-    dateFormat.i18n = {
-      dayNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-      timeNames: ["a", "p", "am", "pm", "A", "P", "AM", "PM"]
-    };
-
-    var pad = function pad(val, len) {
-      val = String(val);
-      len = len || 2;
-
-      while (val.length < len) {
-        val = "0" + val;
-      }
-
-      return val;
-    };
-
-    var getDayName = function getDayName(_ref) {
-      var y = _ref.y,
-          m = _ref.m,
-          d = _ref.d,
-          _ = _ref._,
-          dayName = _ref.dayName,
-          _ref$short = _ref["short"],
-          _short = _ref$short === void 0 ? false : _ref$short;
-
-      var today = new Date();
-      var yesterday = new Date();
-      yesterday.setDate(yesterday[_ + "Date"]() - 1);
-      var tomorrow = new Date();
-      tomorrow.setDate(tomorrow[_ + "Date"]() + 1);
-
-      var today_d = function today_d() {
-        return today[_ + "Date"]();
-      };
-
-      var today_m = function today_m() {
-        return today[_ + "Month"]();
-      };
-
-      var today_y = function today_y() {
-        return today[_ + "FullYear"]();
-      };
-
-      var yesterday_d = function yesterday_d() {
-        return yesterday[_ + "Date"]();
-      };
-
-      var yesterday_m = function yesterday_m() {
-        return yesterday[_ + "Month"]();
-      };
-
-      var yesterday_y = function yesterday_y() {
-        return yesterday[_ + "FullYear"]();
-      };
-
-      var tomorrow_d = function tomorrow_d() {
-        return tomorrow[_ + "Date"]();
-      };
-
-      var tomorrow_m = function tomorrow_m() {
-        return tomorrow[_ + "Month"]();
-      };
-
-      var tomorrow_y = function tomorrow_y() {
-        return tomorrow[_ + "FullYear"]();
-      };
-
-      if (today_y() === y && today_m() === m && today_d() === d) {
-        return _short ? "Tdy" : "Today";
-      } else if (yesterday_y() === y && yesterday_m() === m && yesterday_d() === d) {
-        return _short ? "Ysd" : "Yesterday";
-      } else if (tomorrow_y() === y && tomorrow_m() === m && tomorrow_d() === d) {
-        return _short ? "Tmw" : "Tomorrow";
-      }
-
-      return dayName;
-    };
-
-    var getWeek = function getWeek(date) {
-      var targetThursday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      targetThursday.setDate(targetThursday.getDate() - (targetThursday.getDay() + 6) % 7 + 3);
-      var firstThursday = new Date(targetThursday.getFullYear(), 0, 4);
-      firstThursday.setDate(firstThursday.getDate() - (firstThursday.getDay() + 6) % 7 + 3);
-      var ds = targetThursday.getTimezoneOffset() - firstThursday.getTimezoneOffset();
-      targetThursday.setHours(targetThursday.getHours() - ds);
-      var weekDiff = (targetThursday - firstThursday) / (864e5 * 7);
-      return 1 + Math.floor(weekDiff);
-    };
-
-    var getDayOfWeek = function getDayOfWeek(date) {
-      var dow = date.getDay();
-
-      if (dow === 0) {
-        dow = 7;
-      }
-
-      return dow;
-    };
-
-    var kindOf = function kindOf(val) {
-      if (val === null) {
-        return "null";
-      }
-
-      if (val === undefined) {
-        return "undefined";
-      }
-
-      if (_typeof(val) !== "object") {
-        return _typeof(val);
-      }
-
-      if (Array.isArray(val)) {
-        return "array";
-      }
-
-      return {}.toString.call(val).slice(8, -1).toLowerCase();
-    };
-
-    if ((_typeof(exports)) === "object") {
-      module.exports = dateFormat;
-    } else {
-      global.dateFormat = dateFormat;
-    }
-  })(void 0);
-})(dateformat$1, dateformat$1.exports);
-
-const clone = rfdc_1({
-  circles: true
-});
-const dateformat = dateformat$1.exports;
-const stringifySafe$1 = fastSafeStringify;
-const defaultColorizer = colors$1();
-const {
-  DATE_FORMAT,
-  ERROR_LIKE_KEYS: ERROR_LIKE_KEYS$1,
-  MESSAGE_KEY: MESSAGE_KEY$1,
-  LEVEL_KEY,
-  LEVEL_LABEL,
-  TIMESTAMP_KEY: TIMESTAMP_KEY$1,
-  LOGGER_KEYS,
-  LEVELS
-} = constants;
-utils.exports = {
-  isObject: isObject$1,
-  prettifyErrorLog: prettifyErrorLog$1,
-  prettifyLevel: prettifyLevel$1,
-  prettifyMessage: prettifyMessage$1,
-  prettifyMetadata: prettifyMetadata$1,
-  prettifyObject: prettifyObject$1,
-  prettifyTime: prettifyTime$1,
-  filterLog: filterLog$1
-};
-utils.exports.internals = {
-  formatTime,
-  joinLinesWithIndentation,
-  prettifyError,
-  deleteLogProperty,
-  splitIgnoreKey,
-  createDate,
-  isValidDate
-};
-/**
- * Converts a given `epoch` to a desired display format.
- *
- * @param {number|string} epoch The time to convert. May be any value that is
- * valid for `new Date()`.
- * @param {boolean|string} [translateTime=false] When `false`, the given `epoch`
- * will simply be returned. When `true`, the given `epoch` will be converted
- * to a string at UTC using the `DATE_FORMAT` constant. If `translateTime` is
- * a string, the following rules are available:
- *
- * - `<format string>`: The string is a literal format string. This format
- * string will be used to interpret the `epoch` and return a display string
- * at UTC.
- * - `SYS:STANDARD`: The returned display string will follow the `DATE_FORMAT`
- * constant at the system's local timezone.
- * - `SYS:<format string>`: The returned display string will follow the given
- * `<format string>` at the system's local timezone.
- * - `UTC:<format string>`: The returned display string will follow the given
- * `<format string>` at UTC.
- *
- * @returns {number|string} The formatted time.
- */
-
-function formatTime(epoch, translateTime = false) {
-  if (translateTime === false) {
-    return epoch;
-  }
-
-  const instant = createDate(epoch); // If the Date is invalid, do not attempt to format
-
-  if (!isValidDate(instant)) {
-    return epoch;
-  }
-
-  if (translateTime === true) {
-    return dateformat(instant, 'UTC:' + DATE_FORMAT);
-  }
-
-  const upperFormat = translateTime.toUpperCase();
-
-  if (upperFormat === 'SYS:STANDARD') {
-    return dateformat(instant, DATE_FORMAT);
-  }
-
-  const prefix = upperFormat.substr(0, 4);
-
-  if (prefix === 'SYS:' || prefix === 'UTC:') {
-    if (prefix === 'UTC:') {
-      return dateformat(instant, translateTime);
-    }
-
-    return dateformat(instant, translateTime.slice(4));
-  }
-
-  return dateformat(instant, `UTC:${translateTime}`);
-}
-/**
- * Constructs a JS Date from a number or string. Accepts any single number
- * or single string argument that is valid for the Date() constructor,
- * or an epoch as a string.
- *
- * @param {string|number} epoch The representation of the Date.
- *
- * @returns {Date} The constructed Date.
- */
-
-
-function createDate(epoch) {
-  // If epoch is already a valid argument, return the valid Date
-  let date = new Date(epoch);
-
-  if (isValidDate(date)) {
-    return date;
-  } // Convert to a number to permit epoch as a string
-
-
-  date = new Date(+epoch);
-  return date;
-}
-/**
- * Checks if the argument is a JS Date and not 'Invalid Date'.
- *
- * @param {Date} date The date to check.
- *
- * @returns {boolean} true if the argument is a JS Date and not 'Invalid Date'.
- */
-
-
-function isValidDate(date) {
-  return date instanceof Date && !Number.isNaN(date.getTime());
-}
-
-function isObject$1(input) {
-  return Object.prototype.toString.apply(input) === '[object Object]';
-}
-/**
- * Given a string with line separators, either `\r\n` or `\n`, add indentation
- * to all lines subsequent to the first line and rejoin the lines using an
- * end of line sequence.
- *
- * @param {object} input
- * @param {string} input.input The string to split and reformat.
- * @param {string} [input.ident] The indentation string. Default: `    ` (4 spaces).
- * @param {string} [input.eol] The end of line sequence to use when rejoining
- * the lines. Default: `'\n'`.
- *
- * @returns {string} A string with lines subsequent to the first indented
- * with the given indentation sequence.
- */
-
-
-function joinLinesWithIndentation({
-  input,
-  ident = '    ',
-  eol = '\n'
-}) {
-  const lines = input.split(/\r?\n/);
-
-  for (let i = 1; i < lines.length; i += 1) {
-    lines[i] = ident + lines[i];
-  }
-
-  return lines.join(eol);
-}
-/**
- * Given a log object that has a `type: 'Error'` key, prettify the object and
- * return the result. In other
- *
- * @param {object} input
- * @param {object} input.log The error log to prettify.
- * @param {string} [input.messageKey] The name of the key that contains a
- * general log message. This is not the error's message property but the logger
- * messsage property. Default: `MESSAGE_KEY` constant.
- * @param {string} [input.ident] The sequence to use for indentation. Default: `'    '`.
- * @param {string} [input.eol] The sequence to use for EOL. Default: `'\n'`.
- * @param {string[]} [input.errorLikeKeys] A set of keys that should be considered
- * to have error objects as values. Default: `ERROR_LIKE_KEYS` constant.
- * @param {string[]} [input.errorProperties] A set of specific error object
- * properties, that are not the value of `messageKey`, `type`, or `stack`, to
- * include in the prettified result. The first entry in the list may be `'*'`
- * to indicate that all sibiling properties should be prettified. Default: `[]`.
- *
- * @returns {string} A sring that represents the prettified error log.
- */
-
-
-function prettifyErrorLog$1({
-  log,
-  messageKey = MESSAGE_KEY$1,
-  ident = '    ',
-  eol = '\n',
-  errorLikeKeys = ERROR_LIKE_KEYS$1,
-  errorProperties = []
-}) {
-  const stack = log.stack;
-  const joinedLines = joinLinesWithIndentation({
-    input: stack,
-    ident,
-    eol
-  });
-  let result = `${ident}${joinedLines}${eol}`;
-
-  if (errorProperties.length > 0) {
-    const excludeProperties = LOGGER_KEYS.concat(messageKey, 'type', 'stack');
-    let propertiesToPrint;
-
-    if (errorProperties[0] === '*') {
-      // Print all sibling properties except for the standard exclusions.
-      propertiesToPrint = Object.keys(log).filter(k => excludeProperties.includes(k) === false);
-    } else {
-      // Print only specified properties unless the property is a standard exclusion.
-      propertiesToPrint = errorProperties.filter(k => excludeProperties.includes(k) === false);
-    }
-
-    for (let i = 0; i < propertiesToPrint.length; i += 1) {
-      const key = propertiesToPrint[i];
-      if (key in log === false) continue;
-
-      if (isObject$1(log[key])) {
-        // The nested object may have "logger" type keys but since they are not
-        // at the root level of the object being processed, we want to print them.
-        // Thus, we invoke with `excludeLoggerKeys: false`.
-        const prettifiedObject = prettifyObject$1({
-          input: log[key],
-          errorLikeKeys,
-          excludeLoggerKeys: false,
-          eol,
-          ident
-        });
-        result = `${result}${key}: {${eol}${prettifiedObject}}${eol}`;
-        continue;
-      }
-
-      result = `${result}${key}: ${log[key]}${eol}`;
-    }
-  }
-
-  return result;
-}
-/**
- * Checks if the passed in log has a `level` value and returns a prettified
- * string for that level if so.
- *
- * @param {object} input
- * @param {object} input.log The log object.
- * @param {function} [input.colorizer] A colorizer function that accepts a level
- * value and returns a colorized string. Default: a no-op colorizer.
- * @param {string} [levelKey='level'] The key to find the level under.
- *
- * @returns {undefined|string} If `log` does not have a `level` property then
- * `undefined` will be returned. Otherwise, a string from the specified
- * `colorizer` is returned.
- */
-
-
-function prettifyLevel$1({
-  log,
-  colorizer = defaultColorizer,
-  levelKey = LEVEL_KEY
-}) {
-  if (levelKey in log === false) return undefined;
-  return colorizer(log[levelKey]);
-}
-/**
- * Prettifies a message string if the given `log` has a message property.
- *
- * @param {object} input
- * @param {object} input.log The log object with the message to colorize.
- * @param {string} [input.messageKey='msg'] The property of the `log` that is the
- * message to be prettified.
- * @param {string|function} [input.messageFormat=undefined] A format string or function that defines how the
- *  logged message should be formatted, e.g. `'{level} - {pid}'`.
- * @param {function} [input.colorizer] A colorizer function that has a
- * `.message(str)` method attached to it. This function should return a colorized
- * string which will be the "prettified" message. Default: a no-op colorizer.
- *
- * @returns {undefined|string} If the message key is not found, or the message
- * key is not a string, then `undefined` will be returned. Otherwise, a string
- * that is the prettified message.
- */
-
-
-function prettifyMessage$1({
-  log,
-  messageFormat,
-  messageKey = MESSAGE_KEY$1,
-  colorizer = defaultColorizer,
-  levelLabel = LEVEL_LABEL
-}) {
-  if (messageFormat && typeof messageFormat === 'string') {
-    const message = String(messageFormat).replace(/{([^{}]+)}/g, function (match, p1) {
-      // return log level as string instead of int
-      if (p1 === levelLabel && log[LEVEL_KEY]) {
-        return LEVELS[log[LEVEL_KEY]];
-      } // Parse nested key access, e.g. `{keyA.subKeyB}`.
-
-
-      return p1.split('.').reduce(function (prev, curr) {
-        if (prev && prev[curr]) {
-          return prev[curr];
-        }
-
-        return '';
-      }, log);
-    });
-    return colorizer.message(message);
-  }
-
-  if (messageFormat && typeof messageFormat === 'function') {
-    const msg = messageFormat(log, messageKey, levelLabel);
-    return colorizer.message(msg);
-  }
-
-  if (messageKey in log === false) return undefined;
-  if (typeof log[messageKey] !== 'string') return undefined;
-  return colorizer.message(log[messageKey]);
-}
-/**
- * Prettifies metadata that is usually present in a Pino log line. It looks for
- * fields `name`, `pid`, `hostname`, and `caller` and returns a formatted string using
- * the fields it finds.
- *
- * @param {object} input
- * @param {object} input.log The log that may or may not contain metadata to
- * be prettified.
- *
- * @returns {undefined|string} If no metadata is found then `undefined` is
- * returned. Otherwise, a string of prettified metadata is returned.
- */
-
-
-function prettifyMetadata$1({
-  log
-}) {
-  let line = '';
-
-  if (log.name || log.pid || log.hostname) {
-    line += '(';
-
-    if (log.name) {
-      line += log.name;
-    }
-
-    if (log.name && log.pid) {
-      line += '/' + log.pid;
-    } else if (log.pid) {
-      line += log.pid;
-    }
-
-    if (log.hostname) {
-      // If `pid` and `name` were in the ignore keys list then we don't need
-      // the leading space.
-      line += `${line === '(' ? 'on' : ' on'} ${log.hostname}`;
-    }
-
-    line += ')';
-  }
-
-  if (log.caller) {
-    line += `${line === '' ? '' : ' '}<${log.caller}>`;
-  }
-
-  if (line === '') {
-    return undefined;
-  } else {
-    return line;
-  }
-}
-/**
- * Prettifies a standard object. Special care is taken when processing the object
- * to handle child objects that are attached to keys known to contain error
- * objects.
- *
- * @param {object} input
- * @param {object} input.input The object to prettify.
- * @param {string} [input.ident] The identation sequence to use. Default: `'    '`.
- * @param {string} [input.eol] The EOL sequence to use. Default: `'\n'`.
- * @param {string[]} [input.skipKeys] A set of object keys to exclude from the
- * prettified result. Default: `[]`.
- * @param {Object<string, function>} [input.customPrettifiers] Dictionary of
- * custom prettifiers. Default: `{}`.
- * @param {string[]} [input.errorLikeKeys] A set of object keys that contain
- * error objects. Default: `ERROR_LIKE_KEYS` constant.
- * @param {boolean} [input.excludeLoggerKeys] Indicates if known logger specific
- * keys should be excluded from prettification. Default: `true`.
- * @param {boolean} [input.singleLine] Should non-error keys all be formatted
- * on a single line? This does NOT apply to errors, which will still be
- * multi-line. Default: `false`
- *
- * @returns {string} The prettified string. This can be as little as `''` if
- * there was nothing to prettify.
- */
-
-
-function prettifyObject$1({
-  input,
-  ident = '    ',
-  eol = '\n',
-  skipKeys = [],
-  customPrettifiers = {},
-  errorLikeKeys = ERROR_LIKE_KEYS$1,
-  excludeLoggerKeys = true,
-  singleLine = false,
-  colorizer = defaultColorizer
-}) {
-  const keysToIgnore = [].concat(skipKeys);
-  if (excludeLoggerKeys === true) Array.prototype.push.apply(keysToIgnore, LOGGER_KEYS);
-  let result = ''; // Split object keys into two categories: error and non-error
-
-  const {
-    plain,
-    errors
-  } = Object.entries(input).reduce(({
-    plain,
-    errors
-  }, [k, v]) => {
-    if (keysToIgnore.includes(k) === false) {
-      // Pre-apply custom prettifiers, because all 3 cases below will need this
-      const pretty = typeof customPrettifiers[k] === 'function' ? customPrettifiers[k](v, k, input) : v;
-
-      if (errorLikeKeys.includes(k)) {
-        errors[k] = pretty;
-      } else {
-        plain[k] = pretty;
-      }
-    }
-
-    return {
-      plain,
-      errors
-    };
-  }, {
-    plain: {},
-    errors: {}
-  });
-
-  if (singleLine) {
-    // Stringify the entire object as a single JSON line
-    if (Object.keys(plain).length > 0) {
-      result += colorizer.greyMessage(stringifySafe$1(plain));
-    }
-
-    result += eol;
-  } else {
-    // Put each object entry on its own line
-    Object.entries(plain).forEach(([keyName, keyValue]) => {
-      // custom prettifiers are already applied above, so we can skip it now
-      const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : stringifySafe$1(keyValue, null, 2);
-      if (lines === undefined) return;
-      const joinedLines = joinLinesWithIndentation({
-        input: lines,
-        ident,
-        eol
-      });
-      result += `${ident}${keyName}: ${joinedLines}${eol}`;
-    });
-  } // Errors
-
-
-  Object.entries(errors).forEach(([keyName, keyValue]) => {
-    // custom prettifiers are already applied above, so we can skip it now
-    const lines = typeof customPrettifiers[keyName] === 'function' ? keyValue : stringifySafe$1(keyValue, null, 2);
-    if (lines === undefined) return;
-    result += prettifyError({
-      keyName,
-      lines,
-      eol,
-      ident
-    });
-  });
-  return result;
-}
-/**
- * Prettifies a timestamp if the given `log` has either `time`, `timestamp` or custom specified timestamp
- * property.
- *
- * @param {object} input
- * @param {object} input.log The log object with the timestamp to be prettified.
- * @param {string} [input.timestampKey='time'] The log property that should be used to resolve timestamp value
- * @param {boolean|string} [input.translateFormat=undefined] When `true` the
- * timestamp will be prettified into a string at UTC using the default
- * `DATE_FORMAT`. If a string, then `translateFormat` will be used as the format
- * string to determine the output; see the `formatTime` function for details.
- *
- * @returns {undefined|string} If a timestamp property cannot be found then
- * `undefined` is returned. Otherwise, the prettified time is returned as a
- * string.
- */
-
-
-function prettifyTime$1({
-  log,
-  timestampKey = TIMESTAMP_KEY$1,
-  translateFormat = undefined
-}) {
-  let time = null;
-
-  if (timestampKey in log) {
-    time = log[timestampKey];
-  } else if ('timestamp' in log) {
-    time = log.timestamp;
-  }
-
-  if (time === null) return undefined;
-
-  if (translateFormat) {
-    return '[' + formatTime(time, translateFormat) + ']';
-  }
-
-  return `[${time}]`;
-}
-/**
- * Prettifies an error string into a multi-line format.
- * @param {object} input
- * @param {string} input.keyName The key assigned to this error in the log object
- * @param {string} input.lines The STRINGIFIED error. If the error field has a
- *  custom prettifier, that should be pre-applied as well
- * @param {string} input.ident The indentation sequence to use
- * @param {string} input.eol The EOL sequence to use
- */
-
-
-function prettifyError({
-  keyName,
-  lines,
-  eol,
-  ident
-}) {
-  let result = '';
-  const joinedLines = joinLinesWithIndentation({
-    input: lines,
-    ident,
-    eol
-  });
-  const splitLines = `${ident}${keyName}: ${joinedLines}${eol}`.split(eol);
-
-  for (let j = 0; j < splitLines.length; j += 1) {
-    if (j !== 0) result += eol;
-    const line = splitLines[j];
-
-    if (/^\s*"stack"/.test(line)) {
-      const matches = /^(\s*"stack":)\s*(".*"),?$/.exec(line);
-      /* istanbul ignore else */
-
-      if (matches && matches.length === 3) {
-        const indentSize = /^\s*/.exec(line)[0].length + 4;
-        const indentation = ' '.repeat(indentSize);
-        const stackMessage = matches[2];
-        result += matches[1] + eol + indentation + JSON.parse(stackMessage).replace(/\n/g, eol + indentation);
-      }
-    } else {
-      result += line;
-    }
-  }
-
-  return result;
-}
-/**
- * Splits the input key delimited by a dot character but not when it is preceded
- * by a backslash.
- *
- * @param {string} key A string identifying the property.
- *
- * @returns {string[]} Returns a list of string containing each delimited property.
- * e.g. `'prop2\.domain\.corp.prop2'` should return [ 'prop2.domain.com', 'prop2' ]
- */
-
-
-function splitIgnoreKey(key) {
-  const result = [];
-  let backslash = false;
-  let segment = '';
-
-  for (let i = 0; i < key.length; i++) {
-    const c = key.charAt(i);
-
-    if (c === '\\') {
-      backslash = true;
-      continue;
-    }
-
-    if (backslash) {
-      backslash = false;
-      segment += c;
-      continue;
-    }
-    /* Non-escaped dot, push to result */
-
-
-    if (c === '.') {
-      result.push(segment);
-      segment = '';
-      continue;
-    }
-
-    segment += c;
-  }
-  /* Push last entry to result */
-
-
-  if (segment.length) {
-    result.push(segment);
-  }
-
-  return result;
-}
-/**
- * Deletes a specified property from a log object if it exists.
- * This function mutates the passed in `log` object.
- *
- * @param {object} log The log object to be modified.
- * @param {string} property A string identifying the property to be deleted from
- * the log object. Accepts nested properties delimited by a `.`
- * Delimiter can be escaped to preserve property names that contain the delimiter.
- * e.g. `'prop1.prop2'` or `'prop2\.domain\.corp.prop2'`
- */
-
-
-function deleteLogProperty(log, property) {
-  const props = splitIgnoreKey(property);
-  const propToDelete = props.pop();
-  props.forEach(prop => {
-    if (!Object.prototype.hasOwnProperty.call(log, prop)) {
-      return;
-    }
-
-    log = log[prop];
-  });
-  delete log[propToDelete];
-}
-/**
- * Filter a log object by removing any ignored keys.
- *
- * @param {object} log The log object to be modified.
- * @param {string} ignoreKeys An array of strings identifying the properties to be removed.
- *
- * @returns {object} A new `log` object instance that does not include the ignored keys.
- */
-
-
-function filterLog$1(log, ignoreKeys) {
-  const logCopy = clone(log);
-  ignoreKeys.forEach(ignoreKey => {
-    deleteLogProperty(logCopy, ignoreKey);
-  });
-  return logCopy;
-}
-
-const {
-  isColorSupported
-} = colorette;
-const pump = pump_1;
-const {
-  Transform
-} = require$$0__default$4["default"];
-const abstractTransport = pinoAbstractTransport;
-const sonic = sonicBoom;
-const sjs = secureJsonParse;
-const colors = colors$1;
-const {
-  ERROR_LIKE_KEYS,
-  MESSAGE_KEY,
-  TIMESTAMP_KEY
-} = constants;
-const {
-  isObject,
-  prettifyErrorLog,
-  prettifyLevel,
-  prettifyMessage,
-  prettifyMetadata,
-  prettifyObject,
-  prettifyTime,
-  filterLog
-} = utils.exports;
-
-const jsonParser = input => {
-  try {
-    return {
-      value: sjs.parse(input, {
-        protoAction: 'remove'
-      })
-    };
-  } catch (err) {
-    return {
-      err
-    };
-  }
-};
-
-const defaultOptions$1 = {
-  colorize: isColorSupported,
-  crlf: false,
-  errorLikeObjectKeys: ERROR_LIKE_KEYS,
-  errorProps: '',
-  levelFirst: false,
-  messageKey: MESSAGE_KEY,
-  messageFormat: false,
-  timestampKey: TIMESTAMP_KEY,
-  translateTime: false,
-  useMetadata: false,
-  outputStream: process.stdout,
-  customPrettifiers: {},
-  hideObject: false,
-  singleLine: false
-};
-
-function prettyFactory(options) {
-  const opts = Object.assign({}, defaultOptions$1, options);
-  const EOL = opts.crlf ? '\r\n' : '\n';
-  const IDENT = '    ';
-  const messageKey = opts.messageKey;
-  const levelKey = opts.levelKey;
-  const levelLabel = opts.levelLabel;
-  const messageFormat = opts.messageFormat;
-  const timestampKey = opts.timestampKey;
-  const errorLikeObjectKeys = opts.errorLikeObjectKeys;
-  const errorProps = opts.errorProps.split(',');
-  const customPrettifiers = opts.customPrettifiers;
-  const ignoreKeys = opts.ignore ? new Set(opts.ignore.split(',')) : undefined;
-  const hideObject = opts.hideObject;
-  const singleLine = opts.singleLine;
-  const colorizer = colors(opts.colorize);
-  return pretty;
-
-  function pretty(inputData) {
-    let log;
-
-    if (!isObject(inputData)) {
-      const parsed = jsonParser(inputData);
-
-      if (parsed.err || !isObject(parsed.value)) {
-        // pass through
-        return inputData + EOL;
-      }
-
-      log = parsed.value;
-    } else {
-      log = inputData;
-    }
-
-    const prettifiedMessage = prettifyMessage({
-      log,
-      messageKey,
-      colorizer,
-      messageFormat,
-      levelLabel
-    });
-
-    if (ignoreKeys) {
-      log = filterLog(log, ignoreKeys);
-    }
-
-    const prettifiedLevel = prettifyLevel({
-      log,
-      colorizer,
-      levelKey
-    });
-    const prettifiedMetadata = prettifyMetadata({
-      log
-    });
-    const prettifiedTime = prettifyTime({
-      log,
-      translateFormat: opts.translateTime,
-      timestampKey
-    });
-    let line = '';
-
-    if (opts.levelFirst && prettifiedLevel) {
-      line = `${prettifiedLevel}`;
-    }
-
-    if (prettifiedTime && line === '') {
-      line = `${prettifiedTime}`;
-    } else if (prettifiedTime) {
-      line = `${line} ${prettifiedTime}`;
-    }
-
-    if (!opts.levelFirst && prettifiedLevel) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedLevel}`;
-      } else {
-        line = prettifiedLevel;
-      }
-    }
-
-    if (prettifiedMetadata) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedMetadata}:`;
-      } else {
-        line = prettifiedMetadata;
-      }
-    }
-
-    if (line.endsWith(':') === false && line !== '') {
-      line += ':';
-    }
-
-    if (prettifiedMessage) {
-      if (line.length > 0) {
-        line = `${line} ${prettifiedMessage}`;
-      } else {
-        line = prettifiedMessage;
-      }
-    }
-
-    if (line.length > 0 && !singleLine) {
-      line += EOL;
-    }
-
-    if (log.type === 'Error' && log.stack) {
-      const prettifiedErrorLog = prettifyErrorLog({
-        log,
-        errorLikeKeys: errorLikeObjectKeys,
-        errorProperties: errorProps,
-        ident: IDENT,
-        eol: EOL
-      });
-      line += prettifiedErrorLog;
-    } else if (!hideObject) {
-      const skipKeys = [messageKey, levelKey, timestampKey].filter(key => typeof log[key] === 'string' || typeof log[key] === 'number');
-      const prettifiedObject = prettifyObject({
-        input: log,
-        skipKeys,
-        customPrettifiers,
-        errorLikeKeys: errorLikeObjectKeys,
-        eol: EOL,
-        ident: IDENT,
-        singleLine,
-        colorizer
-      }); // In single line mode, include a space only if prettified version isn't empty
-
-      if (singleLine && !/^\s$/.test(prettifiedObject)) {
-        line += ' ';
-      }
-
-      line += prettifiedObject;
-    }
-
-    return line;
-  }
-}
-
-function build(opts = {}) {
-  const pretty = prettyFactory(opts);
-  return abstractTransport(function (source) {
-    const stream = new Transform({
-      objectMode: true,
-      autoDestroy: true,
-
-      transform(chunk, enc, cb) {
-        const line = pretty(chunk);
-        cb(null, line);
-      }
-
-    });
-    const destination = sonic({
-      dest: opts.destination || 1,
-      sync: false
-    });
-    /* istanbul ignore else */
-
-    if (destination.fd === 1) {
-      // We cannot close the output
-      destination.end = function () {
-        this.emit('close');
-      };
-    }
-
-    source.on('unknown', function (line) {
-      destination.write(line + '\n');
-    });
-    pump(source, stream, destination);
-    return stream;
-  }, {
-    parse: 'lines'
-  });
-}
-
-pinoPretty.exports = build;
-pinoPretty.exports.prettyFactory = prettyFactory;
-
-pinoPretty.exports.default = build;
-
 /* eslint no-prototype-builtins: 0 */
 
 
@@ -7472,7 +4700,7 @@ const {
   mapHttpRequest,
   mapHttpResponse
 } = pinoStdSerializers;
-const SonicBoom$1 = sonicBoom$1;
+const SonicBoom$1 = sonicBoom;
 const stringifySafe = fastSafeStringify;
 const {
   lsCacheSym: lsCacheSym$2,
@@ -7664,7 +4892,8 @@ function getPrettyStream(opts, prettifier, dest, instance) {
   }
 
   try {
-    const prettyFactory = pinoPretty.exports.prettyFactory || pinoPretty.exports;
+    const prettyFactory = require('pino-pretty').prettyFactory || require('pino-pretty');
+
     prettyFactory.asMetaWrapper = prettifierMetaWrapper;
     return prettifierMetaWrapper(prettyFactory(opts), dest, opts);
   } catch (e) {
@@ -8299,7 +5528,7 @@ var meta = {
 const {
   EventEmitter: EventEmitter$2
 } = require$$0__default$2["default"];
-const SonicBoom = sonicBoom$1;
+const SonicBoom = sonicBoom;
 const flatstr = flatstr_1;
 const warning = deprecations;
 const {
@@ -8541,7 +5770,7 @@ function flush() {
 /* eslint no-prototype-builtins: 0 */
 
 
-const os = require$$0__default$5["default"];
+const os = require$$0__default$3["default"];
 const stdSerializers = pinoStdSerializers;
 const redaction = redaction_1;
 const time = time$1;
@@ -9064,8 +6293,8 @@ class RequestCancelled$1 extends Error {
 
 var RequestCancelled_1 = RequestCancelled$1;
 
-const zlib = require$$0__default$6["default"];
-const http = require$$1__default$1["default"];
+const zlib = require$$0__default$4["default"];
+const http = require$$1__default["default"];
 const https = require$$2__default["default"];
 const ON_CANCEL = cancel;
 const RequestCancelled = RequestCancelled_1;
@@ -9334,1429 +6563,9 @@ var qq = {
 
 var crypto$3 = {exports: {}};
 
-var long = Long$1;
-/**
- * wasm optimizations, to do native i64 multiplication and divide
- */
-
-var wasm = null;
-
-try {
-  wasm = new WebAssembly.Instance(new WebAssembly.Module(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 13, 2, 96, 0, 1, 127, 96, 4, 127, 127, 127, 127, 1, 127, 3, 7, 6, 0, 1, 1, 1, 1, 1, 6, 6, 1, 127, 1, 65, 0, 11, 7, 50, 6, 3, 109, 117, 108, 0, 1, 5, 100, 105, 118, 95, 115, 0, 2, 5, 100, 105, 118, 95, 117, 0, 3, 5, 114, 101, 109, 95, 115, 0, 4, 5, 114, 101, 109, 95, 117, 0, 5, 8, 103, 101, 116, 95, 104, 105, 103, 104, 0, 0, 10, 191, 1, 6, 4, 0, 35, 0, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 126, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 127, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 128, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 129, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11, 36, 1, 1, 126, 32, 0, 173, 32, 1, 173, 66, 32, 134, 132, 32, 2, 173, 32, 3, 173, 66, 32, 134, 132, 130, 34, 4, 66, 32, 135, 167, 36, 0, 32, 4, 167, 11])), {}).exports;
-} catch (e) {// no wasm support :(
-}
-/**
- * Constructs a 64 bit two's-complement integer, given its low and high 32 bit values as *signed* integers.
- *  See the from* functions below for more convenient ways of constructing Longs.
- * @exports Long
- * @class A Long class for representing a 64 bit two's-complement integer value.
- * @param {number} low The low (signed) 32 bits of the long
- * @param {number} high The high (signed) 32 bits of the long
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @constructor
- */
-
-
-function Long$1(low, high, unsigned) {
-  /**
-   * The low 32 bits as a signed value.
-   * @type {number}
-   */
-  this.low = low | 0;
-  /**
-   * The high 32 bits as a signed value.
-   * @type {number}
-   */
-
-  this.high = high | 0;
-  /**
-   * Whether unsigned or not.
-   * @type {boolean}
-   */
-
-  this.unsigned = !!unsigned;
-} // The internal representation of a long is the two given signed, 32-bit values.
-// We use 32-bit pieces because these are the size of integers on which
-// Javascript performs bit-operations.  For operations like addition and
-// multiplication, we split each number into 16 bit pieces, which can easily be
-// multiplied within Javascript's floating-point representation without overflow
-// or change in sign.
-//
-// In the algorithms below, we frequently reduce the negative case to the
-// positive case by negating the input(s) and then post-processing the result.
-// Note that we must ALWAYS check specially whether those values are MIN_VALUE
-// (-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as
-// a positive number, it overflows back into a negative).  Not handling this
-// case would often result in infinite recursion.
-//
-// Common constant values ZERO, ONE, NEG_ONE, etc. are defined below the from*
-// methods on which they depend.
-
-/**
- * An indicator used to reliably determine if an object is a Long or not.
- * @type {boolean}
- * @const
- * @private
- */
-
-
-Long$1.prototype.__isLong__;
-Object.defineProperty(Long$1.prototype, "__isLong__", {
-  value: true
-});
-/**
- * @function
- * @param {*} obj Object
- * @returns {boolean}
- * @inner
- */
-
-function isLong(obj) {
-  return (obj && obj["__isLong__"]) === true;
-}
-/**
- * Tests if the specified object is a Long.
- * @function
- * @param {*} obj Object
- * @returns {boolean}
- */
-
-
-Long$1.isLong = isLong;
-/**
- * A cache of the Long representations of small integer values.
- * @type {!Object}
- * @inner
- */
-
-var INT_CACHE = {};
-/**
- * A cache of the Long representations of small unsigned integer values.
- * @type {!Object}
- * @inner
- */
-
-var UINT_CACHE = {};
-/**
- * @param {number} value
- * @param {boolean=} unsigned
- * @returns {!Long}
- * @inner
- */
-
-function fromInt(value, unsigned) {
-  var obj, cachedObj, cache;
-
-  if (unsigned) {
-    value >>>= 0;
-
-    if (cache = 0 <= value && value < 256) {
-      cachedObj = UINT_CACHE[value];
-      if (cachedObj) return cachedObj;
-    }
-
-    obj = fromBits(value, (value | 0) < 0 ? -1 : 0, true);
-    if (cache) UINT_CACHE[value] = obj;
-    return obj;
-  } else {
-    value |= 0;
-
-    if (cache = -128 <= value && value < 128) {
-      cachedObj = INT_CACHE[value];
-      if (cachedObj) return cachedObj;
-    }
-
-    obj = fromBits(value, value < 0 ? -1 : 0, false);
-    if (cache) INT_CACHE[value] = obj;
-    return obj;
-  }
-}
-/**
- * Returns a Long representing the given 32 bit integer value.
- * @function
- * @param {number} value The 32 bit integer in question
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @returns {!Long} The corresponding Long value
- */
-
-
-Long$1.fromInt = fromInt;
-/**
- * @param {number} value
- * @param {boolean=} unsigned
- * @returns {!Long}
- * @inner
- */
-
-function fromNumber(value, unsigned) {
-  if (isNaN(value)) return unsigned ? UZERO : ZERO;
-
-  if (unsigned) {
-    if (value < 0) return UZERO;
-    if (value >= TWO_PWR_64_DBL) return MAX_UNSIGNED_VALUE;
-  } else {
-    if (value <= -TWO_PWR_63_DBL) return MIN_VALUE;
-    if (value + 1 >= TWO_PWR_63_DBL) return MAX_VALUE;
-  }
-
-  if (value < 0) return fromNumber(-value, unsigned).neg();
-  return fromBits(value % TWO_PWR_32_DBL | 0, value / TWO_PWR_32_DBL | 0, unsigned);
-}
-/**
- * Returns a Long representing the given value, provided that it is a finite number. Otherwise, zero is returned.
- * @function
- * @param {number} value The number in question
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @returns {!Long} The corresponding Long value
- */
-
-
-Long$1.fromNumber = fromNumber;
-/**
- * @param {number} lowBits
- * @param {number} highBits
- * @param {boolean=} unsigned
- * @returns {!Long}
- * @inner
- */
-
-function fromBits(lowBits, highBits, unsigned) {
-  return new Long$1(lowBits, highBits, unsigned);
-}
-/**
- * Returns a Long representing the 64 bit integer that comes by concatenating the given low and high bits. Each is
- *  assumed to use 32 bits.
- * @function
- * @param {number} lowBits The low 32 bits
- * @param {number} highBits The high 32 bits
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @returns {!Long} The corresponding Long value
- */
-
-
-Long$1.fromBits = fromBits;
-/**
- * @function
- * @param {number} base
- * @param {number} exponent
- * @returns {number}
- * @inner
- */
-
-var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
-
-/**
- * @param {string} str
- * @param {(boolean|number)=} unsigned
- * @param {number=} radix
- * @returns {!Long}
- * @inner
- */
-
-function fromString(str, unsigned, radix) {
-  if (str.length === 0) throw Error('empty string');
-  if (str === "NaN" || str === "Infinity" || str === "+Infinity" || str === "-Infinity") return ZERO;
-
-  if (typeof unsigned === 'number') {
-    // For goog.math.long compatibility
-    radix = unsigned, unsigned = false;
-  } else {
-    unsigned = !!unsigned;
-  }
-
-  radix = radix || 10;
-  if (radix < 2 || 36 < radix) throw RangeError('radix');
-  var p;
-  if ((p = str.indexOf('-')) > 0) throw Error('interior hyphen');else if (p === 0) {
-    return fromString(str.substring(1), unsigned, radix).neg();
-  } // Do several (8) digits each time through the loop, so as to
-  // minimize the calls to the very expensive emulated div.
-
-  var radixToPower = fromNumber(pow_dbl(radix, 8));
-  var result = ZERO;
-
-  for (var i = 0; i < str.length; i += 8) {
-    var size = Math.min(8, str.length - i),
-        value = parseInt(str.substring(i, i + size), radix);
-
-    if (size < 8) {
-      var power = fromNumber(pow_dbl(radix, size));
-      result = result.mul(power).add(fromNumber(value));
-    } else {
-      result = result.mul(radixToPower);
-      result = result.add(fromNumber(value));
-    }
-  }
-
-  result.unsigned = unsigned;
-  return result;
-}
-/**
- * Returns a Long representation of the given string, written using the specified radix.
- * @function
- * @param {string} str The textual representation of the Long
- * @param {(boolean|number)=} unsigned Whether unsigned or not, defaults to signed
- * @param {number=} radix The radix in which the text is written (2-36), defaults to 10
- * @returns {!Long} The corresponding Long value
- */
-
-
-Long$1.fromString = fromString;
-/**
- * @function
- * @param {!Long|number|string|!{low: number, high: number, unsigned: boolean}} val
- * @param {boolean=} unsigned
- * @returns {!Long}
- * @inner
- */
-
-function fromValue(val, unsigned) {
-  if (typeof val === 'number') return fromNumber(val, unsigned);
-  if (typeof val === 'string') return fromString(val, unsigned); // Throws for non-objects, converts non-instanceof Long:
-
-  return fromBits(val.low, val.high, typeof unsigned === 'boolean' ? unsigned : val.unsigned);
-}
-/**
- * Converts the specified value to a Long using the appropriate from* function for its type.
- * @function
- * @param {!Long|number|string|!{low: number, high: number, unsigned: boolean}} val Value
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @returns {!Long}
- */
-
-
-Long$1.fromValue = fromValue; // NOTE: the compiler should inline these constant values below and then remove these variables, so there should be
-// no runtime penalty for these.
-
-/**
- * @type {number}
- * @const
- * @inner
- */
-
-var TWO_PWR_16_DBL = 1 << 16;
-/**
- * @type {number}
- * @const
- * @inner
- */
-
-var TWO_PWR_24_DBL = 1 << 24;
-/**
- * @type {number}
- * @const
- * @inner
- */
-
-var TWO_PWR_32_DBL = TWO_PWR_16_DBL * TWO_PWR_16_DBL;
-/**
- * @type {number}
- * @const
- * @inner
- */
-
-var TWO_PWR_64_DBL = TWO_PWR_32_DBL * TWO_PWR_32_DBL;
-/**
- * @type {number}
- * @const
- * @inner
- */
-
-var TWO_PWR_63_DBL = TWO_PWR_64_DBL / 2;
-/**
- * @type {!Long}
- * @const
- * @inner
- */
-
-var TWO_PWR_24 = fromInt(TWO_PWR_24_DBL);
-/**
- * @type {!Long}
- * @inner
- */
-
-var ZERO = fromInt(0);
-/**
- * Signed zero.
- * @type {!Long}
- */
-
-Long$1.ZERO = ZERO;
-/**
- * @type {!Long}
- * @inner
- */
-
-var UZERO = fromInt(0, true);
-/**
- * Unsigned zero.
- * @type {!Long}
- */
-
-Long$1.UZERO = UZERO;
-/**
- * @type {!Long}
- * @inner
- */
-
-var ONE = fromInt(1);
-/**
- * Signed one.
- * @type {!Long}
- */
-
-Long$1.ONE = ONE;
-/**
- * @type {!Long}
- * @inner
- */
-
-var UONE = fromInt(1, true);
-/**
- * Unsigned one.
- * @type {!Long}
- */
-
-Long$1.UONE = UONE;
-/**
- * @type {!Long}
- * @inner
- */
-
-var NEG_ONE = fromInt(-1);
-/**
- * Signed negative one.
- * @type {!Long}
- */
-
-Long$1.NEG_ONE = NEG_ONE;
-/**
- * @type {!Long}
- * @inner
- */
-
-var MAX_VALUE = fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0, false);
-/**
- * Maximum signed value.
- * @type {!Long}
- */
-
-Long$1.MAX_VALUE = MAX_VALUE;
-/**
- * @type {!Long}
- * @inner
- */
-
-var MAX_UNSIGNED_VALUE = fromBits(0xFFFFFFFF | 0, 0xFFFFFFFF | 0, true);
-/**
- * Maximum unsigned value.
- * @type {!Long}
- */
-
-Long$1.MAX_UNSIGNED_VALUE = MAX_UNSIGNED_VALUE;
-/**
- * @type {!Long}
- * @inner
- */
-
-var MIN_VALUE = fromBits(0, 0x80000000 | 0, false);
-/**
- * Minimum signed value.
- * @type {!Long}
- */
-
-Long$1.MIN_VALUE = MIN_VALUE;
-/**
- * @alias Long.prototype
- * @inner
- */
-
-var LongPrototype = Long$1.prototype;
-/**
- * Converts the Long to a 32 bit integer, assuming it is a 32 bit integer.
- * @returns {number}
- */
-
-LongPrototype.toInt = function toInt() {
-  return this.unsigned ? this.low >>> 0 : this.low;
-};
-/**
- * Converts the Long to a the nearest floating-point representation of this value (double, 53 bit mantissa).
- * @returns {number}
- */
-
-
-LongPrototype.toNumber = function toNumber() {
-  if (this.unsigned) return (this.high >>> 0) * TWO_PWR_32_DBL + (this.low >>> 0);
-  return this.high * TWO_PWR_32_DBL + (this.low >>> 0);
-};
-/**
- * Converts the Long to a string written in the specified radix.
- * @param {number=} radix Radix (2-36), defaults to 10
- * @returns {string}
- * @override
- * @throws {RangeError} If `radix` is out of range
- */
-
-
-LongPrototype.toString = function toString(radix) {
-  radix = radix || 10;
-  if (radix < 2 || 36 < radix) throw RangeError('radix');
-  if (this.isZero()) return '0';
-
-  if (this.isNegative()) {
-    // Unsigned Longs are never negative
-    if (this.eq(MIN_VALUE)) {
-      // We need to change the Long value before it can be negated, so we remove
-      // the bottom-most digit in this base and then recurse to do the rest.
-      var radixLong = fromNumber(radix),
-          div = this.div(radixLong),
-          rem1 = div.mul(radixLong).sub(this);
-      return div.toString(radix) + rem1.toInt().toString(radix);
-    } else return '-' + this.neg().toString(radix);
-  } // Do several (6) digits each time through the loop, so as to
-  // minimize the calls to the very expensive emulated div.
-
-
-  var radixToPower = fromNumber(pow_dbl(radix, 6), this.unsigned),
-      rem = this;
-  var result = '';
-
-  while (true) {
-    var remDiv = rem.div(radixToPower),
-        intval = rem.sub(remDiv.mul(radixToPower)).toInt() >>> 0,
-        digits = intval.toString(radix);
-    rem = remDiv;
-    if (rem.isZero()) return digits + result;else {
-      while (digits.length < 6) digits = '0' + digits;
-
-      result = '' + digits + result;
-    }
-  }
-};
-/**
- * Gets the high 32 bits as a signed integer.
- * @returns {number} Signed high bits
- */
-
-
-LongPrototype.getHighBits = function getHighBits() {
-  return this.high;
-};
-/**
- * Gets the high 32 bits as an unsigned integer.
- * @returns {number} Unsigned high bits
- */
-
-
-LongPrototype.getHighBitsUnsigned = function getHighBitsUnsigned() {
-  return this.high >>> 0;
-};
-/**
- * Gets the low 32 bits as a signed integer.
- * @returns {number} Signed low bits
- */
-
-
-LongPrototype.getLowBits = function getLowBits() {
-  return this.low;
-};
-/**
- * Gets the low 32 bits as an unsigned integer.
- * @returns {number} Unsigned low bits
- */
-
-
-LongPrototype.getLowBitsUnsigned = function getLowBitsUnsigned() {
-  return this.low >>> 0;
-};
-/**
- * Gets the number of bits needed to represent the absolute value of this Long.
- * @returns {number}
- */
-
-
-LongPrototype.getNumBitsAbs = function getNumBitsAbs() {
-  if (this.isNegative()) // Unsigned Longs are never negative
-    return this.eq(MIN_VALUE) ? 64 : this.neg().getNumBitsAbs();
-  var val = this.high != 0 ? this.high : this.low;
-
-  for (var bit = 31; bit > 0; bit--) if ((val & 1 << bit) != 0) break;
-
-  return this.high != 0 ? bit + 33 : bit + 1;
-};
-/**
- * Tests if this Long's value equals zero.
- * @returns {boolean}
- */
-
-
-LongPrototype.isZero = function isZero() {
-  return this.high === 0 && this.low === 0;
-};
-/**
- * Tests if this Long's value equals zero. This is an alias of {@link Long#isZero}.
- * @returns {boolean}
- */
-
-
-LongPrototype.eqz = LongPrototype.isZero;
-/**
- * Tests if this Long's value is negative.
- * @returns {boolean}
- */
-
-LongPrototype.isNegative = function isNegative() {
-  return !this.unsigned && this.high < 0;
-};
-/**
- * Tests if this Long's value is positive.
- * @returns {boolean}
- */
-
-
-LongPrototype.isPositive = function isPositive() {
-  return this.unsigned || this.high >= 0;
-};
-/**
- * Tests if this Long's value is odd.
- * @returns {boolean}
- */
-
-
-LongPrototype.isOdd = function isOdd() {
-  return (this.low & 1) === 1;
-};
-/**
- * Tests if this Long's value is even.
- * @returns {boolean}
- */
-
-
-LongPrototype.isEven = function isEven() {
-  return (this.low & 1) === 0;
-};
-/**
- * Tests if this Long's value equals the specified's.
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-
-LongPrototype.equals = function equals(other) {
-  if (!isLong(other)) other = fromValue(other);
-  if (this.unsigned !== other.unsigned && this.high >>> 31 === 1 && other.high >>> 31 === 1) return false;
-  return this.high === other.high && this.low === other.low;
-};
-/**
- * Tests if this Long's value equals the specified's. This is an alias of {@link Long#equals}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-
-LongPrototype.eq = LongPrototype.equals;
-/**
- * Tests if this Long's value differs from the specified's.
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.notEquals = function notEquals(other) {
-  return !this.eq(
-  /* validates */
-  other);
-};
-/**
- * Tests if this Long's value differs from the specified's. This is an alias of {@link Long#notEquals}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-
-LongPrototype.neq = LongPrototype.notEquals;
-/**
- * Tests if this Long's value differs from the specified's. This is an alias of {@link Long#notEquals}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.ne = LongPrototype.notEquals;
-/**
- * Tests if this Long's value is less than the specified's.
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.lessThan = function lessThan(other) {
-  return this.comp(
-  /* validates */
-  other) < 0;
-};
-/**
- * Tests if this Long's value is less than the specified's. This is an alias of {@link Long#lessThan}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-
-LongPrototype.lt = LongPrototype.lessThan;
-/**
- * Tests if this Long's value is less than or equal the specified's.
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.lessThanOrEqual = function lessThanOrEqual(other) {
-  return this.comp(
-  /* validates */
-  other) <= 0;
-};
-/**
- * Tests if this Long's value is less than or equal the specified's. This is an alias of {@link Long#lessThanOrEqual}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-
-LongPrototype.lte = LongPrototype.lessThanOrEqual;
-/**
- * Tests if this Long's value is less than or equal the specified's. This is an alias of {@link Long#lessThanOrEqual}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.le = LongPrototype.lessThanOrEqual;
-/**
- * Tests if this Long's value is greater than the specified's.
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.greaterThan = function greaterThan(other) {
-  return this.comp(
-  /* validates */
-  other) > 0;
-};
-/**
- * Tests if this Long's value is greater than the specified's. This is an alias of {@link Long#greaterThan}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-
-LongPrototype.gt = LongPrototype.greaterThan;
-/**
- * Tests if this Long's value is greater than or equal the specified's.
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.greaterThanOrEqual = function greaterThanOrEqual(other) {
-  return this.comp(
-  /* validates */
-  other) >= 0;
-};
-/**
- * Tests if this Long's value is greater than or equal the specified's. This is an alias of {@link Long#greaterThanOrEqual}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-
-LongPrototype.gte = LongPrototype.greaterThanOrEqual;
-/**
- * Tests if this Long's value is greater than or equal the specified's. This is an alias of {@link Long#greaterThanOrEqual}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {boolean}
- */
-
-LongPrototype.ge = LongPrototype.greaterThanOrEqual;
-/**
- * Compares this Long's value with the specified's.
- * @param {!Long|number|string} other Other value
- * @returns {number} 0 if they are the same, 1 if the this is greater and -1
- *  if the given one is greater
- */
-
-LongPrototype.compare = function compare(other) {
-  if (!isLong(other)) other = fromValue(other);
-  if (this.eq(other)) return 0;
-  var thisNeg = this.isNegative(),
-      otherNeg = other.isNegative();
-  if (thisNeg && !otherNeg) return -1;
-  if (!thisNeg && otherNeg) return 1; // At this point the sign bits are the same
-
-  if (!this.unsigned) return this.sub(other).isNegative() ? -1 : 1; // Both are positive if at least one is unsigned
-
-  return other.high >>> 0 > this.high >>> 0 || other.high === this.high && other.low >>> 0 > this.low >>> 0 ? -1 : 1;
-};
-/**
- * Compares this Long's value with the specified's. This is an alias of {@link Long#compare}.
- * @function
- * @param {!Long|number|string} other Other value
- * @returns {number} 0 if they are the same, 1 if the this is greater and -1
- *  if the given one is greater
- */
-
-
-LongPrototype.comp = LongPrototype.compare;
-/**
- * Negates this Long's value.
- * @returns {!Long} Negated Long
- */
-
-LongPrototype.negate = function negate() {
-  if (!this.unsigned && this.eq(MIN_VALUE)) return MIN_VALUE;
-  return this.not().add(ONE);
-};
-/**
- * Negates this Long's value. This is an alias of {@link Long#negate}.
- * @function
- * @returns {!Long} Negated Long
- */
-
-
-LongPrototype.neg = LongPrototype.negate;
-/**
- * Returns the sum of this and the specified Long.
- * @param {!Long|number|string} addend Addend
- * @returns {!Long} Sum
- */
-
-LongPrototype.add = function add(addend) {
-  if (!isLong(addend)) addend = fromValue(addend); // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
-
-  var a48 = this.high >>> 16;
-  var a32 = this.high & 0xFFFF;
-  var a16 = this.low >>> 16;
-  var a00 = this.low & 0xFFFF;
-  var b48 = addend.high >>> 16;
-  var b32 = addend.high & 0xFFFF;
-  var b16 = addend.low >>> 16;
-  var b00 = addend.low & 0xFFFF;
-  var c48 = 0,
-      c32 = 0,
-      c16 = 0,
-      c00 = 0;
-  c00 += a00 + b00;
-  c16 += c00 >>> 16;
-  c00 &= 0xFFFF;
-  c16 += a16 + b16;
-  c32 += c16 >>> 16;
-  c16 &= 0xFFFF;
-  c32 += a32 + b32;
-  c48 += c32 >>> 16;
-  c32 &= 0xFFFF;
-  c48 += a48 + b48;
-  c48 &= 0xFFFF;
-  return fromBits(c16 << 16 | c00, c48 << 16 | c32, this.unsigned);
-};
-/**
- * Returns the difference of this and the specified Long.
- * @param {!Long|number|string} subtrahend Subtrahend
- * @returns {!Long} Difference
- */
-
-
-LongPrototype.subtract = function subtract(subtrahend) {
-  if (!isLong(subtrahend)) subtrahend = fromValue(subtrahend);
-  return this.add(subtrahend.neg());
-};
-/**
- * Returns the difference of this and the specified Long. This is an alias of {@link Long#subtract}.
- * @function
- * @param {!Long|number|string} subtrahend Subtrahend
- * @returns {!Long} Difference
- */
-
-
-LongPrototype.sub = LongPrototype.subtract;
-/**
- * Returns the product of this and the specified Long.
- * @param {!Long|number|string} multiplier Multiplier
- * @returns {!Long} Product
- */
-
-LongPrototype.multiply = function multiply(multiplier) {
-  if (this.isZero()) return ZERO;
-  if (!isLong(multiplier)) multiplier = fromValue(multiplier); // use wasm support if present
-
-  if (wasm) {
-    var low = wasm.mul(this.low, this.high, multiplier.low, multiplier.high);
-    return fromBits(low, wasm.get_high(), this.unsigned);
-  }
-
-  if (multiplier.isZero()) return ZERO;
-  if (this.eq(MIN_VALUE)) return multiplier.isOdd() ? MIN_VALUE : ZERO;
-  if (multiplier.eq(MIN_VALUE)) return this.isOdd() ? MIN_VALUE : ZERO;
-
-  if (this.isNegative()) {
-    if (multiplier.isNegative()) return this.neg().mul(multiplier.neg());else return this.neg().mul(multiplier).neg();
-  } else if (multiplier.isNegative()) return this.mul(multiplier.neg()).neg(); // If both longs are small, use float multiplication
-
-
-  if (this.lt(TWO_PWR_24) && multiplier.lt(TWO_PWR_24)) return fromNumber(this.toNumber() * multiplier.toNumber(), this.unsigned); // Divide each long into 4 chunks of 16 bits, and then add up 4x4 products.
-  // We can skip products that would overflow.
-
-  var a48 = this.high >>> 16;
-  var a32 = this.high & 0xFFFF;
-  var a16 = this.low >>> 16;
-  var a00 = this.low & 0xFFFF;
-  var b48 = multiplier.high >>> 16;
-  var b32 = multiplier.high & 0xFFFF;
-  var b16 = multiplier.low >>> 16;
-  var b00 = multiplier.low & 0xFFFF;
-  var c48 = 0,
-      c32 = 0,
-      c16 = 0,
-      c00 = 0;
-  c00 += a00 * b00;
-  c16 += c00 >>> 16;
-  c00 &= 0xFFFF;
-  c16 += a16 * b00;
-  c32 += c16 >>> 16;
-  c16 &= 0xFFFF;
-  c16 += a00 * b16;
-  c32 += c16 >>> 16;
-  c16 &= 0xFFFF;
-  c32 += a32 * b00;
-  c48 += c32 >>> 16;
-  c32 &= 0xFFFF;
-  c32 += a16 * b16;
-  c48 += c32 >>> 16;
-  c32 &= 0xFFFF;
-  c32 += a00 * b32;
-  c48 += c32 >>> 16;
-  c32 &= 0xFFFF;
-  c48 += a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48;
-  c48 &= 0xFFFF;
-  return fromBits(c16 << 16 | c00, c48 << 16 | c32, this.unsigned);
-};
-/**
- * Returns the product of this and the specified Long. This is an alias of {@link Long#multiply}.
- * @function
- * @param {!Long|number|string} multiplier Multiplier
- * @returns {!Long} Product
- */
-
-
-LongPrototype.mul = LongPrototype.multiply;
-/**
- * Returns this Long divided by the specified. The result is signed if this Long is signed or
- *  unsigned if this Long is unsigned.
- * @param {!Long|number|string} divisor Divisor
- * @returns {!Long} Quotient
- */
-
-LongPrototype.divide = function divide(divisor) {
-  if (!isLong(divisor)) divisor = fromValue(divisor);
-  if (divisor.isZero()) throw Error('division by zero'); // use wasm support if present
-
-  if (wasm) {
-    // guard against signed division overflow: the largest
-    // negative number / -1 would be 1 larger than the largest
-    // positive number, due to two's complement.
-    if (!this.unsigned && this.high === -0x80000000 && divisor.low === -1 && divisor.high === -1) {
-      // be consistent with non-wasm code path
-      return this;
-    }
-
-    var low = (this.unsigned ? wasm.div_u : wasm.div_s)(this.low, this.high, divisor.low, divisor.high);
-    return fromBits(low, wasm.get_high(), this.unsigned);
-  }
-
-  if (this.isZero()) return this.unsigned ? UZERO : ZERO;
-  var approx, rem, res;
-
-  if (!this.unsigned) {
-    // This section is only relevant for signed longs and is derived from the
-    // closure library as a whole.
-    if (this.eq(MIN_VALUE)) {
-      if (divisor.eq(ONE) || divisor.eq(NEG_ONE)) return MIN_VALUE; // recall that -MIN_VALUE == MIN_VALUE
-      else if (divisor.eq(MIN_VALUE)) return ONE;else {
-        // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.
-        var halfThis = this.shr(1);
-        approx = halfThis.div(divisor).shl(1);
-
-        if (approx.eq(ZERO)) {
-          return divisor.isNegative() ? ONE : NEG_ONE;
-        } else {
-          rem = this.sub(divisor.mul(approx));
-          res = approx.add(rem.div(divisor));
-          return res;
-        }
-      }
-    } else if (divisor.eq(MIN_VALUE)) return this.unsigned ? UZERO : ZERO;
-
-    if (this.isNegative()) {
-      if (divisor.isNegative()) return this.neg().div(divisor.neg());
-      return this.neg().div(divisor).neg();
-    } else if (divisor.isNegative()) return this.div(divisor.neg()).neg();
-
-    res = ZERO;
-  } else {
-    // The algorithm below has not been made for unsigned longs. It's therefore
-    // required to take special care of the MSB prior to running it.
-    if (!divisor.unsigned) divisor = divisor.toUnsigned();
-    if (divisor.gt(this)) return UZERO;
-    if (divisor.gt(this.shru(1))) // 15 >>> 1 = 7 ; with divisor = 8 ; true
-      return UONE;
-    res = UZERO;
-  } // Repeat the following until the remainder is less than other:  find a
-  // floating-point that approximates remainder / other *from below*, add this
-  // into the result, and subtract it from the remainder.  It is critical that
-  // the approximate value is less than or equal to the real value so that the
-  // remainder never becomes negative.
-
-
-  rem = this;
-
-  while (rem.gte(divisor)) {
-    // Approximate the result of division. This may be a little greater or
-    // smaller than the actual value.
-    approx = Math.max(1, Math.floor(rem.toNumber() / divisor.toNumber())); // We will tweak the approximate result by changing it in the 48-th digit or
-    // the smallest non-fractional digit, whichever is larger.
-
-    var log2 = Math.ceil(Math.log(approx) / Math.LN2),
-        delta = log2 <= 48 ? 1 : pow_dbl(2, log2 - 48),
-        // Decrease the approximation until it is smaller than the remainder.  Note
-    // that if it is too large, the product overflows and is negative.
-    approxRes = fromNumber(approx),
-        approxRem = approxRes.mul(divisor);
-
-    while (approxRem.isNegative() || approxRem.gt(rem)) {
-      approx -= delta;
-      approxRes = fromNumber(approx, this.unsigned);
-      approxRem = approxRes.mul(divisor);
-    } // We know the answer can't be zero... and actually, zero would cause
-    // infinite recursion since we would make no progress.
-
-
-    if (approxRes.isZero()) approxRes = ONE;
-    res = res.add(approxRes);
-    rem = rem.sub(approxRem);
-  }
-
-  return res;
-};
-/**
- * Returns this Long divided by the specified. This is an alias of {@link Long#divide}.
- * @function
- * @param {!Long|number|string} divisor Divisor
- * @returns {!Long} Quotient
- */
-
-
-LongPrototype.div = LongPrototype.divide;
-/**
- * Returns this Long modulo the specified.
- * @param {!Long|number|string} divisor Divisor
- * @returns {!Long} Remainder
- */
-
-LongPrototype.modulo = function modulo(divisor) {
-  if (!isLong(divisor)) divisor = fromValue(divisor); // use wasm support if present
-
-  if (wasm) {
-    var low = (this.unsigned ? wasm.rem_u : wasm.rem_s)(this.low, this.high, divisor.low, divisor.high);
-    return fromBits(low, wasm.get_high(), this.unsigned);
-  }
-
-  return this.sub(this.div(divisor).mul(divisor));
-};
-/**
- * Returns this Long modulo the specified. This is an alias of {@link Long#modulo}.
- * @function
- * @param {!Long|number|string} divisor Divisor
- * @returns {!Long} Remainder
- */
-
-
-LongPrototype.mod = LongPrototype.modulo;
-/**
- * Returns this Long modulo the specified. This is an alias of {@link Long#modulo}.
- * @function
- * @param {!Long|number|string} divisor Divisor
- * @returns {!Long} Remainder
- */
-
-LongPrototype.rem = LongPrototype.modulo;
-/**
- * Returns the bitwise NOT of this Long.
- * @returns {!Long}
- */
-
-LongPrototype.not = function not() {
-  return fromBits(~this.low, ~this.high, this.unsigned);
-};
-/**
- * Returns the bitwise AND of this Long and the specified.
- * @param {!Long|number|string} other Other Long
- * @returns {!Long}
- */
-
-
-LongPrototype.and = function and(other) {
-  if (!isLong(other)) other = fromValue(other);
-  return fromBits(this.low & other.low, this.high & other.high, this.unsigned);
-};
-/**
- * Returns the bitwise OR of this Long and the specified.
- * @param {!Long|number|string} other Other Long
- * @returns {!Long}
- */
-
-
-LongPrototype.or = function or(other) {
-  if (!isLong(other)) other = fromValue(other);
-  return fromBits(this.low | other.low, this.high | other.high, this.unsigned);
-};
-/**
- * Returns the bitwise XOR of this Long and the given one.
- * @param {!Long|number|string} other Other Long
- * @returns {!Long}
- */
-
-
-LongPrototype.xor = function xor(other) {
-  if (!isLong(other)) other = fromValue(other);
-  return fromBits(this.low ^ other.low, this.high ^ other.high, this.unsigned);
-};
-/**
- * Returns this Long with bits shifted to the left by the given amount.
- * @param {number|!Long} numBits Number of bits
- * @returns {!Long} Shifted Long
- */
-
-
-LongPrototype.shiftLeft = function shiftLeft(numBits) {
-  if (isLong(numBits)) numBits = numBits.toInt();
-  if ((numBits &= 63) === 0) return this;else if (numBits < 32) return fromBits(this.low << numBits, this.high << numBits | this.low >>> 32 - numBits, this.unsigned);else return fromBits(0, this.low << numBits - 32, this.unsigned);
-};
-/**
- * Returns this Long with bits shifted to the left by the given amount. This is an alias of {@link Long#shiftLeft}.
- * @function
- * @param {number|!Long} numBits Number of bits
- * @returns {!Long} Shifted Long
- */
-
-
-LongPrototype.shl = LongPrototype.shiftLeft;
-/**
- * Returns this Long with bits arithmetically shifted to the right by the given amount.
- * @param {number|!Long} numBits Number of bits
- * @returns {!Long} Shifted Long
- */
-
-LongPrototype.shiftRight = function shiftRight(numBits) {
-  if (isLong(numBits)) numBits = numBits.toInt();
-  if ((numBits &= 63) === 0) return this;else if (numBits < 32) return fromBits(this.low >>> numBits | this.high << 32 - numBits, this.high >> numBits, this.unsigned);else return fromBits(this.high >> numBits - 32, this.high >= 0 ? 0 : -1, this.unsigned);
-};
-/**
- * Returns this Long with bits arithmetically shifted to the right by the given amount. This is an alias of {@link Long#shiftRight}.
- * @function
- * @param {number|!Long} numBits Number of bits
- * @returns {!Long} Shifted Long
- */
-
-
-LongPrototype.shr = LongPrototype.shiftRight;
-/**
- * Returns this Long with bits logically shifted to the right by the given amount.
- * @param {number|!Long} numBits Number of bits
- * @returns {!Long} Shifted Long
- */
-
-LongPrototype.shiftRightUnsigned = function shiftRightUnsigned(numBits) {
-  if (isLong(numBits)) numBits = numBits.toInt();
-  numBits &= 63;
-  if (numBits === 0) return this;else {
-    var high = this.high;
-
-    if (numBits < 32) {
-      var low = this.low;
-      return fromBits(low >>> numBits | high << 32 - numBits, high >>> numBits, this.unsigned);
-    } else if (numBits === 32) return fromBits(high, 0, this.unsigned);else return fromBits(high >>> numBits - 32, 0, this.unsigned);
-  }
-};
-/**
- * Returns this Long with bits logically shifted to the right by the given amount. This is an alias of {@link Long#shiftRightUnsigned}.
- * @function
- * @param {number|!Long} numBits Number of bits
- * @returns {!Long} Shifted Long
- */
-
-
-LongPrototype.shru = LongPrototype.shiftRightUnsigned;
-/**
- * Returns this Long with bits logically shifted to the right by the given amount. This is an alias of {@link Long#shiftRightUnsigned}.
- * @function
- * @param {number|!Long} numBits Number of bits
- * @returns {!Long} Shifted Long
- */
-
-LongPrototype.shr_u = LongPrototype.shiftRightUnsigned;
-/**
- * Converts this Long to signed.
- * @returns {!Long} Signed long
- */
-
-LongPrototype.toSigned = function toSigned() {
-  if (!this.unsigned) return this;
-  return fromBits(this.low, this.high, false);
-};
-/**
- * Converts this Long to unsigned.
- * @returns {!Long} Unsigned long
- */
-
-
-LongPrototype.toUnsigned = function toUnsigned() {
-  if (this.unsigned) return this;
-  return fromBits(this.low, this.high, true);
-};
-/**
- * Converts this Long to its byte representation.
- * @param {boolean=} le Whether little or big endian, defaults to big endian
- * @returns {!Array.<number>} Byte representation
- */
-
-
-LongPrototype.toBytes = function toBytes(le) {
-  return le ? this.toBytesLE() : this.toBytesBE();
-};
-/**
- * Converts this Long to its little endian byte representation.
- * @returns {!Array.<number>} Little endian byte representation
- */
-
-
-LongPrototype.toBytesLE = function toBytesLE() {
-  var hi = this.high,
-      lo = this.low;
-  return [lo & 0xff, lo >>> 8 & 0xff, lo >>> 16 & 0xff, lo >>> 24, hi & 0xff, hi >>> 8 & 0xff, hi >>> 16 & 0xff, hi >>> 24];
-};
-/**
- * Converts this Long to its big endian byte representation.
- * @returns {!Array.<number>} Big endian byte representation
- */
-
-
-LongPrototype.toBytesBE = function toBytesBE() {
-  var hi = this.high,
-      lo = this.low;
-  return [hi >>> 24, hi >>> 16 & 0xff, hi >>> 8 & 0xff, hi & 0xff, lo >>> 24, lo >>> 16 & 0xff, lo >>> 8 & 0xff, lo & 0xff];
-};
-/**
- * Creates a Long from its byte representation.
- * @param {!Array.<number>} bytes Byte representation
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @param {boolean=} le Whether little or big endian, defaults to big endian
- * @returns {Long} The corresponding Long value
- */
-
-
-Long$1.fromBytes = function fromBytes(bytes, unsigned, le) {
-  return le ? Long$1.fromBytesLE(bytes, unsigned) : Long$1.fromBytesBE(bytes, unsigned);
-};
-/**
- * Creates a Long from its little endian byte representation.
- * @param {!Array.<number>} bytes Little endian byte representation
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @returns {Long} The corresponding Long value
- */
-
-
-Long$1.fromBytesLE = function fromBytesLE(bytes, unsigned) {
-  return new Long$1(bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24, bytes[4] | bytes[5] << 8 | bytes[6] << 16 | bytes[7] << 24, unsigned);
-};
-/**
- * Creates a Long from its big endian byte representation.
- * @param {!Array.<number>} bytes Big endian byte representation
- * @param {boolean=} unsigned Whether unsigned or not, defaults to signed
- * @returns {Long} The corresponding Long value
- */
-
-
-Long$1.fromBytesBE = function fromBytesBE(bytes, unsigned) {
-  return new Long$1(bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7], bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3], unsigned);
-};
-
-/*
-	Thanks to
-	https://github.com/XuShaohua/kwplayer/blob/master/kuwo/DES.py
-	https://github.com/Levi233/MusicPlayer/blob/master/app/src/main/java/com/chenhao/musicplayer/utils/crypt/KuwoDES.java
-*/
-const Long = typeof BigInt === 'function' // BigInt support in Node 10+
-? n => {
-  const bN = BigInt(n);
-  return {
-    low: Number(bN),
-    valueOf: () => bN.valueOf(),
-    toString: () => bN.toString(),
-    not: () => Long(~bN),
-    isNegative: () => bN < 0,
-    or: x => Long(bN | BigInt(x)),
-    and: x => Long(bN & BigInt(x)),
-    xor: x => Long(bN ^ BigInt(x)),
-    equals: x => bN === BigInt(x),
-    multiply: x => Long(bN * BigInt(x)),
-    shiftLeft: x => Long(bN << BigInt(x)),
-    shiftRight: x => Long(bN >> BigInt(x))
-  };
-} : (...args) => new long(...args);
-
-const range = n => Array.from(new Array(n).keys());
-
-const power = (base, index) => Array(index).fill(null).reduce(result => result.multiply(base), Long(1));
-
-const LongArray = (...array) => array.map(n => n === -1 ? Long(-1, -1) : Long(n)); // EXPANSION
-
-
-const arrayE = LongArray(31, 0, 1, 2, 3, 4, -1, -1, 3, 4, 5, 6, 7, 8, -1, -1, 7, 8, 9, 10, 11, 12, -1, -1, 11, 12, 13, 14, 15, 16, -1, -1, 15, 16, 17, 18, 19, 20, -1, -1, 19, 20, 21, 22, 23, 24, -1, -1, 23, 24, 25, 26, 27, 28, -1, -1, 27, 28, 29, 30, 31, 30, -1, -1); // INITIAL_PERMUTATION
-
-const arrayIP = LongArray(57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7, 56, 48, 40, 32, 24, 16, 8, 0, 58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6); // INVERSE_PERMUTATION
-
-const arrayIP_1 = LongArray(39, 7, 47, 15, 55, 23, 63, 31, 38, 6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25, 32, 0, 40, 8, 48, 16, 56, 24); // ROTATES
-
-const arrayLs = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1];
-const arrayLsMask = LongArray(0, 0x100001, 0x300003);
-const arrayMask = range(64).map(n => power(2, n));
-arrayMask[arrayMask.length - 1] = arrayMask[arrayMask.length - 1].multiply(-1); // PERMUTATION
-
-const arrayP = LongArray(15, 6, 19, 20, 28, 11, 27, 16, 0, 14, 22, 25, 4, 17, 30, 9, 1, 7, 23, 13, 31, 26, 2, 8, 18, 12, 29, 5, 21, 10, 3, 24); // PERMUTED_CHOICE1
-
-const arrayPC_1 = LongArray(56, 48, 40, 32, 24, 16, 8, 0, 57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 60, 52, 44, 36, 28, 20, 12, 4, 27, 19, 11, 3); // PERMUTED_CHOICE2
-
-const arrayPC_2 = LongArray(13, 16, 10, 23, 0, 4, -1, -1, 2, 27, 14, 5, 20, 9, -1, -1, 22, 18, 11, 3, 25, 7, -1, -1, 15, 6, 26, 19, 12, 1, -1, -1, 40, 51, 30, 36, 46, 54, -1, -1, 29, 39, 50, 44, 32, 47, -1, -1, 43, 48, 38, 55, 33, 52, -1, -1, 45, 41, 49, 35, 28, 31, -1, -1);
-const matrixNSBox = [[14, 4, 3, 15, 2, 13, 5, 3, 13, 14, 6, 9, 11, 2, 0, 5, 4, 1, 10, 12, 15, 6, 9, 10, 1, 8, 12, 7, 8, 11, 7, 0, 0, 15, 10, 5, 14, 4, 9, 10, 7, 8, 12, 3, 13, 1, 3, 6, 15, 12, 6, 11, 2, 9, 5, 0, 4, 2, 11, 14, 1, 7, 8, 13], [15, 0, 9, 5, 6, 10, 12, 9, 8, 7, 2, 12, 3, 13, 5, 2, 1, 14, 7, 8, 11, 4, 0, 3, 14, 11, 13, 6, 4, 1, 10, 15, 3, 13, 12, 11, 15, 3, 6, 0, 4, 10, 1, 7, 8, 4, 11, 14, 13, 8, 0, 6, 2, 15, 9, 5, 7, 1, 10, 12, 14, 2, 5, 9], [10, 13, 1, 11, 6, 8, 11, 5, 9, 4, 12, 2, 15, 3, 2, 14, 0, 6, 13, 1, 3, 15, 4, 10, 14, 9, 7, 12, 5, 0, 8, 7, 13, 1, 2, 4, 3, 6, 12, 11, 0, 13, 5, 14, 6, 8, 15, 2, 7, 10, 8, 15, 4, 9, 11, 5, 9, 0, 14, 3, 10, 7, 1, 12], [7, 10, 1, 15, 0, 12, 11, 5, 14, 9, 8, 3, 9, 7, 4, 8, 13, 6, 2, 1, 6, 11, 12, 2, 3, 0, 5, 14, 10, 13, 15, 4, 13, 3, 4, 9, 6, 10, 1, 12, 11, 0, 2, 5, 0, 13, 14, 2, 8, 15, 7, 4, 15, 1, 10, 7, 5, 6, 12, 11, 3, 8, 9, 14], [2, 4, 8, 15, 7, 10, 13, 6, 4, 1, 3, 12, 11, 7, 14, 0, 12, 2, 5, 9, 10, 13, 0, 3, 1, 11, 15, 5, 6, 8, 9, 14, 14, 11, 5, 6, 4, 1, 3, 10, 2, 12, 15, 0, 13, 2, 8, 5, 11, 8, 0, 15, 7, 14, 9, 4, 12, 7, 10, 9, 1, 13, 6, 3], [12, 9, 0, 7, 9, 2, 14, 1, 10, 15, 3, 4, 6, 12, 5, 11, 1, 14, 13, 0, 2, 8, 7, 13, 15, 5, 4, 10, 8, 3, 11, 6, 10, 4, 6, 11, 7, 9, 0, 6, 4, 2, 13, 1, 9, 15, 3, 8, 15, 3, 1, 14, 12, 5, 11, 0, 2, 12, 14, 7, 5, 10, 8, 13], [4, 1, 3, 10, 15, 12, 5, 0, 2, 11, 9, 6, 8, 7, 6, 9, 11, 4, 12, 15, 0, 3, 10, 5, 14, 13, 7, 8, 13, 14, 1, 2, 13, 6, 14, 9, 4, 1, 2, 14, 11, 13, 5, 0, 1, 10, 8, 3, 0, 11, 3, 5, 9, 4, 15, 2, 7, 8, 12, 15, 10, 7, 6, 12], [13, 7, 10, 0, 6, 9, 5, 15, 8, 4, 3, 10, 11, 14, 12, 5, 2, 11, 9, 6, 15, 12, 0, 3, 4, 1, 14, 13, 1, 2, 7, 8, 1, 2, 12, 15, 10, 4, 0, 3, 13, 14, 6, 9, 7, 8, 9, 6, 15, 1, 5, 12, 3, 10, 14, 5, 8, 7, 11, 0, 4, 13, 2, 11]];
-
-const bitTransform = (arrInt, n, l) => {
-  // int[], int, long : long
-  let l2 = Long(0);
-  range(n).forEach(i => {
-    if (arrInt[i].isNegative() || l.and(arrayMask[arrInt[i].low]).equals(0)) return;
-    l2 = l2.or(arrayMask[i]);
-  });
-  return l2;
-};
-
-const DES64 = (longs, l) => {
-  const pR = range(8).map(() => Long(0));
-  const pSource = [Long(0), Long(0)];
-  let L = Long(0);
-  let R = Long(0);
-  let out = bitTransform(arrayIP, 64, l);
-  pSource[0] = out.and(0xffffffff);
-  pSource[1] = out.and(-4294967296).shiftRight(32);
-  range(16).forEach(i => {
-    let SOut = Long(0);
-    R = Long(pSource[1]);
-    R = bitTransform(arrayE, 64, R);
-    R = R.xor(longs[i]);
-    range(8).forEach(j => {
-      pR[j] = R.shiftRight(j * 8).and(255);
-    });
-    range(8).reverse().forEach(sbi => {
-      SOut = SOut.shiftLeft(4).or(matrixNSBox[sbi][pR[sbi]]);
-    });
-    R = bitTransform(arrayP, 32, SOut);
-    L = Long(pSource[0]);
-    pSource[0] = Long(pSource[1]);
-    pSource[1] = L.xor(R);
-  });
-  pSource.reverse();
-  out = pSource[1].shiftLeft(32).and(-4294967296).or(pSource[0].and(0xffffffff));
-  out = bitTransform(arrayIP_1, 64, out);
-  return out;
-};
-
-const subKeys = (l, longs, n) => {
-  // long, long[], int
-  let l2 = bitTransform(arrayPC_1, 56, l);
-  range(16).forEach(i => {
-    l2 = l2.and(arrayLsMask[arrayLs[i]]).shiftLeft(28 - arrayLs[i]).or(l2.and(arrayLsMask[arrayLs[i]].not()).shiftRight(arrayLs[i]));
-    longs[i] = bitTransform(arrayPC_2, 64, l2);
-  });
-
-  if (n === 1) {
-    range(8).forEach(j => {
-      [longs[j], longs[15 - j]] = [longs[15 - j], longs[j]];
-    });
-  }
-};
-
-const crypt = (msg, key, mode) => {
-  // 处理密钥块
-  let l = Long(0);
-  range(8).forEach(i => {
-    l = Long(key[i]).shiftLeft(i * 8).or(l);
-  });
-  const j = Math.floor(msg.length / 8); // arrLong1 存放的是转换后的密钥块, 在解密时只需要把这个密钥块反转就行了
-
-  const arrLong1 = range(16).map(() => Long(0));
-  subKeys(l, arrLong1, mode); // arrLong2 存放的是前部分的明文
-
-  const arrLong2 = range(j).map(() => Long(0));
-  range(j).forEach(m => {
-    range(8).forEach(n => {
-      arrLong2[m] = Long(msg[n + m * 8]).shiftLeft(n * 8).or(arrLong2[m]);
-    });
-  }); // 用于存放密文
-
-  const arrLong3 = range(Math.floor((1 + 8 * (j + 1)) / 8)).map(() => Long(0)); // 计算前部的数据块(除了最后一部分)
-
-  range(j).forEach(i1 => {
-    arrLong3[i1] = DES64(arrLong1, arrLong2[i1]);
-  }); // 保存多出来的字节
-
-  const arrByte1 = msg.slice(j * 8);
-  let l2 = Long(0);
-  range(msg.length % 8).forEach(i1 => {
-    l2 = Long(arrByte1[i1]).shiftLeft(i1 * 8).or(l2);
-  }); // 计算多出的那一位(最后一位)
-
-  if (arrByte1.length || mode === 0) arrLong3[j] = DES64(arrLong1, l2); // 解密不需要
-  // 将密文转为字节型
-
-  const arrByte2 = range(8 * arrLong3.length).map(() => 0);
-  let i4 = 0;
-  arrLong3.forEach(l3 => {
-    range(8).forEach(i6 => {
-      arrByte2[i4] = l3.shiftRight(i6 * 8).and(255).low;
-      i4 += 1;
-    });
-  });
-  return Buffer.from(arrByte2);
-};
-
-const SECRET_KEY = Buffer.from('ylzsxkwm');
-
-const encrypt = msg => crypt(msg, SECRET_KEY, 0);
-
-const decrypt = msg => crypt(msg, SECRET_KEY, 1);
-
-const encryptQuery = query => encrypt(Buffer.from(query)).toString('base64');
-
-var kwDES = {
-  encrypt,
-  decrypt,
-  encryptQuery
-};
-
 (function (module) {
 
-  const crypto = require$$0__default$7["default"];
+  const crypto = require$$0__default$5["default"];
   const parse = require$$6__default["default"].parse;
   const bodyify = require$$2__default$1["default"].stringify;
   const eapiKey = 'e82ckenh8dichen8';
@@ -10861,7 +6670,7 @@ var kwDES = {
   };
 
   try {
-    module.exports.kuwoapi = kwDES;
+    module.exports.kuwoapi = require('./kwDES');
   } catch (e) {}
 })(crypto$3);
 
@@ -11329,7 +7138,7 @@ class ProcessExitNotSuccessfully$1 extends Error {
 
 var ProcessExitNotSuccessfully_1 = ProcessExitNotSuccessfully$1;
 
-const child_process = require$$0__default$8["default"];
+const child_process = require$$0__default$6["default"];
 const {
   logScope: logScope$1
 } = logger_1;
@@ -11595,6 +7404,6 @@ const csgInstance = CacheStorageGroup.getInstance();
 setInterval(() => {
   csgInstance.cleanup();
 }, 15 * 60 * 1000);
-require$$1__default$1["default"].createServer().listen(parseInt(process.argv[2]) || 9000).on('request', (req, res) => distribute(parse(req.url), router).then(data => res.write(data)).catch(() => res.writeHead(404)).then(() => res.end()));
+require$$1__default["default"].createServer().listen(parseInt(process.argv[2]) || 9000).on('request', (req, res) => distribute(parse(req.url), router).then(data => res.write(data)).catch(() => res.writeHead(404)).then(() => res.end()));
 
 module.exports = bridge;
