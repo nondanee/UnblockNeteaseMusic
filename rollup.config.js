@@ -14,7 +14,9 @@ const commonConfig = {
 		banner: ['#!/usr/bin/node', ''].join('\n'),
 	},
 	plugins: [
-		commonjs(),
+		commonjs({
+			ignoreTryCatch: false,
+		}),
 		json(),
 		babel({
 			babelHelpers: 'bundled',
