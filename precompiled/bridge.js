@@ -271,7 +271,7 @@ var store$2 = sharedStore;
 (shared$3.exports = function (key, value) {
   return store$2[key] || (store$2[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.18.1',
+  version: '3.18.2',
   mode: 'global',
   copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -284,9 +284,10 @@ var toObject$1 = function (argument) {
 };
 
 var toObject = toObject$1;
-var hasOwnProperty = {}.hasOwnProperty;
+var hasOwnProperty = {}.hasOwnProperty; // `HasOwnProperty` abstract operation
+// https://tc39.es/ecma262/#sec-hasownproperty
 
-var has$9 = Object.hasOwn || function hasOwn(it, key) {
+var hasOwnProperty_1 = Object.hasOwn || function hasOwn(it, key) {
   return hasOwnProperty.call(toObject(it), key);
 };
 
@@ -299,7 +300,7 @@ var uid$2 = function (key) {
 
 var global$d = global$i;
 var shared$2 = shared$3.exports;
-var has$8 = has$9;
+var hasOwn$7 = hasOwnProperty_1;
 var uid$1 = uid$2;
 var NATIVE_SYMBOL = nativeSymbol;
 var USE_SYMBOL_AS_UID = useSymbolAsUid;
@@ -308,8 +309,8 @@ var Symbol$1 = global$d.Symbol;
 var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid$1;
 
 var wellKnownSymbol$a = function (name) {
-  if (!has$8(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
-    if (NATIVE_SYMBOL && has$8(Symbol$1, name)) {
+  if (!hasOwn$7(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
+    if (NATIVE_SYMBOL && hasOwn$7(Symbol$1, name)) {
       WellKnownSymbolsStore[name] = Symbol$1[name];
     } else {
       WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
@@ -380,7 +381,7 @@ var propertyIsEnumerableModule = objectPropertyIsEnumerable;
 var createPropertyDescriptor$1 = createPropertyDescriptor$2;
 var toIndexedObject$2 = toIndexedObject$3;
 var toPropertyKey$1 = toPropertyKey$2;
-var has$7 = has$9;
+var hasOwn$6 = hasOwnProperty_1;
 var IE8_DOM_DEFINE$1 = ie8DomDefine; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor; // `Object.getOwnPropertyDescriptor` method
@@ -394,7 +395,7 @@ objectGetOwnPropertyDescriptor.f = DESCRIPTORS$4 ? $getOwnPropertyDescriptor : f
   } catch (error) {
     /* empty */
   }
-  if (has$7(O, P)) return createPropertyDescriptor$1(!propertyIsEnumerableModule.f.call(O, P), O[P]);
+  if (hasOwn$6(O, P)) return createPropertyDescriptor$1(!propertyIsEnumerableModule.f.call(O, P), O[P]);
 };
 
 var objectDefineProperty = {};
@@ -472,16 +473,16 @@ var NATIVE_WEAK_MAP = nativeWeakMap;
 var global$a = global$i;
 var isObject$4 = isObject$9;
 var createNonEnumerableProperty$2 = createNonEnumerableProperty$3;
-var objectHas = has$9;
+var hasOwn$5 = hasOwnProperty_1;
 var shared = sharedStore;
 var sharedKey = sharedKey$1;
 var hiddenKeys$2 = hiddenKeys$3;
 var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
 var WeakMap = global$a.WeakMap;
-var set$1, get$1, has$6;
+var set$1, get$1, has$1;
 
 var enforce = function (it) {
-  return has$6(it) ? get$1(it) : set$1(it, {});
+  return has$1(it) ? get$1(it) : set$1(it, {});
 };
 
 var getterFor = function (TYPE) {
@@ -513,7 +514,7 @@ if (NATIVE_WEAK_MAP || shared.state) {
     return wmget.call(store, it) || {};
   };
 
-  has$6 = function (it) {
+  has$1 = function (it) {
     return wmhas.call(store, it);
   };
 } else {
@@ -521,35 +522,35 @@ if (NATIVE_WEAK_MAP || shared.state) {
   hiddenKeys$2[STATE] = true;
 
   set$1 = function (it, metadata) {
-    if (objectHas(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+    if (hasOwn$5(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
     createNonEnumerableProperty$2(it, STATE, metadata);
     return metadata;
   };
 
   get$1 = function (it) {
-    return objectHas(it, STATE) ? it[STATE] : {};
+    return hasOwn$5(it, STATE) ? it[STATE] : {};
   };
 
-  has$6 = function (it) {
-    return objectHas(it, STATE);
+  has$1 = function (it) {
+    return hasOwn$5(it, STATE);
   };
 }
 
 var internalState = {
   set: set$1,
   get: get$1,
-  has: has$6,
+  has: has$1,
   enforce: enforce,
   getterFor: getterFor
 };
 
 var DESCRIPTORS$1 = descriptors;
-var has$5 = has$9;
+var hasOwn$4 = hasOwnProperty_1;
 var FunctionPrototype = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
 var getDescriptor = DESCRIPTORS$1 && Object.getOwnPropertyDescriptor;
-var EXISTS = has$5(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
+var EXISTS = hasOwn$4(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
 
 var PROPER = EXISTS && function something() {
   /* empty */
@@ -564,7 +565,7 @@ var functionName = {
 
 var global$9 = global$i;
 var isCallable$7 = isCallable$f;
-var has$4 = has$9;
+var hasOwn$3 = hasOwnProperty_1;
 var createNonEnumerableProperty$1 = createNonEnumerableProperty$3;
 var setGlobal$1 = setGlobal$3;
 var inspectSource$2 = inspectSource$4;
@@ -585,7 +586,7 @@ var TEMPLATE = String(String).split('String');
       name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
     }
 
-    if (!has$4(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
+    if (!hasOwn$3(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
       createNonEnumerableProperty$1(value, 'name', name);
     }
 
@@ -613,40 +614,49 @@ var TEMPLATE = String(String).split('String');
 var objectGetOwnPropertyNames = {};
 
 var ceil = Math.ceil;
-var floor = Math.floor; // `ToInteger` abstract operation
-// https://tc39.es/ecma262/#sec-tointeger
+var floor = Math.floor; // `ToIntegerOrInfinity` abstract operation
+// https://tc39.es/ecma262/#sec-tointegerorinfinity
 
-var toInteger$2 = function (argument) {
-  return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
+var toIntegerOrInfinity$2 = function (argument) {
+  var number = +argument; // eslint-disable-next-line no-self-compare -- safe
+
+  return number !== number || number === 0 ? 0 : (number > 0 ? floor : ceil)(number);
 };
 
-var toInteger$1 = toInteger$2;
-var min$1 = Math.min; // `ToLength` abstract operation
-// https://tc39.es/ecma262/#sec-tolength
-
-var toLength$2 = function (argument) {
-  return argument > 0 ? min$1(toInteger$1(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
-};
-
-var toInteger = toInteger$2;
+var toIntegerOrInfinity$1 = toIntegerOrInfinity$2;
 var max = Math.max;
-var min = Math.min; // Helper for a popular repeating case of the spec:
+var min$1 = Math.min; // Helper for a popular repeating case of the spec:
 // Let integer be ? ToInteger(index).
 // If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
 
 var toAbsoluteIndex$1 = function (index, length) {
-  var integer = toInteger(index);
-  return integer < 0 ? max(integer + length, 0) : min(integer, length);
+  var integer = toIntegerOrInfinity$1(index);
+  return integer < 0 ? max(integer + length, 0) : min$1(integer, length);
+};
+
+var toIntegerOrInfinity = toIntegerOrInfinity$2;
+var min = Math.min; // `ToLength` abstract operation
+// https://tc39.es/ecma262/#sec-tolength
+
+var toLength$1 = function (argument) {
+  return argument > 0 ? min(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+};
+
+var toLength = toLength$1; // `LengthOfArrayLike` abstract operation
+// https://tc39.es/ecma262/#sec-lengthofarraylike
+
+var lengthOfArrayLike$2 = function (obj) {
+  return toLength(obj.length);
 };
 
 var toIndexedObject$1 = toIndexedObject$3;
-var toLength$1 = toLength$2;
-var toAbsoluteIndex = toAbsoluteIndex$1; // `Array.prototype.{ indexOf, includes }` methods implementation
+var toAbsoluteIndex = toAbsoluteIndex$1;
+var lengthOfArrayLike$1 = lengthOfArrayLike$2; // `Array.prototype.{ indexOf, includes }` methods implementation
 
 var createMethod = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIndexedObject$1($this);
-    var length = toLength$1(O.length);
+    var length = lengthOfArrayLike$1(O);
     var index = toAbsoluteIndex(fromIndex, length);
     var value; // Array#includes uses SameValueZero equality algorithm
     // eslint-disable-next-line no-self-compare -- NaN check
@@ -671,7 +681,7 @@ var arrayIncludes = {
   indexOf: createMethod(false)
 };
 
-var has$3 = has$9;
+var hasOwn$2 = hasOwnProperty_1;
 var toIndexedObject = toIndexedObject$3;
 var indexOf = arrayIncludes.indexOf;
 var hiddenKeys$1 = hiddenKeys$3;
@@ -682,10 +692,10 @@ var objectKeysInternal = function (object, names) {
   var result = [];
   var key;
 
-  for (key in O) !has$3(hiddenKeys$1, key) && has$3(O, key) && result.push(key); // Don't enum bug & hidden keys
+  for (key in O) !hasOwn$2(hiddenKeys$1, key) && hasOwn$2(O, key) && result.push(key); // Don't enum bug & hidden keys
 
 
-  while (names.length > i) if (has$3(O, key = names[i++])) {
+  while (names.length > i) if (hasOwn$2(O, key = names[i++])) {
     ~indexOf(result, key) || result.push(key);
   }
 
@@ -719,7 +729,7 @@ var ownKeys$1 = getBuiltIn$e('Reflect', 'ownKeys') || function ownKeys(it) {
   return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
 };
 
-var has$2 = has$9;
+var hasOwn$1 = hasOwnProperty_1;
 var ownKeys = ownKeys$1;
 var getOwnPropertyDescriptorModule = objectGetOwnPropertyDescriptor;
 var definePropertyModule$1 = objectDefineProperty;
@@ -731,7 +741,7 @@ var copyConstructorProperties$1 = function (target, source) {
 
   for (var i = 0; i < keys.length; i++) {
     var key = keys[i];
-    if (!has$2(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+    if (!hasOwn$1(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
   }
 };
 
@@ -863,12 +873,12 @@ var objectSetPrototypeOf = Object.setPrototypeOf || ('__proto__' in {} ? functio
 }() : undefined);
 
 var defineProperty = objectDefineProperty.f;
-var has$1 = has$9;
+var hasOwn = hasOwnProperty_1;
 var wellKnownSymbol$8 = wellKnownSymbol$a;
 var TO_STRING_TAG$2 = wellKnownSymbol$8('toStringTag');
 
 var setToStringTag$1 = function (it, TAG, STATIC) {
-  if (it && !has$1(it = STATIC ? it : it.prototype, TO_STRING_TAG$2)) {
+  if (it && !hasOwn(it = STATIC ? it : it.prototype, TO_STRING_TAG$2)) {
     defineProperty(it, TO_STRING_TAG$2, {
       configurable: true,
       value: TAG
@@ -1027,7 +1037,7 @@ var iteratorClose$1 = function (iterator, kind, value) {
 
 var anObject$u = anObject$A;
 var isArrayIteratorMethod = isArrayIteratorMethod$1;
-var toLength = toLength$2;
+var lengthOfArrayLike = lengthOfArrayLike$2;
 var bind$e = functionBindContext;
 var getIterator$1 = getIterator$2;
 var getIteratorMethod = getIteratorMethod$2;
@@ -1067,7 +1077,7 @@ var iterate$q = function (iterable, unboundFunction, options) {
     if (!iterFn) throw TypeError(String(iterable) + ' is not iterable'); // optimisation for array iterators
 
     if (isArrayIteratorMethod(iterFn)) {
-      for (index = 0, length = toLength(iterable.length); length > index; index++) {
+      for (index = 0, length = lengthOfArrayLike(iterable); length > index; index++) {
         result = callFn(iterable[index]);
         if (result && result instanceof Result) return result;
       }
