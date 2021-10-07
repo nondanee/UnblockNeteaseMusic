@@ -31,7 +31,6 @@
 	"author": "nondanee, 1715173329, pan93412",
 	"license": "LGPL-3.0-only",
 	"dependencies": {
-		"long": "^4.0.0",
 		"node-windows": "^1.0.0-beta.6"
 	},
 	"private": true,

@@ -4,27 +4,24 @@
 	https://github.com/Levi233/MusicPlayer/blob/master/app/src/main/java/com/chenhao/musicplayer/utils/crypt/KuwoDES.java
 */
 
-const Long =
-	typeof BigInt === 'function' // BigInt support in Node 10+
-		? (n) => {
-				const bN = BigInt(n);
+const Long = (n) => {
+	const bN = BigInt(n);
 
-				return {
-					low: Number(bN),
-					valueOf: () => bN.valueOf(),
-					toString: () => bN.toString(),
-					not: () => Long(~bN),
-					isNegative: () => bN < 0,
-					or: (x) => Long(bN | BigInt(x)),
-					and: (x) => Long(bN & BigInt(x)),
-					xor: (x) => Long(bN ^ BigInt(x)),
-					equals: (x) => bN === BigInt(x),
-					multiply: (x) => Long(bN * BigInt(x)),
-					shiftLeft: (x) => Long(bN << BigInt(x)),
-					shiftRight: (x) => Long(bN >> BigInt(x)),
-				};
-		  }
-		: (...args) => new (require('long'))(...args);
+	return {
+		low: Number(bN),
+		valueOf: () => bN.valueOf(),
+		toString: () => bN.toString(),
+		not: () => Long(~bN),
+		isNegative: () => bN < 0,
+		or: (x) => Long(bN | BigInt(x)),
+		and: (x) => Long(bN & BigInt(x)),
+		xor: (x) => Long(bN ^ BigInt(x)),
+		equals: (x) => bN === BigInt(x),
+		multiply: (x) => Long(bN * BigInt(x)),
+		shiftLeft: (x) => Long(bN << BigInt(x)),
+		shiftRight: (x) => Long(bN >> BigInt(x)),
+	};
+};
 
 const range = (n) => Array.from(new Array(n).keys());
 const power = (base, index) =>
