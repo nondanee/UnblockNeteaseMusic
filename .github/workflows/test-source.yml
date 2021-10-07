@@ -6,7 +6,9 @@ on:
             - 'enhanced'
         paths:
             - '*.js'
+            - 'package.json'
             - 'src/**.js'
+            - 'yarn.lock'
             - '.github/workflows/*.yml'
 
     pull_request:
