@@ -1,4 +1,4 @@
-name: Test the sources availability with Jest
+name: Test UNM with Jest
 
 on:
     push:
