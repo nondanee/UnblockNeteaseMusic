@@ -4,8 +4,11 @@ on:
     push:
         branches:
             - 'enhanced'
-        paths-ignore:
-            - '**.md'
+        paths:
+            - '.github/workflows/push-docker.yml'
+            - 'precompiled/**'
+            - 'server.crt'
+            - 'server.key'
 
     release:
         types:
@@ -46,11 +49,7 @@ jobs:
 
             - name: Build and push the latest version
               uses: docker/build-push-action@v2
-              if: >-
-                ${{
-                  github.event_name != 'release'
-                  && github.event.head_commit.message == 'build(precompiled): make a bundle with the dependencies'
-                }}
+              if: github.event_name != 'release'
               with:
                   context: .
                   platforms: ${{ env.platforms }}
