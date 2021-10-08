@@ -35,7 +35,7 @@
 	},
 	"private": true,
 	"devDependencies": {
-		"@babel/core": "^7.15.5",
+		"@babel/core": "^7.15.8",
 		"@babel/preset-env": "^7.15.8",
 		"@rollup/plugin-babel": "^5.3.0",
 		"@rollup/plugin-commonjs": "^21.0.0",
