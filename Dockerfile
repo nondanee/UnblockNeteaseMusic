@@ -1,14 +1,16 @@
-FROM alpine
-RUN apk add --update nodejs yarn --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/main/
+FROM node:lts-alpine
 
+RUN set -ex && mkdir /app
+
+COPY ./precompiled/* /app/
+COPY ./*.crt /app/
+COPY ./*.key /app/
+
+ENV SIGN_CERT /app/server.crt
+ENV SIGN_KEY /app/server.key
 ENV NODE_ENV production
 ENV SOURCE bilibili kugou kuwo
 
-WORKDIR /usr/src/app
-COPY package*.json ./
-RUN yarn --production
-COPY . .
+WORKDIR /app
 
-EXPOSE 8080 8081
-
-ENTRYPOINT ["sh", "-c", "node app.js -o ${SOURCE} \"$0\" \"$@\""]
+ENTRYPOINT ["node", "app.js", "-o", "${SOURCE}"]
