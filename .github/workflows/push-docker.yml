@@ -46,7 +46,11 @@ jobs:
 
             - name: Build and push the latest version
               uses: docker/build-push-action@v2
-              if: github.event_name != 'release'
+              if: >-
+                ${{
+                  github.event_name != 'release'
+                  && github.event.head_commit.message == 'build(precompiled): make a bundle with the dependencies'
+                }}
               with:
                   context: .
                   platforms: ${{ env.platforms }}
