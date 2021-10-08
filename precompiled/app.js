@@ -81,8 +81,8 @@ var dependencies$1 = {
 	"node-windows": "^1.0.0-beta.6"
 };
 var devDependencies$1 = {
-	"@babel/core": "^7.15.5",
-	"@babel/preset-env": "^7.15.6",
+	"@babel/core": "^7.15.8",
+	"@babel/preset-env": "^7.15.8",
 	"@rollup/plugin-babel": "^5.3.0",
 	"@rollup/plugin-commonjs": "^21.0.0",
 	"@rollup/plugin-json": "^4.1.0",
