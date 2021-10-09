@@ -1,5 +1,5 @@
 {
-	"name": "@unblockneteasemusic/server",
+	"name": "@unbnm/server",
 	"version": "v0.27.0-beta.4",
 	"description": "Revive unavailable songs for Netease Cloud Music",
 	"main": "src/provider/match.js",

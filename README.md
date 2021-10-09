@@ -187,7 +187,7 @@ PAC 自动代理脚本地址 `http://<Server Name:PORT>/proxy.pac`
 作为依赖库使用
 
 ```javascript
-const match = require('@unblockneteasemusic/server');
+const match = require('@unbnm/server');
 
 /**
  * Set proxy or hosts if needed
