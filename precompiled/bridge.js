@@ -3890,22 +3890,26 @@ function _interopNamespace$1(e) {
 var tty__namespace = /*#__PURE__*/_interopNamespace$1(tty);
 
 const env = process.env || {};
-const isDisabled = ("NO_COLOR" in env);
-const isForced = ("FORCE_COLOR" in env);
+const argv = process.argv || [];
+const isDisabled = "NO_COLOR" in env || argv.includes("--no-color");
+const isForced = "FORCE_COLOR" in env || argv.includes("--color");
 const isWindows = process.platform === "win32";
 const isCompatibleTerminal = tty__namespace && tty__namespace.isatty && tty__namespace.isatty(1) && env.TERM && env.TERM !== "dumb";
 const isCI = "CI" in env && ("GITHUB_ACTIONS" in env || "GITLAB_CI" in env || "CIRCLECI" in env);
 const isColorSupported$1 = !isDisabled && (isForced || isWindows || isCompatibleTerminal || isCI);
 
-const raw = (open, close, searchRegex, replaceValue) => s => s || !(s === "" || s === undefined) ? open + (~(s + "").indexOf(close, 4) // skip opening \x1b[
-? s.replace(searchRegex, replaceValue) : s) + close : "";
+const replaceClose = (index, string, close, replace, head = string.substring(0, index) + replace, tail = string.substring(index + close.length), next = tail.indexOf(close)) => head + (next < 0 ? tail : replaceClose(next, tail, close, replace));
 
-const init = (open, close) => raw(`\x1b[${open}m`, `\x1b[${close}m`, new RegExp(`\\x1b\\[${close}m`, "g"), `\x1b[${open}m`);
+const clearBleed = (index, string, open, close, replace) => index < 0 ? open + string + close : open + replaceClose(index, string, close, replace) + close;
+
+const filterEmpty = (open, close, replace = open, at = open.length + 1) => string => string || !(string === "" || string === undefined) ? clearBleed(("" + string).indexOf(close, at), string, open, close, replace) : "";
+
+const init = (open, close, replace) => filterEmpty(`\x1b[${open}m`, `\x1b[${close}m`, replace);
 
 const colors$2 = {
   reset: init(0, 0),
-  bold: raw("\x1b[1m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[1m"),
-  dim: raw("\x1b[2m", "\x1b[22m", /\x1b\[22m/g, "\x1b[22m\x1b[2m"),
+  bold: init(1, 22, "\x1b[22m\x1b[1m"),
+  dim: init(2, 22, "\x1b[22m\x1b[2m"),
   italic: init(3, 23),
   underline: init(4, 24),
   inverse: init(7, 27),
@@ -3950,7 +3954,7 @@ const none = any => any;
 
 const createColors$1 = ({
   useColor = isColorSupported$1
-} = {}) => useColor ? colors$2 : Object.keys(colors$2).reduce((colorMap, key) => ({ ...colorMap,
+} = {}) => useColor ? colors$2 : Object.keys(colors$2).reduce((colors, key) => ({ ...colors,
   [key]: none
 }), {});
 
