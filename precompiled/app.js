@@ -91,7 +91,7 @@ var devDependencies$1 = {
 	"@types/node": "^16.10.3",
 	"@types/pino": "^6.3.11",
 	"core-js": "3",
-	jest: "^27.2.4",
+	jest: "^27.2.5",
 	pino: "^6.13.3",
 	"pino-pretty": "^7.0.1",
 	pkg: "^5.3.3",
