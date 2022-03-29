@@ -1,3 +1,26 @@
+<div align="center">
+    <h1>🚨 本 UnblockNeteaseMusic 版本已暂停维护 🚨</h1>
+    <p>
+        以下是其他开发者制作的 UNM 版本。使用这些版本可以获得更完善的支援，
+        以及更积极的更新。您可以自由选择您想使用的分支版本：
+    </p>
+    <table>
+        <tr>
+            <th>名称</th>
+            <th>连结</th>
+            <th>特点</th>
+        </tr>
+        <tr>
+            <td>UnblockNeteaseMusic/server</td>
+            <td><a href="https://github.com/UnblockNeteaseMusic/server">https://github.com/UnblockNeteaseMusic/server</a></td>
+            <td>已积极维护数月，改善各种原版问题（音源失效、支援新版网易云、内存泄漏问题）的分支版本</td>
+        </tr>
+        <!-- Insert your fork here! -->
+    </table>
+</div>
+
+---
+
 <img src="https://user-images.githubusercontent.com/26399680/47980314-0e3f1700-e102-11e8-8857-e3436ecc8beb.png" alt="logo" width="140" height="140" align="right">
 
 # UnblockNeteaseMusic
